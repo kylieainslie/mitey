@@ -8,6 +8,15 @@
 \description{
 This package provides methods to estimate key epidemiological parameters for infectious diseases with particular application to scabies.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/kylieainslie/mitey}
+  \item \url{https://kylieainslie.github.io/mitey/}
+  \item Report bugs at \url{https://github.com/kylieainslie/mitey/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Kylie Ainslie \email{kylie.ainslie@rivm.nl} (\href{https://orcid.org/0000-0001-5419-7206}{ORCID})
 
