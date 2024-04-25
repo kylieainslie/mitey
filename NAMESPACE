@@ -2,3 +2,7 @@
 
 export(si_estim)
 import(fdrtool)
+importFrom(stats,dnorm)
+importFrom(stats,integrate)
+importFrom(stats,sd)
+importFrom(stats,weighted.mean)
