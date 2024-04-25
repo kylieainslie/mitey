@@ -1,12 +1,21 @@
-#' Estimate serial interval using the method method from Vink et al. (2014)
+#' Estimate serial interval using the method from Vink et al. (2014)
 #'
-#' @param dat a vector of
+#' @param dat a (numeric) vector of index case to case intervals
 #'
 #' @return vector with estimates for the mean and standard deviation of the primary-secondary infection component
 #' @export
 #' @import fdrtool
 #'
 #' @examples
+#' N <- 1000; hmu<-15; hsigma<-3
+#' CP <- rhalfnorm((0.2*N),theta=sqrt(pi/2)/(sqrt(2)*hsigma))
+#' PS <- rnorm(0.5*N,mean=hmu,sd=hsigma)
+#' PT <- rnorm(0.3*N,mean=2*hmu,sd=sqrt(2)*hsigma)
+#' PQ <- rnorm(0.1*N,mean=3*hmu,sd=sqrt(3)*hsigma)
+#' icc_intervals <- round(c(CP,PS,PT,PQ))
+#'
+#' si_estim(icc_intervals)
+
 si_estim <- function(dat){
   # function for weighted variance, to be used in E-step
   # weighted variance
