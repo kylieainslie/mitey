@@ -1,6 +1,6 @@
 #' Estimate serial interval using the method method from Vink et al. (2014)
 #'
-#' @param dat a vactor of
+#' @param dat a vector of
 #'
 #' @return vector with estimates for the mean and standard deviation of the primary-secondary infection component
 #' @export
@@ -86,7 +86,7 @@ si_estim <- function(dat){
   p7lower<-function(d,mu,sigma) 	integrate(f=f7lower, lower=(d-1), upper=d, r = d, mu = mu, sigma = sigma)
   p7upper<-function(d,mu,sigma) 	integrate(f=f7upper, lower=d, upper=(d+1), r = d, mu = mu, sigma = sigma)
 
-  j<-length(data)
+  j<-length(dat)
 
   # EM algorithm:
   tau1<-numeric(j)    #mixture weights for (coprimary, coprimary) pairs
@@ -98,8 +98,8 @@ si_estim <- function(dat){
   tau7<-numeric(j)    #mixture weights for (quaternary, primary) pairs
 
   # plausible starting values/educated guess
-  mu<-mean(data)
-  sigma<-sd(data)
+  mu<-mean(dat)
+  sigma<-sd(dat)
 
   # number of iterations
   N<-50
@@ -109,23 +109,23 @@ si_estim <- function(dat){
   # calculate the absolute probability of interval belonging to a component
   for(k in 1:N){
     for(l in 1:j){
-      if(data[l]==0){
-        d1<-p10(data[l],sigma)[[1]]
-        d2<-p20(data[l],mu,sigma)[[1]]
-        d3<-p30(data[l],mu,sigma)[[1]]
-        d4<-p40(data[l],mu,sigma)[[1]]
-        d5<-p50(data[l],mu,sigma)[[1]]
-        d6<-p60(data[l],mu,sigma)[[1]]
-        d7<-p70(data[l],mu,sigma)[[1]]
+      if(dat[l]==0){
+        d1<-p10(dat[l],sigma)[[1]]
+        d2<-p20(dat[l],mu,sigma)[[1]]
+        d3<-p30(dat[l],mu,sigma)[[1]]
+        d4<-p40(dat[l],mu,sigma)[[1]]
+        d5<-p50(dat[l],mu,sigma)[[1]]
+        d6<-p60(dat[l],mu,sigma)[[1]]
+        d7<-p70(dat[l],mu,sigma)[[1]]
       }
       else{
-        d1<-p1lower(data[l],sigma)[[1]]+p1upper(data[l],sigma)[[1]]
-        d2<-p2lower(data[l],mu,sigma)[[1]]+p2upper(data[l],mu,sigma)[[1]]
-        d3<-p3lower(data[l],mu,sigma)[[1]]+p3upper(data[l],mu,sigma)[[1]]
-        d4<-p4lower(data[l],mu,sigma)[[1]]+p4upper(data[l],mu,sigma)[[1]]
-        d5<-p5lower(data[l],mu,sigma)[[1]]+p5upper(data[l],mu,sigma)[[1]]
-        d6<-p6lower(data[l],mu,sigma)[[1]]+p6upper(data[l],mu,sigma)[[1]]
-        d7<-p7lower(data[l],mu,sigma)[[1]]+p7upper(data[l],mu,sigma)[[1]]
+        d1<-p1lower(dat[l],sigma)[[1]]+p1upper(dat[l],sigma)[[1]]
+        d2<-p2lower(dat[l],mu,sigma)[[1]]+p2upper(dat[l],mu,sigma)[[1]]
+        d3<-p3lower(dat[l],mu,sigma)[[1]]+p3upper(dat[l],mu,sigma)[[1]]
+        d4<-p4lower(dat[l],mu,sigma)[[1]]+p4upper(dat[l],mu,sigma)[[1]]
+        d5<-p5lower(dat[l],mu,sigma)[[1]]+p5upper(dat[l],mu,sigma)[[1]]
+        d6<-p6lower(dat[l],mu,sigma)[[1]]+p6upper(dat[l],mu,sigma)[[1]]
+        d7<-p7lower(dat[l],mu,sigma)[[1]]+p7upper(dat[l],mu,sigma)[[1]]
       }
 
       # then calculate the relative probability of a data point to belong to one of
@@ -152,8 +152,8 @@ si_estim <- function(dat){
     # M-step
     # estimates for the mean and standard deviation of the primary-secondary
     # infection component can be calculated directly
-    mu<-weighted.mean(data,tau2)
-    sigma<-sqrt(weighted.var(data, tau2))
+    mu<-weighted.mean(dat,tau2)
+    sigma<-sqrt(weighted.var(dat, tau2))
     rtn <- c(mu,sigma)
     return(rtn)
   }
