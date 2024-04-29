@@ -151,7 +151,7 @@ si_estim <- function(dat){
     # estimates for the mean and standard deviation of the primary-secondary
     # infection component can be calculated directly
     mu<-weighted.mean(dat,tau2)
-    sigma<-sqrt(weighted.var(dat, tau2))
+    sigma<-sqrt(weighted_var(dat, tau2))
     rtn <- c(mu,sigma)
     return(rtn)
   }
