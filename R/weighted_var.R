@@ -14,7 +14,7 @@
 #' a <- 1:10
 #' b <- seq(0.1, 1, length.out = 10)
 #'
-#' weighted.var(a, b)
+#' weighted_var(a, b)
 
 weighted_var <- function(x, w, na.rm = FALSE) {
   if (na.rm) {
