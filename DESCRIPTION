@@ -14,3 +14,6 @@ Imports:
     stats
 URL: https://github.com/kylieainslie/mitey, https://kylieainslie.github.io/mitey/
 BugReports: https://github.com/kylieainslie/mitey/issues
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
