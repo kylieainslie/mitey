@@ -17,17 +17,6 @@
 #' si_estim(icc_intervals)
 
 si_estim <- function(dat){
-  # function for weighted variance, to be used in E-step
-  # weighted variance
-  weighted.var <- function(x, w, na.rm = FALSE) {
-    if (na.rm) {
-      w <- w[i <- !is.na(x)]
-      x <- x[i]
-    }
-    sum.w <- sum(w)
-    (sum.w*(sum(w*(x-weighted.mean(x,w))^2))) / (sum.w^2 - sum(w^2))
-  }
-
   # mixture with 7 components
   # we split the folded normal distribution for the PS, PT and PQ route into two parts
   # component 1: CP route
