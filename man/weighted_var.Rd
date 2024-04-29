@@ -23,5 +23,5 @@ This function calculates the weighted variance which is then used in the estimat
 a <- 1:10
 b <- seq(0.1, 1, length.out = 10)
 
-weighted.var(a, b)
+weighted_var(a, b)
 }
