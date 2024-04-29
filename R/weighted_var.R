@@ -12,7 +12,7 @@
 #'
 #' @examples
 #' a <- 1:10
-#' b <- eq(0.1, 1, length.out = 10)
+#' b <- seq(0.1, 1, length.out = 10)
 #'
 #' weighted.var(a, b)
 
