@@ -16,7 +16,7 @@
 #'
 #' weighted.var(a, b)
 
-weighted.var <- function(x, w, na.rm = FALSE) {
+weighted_var <- function(x, w, na.rm = FALSE) {
   if (na.rm) {
     w <- w[i <- !is.na(x)]
     x <- x[i]
