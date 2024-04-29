@@ -5,6 +5,11 @@
 #' + component 2+3: Primary-Secondary route
 #' + component 4+5: Primary-Tertiary route
 #' + component 6+7: Primary-Quaternary route
+#' @param x description
+#' @param sigma description
+#' @param r description
+#' @param mu description
+#' @param route integer; between 1 and 7 and indicates the route of transmission.
 
 conv_tri_dist <- function(x, sigma, r, mu, route){
 
