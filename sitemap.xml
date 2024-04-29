@@ -16,6 +16,9 @@
     <loc>https://kylieainslie.github.io/mitey/index.html</loc>
   </url>
   <url>
+    <loc>https://kylieainslie.github.io/mitey/reference/conv_tri_dist.html</loc>
+  </url>
+  <url>
     <loc>https://kylieainslie.github.io/mitey/reference/index.html</loc>
   </url>
   <url>
@@ -23,5 +26,8 @@
   </url>
   <url>
     <loc>https://kylieainslie.github.io/mitey/reference/si_estim.html</loc>
+  </url>
+  <url>
+    <loc>https://kylieainslie.github.io/mitey/reference/weighted_var.html</loc>
   </url>
 </urlset>
