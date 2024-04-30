@@ -10,7 +10,7 @@
 #' @param r description??
 #' @param mu mean of density distribution
 #' @param route integer; between 1 and 7 and indicates the route of transmission.
-#' @param quantity character; "mean", "lower", "upper"
+#' @param quantity character; "zero", "lower", "upper"
 #'
 #' @return vector of density draws for each value of x
 #' @export
@@ -22,7 +22,7 @@
 #' iccs <- 1:30
 #' conv_tri_dist(x = iccs, sigma = 3, r = 10, mu = 15, route = 1)
 
-conv_tri_dist <- function(x, sigma, r, mu, route, quantity = "mean"){
+conv_tri_dist <- function(x, sigma, r, mu, route, quantity = "zero"){
 
   # determine the distribution to draw from based on the route of transmission
   if(route == 1){
@@ -44,14 +44,14 @@ conv_tri_dist <- function(x, sigma, r, mu, route, quantity = "mean"){
   }
 
   # calculate the quantity of interest
-  if(quantity == "mean"){
+  if(quantity == "zero"){
     rtn <- (2 - 2 * x) * dist_draw
   } else if (quantity == "lower"){
     rtn <- (x - r + 1) * dist_draw
   } else if (quantity == "upper"){
     rtn <- (r + 1 - x) * dist_draw
   } else {
-    stop("Invalid string in quantity argument. Valid inputs are 'mean', 'lower', and 'upper'.")
+    stop("Invalid string in quantity argument. Valid inputs are 'zero', 'lower', and 'upper'.")
   }
 
   # output
