@@ -12,11 +12,15 @@
 #' @param route integer; between 1 and 7 and indicates the route of transmission.
 #' @param quantity character; "mean", "lower", "upper"
 #'
-#' @return description
+#' @return vector of density draws for each value of x
 #' @export
 #'
 #' @importFrom fdrtool dhalfnorm
 #' @importFrom stats dnorm
+#'
+#' @example
+#' iccs <- 1:30
+#' conv_tri_dist(x = iccs, sigma = 3, r = 10, mu = 15, route = 1)
 
 conv_tri_dist <- function(x, sigma, r, mu, route, quantity = "mean"){
 
