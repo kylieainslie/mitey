@@ -22,6 +22,10 @@ weighted_var <- function(x, w, na.rm = FALSE) {
     stop("x and/or w must be numeric")
   }
 
+  if( length(x) != length(w)){
+    stop("x and w must have the same length")
+  }
+
   if (na.rm) {
     w <- w[i <- !is.na(x)]
     x <- x[i]
