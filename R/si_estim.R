@@ -26,6 +26,7 @@ si_estim <- function(dat){
 
   # convolution of the triangular distribution with the mixture component density
   # contiunous case
+  # TODO make into separate function
   f10<-function(x,sigma)          	(2-2*x)*dhalfnorm(x,theta=sqrt(pi/2)/(sqrt(2)*sigma))
   f1lower<-function(x,r,sigma)    	(x-r+1)*dhalfnorm(x,theta=sqrt(pi/2)/(sqrt(2)*sigma))
   f1upper<-function(x,r,sigma)    	(r+1-x)*dhalfnorm(x,theta=sqrt(pi/2)/(sqrt(2)*sigma))
@@ -56,6 +57,7 @@ si_estim <- function(dat){
 
 
   # discretization
+  # TODO make into separate function
   p10<-function(d,sigma)        	integrate(f = f10, lower = d, upper = (d+1), sigma = sigma)
   p1lower<-function(d,sigma)    	integrate(f=f1lower, lower=(d-1), upper=d, r = d, sigma = sigma)
   p1upper<-function(d,sigma)   	 integrate(f=f1upper, lower=d, upper=(d+1), r = d, sigma = sigma)
@@ -105,6 +107,7 @@ si_estim <- function(dat){
   # E-step
 
   # calculate the absolute probability of interval belonging to a component
+  # TODO vectorise
   for(k in 1:N){
     for(l in 1:j){
       if(dat[l]==0){
