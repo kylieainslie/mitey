@@ -11,6 +11,12 @@
 #' @param mu mean of density distribution
 #' @param route integer; between 1 and 7 and indicates the route of transmission.
 #' @param quantity character; "mean", "lower", "upper"
+#'
+#' @return description
+#' @export
+#'
+#' @importFrom fdrtool dhalfnorm
+#' @importFrom stats dnorm
 
 conv_tri_dist <- function(x, sigma, r, mu, route, quantity = "mean"){
 
