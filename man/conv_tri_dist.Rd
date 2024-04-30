@@ -4,18 +4,20 @@
 \alias{conv_tri_dist}
 \title{Convolution of the triangular distribution with the mixture component density (continuous case)}
 \usage{
-conv_tri_dist(x, sigma, r, mu, route)
+conv_tri_dist(x, sigma, r, mu, route, quantity = "mean")
 }
 \arguments{
-\item{x}{description}
+\item{x}{vector of index case to case intervals}
 
-\item{sigma}{description}
+\item{sigma}{standard deviation of density distribution}
 
-\item{r}{description}
+\item{r}{description??}
 
-\item{mu}{description}
+\item{mu}{mean of density distribution}
 
 \item{route}{integer; between 1 and 7 and indicates the route of transmission.}
+
+\item{quantity}{character; "mean", "lower", "upper"}
 }
 \description{
 We split the folded normal distribution for Primary-Secondary, Primary-Tertiary and Primary-Quaternary routes into two parts
