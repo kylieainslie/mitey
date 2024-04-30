@@ -20,7 +20,7 @@ conv_tri_dist(x, sigma, r, mu, route, quantity = "mean")
 \item{quantity}{character; "mean", "lower", "upper"}
 }
 \value{
-description
+vector of density draws for each value of x
 }
 \description{
 We split the folded normal distribution for Primary-Secondary, Primary-Tertiary and Primary-Quaternary routes into two parts
@@ -30,4 +30,8 @@ We split the folded normal distribution for Primary-Secondary, Primary-Tertiary 
 \item component 4+5: Primary-Tertiary route
 \item component 6+7: Primary-Quaternary route
 }
+}
+\examples{
+iccs <- 1:30
+conv_tri_dist(x = iccs, sigma = 3, r = 10, mu = 15, route = 1)
 }
