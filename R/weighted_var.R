@@ -17,6 +17,11 @@
 #' weighted_var(a, b)
 
 weighted_var <- function(x, w, na.rm = FALSE) {
+
+  if(!is.numeric(x) | !is.numeric(w)){
+    stop("x and/or w must be numeric")
+  }
+
   if (na.rm) {
     w <- w[i <- !is.na(x)]
     x <- x[i]
