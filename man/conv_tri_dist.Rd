@@ -19,6 +19,9 @@ conv_tri_dist(x, sigma, r, mu, route, quantity = "mean")
 
 \item{quantity}{character; "mean", "lower", "upper"}
 }
+\value{
+description
+}
 \description{
 We split the folded normal distribution for Primary-Secondary, Primary-Tertiary and Primary-Quaternary routes into two parts
 \itemize{
