@@ -6,4 +6,5 @@ test_that("check function arguments", {
 
 test_that("check output", {
   expect_equal(weighted_var(1:10, seq(0.1, 1, length.out = 10)), 6.875)
+  expect_equal(weighted_var(1,1), NaN)
 })
