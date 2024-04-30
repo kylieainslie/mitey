@@ -4,7 +4,7 @@
 \alias{conv_tri_dist}
 \title{Convolution of the triangular distribution with the mixture component density (continuous case)}
 \usage{
-conv_tri_dist(x, sigma, r, mu, route, quantity = "mean")
+conv_tri_dist(x, sigma, r, mu, route, quantity = "zero")
 }
 \arguments{
 \item{x}{vector of index case to case intervals}
@@ -17,7 +17,7 @@ conv_tri_dist(x, sigma, r, mu, route, quantity = "mean")
 
 \item{route}{integer; between 1 and 7 and indicates the route of transmission.}
 
-\item{quantity}{character; "mean", "lower", "upper"}
+\item{quantity}{character; "zero", "lower", "upper"}
 }
 \value{
 vector of density draws for each value of x
