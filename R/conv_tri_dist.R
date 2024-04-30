@@ -18,7 +18,7 @@
 #' @importFrom fdrtool dhalfnorm
 #' @importFrom stats dnorm
 #'
-#' @example
+#' @examples
 #' iccs <- 1:30
 #' conv_tri_dist(x = iccs, sigma = 3, r = 10, mu = 15, route = 1)
 
