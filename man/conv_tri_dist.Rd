@@ -4,7 +4,7 @@
 \alias{conv_tri_dist}
 \title{Convolution of the triangular distribution with the mixture component density (continuous case)}
 \usage{
-conv_tri_dist(x, sigma, r, mu, route, quantity = "zero")
+conv_tri_dist(x, sigma = sd(x), r = x, mu = mean(x), route, quantity = "zero")
 }
 \arguments{
 \item{x}{vector of index case to case intervals}
@@ -33,5 +33,5 @@ We split the folded normal distribution for Primary-Secondary, Primary-Tertiary 
 }
 \examples{
 iccs <- 1:30
-conv_tri_dist(x = iccs, sigma = 3, r = 10, mu = 15, route = 1)
+conv_tri_dist(x = iccs, route = 1)
 }
