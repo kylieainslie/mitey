@@ -11,15 +11,9 @@
 #' @importFrom stats integrate
 #'
 #' @examples
-#' N <- 1000; hmu<-15; hsigma<-3
-#' set.seed(1234)
-#' CP <- fdrtool::rhalfnorm((0.2*N),theta=sqrt(pi/2)/(sqrt(2)*hsigma))
-#' PS <- stats::rnorm(0.5*N,mean=hmu,sd=hsigma)
-#' PT <- stats::rnorm(0.3*N,mean=2*hmu,sd=sqrt(2)*hsigma)
-#' PQ <- stats::rnorm(0.1*N,mean=3*hmu,sd=sqrt(3)*hsigma)
-#' icc_intervals <- round(c(CP,PS,PT,PQ))
+#' my_data<-c(rep(1,38),rep(2,39),rep(3,30),rep(4,17),rep(5,7))
 #'
-#' tmp <- vec_int(icc_intervals, l = icc_intervals, u = (icc_intervals + 1), rt = 1, q = "zero")
+#' vec_int(x = my_data, l = my_data, u = (my_data + 1), rt = 1, q = "zero")
 
 # vectorized method
 vec_int <- Vectorize(function(x, l, u, rt, q) integrate(f = conv_tri_dist, lower = l, upper = u,
