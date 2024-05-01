@@ -32,7 +32,7 @@ conv_tri_dist <- function(x, sigma, r, mu, route, quantity = "zero"){
   } else if(route == 3){
     dist_draw <- dnorm(x, mean = -mu, sd = sigma)
   } else if (route == 4){
-    dist_drawm <- dnorm(x, mean = 2*mu, sd = sqrt(2)*sigma)
+    dist_draw <- dnorm(x, mean = 2*mu, sd = sqrt(2)*sigma)
   } else if (route == 5){
     dist_draw <- dnorm(x, mean = -2*mu, sd = sqrt(2)*sigma)
   } else if (route == 6){
