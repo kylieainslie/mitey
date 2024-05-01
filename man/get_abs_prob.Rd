@@ -4,10 +4,14 @@
 \alias{get_abs_prob}
 \title{Calculate the absolute probability of an index case to case interval belonging to a transmission route component}
 \usage{
-get_abs_prob(dat)
+get_abs_prob(dat, sigma = sd(dat), mu = mean(dat))
 }
 \arguments{
 \item{dat}{a (numeric) vector of index case to case intervals}
+
+\item{sigma}{standard deviation of underlying probability distribution; defaults to sd(dat)}
+
+\item{mu}{mean of underlying probability distribution; defaults to mean(dat)}
 }
 \value{
 matrix where each row represents a transmission route and each column represents the absolue probability of belonging to that transmission route for each index case to case interval in dat
