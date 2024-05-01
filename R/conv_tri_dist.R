@@ -20,9 +20,9 @@
 #'
 #' @examples
 #' iccs <- 1:30
-#' conv_tri_dist(x = iccs, sigma = 3, r = 10, mu = 15, route = 1)
+#' conv_tri_dist(x = iccs, route = 1)
 
-conv_tri_dist <- function(x, sigma, r, mu, route, quantity = "zero"){
+conv_tri_dist <- function(x, sigma=sd(x), r=x, mu=mean(x), route, quantity = "zero"){
 
   # determine the distribution to draw from based on the route of transmission
   if(route == 1){
