@@ -4,7 +4,7 @@
 \alias{vec_int}
 \title{Vectorized integration}
 \usage{
-vec_int(x, l, u, rt, q)
+vec_int(x, l, u, s, m, rt, q)
 }
 \arguments{
 \item{x}{a (numeric) vector of index case to case intervals}
@@ -12,6 +12,10 @@ vec_int(x, l, u, rt, q)
 \item{l}{lower bound for integration}
 
 \item{u}{upper bound for integration}
+
+\item{s}{standard deviation of distribution function to be integrated}
+
+\item{m}{mean of distribution function to be integrated}
 
 \item{rt}{route of transmission; integer from 1 to 7}
 
@@ -24,13 +28,7 @@ a vector of solutions for the integral for every value of x
 Vectorized integration
 }
 \examples{
-N <- 1000; hmu<-15; hsigma<-3
-set.seed(1234)
-CP <- fdrtool::rhalfnorm((0.2*N),theta=sqrt(pi/2)/(sqrt(2)*hsigma))
-PS <- stats::rnorm(0.5*N,mean=hmu,sd=hsigma)
-PT <- stats::rnorm(0.3*N,mean=2*hmu,sd=sqrt(2)*hsigma)
-PQ <- stats::rnorm(0.1*N,mean=3*hmu,sd=sqrt(3)*hsigma)
-icc_intervals <- round(c(CP,PS,PT,PQ))
+df <-c(rep(1,38),rep(2,39),rep(3,30),rep(4,17),rep(5,7))
 
-tmp <- vec_int(icc_intervals, l = icc_intervals, u = (icc_intervals + 1), rt = 1, q = "zero")
+vec_int(x = df, l = df, u = (df + 1), s = sd(df), m = mean(df), rt = 1, q = "zero")
 }
