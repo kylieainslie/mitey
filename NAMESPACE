@@ -2,6 +2,7 @@
 
 export(conv_tri_dist)
 export(get_abs_prob)
+export(si_estim)
 export(vec_int)
 export(weighted_var)
 importFrom(fdrtool,dhalfnorm)
