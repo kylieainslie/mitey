@@ -63,32 +63,53 @@ component 6+7: Primary-Quaternary route
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">conv_tri_dist</span><span class="op">(</span><span class="va">x</span>, <span class="va">sigma</span>, <span class="va">r</span>, <span class="va">mu</span>, <span class="va">route</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">conv_tri_dist</span><span class="op">(</span><span class="va">x</span>, sigma <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, r <span class="op">=</span> <span class="va">x</span>, mu <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="va">route</span>, quantity <span class="op">=</span> <span class="st">"zero"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
-<dd><p>description</p></dd>
+<dd><p>vector of index case to case intervals</p></dd>
 
 
 <dt>sigma</dt>
-<dd><p>description</p></dd>
+<dd><p>standard deviation of density distribution</p></dd>
 
 
 <dt>r</dt>
-<dd><p>description</p></dd>
+<dd><p>description??</p></dd>
 
 
 <dt>mu</dt>
-<dd><p>description</p></dd>
+<dd><p>mean of density distribution</p></dd>
 
 
 <dt>route</dt>
 <dd><p>integer; between 1 and 7 and indicates the route of transmission.</p></dd>
 
-</dl></div>
 
+<dt>quantity</dt>
+<dd><p>character; "zero", "lower", "upper"</p></dd>
+
+</dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    
+
+<p>vector of density draws for each value of x</p>
+    </div>
+
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">iccs</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">30</span></span></span>
+<span class="r-in"><span><span class="fu">conv_tri_dist</span><span class="op">(</span>x <span class="op">=</span> <span class="va">iccs</span>, route <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  0.0000000 -0.1265320 -0.2490151 -0.3651828 -0.4729775 -0.5706108</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] -0.6566121 -0.7298632 -0.7896184 -0.8355101 -0.8675395 -0.8860538</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] -0.8917126 -0.8854446 -0.8683974 -0.8418841 -0.8073273 -0.7662056</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] -0.7200021 -0.6701590 -0.6180381 -0.5648898 -0.5118284 -0.4598168</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [25] -0.4096583 -0.3619946 -0.3173109 -0.2759454 -0.2381022 -0.2038672</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
