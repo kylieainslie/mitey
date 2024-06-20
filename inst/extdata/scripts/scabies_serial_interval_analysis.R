@@ -5,14 +5,17 @@
 
 # load required packages
 library(tidyverse)
+library(ggplot2)
 library(readxl)
+library(devtools)
+library(lubridate)
+load_all()
 
-# set working directory
-setwd("~/Dropbox/Kylie/Projects/RIVM/Projects/scabies")
-
+# ------------------------------------------------------------------------------
 # Kaburi et al. ----------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # read in epidemic curve data file
-kaburi_df <- read_xlsx("./data/Kaburi_et_al_data_scabies.xlsx")
+kaburi_df <- read_xlsx("~/Dropbox/Kylie/Projects/RIVM/Projects/scabies/data/Kaburi_et_al_data_scabies.xlsx")
 
 # we will calculate the index case-to-case (ICC) interval for each person by class
 # the person with the greatest value for number of days since symptom onset will
@@ -34,22 +37,37 @@ icc_df <- kaburi_df %>%
          icc_interval = abs(no_days_since_onset - max(no_days_since_onset))
          )
 
+# analysis without splitting observations into classes
+icc_df2 <- kaburi_df %>%
+  # select the number of days since symptom onset
+  select(`number of days since onset`) %>%
+  # rename variables for ease
+  rename(no_days_since_onset = `number of days since onset`) %>%
+  # make an identification variable for whether or not an individual is an index case
+  mutate(index_case = if_else(no_days_since_onset == max(no_days_since_onset), 1, 0),
+  # calculate ICC intervals
+         icc_interval = abs(no_days_since_onset - max(no_days_since_onset))
+  )
+
 # use method from Vink et al. to estimate SI
-data <- icc_df$icc_interval
-source("./code/SI_estimation_method_from_Vink_et_al.R")
+si_estim(icc_df$icc_interval)
+# [1] mean = 78.01803 sd = 67.18990   different results than script estimates
 # [1] mean = 81.36419, sd = 62.89626
 
-# plot
-hist(data, freq = FALSE, main = "Scabies ICC intervals", xlab = "ICC Interval (days)")
-x <- seq(min(icc_df$icc_interval), max(icc_df$icc_interval), length.out = 100)
-y <- dnorm(x, mean = 81.36419, sd = 62.89626)
-lines(x, y, col = "blue", lwd = 2) 
+# without classes
+si_estim(icc_df2$icc_interval)
+# [1] mean = 165.95206  sd = 19.65646
+# [1] mean = 167.34442  sd = 9.71763 script estimate
+# source("./inst/extdata/scripts/SI_estimation_method_from_Vink_et_al.R")
 # ------------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------------
 # Ariza et al. -----------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# this data is from a pre-school in Germany
 ariza_df <- data.frame(
   id = c(seq(1, 16, by = 1)),
-  date_onset = as.Date(c("01/12/2011", "25/02/2012", "01/03/2012", "02/03/2012", 
+  date_onset = as.Date(c("01/12/2011", "25/02/2012", "01/03/2012", "02/03/2012",
                  "05/03/2012", "08/03/2012", "10/03/2012", "10/03/2012",
                  "13/03/2012", "13/03/2012", "14/03/2012", rep("16/03/2012",3),
                  "17/02/2012", "18/03/2012"), format = "%d/%m/%Y"),
@@ -62,23 +80,164 @@ icc_df2 <- ariza_df %>%
 
 # use method from Vink et al. to estimate SI
 data <- icc_df2$icc_interval
-source("./code/SI_estimation_method_from_Vink_et_al.R")
+source("./inst/extdata/scripts/SI_estimation_method_from_Vink_et_al.R")
 # [1] mean = 98.4, sd = 8.542332
 
-# plot
-hist(data, freq = FALSE, ylim = c(0, 0.05), xlim = c(0, 130),
-     main = "Scabies ICC intervals", xlab = "ICC Interval (days)")
-x <- seq(min(icc_df2$icc_interval), max(icc_df2$icc_interval), length.out = 100)
-y <- dnorm(x, mean = 98.4, sd = 8.542332)
-lines(x, y, col = "blue", lwd = 2) 
+# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-# plot both estimated serial interval distributions
-x <- seq(0,150, by = 1)
-y1 <- dnorm(x, mean = 81.36419, sd = 62.89626)
+# Uganda outbreak --------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Akunzirwe et al 2023.
+# https://uniph.go.ug/an-outbreak-of-scabies-in-a-fishing-community-in-hoima-district-uganda-february%E2%88%92june-2022/
+# outbreak in a fishing community in 2022. Data are provided weekly, so all
+# infections for each week are attributed to the first day of the week
+
+uganda_df <- data.frame(
+  date_onset = as.Date(c("01/01/2022", "08/01/2022", "15/01/2022", "29/01/2022",
+                         "05/02/2022", "12/02/2022", "19/02/2022", "26/02/2022",
+                         "05/03/2022", "12/03/2022", "19/03/2022", "26/03/2022",
+                         "02/04/2022", "09/04/2022", "16/04/2022", "23/04/2022",
+                         "30/04/2022", "07/05/2022", "14/05/2022", "21/05/2022",
+                         "28/05/2022", "11/06/2022", "18/06/2022", "25/06/2022",
+                         "02/07/2022"), format = "%d/%m/%Y"),
+  num_cases = c(3, 4, 2, 5, 3, 2, 3, 6, 6, 4, 3, 2, 6, 20, 7, 4, 14, 8, 18, 2,
+                10, 5, 10, 5, 3)
+)
+
+# Transform the data frame to long format
+uganda_long_df <- uganda_df %>%
+  uncount(num_cases) %>% # Repeat rows based on the number of cases
+  mutate(id = row_number(), # Add an id variable
+         icc_interval = as.integer(date_onset - min(date_onset)) # calculate ICC interval
+  )
+
+# use method from Vink et al. to estimate SI
+data <- uganda_long_df$icc_interval
+source("./inst/extdata/scripts/SI_estimation_method_from_Vink_et_al.R")
+# [1] mean = 122.92385  sd = 26.92035
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# Nevada outbreak
+# ------------------------------------------------------------------------------
+# SCABIES OUTBREAK AMONG RESIDENTS OF A LONG TERM CARE FACILITY, CLARK COUNTY, NEVADA, 2015
+# file:///Users/kylieainslie/Downloads/Scabies%20%E2%80%93%20Clark%20[v%202015%20i%2021%20e%201.0]_BP.pdf
+nevada_df <- data.frame(
+  date_onset = as.Date(c("07/04/2015", "08/04/2015", "16/04/2015", "17/04/2015",
+                         "22/04/2015", "01/05/2015", "14/05/2015", "16/05/2015",
+                         "18/05/2015"), format = "%d/%m/%Y"),
+  num_cases = c(1, 1, 2, 1, 1, 1, 1, 1, 2)
+)
+# Transform the data frame to long format
+nevada_long_df <- nevada_df %>%
+  uncount(num_cases) %>% # Repeat rows based on the number of cases
+  mutate(id = row_number(), # Add an id variable
+         icc_interval = as.integer(date_onset - min(date_onset)) # calculate ICC interval
+  )
+
+# use method from Vink et al. to estimate SI
+data <- nevada_long_df$icc_interval
+source("./inst/extdata/scripts/SI_estimation_method_from_Vink_et_al.R")
+# [1] 21.91776 15.23666
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# Dutch care home outbreak
+# ------------------------------------------------------------------------------
+# Tjon-Kon-Fat et al. (2021) Short report: The potential of PCR on skin flakes
+# from bed linens for diagnosis of scabies in an outbreak.
+# PLoS Negl Trop Dis 15(6): e0009485. https://doi.org/10.1371/journal.pntd.0009485
+# cases identified by week, date of onset is attributed to first day of the week
+#
+dutch_df <- data.frame(
+  week_onset = c(24, 28, 31, 33, 36, 37, 38, 40, 41, 42),
+  num_cases = c(1, 1, 1, 2, 1, 2, 1, 1, 9, 2)
+)
+
+# Define the year
+year <- 2018
+
+# Convert week number to the first day of each week using piping
+dutch_df <- dutch_df %>%
+  mutate(date_onset = ymd(paste0(year, "-01-01")) + weeks(week_onset - 1)) %>%
+  mutate(date_onset = floor_date(date_onset, unit = "week", week_start = 1))
+# Convert to long format
+dutch_long_df <- dutch_df %>%
+  uncount(num_cases) %>% # Repeat rows based on the number of cases
+  mutate(id = row_number(), # Add an id variable
+         icc_interval = as.integer(date_onset - min(date_onset)) # calculate ICC interval
+  )
+
+# use method from Vink et al. to estimate SI
+data <- dutch_long_df$icc_interval
+source("./inst/extdata/scripts/SI_estimation_method_from_Vink_et_al.R")
+# [1] mean = 110.71571  sd = 16.13879
+# ------------------------------------------------------------------------------
+# img <- image_read("./inst/extdata/ethiopia_epidemic_curve.png")
+# img_processed <- image_convert(img, "gray")  # Convert to grayscale
+# tess <- tesseract(options = list(psm = 6))
+# text <- ocr(img_processed, engine = tess)
+# cat(text)
+
+# ------------------------------------------------------------------------------
+# Spain outbreak in a hospital
+# Larrosa A., et al. Nosocomial outbreak of scabies in a hospital in Spain.
+# Euro Surveill. 2003;8(10):pii=429. https://doi.org/10.2807/esm.08.10.00429-en
+# ------------------------------------------------------------------------------
+spain_df <- data.frame(
+  day_onset = c(1, 2, 5, 9, 15, 16, 19, 21, 29, 44, 51, 61, 62),
+  num_cases = c(1, 1, 2, 1, 1, 3, 1, 1, 1, 2, 1, 1, 1)
+)
+
+# Define start date
+start_date <- as.Date("2002-11-05")
+
+# Create sequence of dates based on day_onset
+spain_df$date_onset <- start_date + (spain_df$day_onset - 1)
+
+# Convert to long format and calculate icc_interval
+spain_long_df <- spain_df %>%
+  uncount(num_cases) %>% # Repeat rows based on the number of cases
+  mutate(id = row_number(), # Add an id variable
+         icc_interval = as.integer(date_onset - min(date_onset)) # calculate ICC interval
+  )
+# use method from Vink et al. to estimate SI
+data <- spain_long_df$icc_interval
+source("./inst/extdata/scripts/SI_estimation_method_from_Vink_et_al.R")
+# [1] 16.106246  2.421762
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Plot serial interval curves
+# Data preparation
+x <- seq(0, 250, by = 1)
+y1 <- dnorm(x, mean = 167.34442, sd = 9.71763)
 y2 <- dnorm(x, mean = 98.4, sd = 8.542332)
-plot(y2~x, type = "l", lwd = 2, ylab = "Density", xlab = "Time (days)",
-     main = "Estimated Serial Interval Distributions")
-lines(x, y1, col = "blue", lwd = 2)
-legend(1, 0.045, legend=c("Ariza et al.", "Kaburi et al."),
-       col=c("black", "blue"), lty=c(1,1), cex=1)
+y3 <- dnorm(x, mean = 122.92385, sd = 26.92035)
+y4 <- dnorm(x, mean = 21.91776, sd = 15.23666)
+y5 <- dnorm(x, mean = 110.71571, sd = 16.13879)
+y6 <- dnorm(x, mean = 16.106246, sd = 2.421762)
+# Create a data frame
+my_data <- data.frame(
+  x = rep(x, 6),
+  y = c(y1, y2, y3, y4, y5, y6),
+  group = factor(rep(c("Kaburi et al.", "Ariza et al.", "Uganda outbreak",
+                       "Nevada outbreak", "Dutch outbreak", "Spain outbreak"), each = length(x)),
+                 levels = c("Kaburi et al.", "Ariza et al.", "Uganda outbreak",
+                            "Nevada outbreak", "Dutch outbreak", "Spain outbreak"))
+)
+
+# Create the plot
+ggplot(my_data, aes(x = x, y = y, color = group)) +
+  geom_line(linewidth = 1) +
+  labs(title = "Estimated Serial Interval Distributions",
+       x = "Time (days)",
+       y = "Density") +
+  scale_color_viridis_d() +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.title = element_blank()
+  )
