@@ -20,10 +20,10 @@ The components are:
 \item Component 1: Integration for CP route.
 \item Component 2: Integration for PS route (mean = mu, sd = sigma).
 \item Component 3: Integration for PS route (mean = -mu, sd = sigma).
-\item Component 4: Integration for PT route (mean = 2*mu, sd = sqrt(2)\emph{sigma).
-\item Component 5: Integration for PT route (mean = -2}mu, sd = sqrt(2)\emph{sigma).
-\item Component 6: Integration for PQ route (mean = 3}mu, sd = sqrt(3)\emph{sigma).
-\item Component 7: Integration for PQ route (mean = -3}mu, sd = sqrt(3)*sigma).
+\item Component 4: Integration for PT route (mean = 2*mu, sd = sqrt(2)*sigma).
+\item Component 5: Integration for PT route (mean = -2*mu, sd = sqrt(2)*sigma).
+\item Component 6: Integration for PQ route (mean = 3*mu, sd = sqrt(3)*sigma).
+\item Component 7: Integration for PQ route (mean = -3*mu, sd = sqrt(3)*sigma).
 }
 }
 \description{
