@@ -46,7 +46,7 @@ si_estim <- function(dat, n = 50) {
     mu <- weighted.mean(dat, tau[2, ])
     sigma <- sqrt(weighted_var(dat, tau[2, ]))
     rtn <- c(mu, sigma)
-    print(rtn)
+    #print(rtn)
   }
 
   return(rtn)
