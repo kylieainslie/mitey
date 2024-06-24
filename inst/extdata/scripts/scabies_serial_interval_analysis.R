@@ -23,19 +23,19 @@ kaburi_df <- read_xlsx("~/Dropbox/Kylie/Projects/RIVM/Projects/scabies/data/Kabu
 # interval calculated as the number of days between their symptom onset and the
 # index case.
 
-icc_df <- kaburi_df %>%
-  # for now, we only need the class ID and the number of days since symptom onset
-  select(`Class (0=Creche; 1=Nursery 1; 2=Nursery 2; 3=KG1; 4=KG2)`,
-         `number of days since onset`) %>%
-  # rename variables for ease
-  rename(class = `Class (0=Creche; 1=Nursery 1; 2=Nursery 2; 3=KG1; 4=KG2)`,
-         no_days_since_onset = `number of days since onset`) %>%
-  # make an identification variable for whether or not an individual is an index case
-  group_by(class) %>%
-  mutate(index_case = if_else(no_days_since_onset == max(no_days_since_onset), 1, 0),
-         # calculate ICC intervals
-         icc_interval = abs(no_days_since_onset - max(no_days_since_onset))
-         )
+# icc_df <- kaburi_df %>%
+#   # for now, we only need the class ID and the number of days since symptom onset
+#   select(`Class (0=Creche; 1=Nursery 1; 2=Nursery 2; 3=KG1; 4=KG2)`,
+#          `number of days since onset`) %>%
+#   # rename variables for ease
+#   rename(class = `Class (0=Creche; 1=Nursery 1; 2=Nursery 2; 3=KG1; 4=KG2)`,
+#          no_days_since_onset = `number of days since onset`) %>%
+#   # make an identification variable for whether or not an individual is an index case
+#   group_by(class) %>%
+#   mutate(index_case = if_else(no_days_since_onset == max(no_days_since_onset), 1, 0),
+#          # calculate ICC intervals
+#          icc_interval = abs(no_days_since_onset - max(no_days_since_onset))
+#          )
 
 # analysis without splitting observations into classes
 icc_df2 <- kaburi_df %>%
@@ -50,7 +50,7 @@ icc_df2 <- kaburi_df %>%
   )
 
 # use method from Vink et al. to estimate SI
-si_estim(icc_df$icc_interval)
+# si_estim(icc_df$icc_interval)
 # [1] mean = 78.01803 sd = 67.18990   different results than script estimates
 # [1] mean = 81.36419, sd = 62.89626
 
@@ -58,7 +58,8 @@ si_estim(icc_df$icc_interval)
 si_estim(icc_df2$icc_interval)
 # [1] mean = 165.95206  sd = 19.65646
 # [1] mean = 167.34442  sd = 9.71763 script estimate
-# source("./inst/extdata/scripts/SI_estimation_method_from_Vink_et_al.R")
+data <- icc_df2$icc_interval
+source("./inst/extdata/scripts/SI_estimation_method_from_Vink_et_al.R")
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -75,12 +76,11 @@ ariza_df <- data.frame(
 )
 
 # calculate icc intervals from date of symptom onset
-icc_df2 <- ariza_df %>%
+ariza_df2 <- ariza_df %>%
   mutate(icc_interval = as.integer(date_onset - min(date_onset)))
 
 # use method from Vink et al. to estimate SI
-data <- icc_df2$icc_interval
-source("./inst/extdata/scripts/SI_estimation_method_from_Vink_et_al.R")
+si_estim(ariza_df2$icc_interval)
 # [1] mean = 98.4, sd = 8.542332
 
 # ------------------------------------------------------------------------------
@@ -113,8 +113,7 @@ uganda_long_df <- uganda_df %>%
   )
 
 # use method from Vink et al. to estimate SI
-data <- uganda_long_df$icc_interval
-source("./inst/extdata/scripts/SI_estimation_method_from_Vink_et_al.R")
+si_estim(uganda_long_df$icc_interval)
 # [1] mean = 122.92385  sd = 26.92035
 # ------------------------------------------------------------------------------
 
@@ -137,8 +136,7 @@ nevada_long_df <- nevada_df %>%
   )
 
 # use method from Vink et al. to estimate SI
-data <- nevada_long_df$icc_interval
-source("./inst/extdata/scripts/SI_estimation_method_from_Vink_et_al.R")
+si_estim(nevada_long_df$icc_interval)
 # [1] 21.91776 15.23666
 # ------------------------------------------------------------------------------
 
@@ -170,8 +168,7 @@ dutch_long_df <- dutch_df %>%
   )
 
 # use method from Vink et al. to estimate SI
-data <- dutch_long_df$icc_interval
-source("./inst/extdata/scripts/SI_estimation_method_from_Vink_et_al.R")
+si_estim(dutch_long_df$icc_interval)
 # [1] mean = 110.71571  sd = 16.13879
 # ------------------------------------------------------------------------------
 # img <- image_read("./inst/extdata/ethiopia_epidemic_curve.png")
@@ -203,8 +200,7 @@ spain_long_df <- spain_df %>%
          icc_interval = as.integer(date_onset - min(date_onset)) # calculate ICC interval
   )
 # use method from Vink et al. to estimate SI
-data <- spain_long_df$icc_interval
-source("./inst/extdata/scripts/SI_estimation_method_from_Vink_et_al.R")
+si_estim(spain_long_df$icc_interval)
 # [1] 16.106246  2.421762
 # ------------------------------------------------------------------------------
 
