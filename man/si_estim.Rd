@@ -2,12 +2,12 @@
 % Please edit documentation in R/si_estim.R
 \name{si_estim}
 \alias{si_estim}
-\title{Estimate serial interval using the method from Vink et al. (2014)}
+\title{Estimate serial interval using the EM Algorithm as developed by Vink et al. (2014)}
 \usage{
 si_estim(dat, n = 50)
 }
 \arguments{
-\item{dat}{a (numeric) vector of index case to case intervals}
+\item{dat}{vector; a numeric vector of index case to case intervals}
 
 \item{n}{integer; number of iterations for EM algorithm; defaults to n = 50}
 }
@@ -15,7 +15,7 @@ si_estim(dat, n = 50)
 vector with estimates for the mean and standard deviation of the primary-secondary infection component
 }
 \description{
-Estimate serial interval using the method from Vink et al. (2014)
+This function estimates the serial interval using the Expectation-Maximization (EM) algorithm.
 }
 \examples{
 my_data<-c(rep(1,38),rep(2,39),rep(3,30),rep(4,17),rep(5,7))
