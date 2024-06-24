@@ -8,15 +8,14 @@
 #'
 #' @return A vector containing the integrated values for each component.
 #' The components are:
-#' \itemize{
-#'   \item Component 1: Integration for CP route.
-#'   \item Component 2: Integration for PS route (mean = mu, sd = sigma).
-#'   \item Component 3: Integration for PS route (mean = -mu, sd = sigma).
-#'   \item Component 4: Integration for PT route (mean = 2*mu, sd = sqrt(2)*sigma).
-#'   \item Component 5: Integration for PT route (mean = -2*mu, sd = sqrt(2)*sigma).
-#'   \item Component 6: Integration for PQ route (mean = 3*mu, sd = sqrt(3)*sigma).
-#'   \item Component 7: Integration for PQ route (mean = -3*mu, sd = sqrt(3)*sigma).
-#' }
+#'   - Component 1: Integration for CP route.
+#'   - Component 2: Integration for PS route (mean = mu, sd = sigma).
+#'   - Component 3: Integration for PS route (mean = -mu, sd = sigma).
+#'   - Component 4: Integration for PT route (mean = 2*mu, sd = sqrt(2)*sigma).
+#'   - Component 5: Integration for PT route (mean = -2*mu, sd = sqrt(2)*sigma).
+#'   - Component 6: Integration for PQ route (mean = 3*mu, sd = sqrt(3)*sigma).
+#'   - Component 7: Integration for PQ route (mean = -3*mu, sd = sqrt(3)*sigma).
+#'
 #' @examples
 #' # Example 1: Compute integrations for a specific data point
 #' integrate_components_wrapper(1, 10, 2)
