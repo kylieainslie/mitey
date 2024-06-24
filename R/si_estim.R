@@ -44,7 +44,7 @@ si_estim <- function(dat, n = 50) {
     # Update parameters
     w <- rowSums(tau) / j
     mu <- weighted.mean(dat, tau[2, ])
-    sigma <- sqrt(weighted.var(dat, tau[2, ]))
+    sigma <- sqrt(weighted_var(dat, tau[2, ]))
     rtn <- c(mu, sigma)
     print(rtn)
   }
