@@ -1,6 +1,8 @@
-#' Estimate serial interval using the method from Vink et al. (2014)
+#' Estimate serial interval using the EM Algorithm as developed by Vink et al. (2014)
 #'
-#' @param dat a (numeric) vector of index case to case intervals
+#' This function estimates the serial interval using the Expectation-Maximization (EM) algorithm.
+#'
+#' @param dat vector; a numeric vector of index case to case intervals
 #' @param n integer; number of iterations for EM algorithm; defaults to n = 50
 #'
 #' @return vector with estimates for the mean and standard deviation of the primary-secondary infection component
@@ -12,35 +14,39 @@
 #'
 #' si_estim(my_data)
 
-si_estim <- function(dat, n = 50){
+si_estim <- function(dat, n = 50) {
+  j <- length(dat)
 
-  j<-length(dat)
+  # Initial guesses
+  mu <- mean(dat)
+  sigma <- sd(dat)
 
-  # EM algorithm:
-  # specify plausible starting values/educated guess
-  my_mu<-mean(dat)
-  my_sigma<-sd(dat)
+  # Iterations
+  for (k in 1:n) {
+    tau <- matrix(0, nrow = 7, ncol = j)
 
-  # E-step
-  for(k in 1:n){
+    for (l in 1:j) {
+      if (dat[l] == 0) {
+        for (comp in 1:7) {
+          tau[comp, l] <- integrate_component(dat[l], mu, sigma, comp, lower = FALSE)
+        }
+      } else {
+        for (comp in 1:7) {
+          tau[comp, l] <- integrate_component(dat[l], mu, sigma, comp, lower = TRUE)
+        }
+      }
+    }
 
-    # calculate the absolute probability of interval belonging to a component
-    # the output of get_abs_prob is a 7 x length(dat matrix); each row represents
-    # a route of transmission
-    tmp_mat <- get_abs_prob(dat, sigma = my_sigma, mu = my_mu)
+    # Normalize tau
+    denom <- colSums(tau)
+    tau <- sweep(tau, 2, denom, "/")
 
-    # divide each row by the column sums
-    denom <- colSums(tmp_mat)
-    tau <- sweep(tmp_mat, 2, denom, "/")
-    # calculate the weights for each of the components
-    w <- rowSums(tau)/j
-
-    # M-step
-    # estimates for the mean and standard deviation of the primary-secondary
-    # infection component can be calculated directly
-    my_mu <- weighted.mean(dat,tau[2,])
-    my_sigma <- sqrt(weighted_var(dat, tau[2,]))
-    rtn <- c(my_mu,my_sigma)
+    # Update parameters
+    w <- rowSums(tau) / j
+    mu <- weighted.mean(dat, tau[2, ])
+    sigma <- sqrt(weighted.var(dat, tau[2, ]))
+    rtn <- c(mu, sigma)
+    print(rtn)
   }
 
   return(rtn)
