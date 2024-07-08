@@ -1,7 +1,5 @@
 # Determining serial interval of scabies using epidemic curves from different
 # sources
-# We will start with data from an outbreak of scabies in a preschool from
-# Kaburi et al. 2019 BMC Public Health https://doi.org/10.1186/s12889-019-7085-6
 
 # load required packages
 library(tidyverse)
@@ -9,13 +7,17 @@ library(ggplot2)
 library(readxl)
 library(devtools)
 library(lubridate)
+library(brms)
 load_all()
 
 # ------------------------------------------------------------------------------
 # Kaburi et al. ----------------------------------------------------------------
 # ------------------------------------------------------------------------------
+# This paper describes an outbreak of scabies in a preschool in Ghana
+# Kaburi et al. 2019 BMC Public Health https://doi.org/10.1186/s12889-019-7085-6
+
 # read in epidemic curve data file
-kaburi_df <- read_xlsx("~/Dropbox/Kylie/Projects/RIVM/Projects/scabies/data/Kaburi_et_al_data_scabies.xlsx")
+ghana_df <- read_xlsx("~/Dropbox/Kylie/Projects/RIVM/Projects/scabies/data/Kaburi_et_al_data_scabies.xlsx")
 
 # we will calculate the index case-to-case (ICC) interval for each person by class
 # the person with the greatest value for number of days since symptom onset will
@@ -38,7 +40,7 @@ kaburi_df <- read_xlsx("~/Dropbox/Kylie/Projects/RIVM/Projects/scabies/data/Kabu
 #          )
 
 # analysis without splitting observations into classes
-icc_df2 <- kaburi_df %>%
+icc_df2 <- ghana_df %>%
   # select the number of days since symptom onset
   select(`number of days since onset`) %>%
   # rename variables for ease
@@ -66,7 +68,7 @@ source("./inst/extdata/scripts/SI_estimation_method_from_Vink_et_al.R")
 # Ariza et al. -----------------------------------------------------------------
 # ------------------------------------------------------------------------------
 # this data is from a pre-school in Germany
-ariza_df <- data.frame(
+germany_df <- data.frame(
   id = c(seq(1, 16, by = 1)),
   date_onset = as.Date(c("01/12/2011", "25/02/2012", "01/03/2012", "02/03/2012",
                  "05/03/2012", "08/03/2012", "10/03/2012", "10/03/2012",
@@ -76,11 +78,11 @@ ariza_df <- data.frame(
 )
 
 # calculate icc intervals from date of symptom onset
-ariza_df2 <- ariza_df %>%
+germany_df2 <- germany_df %>%
   mutate(icc_interval = as.integer(date_onset - min(date_onset)))
 
 # use method from Vink et al. to estimate SI
-si_estim(ariza_df2$icc_interval)
+si_estim(germany_df2$icc_interval)
 # [1] mean = 98.4, sd = 8.542332
 
 # ------------------------------------------------------------------------------
@@ -219,10 +221,10 @@ y6 <- dnorm(x, mean = 16.106246, sd = 2.421762)
 my_data <- data.frame(
   x = rep(x, 6),
   y = c(y1, y2, y3, y4, y5, y6),
-  group = factor(rep(c("Kaburi et al.", "Ariza et al.", "Uganda outbreak",
-                       "Nevada outbreak", "Dutch outbreak", "Spain outbreak"), each = length(x)),
-                 levels = c("Kaburi et al.", "Ariza et al.", "Uganda outbreak",
-                            "Nevada outbreak", "Dutch outbreak", "Spain outbreak"))
+  group = factor(rep(c("Ghana outbreak", "Germany outbreak", "Uganda outbreak",
+                       "Nevada (US) outbreak", "Netherlands outbreak", "Spain outbreak"), each = length(x)),
+                 levels = c("Ghana outbreak", "Germany outbreak", "Uganda outbreak",
+                            "Nevada (US) outbreak", "Netherlands outbreak", "Spain outbreak"))
 )
 
 # Create the plot
@@ -237,3 +239,75 @@ ggplot(my_data, aes(x = x, y = y, color = group)) +
     plot.title = element_text(hjust = 0.5),
     legend.title = element_blank()
   )
+
+# ------------------------------------------------------------------------------
+
+# SI Meta-analysis
+
+# create data frame of effect sizes
+df_effect_sizes <- data.frame(
+  mean_si = c(167.34442, 98.4, 122.92385, 21.91776, 110.71571, 16.106246),
+  sd_si = c(9.71763, 8.542332, 26.92035, 15.23666, 16.13879, 2.421762),
+  n = c(nrow(ghana_df), nrow(germany_df), nrow(uganda_long_df), nrow(nevada_long_df),
+        nrow(dutch_long_df), nrow(spain_long_df)),
+  country = c("Ghana", "Germany", "Uganda", "Nevada (USA)", "Netherlands", "Spain")
+) %>%
+  mutate(se_si = sd_si/sqrt(n))
+
+# we will perform a Bayesian meta-analysis using the {brms} package
+# specify priors
+priors <- c(prior(normal(100,50), class = Intercept),
+            prior(cauchy(0,1), class = sd))
+
+# fit a random effects model
+# convert sd to se
+m.brm <- brm(mean_si|se(se_si) ~ 1 + (1|country),
+             data = df_effect_sizes,
+             prior = priors,
+             iter = 5000,
+             warmup = 2000,
+             control = list(adapt_delta = 0.99, max_treedepth = 15))
+
+# check convergence
+# we want to verify that Rhat = 1 (signifying convergence)
+summary(m.brm)
+# pooled mean SI = 95.57; 95% CI = (65.27, 124.83); sd = 15.17
+# sd(Intercept) = 58.31, represents the standard deviation of the random
+# intercepts (the between-study variability). This large estimate indicates that
+# there is substantial heterogeneity among the studies.
+
+# posterior predictive check
+pp_check(m.brm)
+
+# ---------
+# Create a forest plot with each study's estimate of mean SI and the pooled estimate
+# Create the data frame with the study estimates and the pooled estimate
+forest_data <- df_effect_sizes %>%
+  mutate(
+    lower = mean_si - 1.96 * se_si,
+    upper = mean_si + 1.96 * se_si,
+    type = "Study"
+  ) %>%
+  select(country, mean_si, lower, upper, type) %>%
+  rename(estimate = mean_si) %>%
+  bind_rows(
+    data.frame(
+      country = "Pooled Estimate",
+      estimate = posterior_summary(m.brm, variable = "Intercept")[, "Estimate"],
+      lower = posterior_summary(m.brm, variable = "Intercept")[, "Q2.5"],
+      upper = posterior_summary(m.brm, variable = "Intercept")[, "Q97.5"],
+      type = "Pooled"
+    )
+  ) %>%
+  # Ensure the pooled estimate is positioned last
+  mutate(country = factor(country, levels = c(setdiff(country, "Pooled Estimate"), "Pooled Estimate")))
+
+# Create the forest plot using ggplot2
+ggplot(forest_data, aes(x = estimate, y = country, xmin = lower, xmax = upper, color = type)) +
+  geom_point() +
+  geom_errorbarh(height = 0.2) +
+  geom_vline(xintercept = posterior_summary(m.brm, variable = "Intercept")[, "Estimate"], linetype = "dashed", color = "red") +
+  labs(x = "Effect Size", y = "", title = "Forest Plot of Study Estimates and Pooled Estimate") +
+  theme_minimal() +
+  scale_color_manual(values = c("Study" = "blue", "Pooled" = "red")) +
+  theme(legend.position = "none")
