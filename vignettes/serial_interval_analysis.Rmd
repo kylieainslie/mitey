@@ -142,3 +142,6 @@ ggplot(forest_data, aes(x = estimate, y = country, xmin = lower, xmax = upper, c
   scale_color_manual(values = c("Study" = "blue", "Pooled" = "red")) +
   theme(legend.position = "none")
 ```
+
+## Reproduction Number
+Analysis of weekly scabies data from NIVEL. Data courtesy of Mariette Hooiveld.
