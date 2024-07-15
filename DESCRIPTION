@@ -15,5 +15,12 @@ Imports:
 URL: https://github.com/kylieainslie/mitey, https://kylieainslie.github.io/mitey/
 BugReports: https://github.com/kylieainslie/mitey/issues
 Suggests: 
+    brms,
+    devtools,
+    dplyr,
+    ggplot2,
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+VignetteBuilder: knitr

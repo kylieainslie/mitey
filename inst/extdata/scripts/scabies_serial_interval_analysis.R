@@ -307,7 +307,7 @@ ggplot(forest_data, aes(x = estimate, y = country, xmin = lower, xmax = upper, c
   geom_point() +
   geom_errorbarh(height = 0.2) +
   geom_vline(xintercept = posterior_summary(m.brm, variable = "Intercept")[, "Estimate"], linetype = "dashed", color = "red") +
-  labs(x = "Effect Size", y = "", title = "Forest Plot of Study Estimates and Pooled Estimate") +
+  labs(x = "Effect Size", y = "") +
   theme_minimal() +
   scale_color_manual(values = c("Study" = "blue", "Pooled" = "red")) +
   theme(legend.position = "none")
