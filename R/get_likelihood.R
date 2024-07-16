@@ -18,9 +18,6 @@
 #' @return Likelihood of the transmission pair.
 #' @export
 #' @importFrom stats dgamma
-#' @examples
-#' # Compute likelihood for a time difference of 5 days
-#' get_likelihood(5, mu = 4, sigma = 2)
 #'
 get_likelihood <- function(serial_interval, mu, sigma, distn = "normal",
                            tail_cut = NULL, positive_only = TRUE) {
