@@ -3,7 +3,7 @@ pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
   serial_interval_analysis: serial_interval_analysis.html
-last_built: 2024-07-15T14:01Z
+last_built: 2024-07-16T15:05Z
 urls:
   reference: https://kylieainslie.github.io/mitey/reference
   article: https://kylieainslie.github.io/mitey/articles
