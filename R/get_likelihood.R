@@ -1,12 +1,12 @@
 #' Compute the likelihood of a transmission pair given the serial interval distribution
 #'
 #' Two distributions can be specified for the serial interval distribution: Normal and Gamma.
-#' A Normal distribution with mean \code{\link{mu}} and standard deviation \code{\link{sigma}} is assumed by default.
-#' If a Gamma distribution is specified, the mean \code{\link{mu}} and standard deviation \code{\link{sigma}}
+#' A Normal distribution with mean \eqn{\mu} and standard deviation \eqn{\sigma} is assumed by default.
+#' If a Gamma distribution is specified, the mean \eqn{\mu} and standard deviation \eqn{\sigma}
 #' are converted to the shape and rate parameters for a Gamma distribution as:
 #' \deqn{
-#' \beta = \frac{\code{\link{mu}}}{\code{\link{sigma}}^2}
-#' \alpha = \left(\frac{\code{\link{mu}}}{\code{\link{beta}}}\right)^2
+#' \beta = \frac{\mu}{\sigma^2}
+#' \alpha = \left(\frac{\mu}{\beta}\right)^2
 #' }
 #'
 #' @param serial_interval numeric; Time difference \( t_1 - t_2 \) (in days) between two events.
