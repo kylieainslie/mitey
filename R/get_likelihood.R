@@ -33,7 +33,7 @@ get_likelihood <- function(serial_interval, mu, sigma, distn = "normal",
   # consider only positive serial intervals
   if(distn == "gamma"){positive_only = TRUE}
 
-  if(positive_only & serial_interval < 0){
+  if(positive_only & serial_interval <= 0){
     return(0)
   }
 
