@@ -4,24 +4,43 @@
 \alias{get_likelihood}
 \title{Compute the likelihood of a transmission pair given the serial interval distribution}
 \usage{
-get_likelihood(serial_interval, mu, sigma, distn = "normal")
+get_likelihood(
+  serial_interval,
+  mu,
+  sigma,
+  distn = "normal",
+  tail_cut = NULL,
+  positive_only = TRUE
+)
 }
 \arguments{
-\item{serial_interval}{numeric; time between infection or symptom onset of two individuals}
+\item{serial_interval}{numeric; Time difference \( t_1 - t_2 \) (in days) between two events.}
 
 \item{mu}{numeric; mean of serial interval distribution}
 
 \item{sigma}{numeric; standard deviation of serial interval distribution}
 
 \item{distn}{string; distribution to be assumed for serial interval. Defaults to "normal", but also accepts "gamma".}
+
+\item{tail_cut}{numeric; number of days beyond which the likelihood of transmission between two events is 0. Defaults to NULL.}
+
+\item{positive_only}{logical; if TRUE, only positive serial intervals are considered. If the serial interval is negative, the function returns 0.}
 }
 \value{
-value of the likelihood of the input serial_interval
+Likelihood of the transmission pair.
 }
 \description{
-Two distributions can be specified for the serial interval distribution: Normal and Gamma. A Normal distribution with mean \mu and standard deviation \sigma is assumed by default. If a Gamma distribution is specified, the mean \mu and standard deviation \sigma are converted to the shape and rate parameters for a Gamma distribution as:
-[
-\beta = \frac{\mu}{\sigma^2}
-\alpha = (\frac{\mu}{\beta})^2
-]
+Two distributions can be specified for the serial interval distribution: Normal and Gamma.
+A Normal distribution with mean \code{\link{mu}} and standard deviation \code{\link{sigma}} is assumed by default.
+If a Gamma distribution is specified, the mean \code{\link{mu}} and standard deviation \code{\link{sigma}}
+are converted to the shape and rate parameters for a Gamma distribution as:
+\deqn{
+\beta = \frac{\code{\link{mu}}}{\code{\link{sigma}}^2}
+\alpha = \left(\frac{\code{\link{mu}}}{\code{\link{beta}}}\right)^2
+}
+}
+\examples{
+# Compute likelihood for a time difference of 5 days
+get_likelihood(5, mu = 4, sigma = 2)
+
 }
