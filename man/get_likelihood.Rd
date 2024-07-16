@@ -39,8 +39,3 @@ are converted to the shape and rate parameters for a Gamma distribution as:
 \alpha = \left(\frac{\code{\link{mu}}}{\code{\link{beta}}}\right)^2
 }
 }
-\examples{
-# Compute likelihood for a time difference of 5 days
-get_likelihood(5, mu = 4, sigma = 2)
-
-}
