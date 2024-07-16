@@ -90,8 +90,8 @@ rt <- estimate_R(incid = nivel_wkly_data$cases,
                  grid = list(precision = 0.001, min = -1, max = 1),
                  method = "parametric_si",
                  config = make_config(list(
-                   mean_si = 98.4,
-                   std_si = 8.54
+                   mean_si = 95.57,
+                   std_si = 15.17
                    )))
 
 # plot output
@@ -128,7 +128,7 @@ fancy_plot <- ggplot() +
     panel.background = element_blank() #,
     #axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)
   )
-
+fancy_plot
 # Evaluate growth rate ---------------------------------------------------------
 nivel_wkly_data2 <- nivel_wkly_data %>%
   mutate(week_tot = row_number())
