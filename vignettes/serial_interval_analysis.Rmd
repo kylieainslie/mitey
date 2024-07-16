@@ -1,5 +1,5 @@
 ---
-title: "serial_interval_analysis"
+title: "The Epidemiology of Scabies"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{serial_interval_analysis}
@@ -28,6 +28,8 @@ load_all()
 Determining serial interval of scabies using epidemic curves from different sources.
 
 We will calculate the index case-to-case (ICC) interval for each person by class the person with the greatest value for number of days since symptom onset will be considered the index case. The rest of the class members will have an ICC interval calculated as the number of days between their symptom onset and the index case.
+
+Determine time-varying reproduction number and characterise how it changes over time. We will use data from [NIVEL](https://www.nivel.nl/en) on the number of reported cases per week from 2011 to 2023 in the Netherlands.
 
 ## Data Sources
 
