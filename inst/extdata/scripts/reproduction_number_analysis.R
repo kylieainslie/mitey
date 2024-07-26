@@ -64,7 +64,7 @@ n <- dim(nivel_daily_data)[1]
 # the likelihood of an event occurring for every pair of time points. This will
 # decrease the dimensions of our likelihood matrix.
 
-# Step 1: Group data by onset_date and calculate the daily incidence
+# Group data by onset_date and calculate the daily incidence
 df <- nivel_daily_data %>%
   group_by(onset_date) %>%
   mutate(count = n()) %>%
@@ -73,48 +73,41 @@ df <- nivel_daily_data %>%
   mutate(num_date = as.numeric(onset_date)) %>%
   ungroup()
 
+# Calculate the initial R_t
+df$R_t <- rt_estim(df, mean_si = 95.57, sd_si = 15.17, dist_si = "normal",
+                   cut_tail = 180, pos_only = TRUE)
 
-# Step 2: Compute the likelihood matrix
-nt <- nrow(df)
+# Bootstrapping to get confidence intervals for R_t
+set.seed(123)  # For reproducibility
+num_bootstraps <- 1000
+bootstrap_rt <- matrix(0, nrow = num_bootstraps, ncol = nt)
 
-# Initialize the likelihood matrix
-likelihood_mat <- matrix(0, nrow = nt, ncol = nt)
-
-# Pre-compute the likelihood values for all possible serial intervals
-serial_intervals <- outer(df$num_date, df$num_date, "-")
-
-# Apply get_likelihood only to positive serial_intervals
-likelihood_values <- apply(serial_intervals, 1:2, get_likelihood,
-      mu = 95.57,
-      sigma = 15.17,
-      distn = "normal",
-      tail_cut = 180,
-      positive_only = TRUE
-    )
-
-# Step 2 & 3: Combine the calculation of the likelihood matrix and incorporate incidence data
-for (i in 1:nt) {
-  for (j in 1:nt) {
-    if (i > j) {  # Only consider pairs where i > j
-      likelihood_mat[i, j] <- likelihood_values[i, j] * df$count[j]
-    }
-  }
+for (b in 1:num_bootstraps) {
+  boot_indices <- sample(1:nrow(df), replace = TRUE)
+  boot_data <- df[boot_indices, ]
+  boot_rt <- rt_estim(boot_data, mean_si = 95.57, sd_si = 15.17,
+                      dist_si = "normal", cut_tail = 180, pos_only = TRUE)
+  bootstrap_rt[b, ] <- boot_rt
 }
 
+# Calculate confidence intervals
+rt_mean <- apply(bootstrap_rt, 2, mean)
+rt_lower <- apply(bootstrap_rt, 2, quantile, probs = 0.025)
+rt_upper <- apply(bootstrap_rt, 2, quantile, probs = 0.975)
 
-# Step 4: Get the marginal likelihood by summing each row
-marginal_likelihood <- rowSums(likelihood_mat)
+# Add to data frame
+df <- df %>%
+  mutate(R_t_mean = rt_mean,
+         R_t_lower = rt_lower,
+         R_t_upper = rt_upper)
 
-# Step 5: Calculate the probability matrix
-prob_mat <- sweep(likelihood_mat, 1, marginal_likelihood, FUN = "/")
-prob_mat[is.nan(prob_mat)] <- NA
-
-# Step 6: Calculate the expected reproduction number per day (R_t)
-expected_rt <- colSums(prob_mat, na.rm = TRUE)
-
-# Add the R_t values to the data frame
-df$R_t <- expected_rt
-
+# Plot using ggplot2
+ggplot(df, aes(x = onset_date)) +
+  geom_line(aes(y = R_t_mean), color = "blue", size = 1) +
+  geom_ribbon(aes(ymin = R_t_lower, ymax = R_t_upper), alpha = 0.2, fill = "blue") +
+  labs(title = "Estimated Reproduction Number (R_t) with Confidence Intervals",
+       x = "Date", y = "R_t") +
+  theme_minimal()
 # plot -------------------------------------------------------------------------
 df_plot <- df %>%
   # create new variable for plotting Rt where the first 95 days (equivalent to
