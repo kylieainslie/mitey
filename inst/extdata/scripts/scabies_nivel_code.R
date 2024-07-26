@@ -6,20 +6,16 @@
 # load required packages
 library(readxl)
 library(tidyverse)
+library(broom)
+library(nls2)
 
 # read in data set
-setwd("~/Dropbox/Kylie/Projects/RIVM/Projects/scabies/data")
-scabies_inc_total <- read_xlsx("scabies_data_yearly.xlsx", sheet = "total") %>%
+scabies_inc_total <- read_xlsx("./inst/extdata/data/scabies_data_yearly.xlsx",
+                               sheet = "total") %>%
   rename(inc = `Inc per 1.000`) %>%
   mutate(cases = as.numeric(inc),
          time = Year) %>%
   select("time", "cases")
-#scabies_in_by_age_group <- read_xlsx("scabies_data.xlsx", sheet = "Scabies inc per 1.000 by age gr")
-
-# Plot the data
-plot(scabies_inc_total$time, scabies_inc_total$cases,
-     xlab = "Time", ylab = "Incidence", main = "Exponential Growth Data")
-
 
 # Define the exponential growth model
 exponential_model <- function(x, a, b) {
@@ -35,38 +31,56 @@ a_init <- exp(coef(lm_fit)[1])
 b_init <- coef(lm_fit)[2]
 
 # Fitting the model with initial values
-fit <- nls(cases ~ exponential_model(time, a, b), 
+fit <- nls(cases ~ exponential_model(time, a, b),
            data = scabies_inc_total,
            start = list(a = a_init, b = b_init),
            control = list(minFactor = 0.00001, maxiter = 100000))
 
-# Summary of the model
-summary(fit)
-
-# Plot 
-plot(scabies_inc_total$time, scabies_inc_total$cases, 
-     ylim = c(0, max(scabies_inc_total$cases) * 1.1), 
-     xlim = c(min(scabies_inc_total$time), max(scabies_inc_total$time)), 
-     xlab = "Year", ylab = "Cases per 1000", main = "Scabies Exponential Growth Model Fit")
-lines(scabies_inc_total$time, predict(fit), col = "red")
-legend("topleft", legend = c("Data", "Model Fit"), col = c("black", "red"), lty = 1)
-
 # Generate future time points
-future_time <- seq(max(scabies_inc_total$time), max(scabies_inc_total$time) + 10, by = 1)  # Example: extrapolating 10 time points into the future
+future_time <- seq(max(scabies_inc_total$time), max(scabies_inc_total$time) + 10,
+                   by = 1)  # Example: extrapolating 10 time points into the future
 
-# Predict future values
-predicted_values <- predict(fit, newdata = data.frame(time = future_time))
+# Create a data frame with both original and future time points
+all_time <- data.frame(time = c(scabies_inc_total$time, future_time))
 
-# Combine original data with predicted values
-extrapolated_df <- data.frame(time = future_time, cases = predicted_values)
+# Predict cases for all time points with confidence intervals using bootstrapping
+set.seed(123)  # For reproducibility
+bootstraps <- 1000
+bootstrap_results <- replicate(bootstraps, {
+  boot_indices <- sample(1:nrow(scabies_inc_total), replace = TRUE)
+  boot_data <- scabies_inc_total[boot_indices, ]
+  boot_fit <- nls(cases ~ exponential_model(time, a, b),
+                  data = boot_data,
+                  start = list(a = a_init, b = b_init),
+                  control = list(minFactor = 0.000001, maxiter = 100000))
+  predict(boot_fit, newdata = all_time)
+})
 
-# plot fitted data with extrapolated data
-plot(scabies_inc_total$time, scabies_inc_total$cases, 
-     ylim = c(0, max(scabies_inc_total$cases, extrapolated_df$cases) * 1.1), 
-     xlim = c(min(scabies_inc_total$time), max(extrapolated_df$time)), 
-     xlab = "Year", ylab = "Incidence per 1000", 
-     main = "Scabies Incidence")
-lines(scabies_inc_total$time, predict(fit), col = "blue", lwd = 2) # Fitted line
-lines(extrapolated_df$time, extrapolated_df$cases, col = "red", lwd = 2, lty = 2) # Extrapolated line
-legend("topleft", legend = c("Original Data", "Extrapolated Data", "Model Fit"), 
-       col = c("black", "red", "blue"), lty = c(NA, 2, 1), lwd = 2, pch = c(1, NA, NA))
+# Calculate mean and confidence intervals
+predicted_mean <- apply(bootstrap_results, 1, mean)
+predicted_lower <- apply(bootstrap_results, 1, quantile, probs = 0.025)
+predicted_upper <- apply(bootstrap_results, 1, quantile, probs = 0.975)
+
+# Combine into a data frame
+predicted_df <- data.frame(
+  time = all_time$time,
+  cases = predicted_mean,
+  lower = predicted_lower,
+  upper = predicted_upper
+)
+
+# Combine original data with predictions
+scabies_plot_df <- bind_rows(
+  scabies_inc_total %>% mutate(type = "Observed"),
+  predicted_df %>% mutate(type = "Predicted")
+)
+
+# Plot using ggplot2
+ggplot(scabies_plot_df, aes(x = time, y = cases, color = type)) +
+  geom_point(data = scabies_inc_total, aes(x = time, y = cases), size = 2) +
+  geom_line(size = 1.2) +
+  geom_ribbon(data = predicted_df, aes(ymin = lower, ymax = upper), alpha = 0.2, fill = "blue") +
+  labs(title = "Scabies Incidence with Exponential Growth Model",
+       x = "Year", y = "Incidence per 1000",
+       color = "Data Type") +
+  theme_minimal()
