@@ -27,7 +27,7 @@ rt_estim(
 \item{pos_only}{logical; if TRUE, only positive serial intervals are considered. If the serial interval is negative, the function returns 0.}
 }
 \value{
-The input data frame with an additional column for the expected reproduction number.
+A numeric vector with the expected reproduction number for each day.
 }
 \description{
 This function estimates the time-varying reproduction number (R_t) using the method proposed by Wallinga and Teunis (AJE 2004).

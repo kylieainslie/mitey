@@ -10,7 +10,7 @@
 #' @param dist_si string; distribution to be assumed for serial interval. Accepts "normal" or "gamma".
 #' @param cut_tail numeric; number of days beyond which the likelihood of transmission between two events is 0. Defaults to NULL.
 #' @param pos_only logical; if TRUE, only positive serial intervals are considered. If the serial interval is negative, the function returns 0.
-#' @return The input data frame with an additional column for the expected reproduction number.
+#' @return A numeric vector with the expected reproduction number for each day.
 #' @export
 rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = c("normal", "gamma"),
                      cut_tail = NULL, pos_only = TRUE){
@@ -47,9 +47,6 @@ prob_mat[is.nan(prob_mat)] <- NA
 # Calculate the expected reproduction number per day (R_t)
 expected_rt <- colSums(prob_mat, na.rm = TRUE)
 
-# Add the R_t values to the data frame
-inc_dat$R_t <- expected_rt
-
-return(inc_dat)
+return(expected_rt)
 
 }
