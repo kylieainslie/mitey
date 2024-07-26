@@ -1,8 +1,10 @@
 ---
 title: "The Epidemiology of Scabies"
 output: rmarkdown::html_vignette
+bibliography: references.bib
+csl: nature.csl
 vignette: >
-  %\VignetteIndexEntry{serial_interval_analysis}
+  %\VignetteIndexEntry{epidemiology_of_scabies}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,6 +16,8 @@ knitr::opts_chunk$set(
   fig.width=7, 
   fig.height=4
 )
+
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 ```{r setup, echo=FALSE, include = FALSE, results='hide'}
@@ -25,11 +29,15 @@ load_all()
 ```
 
 ## Introduction
-Determining serial interval of scabies using epidemic curves from different sources.
+Scabies is a neglected tropical disease caused by infestation of the skin with a microscopic mite (Sarcoptes scabiei). Symptoms are characterized by itchiness and rash at the site of infestation. Scabies affects around 400 million people per year, and accounts for a large proportion of skin disease in many low- and middle-income countries [@who]. A rise in scabies cases has been observed through out Europe in recent years [@deursen2022; @reichert2021; @redondo-bravo2021; @lugovic-mihic2020; @amato2019; @dona2023], putting pressure on local health services. Despite the considerable burden scabies poses annually, little is known about the disease dynamics of scabies transmission, such as the generation time (time between infection of an index case and a secondary case), serial interval (the time from onset of symptoms in an index case to the time of symptom onset in a secondary case), growth rate, and reproduction number (the average number of secondary cases resulting from one index case). A 1944 study by Mellanby [@mellanby1944] forms much of the basis of our current understanding of scabies transmission; however, the study was carried out on a small number of healthy volunteers which, and may not be representative of the natural history of scabies in populations in which scabies in widespread. 
 
-We will calculate the index case-to-case (ICC) interval for each person by class the person with the greatest value for number of days since symptom onset will be considered the index case. The rest of the class members will have an ICC interval calculated as the number of days between their symptom onset and the index case.
+In this work, we aim to estimate epidemiological parameters of scabies. It is critical to better understand the underlying disease dynamics of scabies to 1) assess current spread and 2) inform infection control policy. Some modelling work has been performed to study the potential impacts of intervention strategies, such as mass drug administration, on scabies transmission [@kinyanjui2018; @lydeamore2019; @tellioglu2023]; however, the values used to parameterise these models are based largely on Mellanby's 1944 study and use information about the mite life-cycle to approximate quantities such as latent period and infectious period. However, this information doesn't necessarily provide good estimates for transmission potential in reality. For example, Kinyanjui et al. [@kinyanjui2018] assume a latent period of 7-14 days to allow for the time for the time it takes for a fertilised female mite to reproduce and incorporate it into a susceptible-exposed-infectious model of scabies transmission. However, this assumes an equal chance of infectiousness despite the number of mites inhabiting an infested indivual. Mellanby [@mellanby1944] shows that the probability of onward transmission of scabies is rare when the number of mites on an individual is low and increases as the mite population grows. A better approximation of the disease process can be obtained using the generation time or serial interval; however, no such estimates exist for scabies. 
 
-Determine time-varying reproduction number and characterise how it changes over time. We will use data from [NIVEL](https://www.nivel.nl/en) on the number of reported cases per week from 2011 to 2023 in the Netherlands.
+Additionally, the growth rate and reproduction number are quantities that describe how fast an infectious disease spreads. They can are also used to determine appropriate control measures to reduce the number of secondary infections so that an epidemic dies out. During the COVID-19 pandemic, many analyses were performed to determine what interventions were needed to "flatten the curve" whereby, the reproduction number (and growth rate) were reduced below one. However, in the case of scabies, the basic reproduction number has never been described. This makes it immensely difficult to determine what level of control measures are needed to contain disease spread. As evidence continues to suggest that scabies is a growing problem, it is important to describe the epidemiological characteristics of scabies.
+
+In this study, we use epidemic curves of scabies outbreaks from the literature and estimate the serial interval. 
+
+reproduction number of scabies.
 
 ## Data Sources
 
@@ -46,6 +54,9 @@ Determine time-varying reproduction number and characterise how it changes over 
     - Spain outbreak in a hospital 
     
 ## Serial Interval Analysis
+Determining serial interval of scabies using epidemic curves from different sources.
+
+We will calculate the index case-to-case (ICC) interval for each person by class the person with the greatest value for number of days since symptom onset will be considered the index case. The rest of the class members will have an ICC interval calculated as the number of days between their symptom onset and the index case. All analyses were performed in R 4.4.0 @R-base.
 
 ### Estimate serial interval distributions
 Plot of the distribution of each study's serial interval. We assume a normal distribution.
@@ -145,5 +156,29 @@ ggplot(forest_data, aes(x = estimate, y = country, xmin = lower, xmax = upper, c
   theme(legend.position = "none")
 ```
 
-## Reproduction Number
-Analysis of weekly scabies data from NIVEL. Data courtesy of Mariette Hooiveld.
+## Reproduction Number and Growth Rate
+
+### Growth Rate
+Using an exponential growth model and data from [NIVEL](https://www.nivel.nl/nl/zorg-en-ziekte-in-cijfers/actuele-cijfers-ziekten-per-week), the annual growth rate is r = 0.190.
+
+[insert figure]
+
+Determine time-varying reproduction number and characterise how it changes over time. We will use data from [NIVEL](https://www.nivel.nl/en) on the number of reported cases per week from 2011 to 2023 in the Netherlands. Data courtesy of Mariette Hooiveld.
+
+# References
+
+<div id="refs"></div>
+
+# Appendix
+TODO:
+ - add text for meta-analysis
+ - add text for reproduction number estimation
+ - re-do growth rate and projection plot in ggplot and make into multi-panel figure
+ 
+## Sensitivity Analyses
+TODO:
+  - add gamma distribution to Vink et al. method and re-run estimation
+  - re-run meta-analysis assuming gamma distribution
+  - potentially remove Uganda estimate from meta-analysis because it's community transmission and not a confined setting (e.g., school, hospital, care home)
+  - check prior assumptions for meta-analysis
+
