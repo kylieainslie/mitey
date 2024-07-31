@@ -1,12 +1,21 @@
 ---
 title: "The Epidemiology of Scabies"
-output: rmarkdown::html_vignette
+author: "Kylie Ainslie, Mariette Hooiveld, Jacco Wallinga"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+  word_document:
+    toc: false
 bibliography: references.bib
 csl: nature.csl
 vignette: >
   %\VignetteIndexEntry{epidemiology_of_scabies}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r, include = FALSE}
@@ -21,47 +30,216 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 ```{r setup, echo=FALSE, include = FALSE, results='hide'}
+library(flextable)
+library(ftExtra)
 library(dplyr)
 library(ggplot2)
+library(cowplot)
 library(brms)
 library(devtools)
 load_all()
 ```
 
 ## Introduction
-Scabies is a neglected tropical disease caused by infestation of the skin with a microscopic mite (Sarcoptes scabiei). Symptoms are characterized by itchiness and rash at the site of infestation. Scabies affects around 400 million people per year, and accounts for a large proportion of skin disease in many low- and middle-income countries [@who]. A rise in scabies cases has been observed through out Europe in recent years [@deursen2022; @reichert2021; @redondo-bravo2021; @lugovic-mihic2020; @amato2019; @dona2023], putting pressure on local health services. Despite the considerable burden scabies poses annually, little is known about the disease dynamics of scabies transmission, such as the generation time (time between infection of an index case and a secondary case), serial interval (the time from onset of symptoms in an index case to the time of symptom onset in a secondary case), growth rate, and reproduction number (the average number of secondary cases resulting from one index case). A 1944 study by Mellanby [@mellanby1944] forms much of the basis of our current understanding of scabies transmission; however, the study was carried out on a small number of healthy volunteers which, and may not be representative of the natural history of scabies in populations in which scabies in widespread. 
 
-In this work, we aim to estimate epidemiological parameters of scabies. It is critical to better understand the underlying disease dynamics of scabies to 1) assess current spread and 2) inform infection control policy. Some modelling work has been performed to study the potential impacts of intervention strategies, such as mass drug administration, on scabies transmission [@kinyanjui2018; @lydeamore2019; @tellioglu2023]; however, the values used to parameterise these models are based largely on Mellanby's 1944 study and use information about the mite life-cycle to approximate quantities such as latent period and infectious period. However, this information doesn't necessarily provide good estimates for transmission potential in reality. For example, Kinyanjui et al. [@kinyanjui2018] assume a latent period of 7-14 days to allow for the time for the time it takes for a fertilised female mite to reproduce and incorporate it into a susceptible-exposed-infectious model of scabies transmission. However, this assumes an equal chance of infectiousness despite the number of mites inhabiting an infested indivual. Mellanby [@mellanby1944] shows that the probability of onward transmission of scabies is rare when the number of mites on an individual is low and increases as the mite population grows. A better approximation of the disease process can be obtained using the generation time or serial interval; however, no such estimates exist for scabies. 
+Scabies is a neglected tropical disease caused by infestation of the
+skin with a microscopic mite (Sarcoptes scabiei). Symptoms are
+characterized by itchiness and rash at the site of infestation. Scabies
+affects around 400 million people per year, and accounts for a large
+proportion of skin disease in many low- and middle-income countries
+[@who]. A rise in scabies cases has been observed through out Europe in
+recent years [@deursen2022; @reichert2021; @redondo-bravo2021;
+@lugovic-mihic2020; @amato2019; @dona2023], putting pressure on local
+health services. Despite the considerable burden scabies poses annually,
+little is known about the disease dynamics of scabies transmission, such
+as the generation time (time between infection of an index case and a
+secondary case), serial interval (the time from onset of symptoms in an
+index case to the time of symptom onset in a secondary case), growth
+rate, and reproduction number (the average number of secondary cases
+resulting from one index case). A 1944 study by Mellanby [@mellanby1944]
+forms much of the basis of our current understanding of scabies
+transmission; however, the study was carried out on a small number of
+healthy volunteers which, and may not be representative of the natural
+history of scabies in populations in which scabies in widespread.
 
-Additionally, the growth rate and reproduction number are quantities that describe how fast an infectious disease spreads. They can are also used to determine appropriate control measures to reduce the number of secondary infections so that an epidemic dies out. During the COVID-19 pandemic, many analyses were performed to determine what interventions were needed to "flatten the curve" whereby, the reproduction number (and growth rate) were reduced below one. However, in the case of scabies, the basic reproduction number has never been described. This makes it immensely difficult to determine what level of control measures are needed to contain disease spread. As evidence continues to suggest that scabies is a growing problem, it is important to describe the epidemiological characteristics of scabies.
+In this work, we aim to estimate epidemiological parameters of scabies.
+It is critical to better understand the underlying disease dynamics of
+scabies to 1) assess current spread and 2) inform infection control
+policy. Some modelling work has been performed to study the potential
+impacts of intervention strategies, such as mass drug administration, on
+scabies transmission [@kinyanjui2018; @lydeamore2019; @tellioglu2023];
+however, the values used to parameterise these models are based largely
+on Mellanby's 1944 study and use information about the mite life-cycle
+to approximate quantities such as latent period and infectious period.
+However, this information doesn't necessarily provide good estimates for
+transmission potential in reality. For example, Kinyanjui et al.
+[@kinyanjui2018] assume a latent period of 7-14 days to allow for the
+time for the time it takes for a fertilised female mite to reproduce and
+incorporate it into a susceptible-exposed-infectious model of scabies
+transmission. However, this assumes an equal chance of infectiousness
+despite the number of mites inhabiting an infested indivual. Mellanby
+[@mellanby1944] shows that the probability of onward transmission of
+scabies is rare when the number of mites on an individual is low and
+increases as the mite population grows. A better approximation of the
+disease process can be obtained using the generation time or serial
+interval; however, no such estimates exist for scabies.
 
-In this study, we use epidemic curves of scabies outbreaks from the literature and estimate the serial interval. 
+Additionally, the growth rate and reproduction number are quantities
+that describe how fast an infectious disease spreads. They are also used
+to determine appropriate control measures to reduce the number of
+secondary infections so that an epidemic dies out. During the COVID-19
+pandemic, many analyses were performed to determine what interventions
+were needed to "flatten the curve" [cite] whereby, measures of spread
+that govern the height of the curve, the effective reproduction number
+(and growth rate), were reduced to slow the spread of COVID-19. However,
+in the case of scabies, the basic reproduction number has never been
+described. This makes it immensely difficult to determine what level of
+control measures are needed to contain disease spread. As evidence
+continues to suggest that scabies is a growing problem, it is important
+to describe the epidemiological characteristics of scabies.
 
-reproduction number of scabies.
+In this study, we use epidemic curves of scabies outbreaks from the
+literature to estimate the serial interval. We use data on weekly
+scabies cases in the Netherlands to estimate time-varying reproduction
+number and annual growth rate.
 
-## Data Sources
+## Methods
 
-  - Kaburi et al. 2019 BMC Public Health https://doi.org/10.1186/s12889-019-7085-6
-    - This paper describes an outbreak of scabies in a preschool in Ghana
-  - Ariza et al.
-    - this data is from a pre-school in Germany
-  - Akunzirwe et al 2023. https://uniph.go.ug/an-outbreak-of-scabies-in-a-fishing-community-in-hoima-district-uganda-february%E2%88%92june-2022/
-    - outbreak in a fishing community in Uganda in 2022. Data are provided weekly, so all infections for each week are attributed to the first day of the week
-  - SCABIES OUTBREAK AMONG RESIDENTS OF A LONG TERM CARE FACILITY, CLARK COUNTY, NEVADA, 2015  file:///Users/kylieainslie/Downloads/Scabies%20%E2%80%93%20Clark%20[v%202015%20i%2021%20e%201.0]_BP.pdf
-  - Tjon-Kon-Fat et al. (2021) Short report: The potential of PCR on skin flakes from bed linens for diagnosis of scabies in an outbreak. PLoS Negl Trop Dis 15(6): e0009485. https://doi.org/10.1371/journal.pntd.0009485
-    - cases identified by week, date of onset is attributed to first day of the week
-  - Larrosa A., et al. Nosocomial outbreak of scabies in a hospital in Spain. Euro Surveill. 2003;8(10):pii=429. https://doi.org/10.2807/esm.08.10.00429-en
-    - Spain outbreak in a hospital 
-    
-## Serial Interval Analysis
-Determining serial interval of scabies using epidemic curves from different sources.
+### Data Sources
 
-We will calculate the index case-to-case (ICC) interval for each person by class the person with the greatest value for number of days since symptom onset will be considered the index case. The rest of the class members will have an ICC interval calculated as the number of days between their symptom onset and the index case. All analyses were performed in R 4.4.0 @R-base.
+We used epidemic curves from previously published studies of scabies
+outbreaks (Table \@ref(tab:data_sources_table)) to estimate the serial
+interval of scabies. When the original study data was not provided, we
+reconstructed the data from the published epidemic curves.
 
-### Estimate serial interval distributions
-Plot of the distribution of each study's serial interval. We assume a normal distribution.
-```{r si_dist_plot, echo=TRUE, eval=TRUE}
-# Plot serial interval curves
+```{r data_sources_table, echo=FALSE, tab.cap="Data sources used to estimate serial interval."}
+# define table
+ref_dat <- data.frame(
+        Authors = c("Kaburi et al.", "Ariza et al.", "Akunzirwe et al.", "Tjon-Kon-Fat et al.", "Larosa et al.", "Division of Public and Behavioral Health"),
+        Year = c(2019, 2013, 2023, 2021, 2003, 2015),
+        Country = c("Ghana", "Germany", "Uganda", "Netherlands", "Spain", "USA"),
+        Details = c("Outbreak of scabies in a preschool",
+                    "Outbreak of scabies in a preschool",
+                    "Outbreak of scabies in a fishing community",
+                    "Outbreak of scabies in a nursing home",
+                    "Outbreak of scabies in a hospital",
+                    "Outbreak of scabies in a long-term care facility"),
+        Reference = c("[@kaburi2019]", 
+                      "[@ariza2013]", 
+                      "[@uganda]", 
+                      "[@tjon-kon-fat2021]", 
+                      "[@larrosa2003]", 
+                      "[@nevada]"),
+  stringsAsFactors = FALSE
+      )
+
+# Create the flextable
+ft <- flextable(ref_dat) %>%
+  autofit(add_w = 0.2) %>%
+  bold(part = "header") %>%
+  border_remove() %>%
+  #border_outer(part = "header", border = officer::fp_border(width = 1)) %>%
+  border(i = 1, border.top = officer::fp_border(width = 1), part = "header") %>%
+  border(i = 1, border.bottom = officer::fp_border(width = 1), part = "header") %>%
+  border(i = 6, border.bottom = officer::fp_border(width = 1), part = "body") %>%
+  align(j = 2, align = "right") %>%
+  padding(padding.right = 10, padding.left = 10) %>%
+  colformat_num(j = "Year", big.mark = "") %>% # Ensure year is displayed without commas
+  colformat_md()
+
+ft
+
+```
+
+### Serial Interval
+
+Using the epidemic curves from six different studies of scabies
+outbreaks (Table \\\@ref(tab:data_sources_table)), we estimated the mean
+and standard deviation of the serial interval distribution using the
+method proposed by Vink et al. [@vink2014]. The method involves
+calculating the index case-to-case (ICC) interval for each person, where
+the person with the greatest value for number of days since symptom
+onset will be considered the index case. The rest of the individuals
+will have an ICC interval calculated as the number of days between their
+symptom onset and the index case. We assumed a Normal serial interval
+distribution. We performed a sensitivity analysis in which a Gamma
+distribution was assumed as the serial interval distribution [TODO!].
+
+We also performed a Bayesian meta-analysis using the `brms` package in R
+[@burkner2017] to estimate the pooled mean serial interval. We used a
+Bayesian hierarchical random-effects model. We chose to use a random
+effects model because we assume that each study has its own “true”
+effect size, which has been sampled from an overarching distribution of
+true effect sizes [@harrer]. We specified a prior distribution N(100,
+50) for the true pooled effect size and Cauchy(0,1) for the
+between-study heterogeneity. We performed sensitivity analyses on our
+choices of prior distributions [TODO!].
+
+### Growth rate
+
+We estimated the annual growth rate of scabies cases by fitting an
+exponential growth model to annual incidence of scabies per 1000 people
+from 2011 to 2023 in the Netherlands [@nivel]. Using the fitted
+exponential growth model and the estimated growth rate, we then
+determined the projected incidence of scabies per 1000 people until 2033
+if no interventions are implemented. We used bootstrapping with 1000
+samples to obtain 95% confidence bounds for the projected incidence of
+scabies per 1000 people.
+
+### Reproduction Number
+
+We obtained weekly reported cases of scabies from 2011 to 2023 in the
+Netherlands [@nivel; @deursen2022]. We performed spectral analysis on
+the time series of weekly scabies cases using a modified Daniell kernel
+(m = 2) for smoothing to identify typical frequencies within the time
+series. To estimate time-varying reproduction number, we first randomly
+assigned each reported case a date of symptom onset in the week in which
+the case was reported. Using the daily time series, we applied the
+method proposed by Wallinga and Teunis [@wallinga_teunis2004] to
+estimate the time-varying reproduction number by determining the
+likelihood of an event occurring for every pair of time points
+[@wallinga2007]. The method requires the specification of the serial
+interval distribution. We assumed a Normal serial interval distribution
+with mean 91.2 and standard deviation 22.79, as estimated previously. To
+obtain confidence intervals on the daily reproduction number, we used
+bootstrapping.
+
+All analyses were performed in R 4.4.0 [@R-base].
+
+## Results
+
+### Serial Interval
+
+We estimated the mean and standard deviation of the serial interval
+using the epidemic curves from each study (Table
+\\\@ref(si_results_tab)). There was considerable variation between
+studies with the largest estimated mean serial interval of 167.34 (SD =
+9.72) from data from Kaburi et al. [@kaburi2019] which describes an
+outbreak in a preschool in Ghana. The smallest estimated mean serial
+interval was 16.11 (SD = 2.42), and was estimated from data from Larrosa
+et al. [@larrosa2003] which describes an outbreak in a hospital in
+Spain.
+
+```{r si_results_tab, echo=FALSE, tab.cap="Estimated mean and standard deviation (SD) of serial interval distribution for each study."}
+si_tab_dat <- data.frame(
+  Study = c("Kaburi et al.", "Ariza et al.", "Akunzirwe et al.", "Tjon-Kon-Fat et al.", "Larrosa et al.", "Division of Public and Behavioral Health"),
+  Mean = c(167.34, 98.4, 122.92, 110.71, 16.11, 21.92),
+  SD = c(9.72, 8.54, 26.92, 16.14, 2.42, 15.24)
+)
+
+ft_si <- flextable(si_tab_dat) %>%
+  autofit(add_w = 0.2) %>%
+  bold(part = "header") %>%
+  border_remove() %>%
+  border(i = 1, border.top = officer::fp_border(width = 1), part = "header") %>%
+  border(i = 1, border.bottom = officer::fp_border(width = 1), part = "header") %>%
+  border(i = 6, border.bottom = officer::fp_border(width = 1), part = "body") 
+
+ft_si
+```
+
+```{r si_dist_plot, echo=FALSE, eval=TRUE}
+
 # Data preparation
 x <- seq(0, 250, by = 1)
 y1 <- dnorm(x, mean = 167.34442, sd = 9.71763)
@@ -74,111 +252,151 @@ y6 <- dnorm(x, mean = 16.106246, sd = 2.421762)
 my_data <- data.frame(
   x = rep(x, 6),
   y = c(y1, y2, y3, y4, y5, y6),
-  group = factor(rep(c("Ghana outbreak", "Germany outbreak", "Uganda outbreak",
-                       "Nevada (US) outbreak", "Netherlands outbreak", "Spain outbreak"), each = length(x)),
-                 levels = c("Ghana outbreak", "Germany outbreak", "Uganda outbreak",
-                            "Nevada (US) outbreak", "Netherlands outbreak", "Spain outbreak"))
+  group = factor(rep(c("Kaburi et al.", "Ariza et al.", "Akunzirwe et al.", "Division of Public and Behavioral Health", "Tjon-Kon-Fat et al.", "Larrosa et al."), each = length(x)),
+                 levels = c("Kaburi et al.", "Ariza et al.", "Akunzirwe et al.", "Division of Public and Behavioral Health", "Tjon-Kon-Fat et al.", "Larrosa et al."))
 )
 
-# Create the plot
-ggplot(my_data, aes(x = x, y = y, color = group)) +
+# Plot serial interval curves
+p_si1 <- ggplot(my_data, aes(x = x, y = y, color = group)) +
   geom_line(linewidth = 1) +
-  labs(title = "Estimated Serial Interval Distributions",
-       x = "Time (days)",
+  labs(x = "Time (days)",
        y = "Density") +
   scale_color_viridis_d() +
   theme_minimal() +
   theme(
+    #legend.position = "bottom",
     plot.title = element_text(hjust = 0.5),
     legend.title = element_blank()
   )
 ```
 
-### Meta-analysis
-```{r, meta-analysis, eval = FALSE}
-df_effect_sizes <- data.frame(
-  mean_si = c(167.34442, 98.4, 122.92385, 21.91776, 110.71571, 16.106246),
-  sd_si = c(9.71763, 8.542332, 26.92035, 15.23666, 16.13879, 2.421762),
-  n = c(nrow(ghana_df), nrow(germany_df), nrow(uganda_long_df), nrow(nevada_long_df),
-        nrow(dutch_long_df), nrow(spain_long_df)),
-  country = c("Ghana", "Germany", "Uganda", "Nevada (USA)", "Netherlands", "Spain")
-) %>%
-  mutate(se_si = sd_si/sqrt(n))
+To obtain a pooled estimate of mean serial interval, we performed a
+Bayesian meta-analysis with random intercepts for each study. We
+estimated a pooled mean serial interval of 91.20 (95% CI: 45.84, 138.04)
+(Figure \@ref(fsi_multi-plot)B). As we saw with the individual study
+estimates (Table \@ref(si_results_tab)), the meta-analysis provided
+further evidence of substantial heterogeneity among studies due to a
+large value of the standard deviation of the random intercepts (60.7).
+The large variation in the mean serial interval estimates can be
+visualised by plotting the estimated distributions of each study's
+serial interval shown in Figure \@ref(si_multi-plot)A. A normal
+distribution is assumed, and is parameterized by the estimated mean and
+standard deviation of serial interval for each study.
 
-# we will perform a Bayesian meta-analysis using the {brms} package
-# specify priors
-priors <- c(prior(normal(100,50), class = Intercept),
-            prior(cauchy(0,1), class = sd))
-
-# fit a random effects model
-# convert sd to se
-m.brm <- brm(mean_si|se(se_si) ~ 1 + (1|country),
-             data = df_effect_sizes,
-             prior = priors,
-             iter = 5000,
-             warmup = 2000,
-             control = list(adapt_delta = 0.99, max_treedepth = 15))
-
-summary(m.brm)
-```
-From `summary(m.brm)` we can see that the pooled mean serial interval is 95.57 (95% CI: 65.27, 124.83) and the pooled standard deviation is 15.17. In the output, `sd(Intercept)` represents the standard deviation of the random intercepts (the between-study variability). Since the value of the standard deviation of the random intercepts is large (58.31), this indicates that there is substantial heterogeneity among the studies. This is not surprising when looking at the estimated distributions of each study's serial interval shown in Figure X.
-
-Create a forest plot with each study's estimate of mean SI and the pooled estimate.
-```{r si_forest_plot, eval = FALSE}
-forest_data <- df_effect_sizes %>%
-  mutate(
-    lower = mean_si - 1.96 * se_si,
-    upper = mean_si + 1.96 * se_si,
-    type = "Study"
-  ) %>%
-  select(country, mean_si, lower, upper, type) %>%
-  rename(estimate = mean_si) %>%
-  bind_rows(
-    data.frame(
-      country = "Pooled Estimate",
-      estimate = posterior_summary(m.brm, variable = "Intercept")[, "Estimate"],
-      lower = posterior_summary(m.brm, variable = "Intercept")[, "Q2.5"],
-      upper = posterior_summary(m.brm, variable = "Intercept")[, "Q97.5"],
-      type = "Pooled"
-    )
-  ) %>%
-  # Ensure the pooled estimate is positioned last
-  mutate(country = factor(country, levels = c(setdiff(country, "Pooled Estimate"), "Pooled Estimate")))
+```{r si_forest_plot, echo=FALSE, eval = TRUE}
+# read in data for plot
+forest_data <- readRDS("data_for_forest_plot.RDS")
 
 # Create the forest plot using ggplot2
-ggplot(forest_data, aes(x = estimate, y = country, xmin = lower, xmax = upper, color = type)) +
+p_si2 <- ggplot(forest_data, aes(x = estimate, y = country, xmin = lower, xmax = upper, color = type)) +
   geom_point() +
   geom_errorbarh(height = 0.2) +
-  geom_vline(xintercept = posterior_summary(m.brm, variable = "Intercept")[, "Estimate"], linetype = "dashed", color = "red") +
+  geom_vline(xintercept = 91.2, linetype = "dashed", color = "red") +
+  #posterior_summary(m.brm, variable = "Intercept")[, "Estimate"],
   labs(x = "Effect Size", y = "") +
   theme_minimal() +
   scale_color_manual(values = c("Study" = "blue", "Pooled" = "red")) +
   theme(legend.position = "none")
 ```
 
-## Reproduction Number and Growth Rate
+```{r si_multi-plot, echo = FALSE, eval = TRUE, fig.cap="A) Estimated serial interval distributions using data from epidemic curves from different scabies outbreaks. B) Forest plot of estimated mean serial interval and pooled mean."}
+
+combined_plot <- plot_grid(p_si1, p_si2, ncol = 1, labels = c("A", "B"))
+combined_plot
+```
 
 ### Growth Rate
-Using an exponential growth model and data from [NIVEL](https://www.nivel.nl/nl/zorg-en-ziekte-in-cijfers/actuele-cijfers-ziekten-per-week), the annual growth rate is r = 0.190.
 
-[insert figure]
+We estimated the annual growth rate of scabies cases by fitting an
+exponential growth model to annual incidence of scabies per 1000 people
+from 2011 to 2023 in the Netherlands [@nivel]. We estimated an annual
+growth rate of 0.353 (95% CI: 0.152, 0.452). Using the fitted
+exponential growth model and the estimated growth rate, we then
+determined the projected incidence of scabies per 1000 people until 2033
+if no interventions are implemented. We found that there could be a
+substantial increase in scabies incidence in the next 10 years in the
+Netherlands if no measures are taken to mitigate scabies spread (Figure
+\@ref(fig:growth_rate_fig)).
 
-Determine time-varying reproduction number and characterise how it changes over time. We will use data from [NIVEL](https://www.nivel.nl/en) on the number of reported cases per week from 2011 to 2023 in the Netherlands. Data courtesy of Mariette Hooiveld.
+```{r growth_rate_fig, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center', fig.cap="Scabies incidence per 1000 people from 2011 to 2023 (points) and then projected scabies indcidence per 1000 people for 2024 to 2033 (line) using an exponential growth model with annual growth rate = 0.353. Shaded regions represent 95% confidence intervals for projected scabies incidence.", out.width="100%"}
+
+# read in df for plot
+scabies_plot_df <- readRDS("scabies_gr_proj_df.rds")
+
+# Define the custom palette
+custom_palette <- c("#21908C", "#440154") # Custom colors
+
+# Plot with custom palette and specified line and point styles
+ggplot(scabies_plot_df, aes(x = time, y = cases_mean, color = type, fill = type)) +
+  # Points with no line through them
+  geom_point(data = filter(scabies_plot_df, type == "Original Data"), aes(y = cases), size = 2, shape = 16) +
+
+  # Line with points for other types
+  geom_line(data = filter(scabies_plot_df, type != "Original Data"), aes(y = cases_mean), linewidth = 1.2) +
+  geom_point(data = filter(scabies_plot_df, type != "Original Data"), aes(y = cases), size = 2, shape = 16) +
+
+  # Ribbon for the confidence interval
+  geom_ribbon(aes(ymin = cases_lower, ymax = cases_upper, fill = type), alpha = 0.2, color = NA) +
+
+  # Labels and theme
+  labs(x = "Year", y = "Incidence per 1000",
+       color = "Data Type", fill = "Data Type") +
+  scale_color_manual(values = custom_palette) +
+  scale_fill_manual(values = custom_palette) +
+  theme_minimal() +
+  theme(legend.position = "right")
+
+```
+
+### Reproduction Number
+
+We first performed a spectral analysis on the time series of weekly
+scabies cases in Netherlands from 2011 to 2023 using a modified Daniell
+kernel (m = 2) for smoothing. We found typical frequencies at 1/51.4
+weeks and at 1/26.67 weeks (where 26.67 weeks is \~187 days). This
+suggests that there is a generation interval at 187 days and strong
+annual periodicity. We also estimated time-varying reproduction number
+and plotted it against season. It appears that peak transmissibility
+occurs in the autumn and in some years extend into winter (Figure
+\\\@ref(rt_plot)).
+
+```{r rt_plot, echo=FALSE, fig.cap="Time-varying reproduction number of scabies transmission. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August. 31; Autumn = September 1 – November 31.", out.width="100%"}
+knitr::include_graphics("rt_plot.png")
+```
+Note: This is a place-holder figure.
+
+# Discussion
+
+Still need to flush this out.
+
+Discuss time-series trends and population that it typically occurs in in
+NL (young adults/college students)
+
+Discuss why estimates of mean serial interval across studies are so
+different (different populations and identification of symptom onset may
+be delayed).
+
+Discuss limitations of the approach and caveats for interpretation.
 
 # References
 
-<div id="refs"></div>
+::: {#refs}
+:::
 
 # Appendix
-TODO:
- - add text for meta-analysis
- - add text for reproduction number estimation
- - re-do growth rate and projection plot in ggplot and make into multi-panel figure
- 
-## Sensitivity Analyses
-TODO:
-  - add gamma distribution to Vink et al. method and re-run estimation
-  - re-run meta-analysis assuming gamma distribution
-  - potentially remove Uganda estimate from meta-analysis because it's community transmission and not a confined setting (e.g., school, hospital, care home)
-  - check prior assumptions for meta-analysis
 
+## Sensitivity Analyses
+
+TODO:
+
+ - add gamma distribution to Vink et al. method and re-run estimation
+
+ - re-run meta-analysis assuming gamma distribution
+
+ - potentially remove Uganda estimate from meta-analysis because it's
+community transmission and not a confined setting (e.g., school,
+hospital, care home)
+
+ - check prior assumptions for meta-analysis
+ 
+ - more in-depth analysis of Rt
