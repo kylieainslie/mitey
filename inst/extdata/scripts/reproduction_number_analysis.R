@@ -48,11 +48,6 @@ nivel_daily_data <- nivel_wkly_data %>%
   select(-iso_week, -first_day, -random_day)
 
 # 2. We will implement the method from Wallinga and Teunis 2004 ----------------
-# To begin, we will try a smaller example and only use data from the first week.
-week1 <- nivel_daily_data %>%
-  filter(year == 2011, week_num == 1) %>%
-  # order by onset date
-  arrange(onset_date)
 
 # Determine likelihood of transmission pair for every possible pair
 # we assume the serial interval distribution is N(95.57, (15.17)^2)
@@ -71,16 +66,18 @@ df <- nivel_daily_data %>%
   distinct(onset_date, count) %>%
   arrange(onset_date) %>%
   mutate(num_date = as.numeric(onset_date)) %>%
-  ungroup()
+  ungroup() %>%
+  rename(date = num_date,
+         inc = count)
 
 # Calculate the initial R_t
-df$R_t <- rt_estim(df, mean_si = 95.57, sd_si = 15.17, dist_si = "normal",
+df$R_t <- rt_estim(df, mean_si = 91.2, sd_si = 22.8, dist_si = "normal",
                    cut_tail = 180, pos_only = TRUE)
 
 # Bootstrapping to get confidence intervals for R_t
 set.seed(123)  # For reproducibility
 num_bootstraps <- 1000
-bootstrap_rt <- matrix(0, nrow = num_bootstraps, ncol = nt)
+bootstrap_rt <- matrix(0, nrow = num_bootstraps, ncol = nrow(df))
 
 for (b in 1:num_bootstraps) {
   boot_indices <- sample(1:nrow(df), replace = TRUE)
@@ -91,19 +88,19 @@ for (b in 1:num_bootstraps) {
 }
 
 # Calculate confidence intervals
-rt_mean <- apply(bootstrap_rt, 2, mean)
+#rt_mean <- apply(bootstrap_rt, 2, mean)
 rt_lower <- apply(bootstrap_rt, 2, quantile, probs = 0.025)
 rt_upper <- apply(bootstrap_rt, 2, quantile, probs = 0.975)
 
 # Add to data frame
 df <- df %>%
-  mutate(R_t_mean = rt_mean,
+  mutate(#R_t_mean = rt_mean,
          R_t_lower = rt_lower,
          R_t_upper = rt_upper)
 
 # Plot using ggplot2
 ggplot(df, aes(x = onset_date)) +
-  geom_line(aes(y = R_t_mean), color = "blue", size = 1) +
+  geom_line(aes(y = R_t), color = "blue", size = 1) +
   geom_ribbon(aes(ymin = R_t_lower, ymax = R_t_upper), alpha = 0.2, fill = "blue") +
   labs(title = "Estimated Reproduction Number (R_t) with Confidence Intervals",
        x = "Date", y = "R_t") +

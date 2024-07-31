@@ -17,7 +17,7 @@ load_all()
 # Kaburi et al. 2019 BMC Public Health https://doi.org/10.1186/s12889-019-7085-6
 
 # read in epidemic curve data file
-ghana_df <- read_xlsx("~/Dropbox/Kylie/Projects/RIVM/Projects/scabies/data/Kaburi_et_al_data_scabies.xlsx")
+ghana_df <- read_xlsx("./inst/extdata/data/Kaburi_et_al_data_scabies.xlsx")
 
 # we will calculate the index case-to-case (ICC) interval for each person by class
 # the person with the greatest value for number of days since symptom onset will
@@ -279,6 +279,88 @@ summary(m.brm)
 # posterior predictive check
 pp_check(m.brm)
 
+# Look at posterior distributions
+post.samples <- posterior_samples(m.brm, c("^b", "^sd"))
+names(post.samples)
+names(post.samples) <- c("smd", "tau")
+
+ggplot(aes(x = smd), data = post.samples) +
+  geom_density(fill = "lightblue",                # set the color
+               color = "lightblue", alpha = 0.7) +
+  geom_point(y = 0,                               # add point at mean
+             x = mean(post.samples$smd)) +
+  labs(x = expression(italic(SMD)),
+       y = element_blank()) +
+  theme_minimal()
+
+ggplot(aes(x = tau), data = post.samples) +
+  geom_density(fill = "lightgreen",               # set the color
+               color = "lightgreen", alpha = 0.7) +
+  geom_point(y = 0,
+             x = mean(post.samples$tau)) +        # add point at mean
+  labs(x = expression(tau),
+       y = element_blank()) +
+  theme_minimal()
+
+# Create forest plot with posteriors
+library(tidybayes)
+library(dplyr)
+library(ggplot2)
+library(ggridges)
+library(glue)
+library(stringr)
+library(forcats)
+
+# get posterior draws from each study
+study.draws <- spread_draws(m.brm, r_country[country,], b_Intercept) %>%
+  mutate(b_Intercept = r_country + b_Intercept)
+
+# get pooled posterior draws
+pooled.effect.draws <- spread_draws(m.brm, b_Intercept) %>%
+  mutate(country = "Pooled Effect")
+
+# combine posterior draws from each study and pooled
+forest.data <- bind_rows(study.draws,
+                         pooled.effect.draws) %>%
+  ungroup() %>%
+  mutate(country = str_replace_all(country, "[.]", " ")) %>%
+  mutate(country = reorder(country, b_Intercept))
+
+# calculate mean and credible intervals
+forest.data.summary <- group_by(forest.data, country) %>%
+  mean_qi(b_Intercept)
+
+# plot
+ggplot(aes(b_Intercept,
+           relevel(country, "Pooled Effect",
+                   after = Inf)),
+       data = forest.data) +
+
+  # Add vertical lines for pooled effect and CI
+  geom_vline(xintercept = fixef(m.brm)[1, 1],
+             color = "grey", size = 1) +
+  geom_vline(xintercept = fixef(m.brm)[1, 3:4],
+             color = "grey", linetype = 2) +
+  geom_vline(xintercept = 0, color = "black",
+             size = 1) +
+
+  # Add densities
+  geom_density_ridges(fill = "blue",
+                      rel_min_height = 0.01,
+                      col = NA, scale = 1,
+                      alpha = 0.8) +
+  geom_pointintervalh(data = forest.data.summary,
+                      size = 1) +
+
+  # Add text and labels
+  geom_text(data = mutate_if(forest.data.summary,
+                             is.numeric, round, 2),
+            aes(label = glue("{b_Intercept} [{.lower}, {.upper}]"),
+                x = Inf), hjust = "inward") +
+  labs(x = "Standardized Mean Difference", # summary measure
+       y = element_blank()) +
+  theme_minimal()
+
 # ---------
 # Create a forest plot with each study's estimate of mean SI and the pooled estimate
 # Create the data frame with the study estimates and the pooled estimate
@@ -302,6 +384,7 @@ forest_data <- df_effect_sizes %>%
   # Ensure the pooled estimate is positioned last
   mutate(country = factor(country, levels = c(setdiff(country, "Pooled Estimate"), "Pooled Estimate")))
 
+saveRDS(forest_data, "vignettes/data_for_forest_plot.RDS")
 # Create the forest plot using ggplot2
 ggplot(forest_data, aes(x = estimate, y = country, xmin = lower, xmax = upper, color = type)) +
   geom_point() +
