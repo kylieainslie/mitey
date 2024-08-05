@@ -19,8 +19,8 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = c("normal", "gamma"),
 serial_intervals <- outer(inc_dat$date, inc_dat$date, "-")
 
 # Apply get_likelihood only to positive serial_intervals
-likelihood_values <- apply(serial_intervals, 1:2, get_likelihood,mu = 95.57,
-                           sigma = 15.17, distn = "normal", tail_cut = 180,
+likelihood_values <- apply(serial_intervals, 1:2, get_likelihood, mu = mean_si,
+                           sigma = sd_si, distn = "normal", tail_cut = 180,
                            positive_only = TRUE)
 
 # Calculation the likelihood matrix
