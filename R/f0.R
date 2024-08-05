@@ -10,11 +10,25 @@
 #' @return The calculated value of f0.
 #' @export
 f0 <- function(x, mu, sigma, comp) {
-  if (comp == 1) return((2 - 2 * x) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)))
-  if (comp == 2) return((2 - 2 * x) * dnorm(x, mean = mu, sd = sigma))
-  if (comp == 3) return((2 - 2 * x) * dnorm(x, mean = -mu, sd = sigma))
-  if (comp == 4) return((2 - 2 * x) * dnorm(x, mean = 2 * mu, sd = sqrt(2) * sigma))
-  if (comp == 5) return((2 - 2 * x) * dnorm(x, mean = -2 * mu, sd = sqrt(2) * sigma))
-  if (comp == 6) return((2 - 2 * x) * dnorm(x, mean = 3 * mu, sd = sqrt(3) * sigma))
-  if (comp == 7) return((2 - 2 * x) * dnorm(x, mean = -3 * mu, sd = sqrt(3) * sigma))
+
+  # if (dist == "normal"){
+    if (comp == 1) return((2 - 2 * x) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)))
+    if (comp == 2) return((2 - 2 * x) * dnorm(x, mean = mu, sd = sigma))
+    if (comp == 3) return((2 - 2 * x) * dnorm(x, mean = -mu, sd = sigma))
+    if (comp == 4) return((2 - 2 * x) * dnorm(x, mean = 2 * mu, sd = sqrt(2) * sigma))
+    if (comp == 5) return((2 - 2 * x) * dnorm(x, mean = -2 * mu, sd = sqrt(2) * sigma))
+    if (comp == 6) return((2 - 2 * x) * dnorm(x, mean = 3 * mu, sd = sqrt(3) * sigma))
+    if (comp == 7) return((2 - 2 * x) * dnorm(x, mean = -3 * mu, sd = sqrt(3) * sigma))
+  # } else if (dist == "gamma"){
+  #   beta <- mu/sigma^2
+  #   alpha <- (mu/beta)^2
+  #   #likelihood <- dgamma(x, shape = alpha, rate = beta)
+  #   if (comp == 1) return((2 - 2 * x) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)))
+  #   if (comp == 2) return((2 - 2 * x) * dnorm(x, mean = mu, sd = sigma))
+  #   if (comp == 3) return((2 - 2 * x) * dnorm(x, mean = -mu, sd = sigma))
+  #   if (comp == 4) return((2 - 2 * x) * dnorm(x, mean = 2 * mu, sd = sqrt(2) * sigma))
+  #   if (comp == 5) return((2 - 2 * x) * dnorm(x, mean = -2 * mu, sd = sqrt(2) * sigma))
+  #   if (comp == 6) return((2 - 2 * x) * dnorm(x, mean = 3 * mu, sd = sqrt(3) * sigma))
+  #   if (comp == 7) return((2 - 2 * x) * dnorm(x, mean = -3 * mu, sd = sqrt(3) * sigma))
+  # }
 }
