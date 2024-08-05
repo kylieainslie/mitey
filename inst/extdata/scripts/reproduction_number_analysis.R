@@ -70,8 +70,12 @@ df <- nivel_daily_data %>%
   rename(date = num_date,
          inc = count)
 
+# si dist parameters
+si_mean <- 91.2
+si_sd <- 22.8
+
 # Calculate the initial R_t
-df$R_t <- rt_estim(df, mean_si = 91.2, sd_si = 22.8, dist_si = "normal",
+df$R_t <- rt_estim(df, mean_si = si_mean, sd_si = si_sd, dist_si = "normal",
                    cut_tail = 180, pos_only = TRUE)
 
 # Bootstrapping to get confidence intervals for R_t
@@ -82,24 +86,30 @@ bootstrap_rt <- matrix(0, nrow = num_bootstraps, ncol = nrow(df))
 for (b in 1:num_bootstraps) {
   boot_indices <- sample(1:nrow(df), replace = TRUE)
   boot_data <- df[boot_indices, ]
-  boot_rt <- rt_estim(boot_data, mean_si = 95.57, sd_si = 15.17,
+  boot_rt <- rt_estim(boot_data, mean_si = si_mean, sd_si = si_sd,
                       dist_si = "normal", cut_tail = 180, pos_only = TRUE)
   bootstrap_rt[b, ] <- boot_rt
 }
 
 # Calculate confidence intervals
-#rt_mean <- apply(bootstrap_rt, 2, mean)
+rt_mean <- apply(bootstrap_rt, 2, mean)
 rt_lower <- apply(bootstrap_rt, 2, quantile, probs = 0.025)
 rt_upper <- apply(bootstrap_rt, 2, quantile, probs = 0.975)
 
 # Add to data frame
 df <- df %>%
-  mutate(#R_t_mean = rt_mean,
+  mutate(R_t_mean = rt_mean,
          R_t_lower = rt_lower,
          R_t_upper = rt_upper)
 
+# save r_t data set, so that we don't have to re-run bootstrapping
+saveRDS(df, "inst/extdata/data/rt_df.rds")
+
 # Plot using ggplot2
-ggplot(df, aes(x = onset_date)) +
+# filter out first 95 days (equivalent to 1 mean serial interval)
+ggplot(df %>%
+         filter(onset_date > min(onset_date) + 95),
+       aes(x = onset_date)) +
   geom_line(aes(y = R_t), color = "blue", size = 1) +
   geom_ribbon(aes(ymin = R_t_lower, ymax = R_t_upper), alpha = 0.2, fill = "blue") +
   labs(title = "Estimated Reproduction Number (R_t) with Confidence Intervals",
