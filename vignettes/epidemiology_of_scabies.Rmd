@@ -6,7 +6,7 @@ output:
   html_document:
     toc: true
   word_document:
-    toc: false
+    toc: true
 bibliography: references.bib
 csl: nature.csl
 vignette: >
@@ -385,6 +385,10 @@ Discuss limitations of the approach and caveats for interpretation.
 
 # Appendix
 
+```{r render_to_word, echo=FALSE, eval=FALSE}
+# To render Word
+rmarkdown::render("vignettes/epidemiology_of_scabies.Rmd", output_format = "word_document")
+```
 ## Sensitivity Analyses
 
 TODO:
