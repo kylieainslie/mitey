@@ -8,6 +8,7 @@
 #' @return vector with estimates for the mean and standard deviation of the primary-secondary infection component
 #' @export
 #' @importFrom stats weighted.mean
+#' @importFrom stats optim
 #'
 #' @examples
 #' my_data<-c(rep(1,38),rep(2,39),rep(3,30),rep(4,17),rep(5,7))
@@ -20,6 +21,9 @@ si_estim <- function(dat, n = 50) {
   # Initial guesses
   mu <- mean(dat)
   sigma <- sd(dat)
+
+  # E-step
+  # calculate the absolute probability of interval belonging to a component
 
   # Iterations
   for (k in 1:n) {
@@ -41,10 +45,21 @@ si_estim <- function(dat, n = 50) {
     denom <- colSums(tau)
     tau <- sweep(tau, 2, denom, "/")
 
-    # Update parameters
+    # Calculate the weights
     w <- rowSums(tau) / j
-    mu <- weighted.mean(dat, tau[2, ])
-    sigma <- sqrt(weighted_var(dat, tau[2, ]))
+
+    # update parameters
+    if (dist == "normal"){
+      mu <- weighted.mean(dat, tau[2, ])
+      sigma <- sqrt(weighted_var(dat, tau[2, ]))
+    } else if (dist == "gamma"){
+      # estimates for the mean and standard deviation of the primary-secondary
+      # infection component
+      opt <- optim(c(mu, sigma), wt_loglik, g=NULL, method = c("BFGS"), hessian=FALSE)
+      mu <- opt$par[1]
+      sigma <- opt$par[2]
+    }
+
     rtn <- c(mu, sigma)
     #print(rtn)
   }
