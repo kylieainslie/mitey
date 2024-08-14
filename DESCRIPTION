@@ -16,11 +16,17 @@ URL: https://github.com/kylieainslie/mitey, https://kylieainslie.github.io/mitey
 BugReports: https://github.com/kylieainslie/mitey/issues
 Suggests: 
     brms,
+    cowplot,
     devtools,
     dplyr,
+    flextable,
+    ftExtra,
     ggplot2,
     knitr,
+    officer,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+Depends: 
+    R (>= 3.5.0)
