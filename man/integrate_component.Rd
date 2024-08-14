@@ -4,7 +4,14 @@
 \alias{integrate_component}
 \title{Integrate Component Function}
 \usage{
-integrate_component(d, mu, sigma, comp, lower = TRUE)
+integrate_component(
+  d,
+  mu,
+  sigma,
+  comp,
+  dist = c("normal", "gamma"),
+  lower = TRUE
+)
 }
 \arguments{
 \item{d}{numeric; the data point.}
@@ -14,6 +21,8 @@ integrate_component(d, mu, sigma, comp, lower = TRUE)
 \item{sigma}{numeric, the standard deviation.}
 
 \item{comp}{integer; the component number, accepts values 1 to 7.}
+
+\item{dist}{string; assumed distribution of the serial interval; take "normal" or "gamma".}
 
 \item{lower}{logical; indicates whether to integrate the lower part (TRUE) or the upper part (FALSE).}
 }

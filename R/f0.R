@@ -17,11 +17,11 @@
 #' @param mu numeric; the mean value.
 #' @param sigma numeric; the standard deviation.
 #' @param comp integer; the component number (1 to 7).
-#' @param dist string; assumed distribution of the serial interval; take "normal" or "gamma".
+#' @param dist string; assumed distribution of the serial interval; takes "normal" or "gamma"; defaults to "normal"
 #'
 #' @return The calculated value of f0.
 #' @export
-f0 <- function(x, mu, sigma, comp, dist = c("normal", "gamma")) {
+f0 <- function(x, mu, sigma, comp, dist = "normal") {
 
   # error messages
   if(dist != "normal" && dist != "gamma"){

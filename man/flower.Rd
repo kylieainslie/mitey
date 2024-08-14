@@ -4,7 +4,7 @@
 \alias{flower}
 \title{Calculate flower for Different Components}
 \usage{
-flower(x, r, mu, sigma, comp)
+flower(x, r, mu, sigma, comp, dist = "normal")
 }
 \arguments{
 \item{x}{The value at which to evaluate the function.}
@@ -16,6 +16,8 @@ flower(x, r, mu, sigma, comp)
 \item{sigma}{The standard deviation.}
 
 \item{comp}{The component number (1 to 7).}
+
+\item{dist}{string; assumed distribution of the serial interval; accepts "normal" or "gamma"; defaults to "normal"}
 }
 \value{
 The calculated value of flower.
