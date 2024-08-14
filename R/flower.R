@@ -7,11 +7,11 @@
 #' @param mu The mean value.
 #' @param sigma The standard deviation.
 #' @param comp The component number (1 to 7).
-#' @param dist string; assumed distribution of the serial interval; take "normal" or "gamma".
+#' @param dist string; assumed distribution of the serial interval; accepts "normal" or "gamma"; defaults to "normal"
 #'
 #' @return The calculated value of flower.
 #' @export
-flower <- function(x, r, mu, sigma, comp, dist = c("normal", "gamma")) {
+flower <- function(x, r, mu, sigma, comp, dist = "normal") {
 
   # error messages
   if(dist != "normal" && dist != "gamma"){

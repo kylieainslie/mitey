@@ -4,20 +4,36 @@
 \alias{f0}
 \title{Calculate f0 for Different Components}
 \usage{
-f0(x, mu, sigma, comp)
+f0(x, mu, sigma, comp, dist = "normal")
 }
 \arguments{
-\item{x}{The value at which to evaluate the function.}
+\item{x}{numeric; the value at which to evaluate the function.}
 
-\item{mu}{The mean value.}
+\item{mu}{numeric; the mean value.}
 
-\item{sigma}{The standard deviation.}
+\item{sigma}{numeric; the standard deviation.}
 
-\item{comp}{The component number (1 to 7).}
+\item{comp}{integer; the component number (1 to 7).}
+
+\item{dist}{string; assumed distribution of the serial interval; takes "normal" or "gamma"; defaults to "normal"}
 }
 \value{
 The calculated value of f0.
 }
 \description{
-This function calculates the value of f0 based on the component.
+This function calculates the value of f0 based on the component, where the components
+represent the transmission routes: Co-Primary (CP), Primary-Secondary (PS), Primary-Tertiary (PT), and Primary-Quaternary (PQ). We split the PS, PT and PQ routes into two parts, such that
+\itemize{
+\item component 1: CP route
+\item component 2+3: PS route
+\item component 4+5: PT route
+\item component 6+7: PQ route
+}
+}
+\details{
+If the dist = gamma, then the mean (\eqn{\mu}) and standard deviation (sigma) are converted into the
+shape (k) and scale (theta) parameters for the gamma distribution, such that the mean (\eqn{\mu}
+) and variance (\eqn{\sigma^2}) are given by:
+\deqn{\mu = k \times \theta}
+\deqn{\sigma^2 = k \times \theta^2}.
 }
