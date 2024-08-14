@@ -4,12 +4,14 @@
 \alias{si_estim}
 \title{Estimate serial interval using the EM Algorithm as developed by Vink et al. (2014)}
 \usage{
-si_estim(dat, n = 50)
+si_estim(dat, n = 50, dist = "normal")
 }
 \arguments{
 \item{dat}{vector; a numeric vector of index case to case intervals}
 
 \item{n}{integer; number of iterations for EM algorithm; defaults to n = 50}
+
+\item{dist}{string; assumed distribution of the serial interval; takes "normal" or "gamma"; defaults to "normal".}
 }
 \value{
 vector with estimates for the mean and standard deviation of the primary-secondary infection component
