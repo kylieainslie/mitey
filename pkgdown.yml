@@ -2,8 +2,8 @@ pandoc: 3.1.11
 pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
-  serial_interval_analysis: serial_interval_analysis.html
-last_built: 2024-07-16T15:05Z
+  epidemiology_of_scabies: epidemiology_of_scabies.html
+last_built: 2024-08-14T14:52Z
 urls:
   reference: https://kylieainslie.github.io/mitey/reference
   article: https://kylieainslie.github.io/mitey/articles
