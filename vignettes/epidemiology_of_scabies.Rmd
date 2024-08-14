@@ -36,6 +36,7 @@ library(dplyr)
 library(ggplot2)
 library(cowplot)
 library(brms)
+library(officer)
 library(devtools)
 load_all()
 ```
