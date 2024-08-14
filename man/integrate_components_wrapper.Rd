@@ -4,7 +4,7 @@
 \alias{integrate_components_wrapper}
 \title{Wrapper function to for integrate_components()}
 \usage{
-integrate_components_wrapper(d, mu, sigma)
+integrate_components_wrapper(d, mu, sigma, dist = "normal")
 }
 \arguments{
 \item{d}{numeric; the data point.}
@@ -12,19 +12,11 @@ integrate_components_wrapper(d, mu, sigma)
 \item{mu}{numeric; the mean value.}
 
 \item{sigma}{numeric; the standard deviation.}
+
+\item{dist}{string; assumed distribution of the serial interval; takes "normal" or "gamma"; defaults to "normal"}
 }
 \value{
 A vector containing the integrated values for each component.
-The components are:
-\itemize{
-\item Component 1: Integration for CP route.
-\item Component 2: Integration for PS route (mean = mu, sd = sigma).
-\item Component 3: Integration for PS route (mean = -mu, sd = sigma).
-\item Component 4: Integration for PT route (mean = 2*mu, sd = sqrt(2)*sigma).
-\item Component 5: Integration for PT route (mean = -2*mu, sd = sqrt(2)*sigma).
-\item Component 6: Integration for PQ route (mean = 3*mu, sd = sqrt(3)*sigma).
-\item Component 7: Integration for PQ route (mean = -3*mu, sd = sqrt(3)*sigma).
-}
 }
 \description{
 This function computes the integral for all components for a given data point.

@@ -1,7 +1,7 @@
 #' weighted likelihood
 #' each point adds to likelihood given weight belonging to component 2: w2
 #'
-#' @param dat
+#' @param dat data to be used for maximisation
 #' @param par parameters to be maximised
 #' @param tau2 numeric; mixture weights for (primary, secondary) pairs
 #' @return value of the negative sum of the weighted log likelihood
