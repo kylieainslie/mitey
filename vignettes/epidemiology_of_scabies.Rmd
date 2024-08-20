@@ -43,15 +43,14 @@ load_all()
 
 ## Introduction
 
-Scabies is a neglected tropical disease caused by infestation of the
-skin with a microscopic mite (Sarcoptes scabiei). Symptoms are
+Scabies is classified as a neglected tropical disease caused by infestation of the
+skin with a microscopic mite (Sarcoptes scabiei) [@who]. Symptoms are
 characterized by itchiness and rash at the site of infestation. Scabies
 affects around 400 million people per year, and accounts for a large
 proportion of skin disease in many low- and middle-income countries
 [@who]. A rise in scabies cases has been observed through out Europe in
 recent years [@deursen2022; @reichert2021; @redondo-bravo2021;
-@lugovic-mihic2020; @amato2019; @dona2023], putting pressure on local
-health services. [Elaborate?]
+@lugovic-mihic2020; @amato2019; @dona2023]. 
 
 Despite the considerable burden scabies poses annually,
 little is known about the disease dynamics of scabies transmission, such
@@ -105,14 +104,14 @@ number and annual growth rate. [not sure this should be in the intro]
 
 ### Data Sources
 
-We used reported symptom onset dates of cases from previously published studies of scabies
+We used publicly available data on reported symptom onset dates of scabies cases from previously published studies of scabies
 outbreaks (Table \@ref(tab:data_sources_table)) to estimate the serial
 interval of scabies. When the original study data was not provided, we
-reconstructed the data from the published epidemic curves. 
+reconstructed the data from the published epidemic curves. Additionally, we used data on the incidence of scabies over time in the Netherlands to estimate reproduction number and growth rate. These data have been described elsewhere [@deursen2022; @hasselaar]. Briefly, we obtained weekly incidence of scabies (per 1000 people) from 2011 to 2023 as diagnosed by general practitioners (GPs) that are stored in a nationally representative primary care database of GPs hosted by the Netherlands Institute for Health Services Research (Nivel) [@hasselaar]. Scabies is not a notifiable disease in the Netherlands, and thus information on scabies cases can only be obtained from GP diagnoses. Individuals in institutions (e.g., care homes) are generally not taken into account in these registrations. 
 
 ### Serial Interval
 
-Using the dates of symptom onset for scabies cases from six different studies of scabies
+Using the dates of symptom onset for scabies cases from four different studies of scabies
 outbreaks (Table \@ref(tab:si_results_tab)), we estimated the mean
 and standard deviation of the serial interval distribution using the
 method proposed by Vink et al. [@vink2014]. The method involves
@@ -147,11 +146,8 @@ scabies per 1000 people.
 
 ### Reproduction Number
 
-We obtained weekly reported cases of scabies from 2011 to 2023 in the
-Netherlands [@nivel; @deursen2022]. We performed spectral analysis on
-the time series of weekly scabies cases using a modified Daniell kernel
-(m = 2) for smoothing to identify typical frequencies within the time
-series. To estimate time-varying reproduction number, we first randomly
+We obtained weekly reported cases of scabies per 1000 people from 2011 to 2023 in the
+Netherlands [@nivel; @deursen2022]. To estimate time-varying reproduction number, we first randomly
 assigned each reported case a date of symptom onset in the week in which
 the case was reported. Using the daily time series, we applied the
 method proposed by Wallinga and Teunis [@wallinga_teunis2004] to
@@ -163,7 +159,8 @@ with mean 91.2 and standard deviation 22.79, as estimated previously. To
 obtain confidence intervals on the daily reproduction number, we used 
 bootstrapping.
 
-All analyses were performed in R 4.4.0 [@R-base].
+All analyses were performed in R 4.4.0 [@R-base] using a variety of additional packages not listed previously [@fdrtool; @cowplot; @devtools; @dplyr; @usethis; @ggplot2]. 
+[Packages to add: flextable, ftExtra, knitr, officer, rmarkdown, testthat]
 
 ## Results
 
@@ -187,19 +184,24 @@ si_tab_dat <- data.frame(
   Study = c("Kaburi et al. 2019", 
             "Ariza et al. 2013", 
             "Akunzirwe et al. 2023", 
-            "Tjon-Kon-Fat et al 2021.", 
-            "Larosa et al. 2003", 
-            "Division of Public and Behavioral Health 2015"),
+            "Tjon-Kon-Fat et al 2021."#, 
+            #"Larosa et al. 2003", 
+            #"Division of Public and Behavioral Health 2015"
+            ),
   Details = c("Outbreak of scabies in a preschool in Ghana",
               "Outbreak of scabies in a preschool in Germany",
               "Outbreak of scabies in a fishing community in Uganda",
-              "Outbreak of scabies in a nursing home in the Netherlands",
-              "Outbreak of scabies in a hospital in Spain",
-              "Outbreak of scabies in a long-term care facility in the USA"),
-  Mean = c(167.34, 98.4, 122.92, 110.71, 16.11, 21.92),
-  SD = c(9.72, 8.54, 26.92, 16.14, 2.42, 15.24),
-  Reference = c("[@kaburi2019]", "[@ariza2013]", "[@uganda]", "[@tjon-kon-fat2021]", 
-                "[@larrosa2003]", "[@nevada]")
+              "Outbreak of scabies in a nursing home in the Netherlands"#,
+              #"Outbreak of scabies in a hospital in Spain",
+              #"Outbreak of scabies in a long-term care facility in the USA"
+              ),
+  Mean = c(167.34, 98.4, 122.92, 110.71#, 16.11, 21.92
+           ),
+  SD = c(9.72, 8.54, 26.92, 16.14#, 2.42, 15.24
+         ),
+  Reference = c("[@kaburi2019]", "[@ariza2013]", "[@uganda]", "[@tjon-kon-fat2021]"#, 
+                #"[@larrosa2003]", "[@nevada]"
+                )
 )
 
 ft_si <- flextable(si_tab_dat) %>%
@@ -220,15 +222,21 @@ x <- seq(0, 250, by = 1)
 y1 <- dnorm(x, mean = 167.34442, sd = 9.71763)
 y2 <- dnorm(x, mean = 98.4, sd = 8.542332)
 y3 <- dnorm(x, mean = 122.92385, sd = 26.92035)
-y4 <- dnorm(x, mean = 21.91776, sd = 15.23666)
+#y4 <- dnorm(x, mean = 21.91776, sd = 15.23666)
 y5 <- dnorm(x, mean = 110.71571, sd = 16.13879)
-y6 <- dnorm(x, mean = 16.106246, sd = 2.421762)
+#y6 <- dnorm(x, mean = 16.106246, sd = 2.421762)
+
+study <- c("Kaburi et al.", "Ariza et al.", "Akunzirwe et al.", #"Division of Public and Behavioral Health", 
+             "Tjon-Kon-Fat et al."#, "Larrosa et al."
+           )
 # Create a data frame
 my_data <- data.frame(
-  x = rep(x, 6),
-  y = c(y1, y2, y3, y4, y5, y6),
-  group = factor(rep(c("Kaburi et al.", "Ariza et al.", "Akunzirwe et al.", "Division of Public and Behavioral Health", "Tjon-Kon-Fat et al.", "Larrosa et al."), each = length(x)),
-                 levels = c("Kaburi et al.", "Ariza et al.", "Akunzirwe et al.", "Division of Public and Behavioral Health", "Tjon-Kon-Fat et al.", "Larrosa et al."))
+  x = rep(x, 4),
+  y = c(y1, y2, y3, y5),
+  group = factor(rep(study, each = length(x)),
+                 levels = c("Kaburi et al.", "Ariza et al.", "Akunzirwe et al.", #"Division of Public and Behavioral Health", 
+                            "Tjon-Kon-Fat et al."#, "Larrosa et al."
+                            ))
 )
 
 # Plot serial interval curves
