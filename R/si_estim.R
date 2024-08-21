@@ -63,12 +63,15 @@ si_estim <- function(dat, n = 50, dist = "normal") {
     } else if (dist == "gamma"){
       # estimates for the mean and standard deviation of the primary-secondary
       # infection component
-      opt <- optim(c(mu, sigma), wt_loglik, gr=NULL, method = c("BFGS"), hessian=FALSE)
+      opt <- optim(par = c(mu, sigma), wt_loglik, tau2 = tau[2,], dat = dat,
+                   gr=NULL, method = c("BFGS"), hessian=FALSE)
       mu <- opt$par[1]
       sigma <- opt$par[2]
     }
 
-    rtn <- c(mu, sigma)
+    rtn <- list(mean = mu,
+                sd = sigma,
+                wts = w)
   }
 
   return(rtn)
