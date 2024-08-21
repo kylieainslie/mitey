@@ -15,10 +15,18 @@ wt_loglik <- function(par, dat, tau2){
   k <- (par[1]^2) / (par[2]^2)
   theta <- (par[2]^2) / par[1]
 
-  if(par[1] < 0 | par[2] < 0){
+  if(k < 0 | theta < 0){
     som <- -1000000
   } else{
-    som <- som + sum(log(tau2*dgamma(dat, shape = k, scale = theta)))
+
+    # Calculate gamma density and add a small constant to avoid log(0)
+    epsilon <- 1e-10
+    densities <- tau2 * dgamma(dat, shape = k, scale = theta)
+    densities <- pmax(densities, epsilon)  # Replace zeros with a small constant
+
+    # Compute the negative log-likelihood
+    som <- sum(log(densities))
+    #som <- som + sum(log(tau2*dgamma(dat, shape = k, scale = theta)))
   }
   return(-som)
 }
