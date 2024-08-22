@@ -15,18 +15,21 @@ wt_loglik <- function(par, dat, tau2){
   k <- (par[1]^2) / (par[2]^2)
   theta <- (par[2]^2) / par[1]
 
-  if(k < 0 | theta < 0){
-    som <- -1000000
-  } else{
+  print(paste("k:", k, "theta:", theta))
 
-    # Calculate gamma density and add a small constant to avoid log(0)
-    epsilon <- 1e-10
-    densities <- tau2 * dgamma(dat, shape = k, scale = theta)
-    densities <- pmax(densities, epsilon)  # Replace zeros with a small constant
-
-    # Compute the negative log-likelihood
-    som <- sum(log(densities))
-    #som <- som + sum(log(tau2*dgamma(dat, shape = k, scale = theta)))
+  # Check if k and theta are valid
+  if(k <= 0 || theta <= 0 || !is.finite(k) || !is.finite(theta)){
+    # Apply a large negative penalty if k or theta are invalid
+    return(1e10)
   }
-  return(-som)
+
+  # Calculate the log-likelihood, handling non-finite values
+    log_likelihood <- sum(log(tau2 * dgamma(dat, shape = k, scale = theta)))
+
+    if (!is.finite(log_likelihood)) {
+      return(1e10)  # Apply a large penalty if log-likelihood is non-finite
+    }
+
+    return(-log_likelihood)  # Return negative log-likelihood for minimization
+    #som <- som + sum(log(tau2*dgamma(dat, shape = k, scale = theta)))
 }
