@@ -29,7 +29,7 @@ f0 <- function(x, mu, sigma, comp, dist = "normal") {
   }
 
   if (dist == "normal"){
-    switch(comp,
+    return(switch(comp,
            `1` = (2 - 2 * x) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)),
            `2` = (2 - 2 * x) * dnorm(x, mean = mu, sd = sigma),
            `3` = (2 - 2 * x) * dnorm(x, mean = -mu, sd = sigma),
@@ -37,7 +37,7 @@ f0 <- function(x, mu, sigma, comp, dist = "normal") {
            `5` = (2 - 2 * x) * dnorm(x, mean = -2 * mu, sd = sqrt(2) * sigma),
            `6` = (2 - 2 * x) * dnorm(x, mean = 3 * mu, sd = sqrt(3) * sigma),
            `7` = (2 - 2 * x) * dnorm(x, mean = -3 * mu, sd = sqrt(3) * sigma)
-    )
+    ))
   } else if (dist == "gamma"){
 
     # convert mean and sd for normal distn into shape and scale parameters for gamma distn.
@@ -49,14 +49,19 @@ f0 <- function(x, mu, sigma, comp, dist = "normal") {
 
     if (k <= 0 || theta <= 0) return(0)
 
-    switch(comp,
-           `1` = (2 - 2 * x) * 1/sqrt(pi) * 2^(3/2 - k) * (theta)^(-0.5 - k) * x^(-0.5 + k) * besselK(x/(theta), 0.5 - k) * 1/gamma(k),
+    return(switch(comp,
+           `1` = { # Handle potential numerical issues
+             bessel_val <- besselK(x/(theta), 0.5 - k)
+             # Replace Inf with 0 while keeping finite values
+             bessel_val[!is.finite(bessel_val)] <- 0
+             (2 - 2 * x) * 1/sqrt(pi) * 2^(3/2 - k) * theta^(-0.5 - k) * x^(-0.5 + k) * bessel_val * 1/gamma(k)
+           },
            `2` = (2 - 2 * x) * dgamma(x, shape = k, scale = theta),
            `3` = (2 - 2 * x) * dgamma(x, shape = k, scale = theta),
            `4` = (2 - 2 * x) * dgamma(x, shape = 2 * k, scale = theta),
            `5` = (2 - 2 * x) * dgamma(x, shape = 2 * k, scale = theta),
            `6` = (2 - 2 * x) * dgamma(x, shape = 3 * k, scale = theta),
            `7` = (2 - 2 * x) * dgamma(x, shape = 3 * k, scale = theta)
-    )
+    ))
   }
 }
