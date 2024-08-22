@@ -19,13 +19,15 @@ fupper <- function(x, r, mu, sigma, comp, dist = "normal") {
   }
 
   if (dist == "normal"){
-    if (comp == 1) return((r + 1 - x) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)))
-    if (comp == 2) return((r + 1 - x) * dnorm(x, mean = mu, sd = sigma))
-    if (comp == 3) return((r + 1 - x) * dnorm(x, mean = -mu, sd = sigma))
-    if (comp == 4) return((r + 1 - x) * dnorm(x, mean = 2 * mu, sd = sqrt(2) * sigma))
-    if (comp == 5) return((r + 1 - x) * dnorm(x, mean = -2 * mu, sd = sqrt(2) * sigma))
-    if (comp == 6) return((r + 1 - x) * dnorm(x, mean = 3 * mu, sd = sqrt(3) * sigma))
-    if (comp == 7) return((r + 1 - x) * dnorm(x, mean = -3 * mu, sd = sqrt(3) * sigma))
+    return(switch(comp,
+                  `1` = (r + 1 - x) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)),
+                  `2` = (r + 1 - x) * dnorm(x, mean = mu, sd = sigma),
+                  `3` = (r + 1 - x) * dnorm(x, mean = -mu, sd = sigma),
+                  `4` = (r + 1 - x) * dnorm(x, mean = 2 * mu, sd = sqrt(2) * sigma),
+                  `5` = (r + 1 - x) * dnorm(x, mean = -2 * mu, sd = sqrt(2) * sigma),
+                  `6` = (r + 1 - x) * dnorm(x, mean = 3 * mu, sd = sqrt(3) * sigma),
+                  `7` = (r + 1 - x) * dnorm(x, mean = -3 * mu, sd = sqrt(3) * sigma)
+                  ))
 
   } else if (dist == "gamma"){
 
@@ -33,9 +35,25 @@ fupper <- function(x, r, mu, sigma, comp, dist = "normal") {
     k <- (mu^2) / (sigma^2)
     theta <- (sigma^2) / mu
 
-    if (comp == 1) return((r + 1 - x) * 1/sqrt(pi) * 2^(3/2-k) * (theta)^(-0.5-k) * x^(-0.5+k) * besselK(x/(theta),0.5-k) * 1/gamma(k))
-    if (comp %in% c(2, 3)) return((r + 1 - x) * dgamma(x, shape = k, scale = theta))
-    if (comp %in% c(4, 5)) return((r + 1 - x) * dgamma(x, shape = 2*k, scale = theta))
-    if (comp %in% c(6, 7)) return((r + 1 - x) * dgamma(x, shape = 3*k, scale = theta))
+    if (k <= 0 || theta <= 0) return(0)
+
+    return(switch(comp,
+                  `1` = { # Handle potential numerical issues
+                    bessel_val <- besselK(x/(theta), 0.5 - k)
+                    print(paste("Bessel values:", bessel_val))
+                    # Replace Inf with 0 while keeping finite values
+                    bessel_val[!is.finite(bessel_val)] <- 0
+                    return_val <- (r + 1 - x) * 1/sqrt(pi) * 2^(3/2 - k) * theta^(-0.5 - k) * x^(-0.5 + k) * bessel_val * 1/gamma(k)
+                    # Replace NaN with 0 while keeping finite values
+                    return_val[is.nan(return_val)] <- 0
+                    return_val
+                  },
+                  `2` = (r + 1 - x) * dgamma(x, shape = k, scale = theta),
+                  `3` = (r + 1 - x) * dgamma(x, shape = k, scale = theta),
+                  `4` = (r + 1 - x) * dgamma(x, shape = 2 * k, scale = theta),
+                  `5` = (r + 1 - x) * dgamma(x, shape = 2 * k, scale = theta),
+                  `6` = (r + 1 - x) * dgamma(x, shape = 3 * k, scale = theta),
+                  `7` = (r + 1 - x) * dgamma(x, shape = 3 * k, scale = theta)
+    ))
   }
 }
