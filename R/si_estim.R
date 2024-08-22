@@ -18,6 +18,7 @@
 si_estim <- function(dat, n = 50, dist = "normal") {
 
   j <- length(dat)
+  dat <- ifelse(dat == 0, 0.00001, dat)
 
   # Initial guesses
   mu <- mean(dat)
@@ -33,10 +34,12 @@ si_estim <- function(dat, n = 50, dist = "normal") {
 
   # Iterations
   for (k in 1:n) {
+
     tau <- matrix(0, nrow = length(comp_vec), ncol = j)
 
     for (l in 1:j) {
-      if (dat[l] == 0) {
+
+      if (dat[l] == 0.00001) {
         for (comp in 1:length(comp_vec)) {
           tau[comp, l] <- integrate_component(dat[l], mu, sigma, comp = comp_vec[comp],
                                               dist = dist, lower = FALSE)
