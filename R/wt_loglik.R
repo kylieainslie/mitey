@@ -15,8 +15,6 @@ wt_loglik <- function(par, dat, tau2){
   k <- (par[1]^2) / (par[2]^2)
   theta <- (par[2]^2) / par[1]
 
-  print(paste("k:", k, "theta:", theta))
-
   # Check if k and theta are valid
   if(k <= 0 || theta <= 0 || !is.finite(k) || !is.finite(theta)){
     # Apply a large negative penalty if k or theta are invalid

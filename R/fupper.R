@@ -40,7 +40,6 @@ fupper <- function(x, r, mu, sigma, comp, dist = "normal") {
     return(switch(comp,
                   `1` = { # Handle potential numerical issues
                     bessel_val <- besselK(x/(theta), 0.5 - k)
-                    print(paste("Bessel values:", bessel_val))
                     # Replace Inf with 0 while keeping finite values
                     bessel_val[!is.finite(bessel_val)] <- 0
                     return_val <- (r + 1 - x) * 1/sqrt(pi) * 2^(3/2 - k) * theta^(-0.5 - k) * x^(-0.5 + k) * bessel_val * 1/gamma(k)

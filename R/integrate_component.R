@@ -15,6 +15,7 @@ integrate_component <- function(d, mu, sigma, comp, dist = c("normal", "gamma"),
                                 lower = TRUE) {
 
   if (lower) {
+
     return(integrate(f = flower,
                      lower = (d - 1),
                      upper = d,
@@ -36,6 +37,7 @@ integrate_component <- function(d, mu, sigma, comp, dist = c("normal", "gamma"),
                     )[[1]]
           )
   } else {
+
     return(integrate(f = f0,
                      lower = d,
                      upper = (d + 1),

@@ -35,17 +35,11 @@ flower <- function(x, r, mu, sigma, comp, dist = "normal") {
     k <- (mu^2) / (sigma^2)
     theta <- (sigma^2) / mu
 
-    print(paste("x:", x))
-    print(paste("r:", r))
-    print(paste("k:", k))
-    print(paste("theta:", theta))
-
     if (k <= 0 || theta <= 0) return(0)
 
     return(switch(comp,
                   `1` = { # Handle potential numerical issues
                     bessel_val <- besselK(x/(theta), 0.5 - k)
-                    print(paste("Bessel values:", bessel_val))
                     # Replace Inf with 0 while keeping finite values
                     bessel_val[!is.finite(bessel_val)] <- 0
                     return_val <- (x - r + 1) * 1/sqrt(pi) * 2^(3/2 - k) * theta^(-0.5 - k) * x^(-0.5 + k) * bessel_val * 1/gamma(k)
