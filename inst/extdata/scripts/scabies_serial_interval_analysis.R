@@ -2,7 +2,7 @@
 # sources
 
 # load required packages
-library(ggplot2)
+library(tidyverse)
 library(brms)
 library(devtools)
 load_all()
@@ -17,20 +17,61 @@ load_all()
 si_data <- readRDS("inst/extdata/data/si_data.rds")
 
 # use method from Vink et al. to estimate SI for each study
-# assume a normal distribution
+# assume a normal distribution, then do some wrangling
 result_norm <- si_data %>%
   select(icc_interval, study) %>%
   group_by(study) %>%
-  reframe(value = si_estim(icc_interval)) %>%
-  mutate(statistic = rep(c("mean", "sd"), 6))
+  summarise(result = list(si_estim(icc_interval))) %>%
+  mutate(
+    mean = map_dbl(result, "mean"),
+    sd = map_dbl(result, "sd"),
+    wts = map(result, "wts")  # Store wts as a list-column
+  ) %>%
+  select(-result) %>%
+  unnest(wts) %>% # Unnest the wts column if needed %>%
+  pivot_longer(
+    cols = c(mean, sd, wts),
+    names_to = "statistic",
+    values_to = "value"
+  ) %>%
+  group_by(study, statistic) %>%
+  mutate(
+    occurrence = row_number(),
+    statistic = if_else(statistic == "wts", paste0("weight_", occurrence), statistic)
+  ) %>%
+  filter(statistic != "mean" | occurrence == 1) %>%
+  filter(statistic != "sd" | occurrence == 1) %>%
+  select(-occurrence) %>%
+  ungroup()
+
 
 # perform sensitivity analysis
 # assume a gamma distribution
 result_gam <- si_data %>%
   select(icc_interval, study) %>%
   group_by(study) %>%
-  reframe(value = si_estim(icc_interval, dist = "gamma")) %>%
-  mutate(statistic = rep(c("mean", "sd"), 6))
+  summarise(result = list(si_estim(icc_interval, dist = "gamma"))) %>%
+  mutate(
+    mean = map_dbl(result, "mean"),
+    sd = map_dbl(result, "sd"),
+    wts = map(result, "wts")  # Store wts as a list-column
+  ) %>%
+  select(-result) %>%
+  unnest(wts) %>% # Unnest the wts column if needed %>%
+  pivot_longer(
+    cols = c(mean, sd, wts),
+    names_to = "statistic",
+    values_to = "value"
+  ) %>%
+  group_by(study, statistic) %>%
+  mutate(
+    occurrence = row_number(),
+    statistic = if_else(statistic == "wts", paste0("weight_", occurrence), statistic)
+  ) %>%
+  filter(statistic != "mean" | occurrence == 1) %>%
+  filter(statistic != "sd" | occurrence == 1) %>%
+  select(-occurrence) %>%
+  ungroup()
 
 
 # Plot serial interval curves
