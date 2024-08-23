@@ -14,16 +14,12 @@ plot_si_fit <- function(dat, mean, sd, weights, dist="normal"){
   if (dist == "gamma"){
 
   # Define breaks
-  breaks <- if(s == 9) {
-    seq(min(dat) - 0.51, max(dat) + 5.51, by = 5)
-  } else {
-    seq(min(dat) - 0.51, max(dat) + 0.51, by = 1)
-  }
+  breaks <- seq(min(dat) - 0.51, max(dat) + 0.51, by = 1)
 
   # Create the plot
-  p <- ggplot(data = data.frame(x = dat), aes(x = x)) +
-    geom_histogram(aes(y = ..density..), breaks = breaks, fill = "lightblue", color = "black") +
-    stat_function(fun = f3,
+  p <- ggplot(data = data.frame(x = dat), aes(x = .data$x)) +
+    geom_histogram(aes(y = after_stat(.data$density)), breaks = breaks, fill = "lightblue", color = "black") +
+    stat_function(fun = f_gam,
                   args = list(w1 = weights[1], w2 = weights[2], w3 = weights[3],
                               mu = mean, sigma = sd),
                   color = "red", linetype = "dashed", size = 1) +
@@ -36,9 +32,9 @@ plot_si_fit <- function(dat, mean, sd, weights, dist="normal"){
     breaks <- seq(min(dat) - 0.51, max(dat) + 0.51, by = 1)
 
     # Create the plot
-    p <- ggplot(data = data.frame(x = dat), aes(x = x)) +
-      geom_histogram(aes(y = ..density..), breaks = breaks, fill = "lightblue", color = "black") +
-      stat_function(fun = f4, args = list(w1 = weights[1], w2 = weights[2], w3 = weights[3],
+    p <- ggplot(data = data.frame(x = dat), aes(x = .data$x)) +
+      geom_histogram(aes(y = after_stat(.data$density)), breaks = breaks, fill = "lightblue", color = "black") +
+      stat_function(fun = f_norm, args = list(w1 = weights[1], w2 = weights[2], w3 = weights[3],
                                           mu = mean, sigma = sd),
                     color = "red", linetype = "solid", size = 1) +
       labs(x = "Index-case to case interval (days)", y = "Density") +
