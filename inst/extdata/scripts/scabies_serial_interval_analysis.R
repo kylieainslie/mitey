@@ -5,6 +5,11 @@
 library(tidyverse)
 library(cowplot)
 library(brms)
+library(tidybayes)
+library(ggridges)
+library(glue)
+library(stringr)
+library(forcats)
 library(devtools)
 load_all()
 
@@ -85,7 +90,7 @@ labeled_plots <- lapply(seq_along(plots), function(i) {
 
 # Combine plots into a multi-pane figure
 final_plot <- plot_grid(
-  plotlist = labeled_plots,
+  plotlist = labeled_plots[-c(3,5)], # exclude DPBH and Larrosa
   labels = "AUTO",      # Automatically adds labels (A, B, C, etc.)
   label_size = 14,      # Size of the labels
   ncol = 2              # Number of columns; adjust as needed
@@ -93,6 +98,10 @@ final_plot <- plot_grid(
 
 # Display the final combined plot
 print(final_plot)
+
+# save plot
+ggsave("vignettes/figures/epidemic_curve_density_plot.png", plot = final_plot,
+       width = 7, height = 5, dpi = 300, units = "in")
 # ------------------------------------------------------------------------------
 
 # Perform a Bayesian meta-analysis
@@ -164,11 +173,6 @@ ggplot(aes(x = tau), data = post.samples) +
   theme_minimal()
 
 # Create forest plot with posteriors
-library(tidybayes)
-library(ggridges)
-library(glue)
-library(stringr)
-library(forcats)
 
 # get posterior draws from each study
 study.draws <- spread_draws(m.brm, r_study[study,], b_Intercept) %>%
@@ -235,3 +239,8 @@ forest_plot <- ggplot(aes(b_Intercept,
     )
 
 print(forest_plot)
+
+# save plot
+ggsave("vignettes/figures/meta-analysis_forest_plot.png", plot = forest_plot,
+       width = 7, height = 5, dpi = 300, units = "in")
+
