@@ -32,6 +32,7 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 ```{r setup, echo=FALSE, include = FALSE, results='hide'}
 library(flextable)
 library(ftExtra)
+library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(cowplot)
@@ -167,11 +168,7 @@ All analyses were performed in R 4.4.0 [@R-base] using a variety of additional p
 ### Serial Interval
 
 We estimated the mean and standard deviation of the serial interval
-using the epidemic curves from each study (Table \@ref(si_results_tab)). 
-
-[Figure of epidemic curves!]
-
-There was considerable variation between
+using the epidemic curves from each study (Table \@ref(si_results_tab)). There was considerable variation between
 studies with the largest estimated mean serial interval of 167.34 (SD =
 9.72) from data from Kaburi et al. [@kaburi2019] which describes an
 outbreak in a preschool in Ghana. The smallest estimated mean serial
@@ -210,82 +207,31 @@ ft_si <- flextable(si_tab_dat) %>%
   border_remove() %>%
   border(i = 1, border.top = officer::fp_border(width = 1), part = "header") %>%
   border(i = 1, border.bottom = officer::fp_border(width = 1), part = "header") %>%
-  border(i = 6, border.bottom = officer::fp_border(width = 1), part = "body") 
+  border(i = 4, border.bottom = officer::fp_border(width = 1), part = "body") 
 
 ft_si
 ```
 
-```{r si_dist_plot, echo=FALSE, eval=TRUE}
-
-# Data preparation
-x <- seq(0, 250, by = 1)
-y1 <- dnorm(x, mean = 167.34442, sd = 9.71763)
-y2 <- dnorm(x, mean = 98.4, sd = 8.542332)
-y3 <- dnorm(x, mean = 122.92385, sd = 26.92035)
-#y4 <- dnorm(x, mean = 21.91776, sd = 15.23666)
-y5 <- dnorm(x, mean = 110.71571, sd = 16.13879)
-#y6 <- dnorm(x, mean = 16.106246, sd = 2.421762)
-
-study <- c("Kaburi et al.", "Ariza et al.", "Akunzirwe et al.", #"Division of Public and Behavioral Health", 
-             "Tjon-Kon-Fat et al."#, "Larrosa et al."
-           )
-# Create a data frame
-my_data <- data.frame(
-  x = rep(x, 4),
-  y = c(y1, y2, y3, y5),
-  group = factor(rep(study, each = length(x)),
-                 levels = c("Kaburi et al.", "Ariza et al.", "Akunzirwe et al.", #"Division of Public and Behavioral Health", 
-                            "Tjon-Kon-Fat et al."#, "Larrosa et al."
-                            ))
-)
-
-# Plot serial interval curves
-p_si1 <- ggplot(my_data, aes(x = x, y = y, color = group)) +
-  geom_line(linewidth = 1) +
-  labs(x = "Time (days)",
-       y = "Density") +
-  scale_color_viridis_d() +
-  theme_minimal() +
-  theme(
-    #legend.position = "bottom",
-    plot.title = element_text(hjust = 0.5),
-    legend.title = element_blank()
-  )
+```{r si_dist_plot, echo=FALSE, eval=TRUE, fig.cap="Epidemic curves and estimated serial interval distributions from four scabies outbreaks. Red line indicates estimated serial interval density assuming an underlying normal distribution."}
+knitr::include_graphics("figures/epidemic_curve_density_plot.png")
 ```
 
 To obtain a pooled estimate of mean serial interval, we performed a
 Bayesian meta-analysis with random intercepts for each study. We
-estimated a pooled mean serial interval of 91.20 (95% CI: 45.84, 138.04)
-(Figure \@ref(fsi_multi-plot)B). As we saw with the individual study
+estimated a pooled mean serial interval of 123.24 (95% credible interval: 91.44, 153.41)
+(Figure \@ref(forest_plot). As we saw with the individual study
 estimates (Table \@ref(si_results_tab)), the meta-analysis provided
 further evidence of substantial heterogeneity among studies due to a
-large value of the standard deviation of the random intercepts (60.7).
+large value of the standard deviation of the random intercepts (31.55).
 The large variation in the mean serial interval estimates can be
 visualised by plotting the estimated distributions of each study's
-serial interval shown in Figure \@ref(si_multi-plot)A. A normal
+serial interval shown in Figure \@ref(si_dist_plot). A normal
 distribution is assumed, and is parameterized by the estimated mean and
 standard deviation of serial interval for each study.
 
-```{r si_forest_plot, echo=FALSE, eval = TRUE}
-# read in data for plot
-forest_data <- readRDS("data_for_forest_plot.RDS")
 
-# Create the forest plot using ggplot2
-p_si2 <- ggplot(forest_data, aes(x = estimate, y = country, xmin = lower, xmax = upper, color = type)) +
-  geom_point() +
-  geom_errorbarh(height = 0.2) +
-  geom_vline(xintercept = 91.2, linetype = "dashed", color = "red") +
-  #posterior_summary(m.brm, variable = "Intercept")[, "Estimate"],
-  labs(x = "Effect Size", y = "") +
-  theme_minimal() +
-  scale_color_manual(values = c("Study" = "blue", "Pooled" = "red")) +
-  theme(legend.position = "none")
-```
-
-```{r si_multi-plot, echo = FALSE, eval = TRUE, fig.cap="A) Estimated serial interval distributions using data from epidemic curves from different scabies outbreaks. B) Forest plot of estimated mean serial interval and pooled mean."}
-
-combined_plot <- plot_grid(p_si1, p_si2, ncol = 1, labels = c("A", "B"))
-combined_plot
+```{r forest_plot, echo = FALSE, eval = TRUE, fig.cap="Forest plot of estimated mean serial intervals and pooled mean."}
+knitr::include_graphics("figures/meta-analysis_forest_plot.png")
 ```
 
 ### Growth Rate and Basic Reproduction Number
@@ -293,20 +239,17 @@ combined_plot
 We estimated the annual growth rate of scabies cases by fitting an
 exponential growth model to annual incidence of scabies per 1000 people
 from 2011 to 2023 in the Netherlands [@nivel]. We estimated an annual
-growth rate of 0.353 (95% CI: 0.152, 0.452). Using the fitted
-exponential growth model and the estimated growth rate, we then
+growth rate of 0.353 (95% CI: 0.152, 0.452). Using the estimated growth rate, we can estimate the basic reproduction number as R0 = 1 + (0.353 * 1/b), where b is the generation time in days [@wallinga2007]. Using the previously estimated pooled mean serial interval as a proxy for generation time, we estimate R0 = 1.002 (1.001, 1.004). Using the fitted exponential growth model and the estimated growth rate, we then
 determined the projected incidence of scabies per 1000 people until 2033
 if no interventions are implemented. We found that there could be a
 substantial increase in scabies incidence in the next 10 years in the
 Netherlands if no measures are taken to mitigate scabies spread (Figure
 \@ref(fig:growth_rate_fig)).
 
-[TODO] Add estimate of basic reproduction number based on growth rate and generation time (use mean serial interval). R0 = 1 + (0.353 * 1/b), where b is the generation time in days.
-
 ```{r growth_rate_fig, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center', fig.cap="Scabies incidence per 1000 people from 2011 to 2023 (points) and then projected scabies indcidence per 1000 people for 2024 to 2033 (line) using an exponential growth model with annual growth rate = 0.353. Shaded regions represent 95% confidence intervals for projected scabies incidence.", out.width="100%"}
 
 # read in df for plot
-scabies_plot_df <- readRDS("scabies_gr_proj_df.rds")
+scabies_plot_df <- readRDS("data/scabies_gr_proj_df.rds")
 
 # Define the custom palette
 custom_palette <- c("#21908C", "#440154") # Custom colors
@@ -346,7 +289,7 @@ occurs in the autumn and in some years extend into winter (Figure
 \\\@ref(rt_plot)).
 
 ```{r rt_plot, echo=FALSE, fig.cap="Time-varying reproduction number of scabies transmission. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August. 31; Autumn = September 1 – November 31.", out.width="100%"}
-knitr::include_graphics("rt_plot.png")
+knitr::include_graphics("figures/rt_plot.png")
 ```
 Note: This is a place-holder figure.
 
@@ -376,15 +319,67 @@ rmarkdown::render("vignettes/epidemiology_of_scabies.Rmd", output_format = "word
 ```
 ## Sensitivity Analyses
 
+### Serial Interval
+Assume Gamma distribution to estimate mean serial interval
+
+```{r, si_results_gam, echo=FALSE, eval=TRUE}
+# read in data
+si_data <- readRDS("data/si_data.rds")
+
+# assume a gamma distribution
+result_gam <- si_data %>%
+  select(icc_interval, study) %>%
+  group_by(study) %>%
+  summarise(result = list(si_estim(icc_interval, dist = "gamma"))) %>%
+  mutate(
+    mean = map_dbl(result, "mean"),
+    sd = map_dbl(result, "sd"),
+    wts = map(result, "wts")  # Store wts as a list-column
+  ) %>%
+  select(-result) %>%
+  unnest(wts) %>% # Unnest the wts column if needed %>%
+  pivot_longer(
+    cols = c(mean, sd, wts),
+    names_to = "statistic",
+    values_to = "value"
+  ) %>%
+  group_by(study, statistic) %>%
+  mutate(
+    occurrence = row_number(),
+    statistic = if_else(statistic == "wts", paste0("weight_", occurrence), statistic)
+  ) %>%
+  filter(statistic != "mean" | occurrence == 1) %>%
+  filter(statistic != "sd" | occurrence == 1) %>%
+  select(-occurrence) %>%
+  ungroup()
+
+# Plot serial interval curves
+# Reshape results from long to wide format
+result_gam_wide <- result_gam %>%
+  pivot_wider(
+    names_from = statistic,
+    values_from = value
+  )
+```
+
+```{r gam_table, echo=FALSE}
+tab_si_gam <- flextable(result_gam_wide[,c(1:3)]) %>%
+  autofit(add_w = 0.2) %>%
+  bold(part = "header") %>%
+  border_remove() %>%
+  border(i = 1, border.top = officer::fp_border(width = 1), part = "header") %>%
+  border(i = 1, border.bottom = officer::fp_border(width = 1), part = "header") %>%
+  border(i = dim(result_gam_wide)[1], border.bottom = officer::fp_border(width = 1), part = "body") 
+
+tab_si_gam
+```
+
+Meta-analysis results using Gamma distribution
+```{r gam_eta_analysis_fig, echo=FALSE, eval=TRUE}
+knitr::include_graphics("figures/gam_meta-analysis_forest_plot.png")
+```
+
 TODO:
-
- - add gamma distribution to Vink et al. method and re-run estimation
-
- - re-run meta-analysis assuming gamma distribution
-
- - potentially remove Uganda estimate from meta-analysis because it's
-community transmission and not a confined setting (e.g., school,
-hospital, care home)
 
  - check prior assumptions for meta-analysis
  
