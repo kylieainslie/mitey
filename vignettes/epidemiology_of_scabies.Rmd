@@ -59,11 +59,9 @@ as the incubation time (time from exposure to symptom onset), generation time (t
 index case to the time of symptom onset in a secondary case), growth
 rate, and reproduction number (the average number of secondary cases
 resulting from one index case). 
-A 1944 study by Mellanby [@mellanby1944]
-forms much of the basis of our current understanding of scabies
-transmission; however, the study was carried out on a small number of
-healthy volunteers and may not be representative of the natural
-history of scabies in populations in which scabies in widespread. Some important results from Mellanby include... [Add key results from Mellanby 1944: curve of mites over time, time to symptom onset, probability of transmission from secondary objects]
+A series of studies in the 1940s by Kenneth Mellanby [@mellanby1944]
+form much of the basis of our current understanding of scabies
+transmission. Some important results from Mellanby include... [Add key results from Mellanby 1944: curve of mites over time, time to symptom onset, probability of transmission from secondary objects]
 
 In this work, we aim to estimate epidemiological characteristics of scabies.
 It is critical to better understand the underlying disease dynamics of
@@ -105,10 +103,7 @@ number and annual growth rate. [not sure this should be in the intro]
 
 ### Data Sources
 
-We used publicly available data on reported symptom onset dates of scabies cases from previously published studies of scabies
-outbreaks (Table \@ref(tab:data_sources_table)) to estimate the serial
-interval of scabies. When the original study data was not provided, we
-reconstructed the data from the published epidemic curves. Additionally, we used data on the incidence of scabies over time in the Netherlands to estimate reproduction number and growth rate. These data have been described elsewhere [@deursen2022; @hasselaar]. Briefly, we obtained weekly incidence of scabies (per 1000 people) from 2011 to 2023 as diagnosed by general practitioners (GPs) that are stored in a nationally representative primary care database of GPs hosted by the Netherlands Institute for Health Services Research (Nivel) [@hasselaar]. Scabies is not a notifiable disease in the Netherlands, and thus information on scabies cases can only be obtained from GP diagnoses. Individuals in institutions (e.g., care homes) are generally not taken into account in these registrations. 
+We used publicly available data on reported symptom onset dates of scabies cases from previously published studies of scabies outbreaks (Table \@ref(tab:data_sources_table)) to estimate the serial interval of scabies. When the original study data was not provided, we reconstructed the data from the published epidemic curves. Additionally, we used data on the incidence of scabies over time in the Netherlands to estimate reproduction number and growth rate. These data have been described elsewhere [@deursen2022; @hasselaar]. Briefly, we obtained weekly incidence of scabies (per 1000 people) from 2011 to 2023 as diagnosed by general practitioners (GPs) that are stored in a nationally representative primary care database of GPs hosted by the Netherlands Institute for Health Services Research (Nivel) [@hasselaar]. Scabies is not a notifiable disease in the Netherlands, and thus information on scabies cases can only be obtained from GP diagnoses. Individuals in institutions (e.g., care homes) are generally not taken into account in these registrations. 
 
 ### Serial Interval
 
@@ -131,37 +126,21 @@ effects model because we assume that each study has its own “true”
 serial interval, which has been sampled from an overarching distribution of
 true serial intervals [@harrer]. We specified a prior distribution N(100,
 50) for the true pooled mean and Cauchy(0,1) for the
-between-study heterogeneity. We performed sensitivity analyses on our
-choices of prior distributions [TODO!].
+between-study heterogeneity. 
+
+[TODO!] We performed sensitivity analyses on our
+choices of prior distributions.
 
 ### Growth rate
 
-We estimated the annual growth rate of scabies cases by fitting an
-exponential growth model to annual incidence of scabies per 1000 people
-from 2011 to 2023 in the Netherlands [@nivel]. Using the fitted
-exponential growth model and the estimated growth rate, we then
-determined the projected incidence of scabies per 1000 people until 2033
-if no interventions are implemented. We used bootstrapping with 1000
-samples to obtain 95% confidence bounds for the projected incidence of
-scabies per 1000 people.
+We estimated the annual growth rate of scabies cases by fitting an exponential growth model to annual incidence of scabies per 1000 people from 2011 to 2023 in the Netherlands [@nivel]. We assumed normally distributed errors, with mean zero and constant variance. Using the fitted exponential growth model and the estimated growth rate, we then determined the projected incidence of scabies per 1000 people until 2033 if no interventions are implemented and the growth rate remains constant. We used bootstrapping with 1000 samples to obtain 95% confidence bounds for the projected incidence of scabies per 1000 people.
 
 ### Reproduction Number
 
-We obtained weekly reported cases of scabies per 1000 people from 2011 to 2023 in the
-Netherlands [@nivel; @deursen2022]. To estimate time-varying reproduction number, we first randomly
-assigned each reported case a date of symptom onset in the week in which
-the case was reported. Using the daily time series, we applied the
-method proposed by Wallinga and Teunis [@wallinga_teunis2004] to
-estimate the time-varying reproduction number by determining the
-likelihood of an event occurring for every pair of time points
-[@wallinga2007]. The method requires the specification of the serial
-interval distribution. We assumed a Normal serial interval distribution
-with mean 91.2 and standard deviation 22.79, as estimated previously. To
-obtain confidence intervals on the daily reproduction number, we used 
-bootstrapping.
+We obtained weekly reported cases of scabies per 1000 people from 2011 to 2023 in the Netherlands [@nivel; @deursen2022]. To estimate time-varying reproduction number, we first randomly assigned each reported case a date of symptom onset in the week in which the case was reported. Using the daily time series, we applied the method proposed by Wallinga and Teunis [@wallinga_teunis2004] to estimate the time-varying reproduction number by determining the likelihood of an event occurring for every pair of time points [@wallinga2007]. The method requires the specification of the serial interval distribution. We assumed a Normal serial interval distribution with mean 91.2 days and standard deviation 22.79 days, as estimated previously. To obtain confidence intervals on the daily reproduction number, we used bootstrapping. 
+[TODO!] We performed a sensitivity analysis in which we assumed the serial interval was Gamma distributed.
 
-All analyses were performed in R 4.4.0 [@R-base] using a variety of additional packages not listed previously [@fdrtool; @cowplot; @devtools; @dplyr; @usethis; @ggplot2]. 
-[Packages to add: flextable, ftExtra, knitr, officer, rmarkdown, testthat]
+All analyses were performed in R 4.4.0 [@R-base]. Additional R packages used in this work are cited in the Appendix.
 
 ## Results
 
@@ -278,14 +257,7 @@ ggplot(scabies_plot_df, aes(x = time, y = cases_mean, color = type, fill = type)
 
 ### Reproduction Number
 
-We first performed a spectral analysis on the time series of weekly
-scabies cases in Netherlands from 2011 to 2023 using a modified Daniell
-kernel (m = 2) for smoothing. We found typical frequencies at 1/51.4
-weeks and at 1/26.67 weeks (where 26.67 weeks is \~187 days). This
-suggests that there is a generation interval at 187 days and strong
-annual periodicity. We also estimated time-varying reproduction number
-and plotted it against season. It appears that peak transmissibility
-occurs in the autumn and in some years extend into winter (Figure
+We estimated time-varying reproduction number and plotted it against season. It appears that peak transmissibility occurs in the autumn and in some years extend into winter (Figure
 \\\@ref(rt_plot)).
 
 ```{r rt_plot, echo=FALSE, fig.cap="Time-varying reproduction number of scabies transmission. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August. 31; Autumn = September 1 – November 31.", out.width="100%"}
@@ -379,8 +351,12 @@ Meta-analysis results using Gamma distribution
 knitr::include_graphics("figures/gam_meta-analysis_forest_plot.png")
 ```
 
-TODO:
+## TODO:
 
  - check prior assumptions for meta-analysis
  
  - more in-depth analysis of Rt
+ 
+## Computing details
+The additional R packages used in this work that have not previously been mentioned or cited in the main text are `fdrtool`[@fdrtool], `cowplot` [@cowplot], `devtools` [@devtools], `dplyr` [@dplyr], `usethis` [@usethis], `ggplot2` [@ggplot2]. 
+[Packages to add: flextable, ftExtra, knitr, officer, rmarkdown, testthat]
