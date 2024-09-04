@@ -48,7 +48,7 @@ library(devtools)
 load_all()
 ```
 
-## Introduction
+# Introduction
 
 Scabies is classified as a neglected tropical disease caused by
 infestation of the skin with a microscopic mite (Sarcoptes scabiei)
@@ -112,9 +112,9 @@ literature to estimate the mean serial interval of scabies. We use also data on 
 scabies cases in the Netherlands to estimate time-varying reproduction
 number and annual growth rate. To our knowledge, this is the first study to estimate these quantities for scabies.
 
-## Methods
+# Methods
 
-### Data Sources
+## Data Sources
 
 We used publicly available data on reported symptom onset dates of
 scabies cases from previously published studies of scabies outbreaks to
@@ -132,7 +132,7 @@ and thus information on scabies cases can only be obtained from GP
 diagnoses. Individuals in institutions (e.g., care homes) are generally
 not taken into account in these registrations.
 
-### Serial Interval
+## Serial Interval
 
 Using the dates of symptom onset for scabies cases from four different
 studies of scabies outbreaks (Table \@ref(tab:si_results_tab)), we
@@ -235,7 +235,7 @@ m.brm <- brm(
 )
 ```
 
-### Growth rate
+## Growth rate
 
 We estimated the annual growth rate of scabies cases by fitting an
 exponential growth model to annual incidence of scabies per 1000 people
@@ -354,7 +354,7 @@ scabies_plot_df <- bind_rows(
 )
 ```
 
-### Reproduction Number
+## Time-varying Reproduction Number
 
 We obtained weekly reported cases of scabies per 1000 people from 2011
 to 2023 in the Netherlands [@nivel; @deursen2022]. To estimate
@@ -365,18 +365,18 @@ Wallinga and Teunis [@wallinga_teunis2004] to estimate the time-varying
 reproduction number by determining the likelihood of an event occurring
 for every pair of time points [@wallinga2007]. The method requires the
 specification of the serial interval distribution. We assumed a Normal
-serial interval distribution with mean 91.2 days and standard deviation
-22.79 days, as estimated previously. To obtain confidence intervals on
-the daily reproduction number, we used bootstrapping. [TODO!] We
+serial interval distribution with mean 123.24 days and standard deviation
+31.55 days, as estimated previously. To obtain confidence intervals on
+the daily reproduction number, we used bootstrapping. We
 performed a sensitivity analysis in which we assumed the serial interval
 was Gamma distributed.
 
 All analyses were performed in R 4.4.0 [@R-base]. Additional R packages
 used in this work are cited in the Appendix.
 
-## Results
+# Results
 
-### Serial Interval
+## Serial Interval
 
 We estimated the mean and standard deviation of the serial interval
 using the epidemic curves from each study (Table
@@ -386,7 +386,7 @@ studies with the largest estimated mean serial interval of 167.34 days
 describes an outbreak in a preschool in Ghana. The smallest estimated
 mean serial interval was 16.11 days (SD = 2.42 days), and was estimated
 from data from Larrosa et al. [@larrosa2003] which describes an outbreak
-in a hospital in Spain.
+in a hospital in Spain. We performed a sensitivity analysis in which we estimated the mean and standard deviation of the serial interval assuming an underlying Gamma distribution (Table \@ref(tab:tab_si_gam) and Figure \@ref(fig:gam_si_plots)). We found that we obtained similar mean estimates as compared to assuming an underlying Normal distribution (albeit lower for most studies), but the estimated standard deviations were large. Model fit was assessed visually by plotting the estimated densities over the epidemic curves (Figure \@ref(fig:gam_si_plot)) and we found that the Gamma distribution was not a good fit of the data.
 
 ```{r si_results_tab, echo=FALSE, tab.cap="Estimated mean and standard deviation (SD) of serial interval distribution, in days, for each study."}
 df_si <- result_norm_wide %>%
@@ -468,11 +468,11 @@ distributions of each study's serial interval shown in Figure
 parameterized by the estimated mean and standard deviation of serial
 interval for each study.
 
-```{r forest_plot, echo = FALSE, eval = TRUE, fig.cap="Forest plot of estimated mean serial intervals and pooled mean.", fig.height = 8, fig.width = 6}
+```{r forest_plot, echo = FALSE, eval = TRUE, fig.cap="Forest plot of estimated mean serial intervals and pooled mean.", fig.height = 4, fig.width = 4}
 knitr::include_graphics("figures/meta-analysis_forest_plot.png")
 ```
 
-### Growth Rate and Basic Reproduction Number
+## Growth Rate and Basic Reproduction Number
 
 We estimated the annual growth rate of scabies cases by fitting an
 exponential growth model to annual incidence of scabies per 1000 people
@@ -489,7 +489,7 @@ substantial increase in scabies incidence in the next 10 years in the
 Netherlands if no measures are taken to mitigate scabies spread (Figure
 \@ref(fig:growth_rate_fig)).
 
-```{r growth_rate_fig, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center', fig.cap="Scabies incidence per 1000 people from 2011 to 2023 (points) and then projected scabies indcidence per 1000 people for 2024 to 2033 (line) using an exponential growth model with annual growth rate = 0.353. Shaded regions represent 95% confidence intervals for projected scabies incidence.", out.width="100%"}
+```{r growth_rate_fig, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center', fig.cap="Scabies incidence per 1000 people from 2011 to 2023 (points) and then projected scabies indcidence per 1000 people for 2024 to 2033 (line) using an exponential growth model with annual growth rate = 0.353. Shaded regions represent 95% confidence intervals for projected scabies incidence. The y-axis is displayed on the log-scale and represents the natural log of scabies incidence per 1000 people.", out.width="100%"}
 
 # read in df for plot
 #scabies_plot_df <- readRDS("data/scabies_gr_proj_df.rds")
@@ -498,18 +498,18 @@ Netherlands if no measures are taken to mitigate scabies spread (Figure
 custom_palette <- c("#21908C", "#440154") # Custom colors
 
 # Plot with custom palette and specified line and point styles
-ggplot(scabies_plot_df, aes(x = time, y = cases_mean, color = type, fill = type)) +
+ggplot(scabies_plot_df, aes(x = time, y = log(cases_mean), color = type, fill = type)) +
   # Points with no line through them
-  geom_point(data = filter(scabies_plot_df, type == "Original Data"), aes(y = cases), size = 2, shape = 16) +
+  geom_point(data = filter(scabies_plot_df, type == "Original Data"), aes(y = log(cases)), size = 2, shape = 16) +
   # Line with points for other types
-  geom_line(data = filter(scabies_plot_df, type != "Original Data"), aes(y = cases_mean), linewidth = 1.2) +
-  geom_point(data = filter(scabies_plot_df, type != "Original Data"), aes(y = cases), size = 2, shape = 16) +
+  geom_line(data = filter(scabies_plot_df, type != "Original Data"), aes(y = log(cases_mean)), linewidth = 1.2) +
+  geom_point(data = filter(scabies_plot_df, type != "Original Data"), aes(y = log(cases)), size = 2, shape = 16) +
 
   # Ribbon for the confidence interval
-  geom_ribbon(aes(ymin = cases_lower, ymax = cases_upper, fill = type), alpha = 0.2, color = NA) +
+  geom_ribbon(aes(ymin = log(cases_lower), ymax = log(cases_upper), fill = type), alpha = 0.2, color = NA) +
 
   # Labels and theme
-  labs(x = "Year", y = "Incidence per 1000",
+  labs(x = "Year", y = "Log(Incidence of scabies cases per 1000 people)",
        color = "Data Type", fill = "Data Type") +
   scale_color_manual(values = custom_palette) +
   scale_fill_manual(values = custom_palette) +
@@ -518,7 +518,7 @@ ggplot(scabies_plot_df, aes(x = time, y = cases_mean, color = type, fill = type)
 
 ```
 
-### Reproduction Number
+## Time-varying Reproduction Number
 
 We estimated time-varying reproduction number and plotted it against
 season. It appears that peak transmissibility occurs in the autumn and
@@ -559,7 +559,7 @@ rmarkdown::render("vignettes/epidemiology_of_scabies.Rmd", output_format = "word
 
 ### Serial Interval
 
-Assume Gamma distribution to estimate mean serial interval
+We performed a sensitivity analysis on the underlying distribution of serial interval. In the main analysis we assumed the serial interval was normally distributed. In the sensitivity analysis we assumed the serial interval was Gamma distributed. The estimated mean and standard deviation of serial interval for each study is shown in Table \@ref(tab:si_sa). For all studies, except Larrosa et al., the mean is serial interval is lower when estimated assuming an underlying Gamma distribution. When assuming an underlying Gamma distribution, the standard deviations were higher than when assuming an underlying Normal distribution. We see from Figure \@ref(fig:gam_si_plots) that the Gamma distribution does not fit the data well.
 
 ```{r, si_results_gam, echo=FALSE, eval=TRUE}
 # read in data
@@ -601,23 +601,80 @@ result_gam_wide <- result_gam %>%
   )
 ```
 
-```{r gam_table, echo=FALSE}
-tab_si_gam <- flextable(result_gam_wide[,c(1:3)]) %>%
+```{r make_gam_table, echo=FALSE, }
+si_tab_sa <- left_join(result_norm_wide[,c(1:3)], result_gam_wide[,c(1:3)], by = "study")
+
+tab_si_gam <- flextable(si_tab_sa) %>%
+  add_header_row(values = c("Study", "Normal", "Gamma"), colwidths = c(1,2,2)) %>%
+  set_header_labels(study = "", mean.x = "Mean", sd.x = "SD", mean.y = "Mean", sd.y = "SD") %>%
   autofit(add_w = 0.2) %>%
   bold(part = "header") %>%
   border_remove() %>%
   border(i = 1, border.top = officer::fp_border(width = 1), part = "header") %>%
   border(i = 1, border.bottom = officer::fp_border(width = 1), part = "header") %>%
-  border(i = dim(result_gam_wide)[1], border.bottom = officer::fp_border(width = 1), part = "body") 
+  border(i = dim(result_gam_wide)[1], border.bottom = officer::fp_border(width = 1), part = "body") %>%
+  add_footer_lines("SD = standard deviation")
+
+set_caption(tab_si_gam, 
+  caption = "Estimated mean and standard deviation of serial interval from different studies assuming a Normal distribution or Gamma distribution.", 
+  style = "Table Caption", 
+  autonum = run_autonum(seq_id = "tab", bkm = "tab_si_sa"))
 
 tab_si_gam
 ```
 
-Meta-analysis results using Gamma distribution
+```{r, gam_si_plots, echo=FALSE, fig.align='center', fig.cap="Epidemic curves and estimated serial interval distributions from four scabies outbreaks. Red line indicates estimated serial interval density assuming an underlying gamma distribution.", fig.id=TRUE}
+# merge si_data and result_norm_wide for plotting
+df_merged_gam <- si_data %>%
+  select(study, icc_interval) %>%
+  left_join(result_gam_wide, by = "study", relationship = "many-to-many")
 
-```{r gam_eta_analysis_fig, echo=FALSE, eval=TRUE}
+# Apply the plot_si_fit function by study
+plots_gam <- df_merged_gam %>%
+  group_by(study) %>%
+  group_map(~ plot_si_fit(
+    dat = .x$icc_interval,
+    mean = .x$mean[1],
+    sd = .x$sd[1],
+    weights = c(.x$weight_1[1], .x$weight_2[1], .x$weight_4[1]),
+    dist = "gamma"
+  ))
+
+# Annotate plots with study names and labels
+group_order_gam <- df_merged_gam %>%
+  group_by(study) %>%
+  group_keys()
+
+labeled_plots_gam <- lapply(seq_along(plots_gam), function(i) {
+  plots_gam[[i]] +
+    ggtitle(group_order_gam[i,1]) +            # Add study names as titles
+    theme(plot.title = element_text(hjust = 0.5))  # Center the title
+})
+
+# Combine plots into a multi-pane figure
+final_plot_gam <- plot_grid(
+  plotlist = labeled_plots_gam[-c(3,5)],
+  labels = "AUTO",      # Automatically adds labels (A, B, C, etc.)
+  label_size = 14,      # Size of the labels
+  ncol = 2              # Number of columns; adjust as needed
+)
+
+# Display the final combined plot
+print(final_plot_gam)
+```
+
+<!-- We also performed a meta-analysis results using Gamma distribution -->
+
+```{r gam_meta_analysis_fig, echo=FALSE, eval=FALSE}
 knitr::include_graphics("figures/gam_meta-analysis_forest_plot.png")
 ```
+
+We performed a sensitivity analysis in which we altered our choice of
+prior distribution for mean serial interval. In the main analysis we
+assumed a prior distribution of N(100,50). In the sensitivity analysis
+we assumed a prior distribution of N(50, 75) and N(150, 50). We obtained
+similar estimates of the pooled mean serial interval under the
+alternative prior distributions (Table \@ref(tab:prior_sa_tab)).
 
 ```{r, meta_analysis_sa, echo=FALSE, eval=FALSE, message=FALSE, results='hide', warning=FALSE}
 
@@ -669,13 +726,6 @@ results_tab <- data.frame(
 
 results_tab
 ```
-
-We performed a sensitivity analysis in which we altered our choice of
-prior distribution for mean serial interval. In the main analysis we
-assumed a prior distribution of N(100,50). In the sensitivity analysis
-we assumed a prior distribution of N(50, 75) and N(150, 50). We obtained
-similar estimates of the pooled mean serial interval under the
-alternative prior distributions (Table \@ref(tab:prior_sa_tab)).
 
 ## TODO:
 
