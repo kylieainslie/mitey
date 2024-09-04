@@ -17,6 +17,7 @@ library(ISOweek)
 library(readxl)
 library(ggplot2)
 library(zoo)
+library(EpiEstim)
 library(devtools)
 load_all()
 
@@ -71,8 +72,8 @@ df <- nivel_daily_data %>%
          inc = count)
 
 # si dist parameters
-si_mean <- 91.2
-si_sd <- 22.8
+si_mean <- 123.24
+si_sd <- 31.55
 
 # Calculate the initial R_t
 df$R_t <- rt_estim(df, mean_si = si_mean, sd_si = si_sd, dist_si = "normal",
@@ -101,6 +102,25 @@ df <- df %>%
   mutate(R_t_mean = rt_mean,
          R_t_lower = rt_lower,
          R_t_upper = rt_upper)
+
+# estimate using EpiEstim (specifying the Wallinga and Teunis method) as a check
+window <- 1 # time window (in days) over which to calculate Rt
+ts <- 1:nrow(df)
+ts <- ts[ts > 1 & ts <= (max(ts)-window+1)]
+te <- ts+(window-1)
+
+rt_epiestim <- wallinga_teunis(
+  incid = df$inc,
+  method = "parametric_si",
+  config = list(
+    mean_si = si_mean,
+    std_si = si_sd,
+    t_start = ts,
+    t_end = te,
+    n_sim=100
+  ))
+
+df_Rt_epiestim <- rt_epiestim$R
 
 # save r_t data set, so that we don't have to re-run bootstrapping
 saveRDS(df, "inst/extdata/data/rt_df.rds")
