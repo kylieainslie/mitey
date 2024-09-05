@@ -120,15 +120,47 @@ rt_epiestim <- wallinga_teunis(
     n_sim=100
   ))
 
-df_Rt_epiestim <- rt_epiestim$R
+df_epiestim <- rt_epiestim$R %>%
+  add_row(t_start = 1, t_end = 1, `Mean(R)` = NA, `Std(R)` = NA,
+          `Quantile.0.025(R)` = NA, `Quantile.0.975(R)` = NA, .before = 1) %>%
+  mutate(onset_date = (t_start - 1) + df$onset_date[1]) %>%
+  select(onset_date, `Mean(R)`, `Quantile.0.025(R)`, `Quantile.0.975(R)`)
+
+df_rt_check <- left_join(df, df_epiestim, by = "onset_date")
+
+# Comapre estimates graphically
+ggplot(df_rt_check %>%
+         filter(onset_date > min(onset_date) + 123),
+       aes(x = onset_date)) +
+  # R_t with confidence intervals
+  #geom_ribbon(aes(ymin = R_t_lower, ymax = R_t_upper), fill = "blue", alpha = 0.2) +
+  geom_line(aes(y = R_t, color = "R_t"), size = 1) +
+  # Mean(R) with confidence intervals
+  #geom_ribbon(aes(ymin = `Quantile.0.025(R)`, ymax = `Quantile.0.975(R)`), fill = "red", alpha = 0.2) +
+  geom_line(aes(y = `Mean(R)`, color = "Mean(R)`"), size = 1) +
+  # Horizontal line at Rt = 1
+  geom_hline(yintercept = 1, linetype = "dashed", color = "black", size = 0.8) +
+  # Customizing the plot
+  labs(
+    title = "R_t and Mean(R) with Confidence Intervals",
+    x = "Onset Date",
+    y = "Rt",
+    color = "Legend"
+  ) +
+  # Setting colors
+  scale_color_manual(values = c("R_t" = "blue", "Mean(R)" = "red")) +
+  # Theme adjustments
+  theme_minimal()
+
+# adjust for right-trunctation using the method of Cauchemez et al. 2006
 
 # save r_t data set, so that we don't have to re-run bootstrapping
 saveRDS(df, "inst/extdata/data/rt_df.rds")
 
 # Plot using ggplot2
-# filter out first 95 days (equivalent to 1 mean serial interval)
+# filter out first 123 days (equivalent to 1 mean serial interval)
 ggplot(df %>%
-         filter(onset_date > min(onset_date) + 95),
+         filter(onset_date > min(onset_date) + 123),
        aes(x = onset_date)) +
   geom_line(aes(y = R_t), color = "blue", size = 1) +
   geom_ribbon(aes(ymin = R_t_lower, ymax = R_t_upper), alpha = 0.2, fill = "blue") +
