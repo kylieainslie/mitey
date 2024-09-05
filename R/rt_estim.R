@@ -13,6 +13,9 @@
 #' @param n_boostrap integer; number of bootstrap samples of the serial interval distribution
 #' @return A numeric vector with the expected reproduction number for each day.
 #' @export
+#' @importFrom stats quantile
+#' @importFrom stats rnorm
+#' @importFrom stats rgamma
 rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
                      cut_tail = NULL, pos_only = TRUE, n_bootstrap = 100){
 

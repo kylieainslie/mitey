@@ -8,9 +8,10 @@ rt_estim(
   inc_dat,
   mean_si,
   sd_si,
-  dist_si = c("normal", "gamma"),
+  dist_si = "normal",
   cut_tail = NULL,
-  pos_only = TRUE
+  pos_only = TRUE,
+  n_bootstrap = 100
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ rt_estim(
 \item{cut_tail}{numeric; number of days beyond which the likelihood of transmission between two events is 0. Defaults to NULL.}
 
 \item{pos_only}{logical; if TRUE, only positive serial intervals are considered. If the serial interval is negative, the function returns 0.}
+
+\item{n_boostrap}{integer; number of bootstrap samples of the serial interval distribution}
 }
 \value{
 A numeric vector with the expected reproduction number for each day.
