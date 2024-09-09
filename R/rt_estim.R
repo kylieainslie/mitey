@@ -19,36 +19,34 @@
 rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
                      cut_tail = NULL, pos_only = TRUE, n_bootstrap = 100){
 
+# Pre-compute the likelihood values for all possible serial intervals
+  serial_intervals <- outer(inc_dat$date, inc_dat$date, "-")
+
 # Initialize a matrix to store R_t estimates from each bootstrap sample
   bootstrap_rt <- matrix(0, nrow = n_bootstrap, ncol = nrow(inc_dat))
 
   for (b in 1:n_bootstrap) {
-    # Sample a new mean serial interval using sd_si for variability
-    if (dist_si == "normal") {
-      # Generate a perturbed serial interval distribution
-      si_distribution <- rnorm(1000, mean = mean_si, sd = sd_si)
 
+    # Generate a perturbed serial interval distribution
+    if (dist_si == "normal") {
+      si_distribution <- rnorm(1000, mean = mean_si, sd = sd_si)
     } else if (dist_si == "gamma") {
       beta <- mean_si / sd_si^2
       alpha <- (mean_si / beta)^2
-      # Generate a perturbed serial interval distribution
       si_distribution <- rgamma(1000, shape = alpha, rate = beta)
     }
 
-  # Pre-compute the likelihood values for all possible serial intervals
-  serial_intervals <- outer(inc_dat$date, inc_dat$date, "-")
+    # get mean of perturbed serial interval distribution
+    new_mean_si <- mean(si_distribution)
 
-  # Apply get_likelihood only to positive serial_intervals
-  likelihood_values <- apply(serial_intervals, 1:2,
-                             function(interval) {
-                               mean(sapply(si_distribution,
-                                           function(si) {
-                                             get_likelihood(interval, si, sd_si,
-                                                            distn = dist_si,
-                                                            tail_cut = cut_tail,
-                                                            positive_only = pos_only)
-                               }))
-                             })
+    # Initialize a matrix to store likelihood values
+    likelihood_values <- matrix(NA, nrow = nrow(serial_intervals),
+                                ncol = ncol(serial_intervals))
+
+    # Loop over all pairs of serial intervals
+    likelihood_values <- apply(serial_intervals, 1:2, get_likelihood,
+                               mu = new_mean_si, sigma = sd_si, distn = dist_si,
+                               tail_cut = 180, positive_only = TRUE)
 
   # Calculation the likelihood matrix
   nt <- nrow(inc_dat)
