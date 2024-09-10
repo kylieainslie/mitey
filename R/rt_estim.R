@@ -29,19 +29,21 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
              ) %>%
     arrange(onset_date)
 
+  nt <- nrow(inc_dat)
+
   # Pre-compute the likelihood values for all possible serial intervals
   serial_intervals <- outer(inc_dat$onset_date, inc_dat$onset_date, "-")
 
     # Generate a perturbed serial interval distribution
     if (perturb_si_dist){
-      if (dist_si == "normal") {
-        si_distribution <- rnorm(1000, mean = mean_si, sd = sd_si)
-      } else if (dist_si == "gamma") {
-        beta <- mean_si / sd_si^2
-        alpha <- (mean_si / beta)^2
-        si_distribution <- rgamma(1000, shape = alpha, rate = beta)
-      }
-
+      si_distribution <- switch(dist_si,
+                                "normal" = rnorm(1000, mean = mean_si, sd = sd_si),
+                                "gamma" = {
+                                  beta <- mean_si / sd_si^2
+                                  alpha <- (mean_si / beta)^2
+                                  rgamma(1000, shape = alpha, rate = beta)
+                                },
+                                stop("Unsupported distribution type"))
       # get mean of perturbed serial interval distribution
       mean_si <- mean(si_distribution)
       sd_si <- sd(si_distribution)
