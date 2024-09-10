@@ -15,28 +15,30 @@
 #' @importFrom stats rnorm
 #' @importFrom stats rgamma
 rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
-                     cut_tail = NULL, pos_only = TRUE, n_bootstrap = 100){
+                     cut_tail = NULL, pos_only = TRUE, perturb_si_dist = FALSE){
 
-# Pre-compute the likelihood values for all possible serial intervals
+  # Pre-compute the likelihood values for all possible serial intervals
   serial_intervals <- outer(inc_dat$date, inc_dat$date, "-")
 
     # Generate a perturbed serial interval distribution
-    if (dist_si == "normal") {
-      si_distribution <- rnorm(1000, mean = mean_si, sd = sd_si)
-    } else if (dist_si == "gamma") {
-      beta <- mean_si / sd_si^2
-      alpha <- (mean_si / beta)^2
-      si_distribution <- rgamma(1000, shape = alpha, rate = beta)
+    if (perturb_si_dist){
+      if (dist_si == "normal") {
+        si_distribution <- rnorm(1000, mean = mean_si, sd = sd_si)
+      } else if (dist_si == "gamma") {
+        beta <- mean_si / sd_si^2
+        alpha <- (mean_si / beta)^2
+        si_distribution <- rgamma(1000, shape = alpha, rate = beta)
+      }
+
+      # get mean of perturbed serial interval distribution
+      mean_si <- mean(si_distribution)
+      sd_si <- sd(si_distribution)
     }
 
-    # get mean of perturbed serial interval distribution
-    new_mean_si <- mean(si_distribution)
-    new_sd_si <- sd(si_distribution)
-
-    # Loop over all pairs of serial intervals
-    likelihood_values <- apply(serial_intervals, 1:2, get_likelihood,
-                               mu = new_mean_si, sigma = new_sd_si, distn = dist_si,
-                               tail_cut = 180, positive_only = TRUE)
+  # Loop over all pairs of serial intervals
+  likelihood_values <- apply(serial_intervals, 1:2, get_likelihood,
+                             mu = mean_si, sigma = sd_si, distn = dist_si,
+                             tail_cut = cut_tail, positive_only = pos_only)
 
   # Calculation the likelihood matrix
   nt <- nrow(inc_dat)
