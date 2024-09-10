@@ -27,7 +27,7 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
     complete(onset_date = all_dates,
              fill = list(inc = 0)
              ) %>%
-    arrange(onset_date)
+    arrange(.data$onset_date)
 
   nt <- nrow(inc_dat)
 

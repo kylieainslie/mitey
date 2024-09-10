@@ -24,7 +24,7 @@ rt_estim_w_boot <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
 
   # uncount inc_dat, so that individual cases can be samples from
   inc_dat_uncount <- inc_dat %>%
-    uncount(inc) %>%
+    uncount(.data$inc) %>%
     mutate(inc = 1)
 
   # get bootstrap samples
@@ -53,8 +53,8 @@ rt_estim_w_boot <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
   # Calculate the mean R_t and confidence intervals across bootstrap samples
   rt_mean <- lapply(boot_rt, 2, mean)
   rt_lower <- lapply(boot_rt, 2, quantile, probs = 0.025)
-  rt_upper <- lapply(bootstrap_rt, 2, quantile, probs = 0.975)
+  rt_upper <- lapply(boot_rt, 2, quantile, probs = 0.975)
 
-  return(lis)
+  return(list(rt_mean = rt_mean, rt_lower = rt_lower, rt_upper = rt_upper))
 
 }
