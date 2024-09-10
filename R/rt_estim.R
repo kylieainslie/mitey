@@ -4,7 +4,7 @@
 #' The function takes as input a data frame with incidence data and requires the specification of the serial interval distribution.
 #' The user must input the mean and standard deviation of the serial interval distribution and select the functional form: Normal or Gamma.
 #'
-#' @param inc_dat data frame; data frame with incidence data. The data frame should have two columns: inc (daily incidence) and date.
+#' @param inc_dat data frame; data frame with incidence data. The data frame should have two columns: inc (daily incidence) and onset_date (date of onset of symptoms).
 #' @param mean_si numeric; mean of serial interval distribution
 #' @param sd_si numeric; standard deviation of serial interval distribution
 #' @param dist_si string; distribution to be assumed for serial interval. Accepts "normal" or "gamma".
@@ -12,13 +12,24 @@
 #' @param pos_only logical; if TRUE, only positive serial intervals are considered. If the serial interval is negative, the function returns 0.
 #' @return A numeric vector with the expected reproduction number for each day.
 #' @export
+#' @import tidyr
+#' @importFrom dplyr arrange
 #' @importFrom stats rnorm
 #' @importFrom stats rgamma
 rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
                      cut_tail = NULL, pos_only = TRUE, perturb_si_dist = FALSE){
 
+  # fill in missing dates, set inc = 0
+  all_dates <- seq(min(inc_dat$onset_date), max(inc_dat$onset_date), by = "day")
+
+  inc_dat <- inc_dat %>%
+    complete(onset_date = all_dates,
+             fill = list(inc = 0)
+             ) %>%
+    arrange(onset_date)
+
   # Pre-compute the likelihood values for all possible serial intervals
-  serial_intervals <- outer(inc_dat$date, inc_dat$date, "-")
+  serial_intervals <- outer(inc_dat$onset_date, inc_dat$onset_date, "-")
 
     # Generate a perturbed serial interval distribution
     if (perturb_si_dist){
