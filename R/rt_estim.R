@@ -55,17 +55,20 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
                              tail_cut = cut_tail, positive_only = pos_only)
 
   # Calculation the likelihood matrix
-  nt <- nrow(inc_dat)
+  likelihood_mat <- likelihood_values * outer(inc_dat$inc, rep(1, nt))
   # Initialize the likelihood matrix
-  likelihood_mat <- matrix(0, nrow = nt, ncol = nt)
+  # likelihood_mat <- matrix(0, nrow = nt, ncol = nt)
+  #
+  # for (i in 1:nt) {
+  #   for (j in 1:nt) {
+  #     if (i > j) {  # Only consider pairs where i > j
+  #       likelihood_mat[i, j] <- likelihood_values[i, j] * inc_dat$inc[j]
+  #     }
+  #   }
+  # }
 
-  for (i in 1:nt) {
-    for (j in 1:nt) {
-      if (i > j) {  # Only consider pairs where i > j
-        likelihood_mat[i, j] <- likelihood_values[i, j] * inc_dat$inc[j]
-      }
-    }
-  }
+  # Zero out upper triangle and diagonal
+  likelihood_mat[upper.tri(likelihood_mat, diag = TRUE)] <- 0
 
   # Get the marginal likelihood by summing each row
   marginal_likelihood <- rowSums(likelihood_mat)
