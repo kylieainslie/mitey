@@ -82,16 +82,15 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
 
   # correct for right-truncation using the method of Cauchemez et al. 2006
   # Apply the right truncation correction to each observation
-  time_since_infection <- max(all_dates) - all_dates
-
-  correction_factors <- sapply(time_since_infection, function(t) {
+  onset_times <- 1:nt
+  correction_factors <- sapply(onset_times, function(t) {
     right_truncation_correction(t, nt, mean_si, sd_si)
   })
 
   # Adjusted Rt values
-  Rt_adjusted <- Rt_obs * correction_factors
+  adjusted_rt <- expected_rt * correction_factors
 
   # Return a list containing the mean R_t, and its lower and upper bounds
-  return(list(rt = expected_rt, rt_adjusted = Rt_adjusted))
+  return(list(rt = expected_rt, rt_adjusted = adjusted_rt))
 
 }
