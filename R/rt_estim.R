@@ -10,10 +10,8 @@
 #' @param dist_si string; distribution to be assumed for serial interval. Accepts "normal" or "gamma".
 #' @param cut_tail numeric; number of days beyond which the likelihood of transmission between two events is 0. Defaults to NULL.
 #' @param pos_only logical; if TRUE, only positive serial intervals are considered. If the serial interval is negative, the function returns 0.
-#' @param n_boostrap integer; number of bootstrap samples of the serial interval distribution
 #' @return A numeric vector with the expected reproduction number for each day.
 #' @export
-#' @importFrom stats quantile
 #' @importFrom stats rnorm
 #' @importFrom stats rgamma
 rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
@@ -21,11 +19,6 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
 
 # Pre-compute the likelihood values for all possible serial intervals
   serial_intervals <- outer(inc_dat$date, inc_dat$date, "-")
-
-# Initialize a matrix to store R_t estimates from each bootstrap sample
-  bootstrap_rt <- matrix(0, nrow = n_bootstrap, ncol = nrow(inc_dat))
-
-  for (b in 1:n_bootstrap) {
 
     # Generate a perturbed serial interval distribution
     if (dist_si == "normal") {
@@ -38,10 +31,6 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
 
     # get mean of perturbed serial interval distribution
     new_mean_si <- mean(si_distribution)
-
-    # Initialize a matrix to store likelihood values
-    likelihood_values <- matrix(NA, nrow = nrow(serial_intervals),
-                                ncol = ncol(serial_intervals))
 
     # Loop over all pairs of serial intervals
     likelihood_values <- apply(serial_intervals, 1:2, get_likelihood,
@@ -71,16 +60,7 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
   # Calculate the expected reproduction number per day (R_t)
   expected_rt <- colSums(prob_mat, na.rm = TRUE)
 
-  # Store the bootstrap result
-  bootstrap_rt[b, ] <- expected_rt
-  }
-
-  # Calculate the mean R_t and confidence intervals across bootstrap samples
-  rt_mean <- apply(bootstrap_rt, 2, mean)
-  rt_lower <- apply(bootstrap_rt, 2, quantile, probs = 0.025)
-  rt_upper <- apply(bootstrap_rt, 2, quantile, probs = 0.975)
-
   # Return a list containing the mean R_t, and its lower and upper bounds
-  return(list(R_t_mean = rt_mean, R_t_lower = rt_lower, R_t_upper = rt_upper))
+  return(expected_rt)
 
 }
