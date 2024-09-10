@@ -19,5 +19,5 @@ right_truncation_correction(t, T_now, mean_serial_interval, sd_serial_interval)
 vector of correction weights
 }
 \description{
-This function calculates the correction factor for each observed time since infection (time_since_infection\link{i}). It uses the cumulative distribution function (\code{pnorm}) of the normal distribution to calculate the probability that the serial interval is less than the time lag T_now - t.
+This function calculates the correction factor for each observed time of symptom onset, t. It uses the cumulative distribution function (\code{pnorm}) of the normal distribution to calculate the probability that the serial interval is less than the time lag T_now - t, where T_now is the current time.
 }
