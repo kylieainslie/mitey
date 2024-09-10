@@ -55,7 +55,7 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
                              tail_cut = cut_tail, positive_only = pos_only)
 
   # Calculation the likelihood matrix
-  likelihood_mat <- likelihood_values * outer(inc_dat$inc, rep(1, nt))
+  likelihood_mat <- likelihood_values * outer(rep(1, nt), inc_dat$inc)
   # Initialize the likelihood matrix
   # likelihood_mat <- matrix(0, nrow = nt, ncol = nt)
   #
@@ -80,7 +80,18 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
   # Calculate the expected reproduction number per day (R_t)
   expected_rt <- colSums(prob_mat, na.rm = TRUE)
 
+  # correct for right-truncation using the method of Cauchemez et al. 2006
+  # Apply the right truncation correction to each observation
+  time_since_infection <- max(all_dates) - all_dates
+
+  correction_factors <- sapply(time_since_infection, function(t) {
+    right_truncation_correction(t, nt, mean_si, sd_si)
+  })
+
+  # Adjusted Rt values
+  Rt_adjusted <- Rt_obs * correction_factors
+
   # Return a list containing the mean R_t, and its lower and upper bounds
-  return(expected_rt)
+  return(list(rt = expected_rt, rt_adjusted = Rt_adjusted))
 
 }
