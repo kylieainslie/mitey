@@ -1,6 +1,6 @@
 #' Correct for right truncation in estimates of time-varying reproduction number
 #'
-#' This function calculates the correction factor for each observed time since infection (time_since_infection[i]). It uses the cumulative distribution function (`pnorm`) of the normal distribution to calculate the probability that the serial interval is less than the time lag T_now - t.
+#' This function calculates the correction factor for each observed time of symptom onset, t. It uses the cumulative distribution function (`pnorm`) of the normal distribution to calculate the probability that the serial interval is less than the time lag T_now - t, where T_now is the current time.
 #'
 #' @param t integer; time point of infection or symptom onset
 #' @param T_now interger; current time point
