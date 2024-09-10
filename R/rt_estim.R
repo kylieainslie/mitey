@@ -10,6 +10,7 @@
 #' @param dist_si string; distribution to be assumed for serial interval. Accepts "normal" or "gamma".
 #' @param cut_tail numeric; number of days beyond which the likelihood of transmission between two events is 0. Defaults to NULL.
 #' @param pos_only logical; if TRUE, only positive serial intervals are considered. If the serial interval is negative, the function returns 0.
+#' @param perturb_si_dist logical; if true a perturbed serial interval is generated based on dist_si, mean_si, and sd_si, then the mean and sd of the perturbed distribution are used in the calculation of the likelihood function.
 #' @return A numeric vector with the expected reproduction number for each day.
 #' @export
 #' @import tidyr
