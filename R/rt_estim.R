@@ -75,7 +75,7 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
 
   # Calculate the probability matrix
   prob_mat <- sweep(likelihood_mat, 1, marginal_likelihood, FUN = "/")
-  prob_mat[is.nan(prob_mat)] <- NA
+  prob_mat[is.nan(prob_mat)] <- 0
 
   # Calculate the expected reproduction number per day (R_t)
   expected_rt <- colSums(prob_mat, na.rm = TRUE)
