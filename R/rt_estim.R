@@ -31,10 +31,11 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
 
     # get mean of perturbed serial interval distribution
     new_mean_si <- mean(si_distribution)
+    new_sd_si <- sd(si_distribution)
 
     # Loop over all pairs of serial intervals
     likelihood_values <- apply(serial_intervals, 1:2, get_likelihood,
-                               mu = new_mean_si, sigma = sd_si, distn = dist_si,
+                               mu = new_mean_si, sigma = new_sd_si, distn = dist_si,
                                tail_cut = 180, positive_only = TRUE)
 
   # Calculation the likelihood matrix
