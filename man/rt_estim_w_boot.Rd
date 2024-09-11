@@ -4,15 +4,7 @@
 \alias{rt_estim_w_boot}
 \title{Estimate Time-varying Reproduction Number}
 \usage{
-rt_estim_w_boot(
-  inc_dat,
-  mean_si,
-  sd_si,
-  dist_si = "normal",
-  cut_tail = NULL,
-  pos_only = TRUE,
-  n_bootstrap = 100
-)
+rt_estim_w_boot(inc_dat, mean_si, sd_si, dist_si = "normal", n_bootstrap = 100)
 }
 \arguments{
 \item{inc_dat}{data frame; data frame with incidence data. The data frame should have two columns: inc (daily incidence) and date.}
@@ -22,10 +14,6 @@ rt_estim_w_boot(
 \item{sd_si}{numeric; standard deviation of serial interval distribution}
 
 \item{dist_si}{string; distribution to be assumed for serial interval. Accepts "normal" or "gamma".}
-
-\item{cut_tail}{numeric; number of days beyond which the likelihood of transmission between two events is 0. Defaults to NULL.}
-
-\item{pos_only}{logical; if TRUE, only positive serial intervals are considered. If the serial interval is negative, the function returns 0.}
 
 \item{n_bootstrap}{integer; number of bootstrap samples of the serial interval distribution}
 }

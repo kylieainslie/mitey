@@ -18,7 +18,7 @@
 #' @importFrom stats rnorm
 #' @importFrom stats rgamma
 rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
-                     cut_tail = NULL, pos_only = TRUE, perturb_si_dist = FALSE){
+                     perturb_si_dist = FALSE){
 
   # fill in missing dates, set inc = 0
   all_dates <- seq(min(inc_dat$onset_date), max(inc_dat$onset_date), by = "day")
@@ -32,7 +32,8 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
   nt <- nrow(inc_dat)
 
   # Pre-compute the likelihood values for all possible serial intervals
-  serial_intervals <- outer(inc_dat$onset_date, inc_dat$onset_date, "-")
+  serial_intervals <- as.vector(outer(inc_dat$onset_date, inc_dat$onset_date, "-"),
+                                mode = "numeric")
 
     # Generate a perturbed serial interval distribution
     if (perturb_si_dist){
@@ -50,22 +51,12 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
     }
 
   # Loop over all pairs of serial intervals
-  likelihood_values <- apply(serial_intervals, 1:2, get_likelihood,
-                             mu = mean_si, sigma = sd_si, distn = dist_si,
-                             tail_cut = cut_tail, positive_only = pos_only)
+  likelihood_values <- get_likelihood(serial_intervals, mu = mean_si,
+                                      sigma = sd_si, distn = dist_si)
 
+  likelihood_values_mat <- matrix(likelihood_values, nrow = nt, ncol = nt)
   # Calculation the likelihood matrix
-  likelihood_mat <- likelihood_values * outer(rep(1, nt), inc_dat$inc)
-  # Initialize the likelihood matrix
-  # likelihood_mat <- matrix(0, nrow = nt, ncol = nt)
-  #
-  # for (i in 1:nt) {
-  #   for (j in 1:nt) {
-  #     if (i > j) {  # Only consider pairs where i > j
-  #       likelihood_mat[i, j] <- likelihood_values[i, j] * inc_dat$inc[j]
-  #     }
-  #   }
-  # }
+  likelihood_mat <- likelihood_values_mat * outer(rep(1, nt), inc_dat$inc)
 
   # Zero out upper triangle and diagonal
   likelihood_mat[upper.tri(likelihood_mat, diag = TRUE)] <- 0
@@ -91,6 +82,7 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
   adjusted_rt <- expected_rt * correction_factors
 
   # Return a list containing the mean R_t, and its lower and upper bounds
-  return(list(rt = expected_rt, rt_adjusted = adjusted_rt))
+  rtn <- data.frame(onset_date = all_dates, rt = expected_rt, rt_adjusted = adjusted_rt)
+  return(rtn)
 
 }

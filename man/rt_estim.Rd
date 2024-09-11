@@ -4,15 +4,7 @@
 \alias{rt_estim}
 \title{Estimate Time-varying Reproduction Number}
 \usage{
-rt_estim(
-  inc_dat,
-  mean_si,
-  sd_si,
-  dist_si = "normal",
-  cut_tail = NULL,
-  pos_only = TRUE,
-  perturb_si_dist = FALSE
-)
+rt_estim(inc_dat, mean_si, sd_si, dist_si = "normal", perturb_si_dist = FALSE)
 }
 \arguments{
 \item{inc_dat}{data frame; data frame with incidence data. The data frame should have two columns: inc (daily incidence) and onset_date (date of onset of symptoms).}
@@ -23,11 +15,11 @@ rt_estim(
 
 \item{dist_si}{string; distribution to be assumed for serial interval. Accepts "normal" or "gamma".}
 
+\item{perturb_si_dist}{logical; if true a perturbed serial interval is generated based on dist_si, mean_si, and sd_si, then the mean and sd of the perturbed distribution are used in the calculation of the likelihood function.}
+
 \item{cut_tail}{numeric; number of days beyond which the likelihood of transmission between two events is 0. Defaults to NULL.}
 
 \item{pos_only}{logical; if TRUE, only positive serial intervals are considered. If the serial interval is negative, the function returns 0.}
-
-\item{perturb_si_dist}{logical; if true a perturbed serial interval is generated based on dist_si, mean_si, and sd_si, then the mean and sd of the perturbed distribution are used in the calculation of the likelihood function.}
 }
 \value{
 A numeric vector with the expected reproduction number for each day.
