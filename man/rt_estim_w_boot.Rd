@@ -18,7 +18,7 @@ rt_estim_w_boot(inc_dat, mean_si, sd_si, dist_si = "normal", n_bootstrap = 100)
 \item{n_bootstrap}{integer; number of bootstrap samples of the serial interval distribution}
 }
 \value{
-A numeric vector with the expected reproduction number for each day.
+A named list of two data frames. The first data frame (\code{results}) contains the mean, mediean, 2.5th percentile, and 97.5th percentile from all of the boot strapped samples. The second data frame (\code{boot_samples}) contains all boot strap samples for each time point.
 }
 \description{
 This function estimates the time-varying reproduction number (R_t) using the method proposed by Wallinga and Teunis (AJE 2004).
