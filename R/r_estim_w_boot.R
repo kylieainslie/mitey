@@ -48,7 +48,7 @@ rt_estim_w_boot <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
   # Apply rt_estim to each bootstrap sample
   boot_rt <- map(boot_samples_wrangled,
                  ~rt_estim(inc_dat = .x, mean_si = mean_si, sd_si = sd_si,
-                           dist_si = dist_si, cut_tail = cut_tail, pos_only = pos_only))
+                           dist_si = dist_si))
 
   df_boot_rt <- bind_rows(boot_rt, .id = "sample")
 
