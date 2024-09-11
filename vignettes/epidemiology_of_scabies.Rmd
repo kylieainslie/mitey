@@ -47,6 +47,7 @@ library(officer)
 library(tidybayes)
 library(ggridges)
 library(glue)
+library(zoo)
 library(stringr)
 library(forcats)
 library(devtools)
@@ -367,7 +368,9 @@ time-varying reproduction number, we first randomly assigned each
 reported case a date of symptom onset in the week in which the case was
 reported. Since scabies is very hard to diagnose prior to symptom onset [@mellanby1972], and reported cases are captured as part of sentinel surveillance based on GP diagnosis [@nivel], we assume reporting date is consistent with date of symptom onset. Using the constructed daily time series of date of symptom onset, we applied the method proposed by
 Wallinga and Teunis [@wallinga_teunis2004] to estimate the time-varying
-case reproduction number. The case reproduction number is defined as the average number of new infections that an individual who becomes infected, or symptomatic, at a particular time point will go on to cause [@gostic202], and is useful in retrospective analyses such as the one presented here. The method of Wallinga and Teunis estimates the time-varying case reproduction number by determining the likelihood of an event occurring for every pair of time points [@wallinga2007]. The method requires the specification of the serial interval distribution. We assumed a Normal serial interval distribution with mean 123.24 days and standard deviation 31.55 days, as estimated previously. To obtain confidence intervals on the daily reproduction number, we used bootstrapping. We performed a sensitivity analysis in which we assumed the serial interval was Gamma distributed.
+case reproduction number. The case reproduction number is defined as the average number of new infections that an individual who becomes infected, or symptomatic, at a particular time point will go on to cause [@gostic2020], and is useful in retrospective analyses such as the one presented here. The method of Wallinga and Teunis estimates the time-varying case reproduction number by determining the likelihood of an event occurring for every pair of time points [@wallinga2007]. The method requires the specification of the serial interval distribution. We assumed a Normal serial interval distribution with mean 123.24 days and standard deviation 31.55 days, as estimated previously. Due to unobserved onward cases at the end of the time series, we adjusted for right truncation [@cauchemez2006a; @cauchemez2006b]. To obtain 95% confidence intervals on the daily reproduction number, we generated 100 bootstrapped samples by resampling each case with replacement and reconstructing the incidence time series for each sample. Reproduction number estimates were then smoothed using a rolling average of 5 weeks. 
+
+[Do we need to do this?] We performed a sensitivity analysis in which we assumed the serial interval was Gamma distributed.
 
 All analyses were performed in R 4.4.0 [@R-base]. Additional R packages
 used in this work are cited in the Appendix.
@@ -552,7 +555,7 @@ then determined the projected incidence of scabies per 1000 people until
 2033 if no interventions are implemented. We found that there could be a
 substantial increase in scabies incidence in the next 10 years in the
 Netherlands if no measures are taken to mitigate scabies spread (Figure
-\@ref(fig:growth_rate_fig)).
+\@ref(fig:growth_rate_fig)). 
 
 ```{r growth_rate_fig, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center', fig.cap="Scabies incidence per 1000 people from 2011 to 2023 (points) and then projected scabies indcidence per 1000 people for 2024 to 2033 (line) using an exponential growth model with annual growth rate = 0.353. Shaded regions represent 95% confidence intervals for projected scabies incidence. The y-axis is displayed on the log-scale and represents the natural log of scabies incidence per 1000 people.", out.width="100%"}
 
@@ -585,26 +588,60 @@ ggplot(scabies_plot_df, aes(x = time, y = log(cases_mean), color = type, fill = 
 
 ## Time-varying Reproduction Number
 
-To determine the pattern of scabies spread over time, particularly if incidence of scabies infections display any sort of repeating temporal pattern (e.g., seasonal waves), we estimated time-varying case reproduction number of weekly scabies incidence in The Netherlands from 2011 to 2023 (Figure \@ref(fig:rt_plot)). We see yearly waves of incidence when looking at the incidence of scabies infecions over time with the amplitude of incidence gradually increasing over time (Figure XX). When examining the time-varying reproduction number we see similar waves of incidence annually (Figure \@ref(fig:rt_plot)), with Rt oscillating around 1. To better determine if these waves of incidence occur within a certain season annually, we plotted time-varying reproduction number against Northern Hemisphere season (colored bars in Figure \@ref(fig:rt_plot)). We found that peak transmissibility consistently occurred in XX season. 
+To determine the pattern of scabies spread over time, particularly if the incidence of scabies infections display any sort of repeating temporal pattern (e.g., seasonal waves), we estimated time-varying case reproduction number of weekly scabies incidence in The Netherlands from 2011 to 2023 (Figure \@ref(fig:rt_plot)). We see yearly waves of incidence when looking at the incidence of scabies infections over time with the amplitude of incidence gradually increasing over time (Figure \@ref(fig:epidemic_curve)). When examining the time-varying reproduction number we see similar waves of incidence annually (Figure \@ref(fig:rt_plot)), with Rt oscillating around 1. To better determine if these waves of incidence occur within a certain season annually, we plotted time-varying reproduction number against Northern Hemisphere season (colored bars in Figure \@ref(fig:rt_plot)). We found that peak transmission consistently occurred in autumn and winter season, while the lowest transmission occurred in the summer. 
 
-[Include epidemic curve histogram!]
-
-```{r rt_plot, echo=FALSE, fig.cap="Time-varying reproduction number of scabies transmission. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August. 31; Autumn = September 1 – November 31.", out.width="100%"}
-knitr::include_graphics("figures/rt_plot.png")
+```{r epidemic_curve, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Incidence of scabies infections per 1,000 people in the Netherlands by date of symptom onset. The red line represents a LOESS smoothed trend line, illustrating the overall pattern in the incidence over time.", out.width="100%"}
+knitr::include_graphics("figures/nivel_epidemic_curve.png")
 ```
 
-Note: This is a place-holder figure.
+
+```{r rt_plot, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Time-varying reproduction number of scabies transmission. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August. 31; Autumn = September 1 – November 31.", out.width="100%"}
+
+# read in data
+rt_df_for_plot <- readRDS("data/rt_df_for_plot.rds")
+# plot rt_adjusted with confidence bounds (and season bars)
+# Breaks for background rectangles
+start_breaks <- c(as.Date("2011-01-01"),
+                  seq(as.Date("2011-03-01"), tail(rt_df_for_plot$onset_date, 1), by = "quarter"))
+end_breaks <- c(start_breaks[-1] - 1, tail(rt_df_for_plot$onset_date,1))
+rects <- data.frame(xstart = start_breaks,
+                    xend = end_breaks,
+                    season = factor(c(rep(c("winter", "spring", "summer", "autumn"),
+                                          length.out = length(start_breaks))),
+                                    levels = c("winter", "spring", "summer", "autumn")))
+
+p <- ggplot() +
+  geom_rect(data = rects, aes(xmin = xstart, xmax = xend, ymin = -Inf, ymax = Inf,
+                              fill = season), alpha = 0.4) +
+  scale_fill_viridis_d() +
+  geom_line(data = rt_df_for_plot, aes(x = onset_date,
+                                       y = rollmean(rt_adjusted, 35, fill = NA))) +
+  geom_ribbon(data = rt_df_for_plot, aes(x = onset_date,
+                                         ymin = rollmean(lower_rt_adjusted, 35, fill = NA),
+                                         ymax = rollmean(upper_rt_adjusted, 35, fill = NA)),
+              alpha = 0.3) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "black", linewidth = 0.8) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(x = "Date of Symptom Onset", y = "Reproduction Number") +
+  theme(
+    panel.background = element_blank()
+  )
+
+p
+```
 
 # Discussion
 
  - Discuss time-series trends and population that it typically occurs in in NL (young adults/college students)
-    - for policy implications, Rt oscillates around 1 and rarely goes above 2, so control efforts would not need to be extreme to control epidemics
+    - for policy implications, Rt oscillates around 1, so control efforts would not need to be extreme to control epidemics
 
  - Discuss why estimates of mean serial interval across studies are so
 different (different populations and identification of symptom onset may
 be delayed).
 
  - Discuss limitations of the approach and caveats for interpretation.
+  - we assume each infection is a person's first infection. 
+  - for estimates of Rt, we used the pooled mean and standard deviation from the meta-analysis.
 
 # References
 

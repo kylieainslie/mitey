@@ -822,6 +822,110 @@
   language  = "en"
 }
 
+@ARTICLE{gostic2020,
+  title     = "Practical considerations for measuring the effective reproductive
+               number, Rt",
+  author    = "Gostic, Katelyn M and McGough, Lauren and Baskerville, Edward B
+               and Abbott, Sam and Joshi, Keya and Tedijanto, Christine and
+               Kahn, Rebecca and Niehus, Rene and Hay, James A and De Salazar,
+               Pablo M and Hellewell, Joel and Meakin, Sophie and Munday, James
+               D and Bosse, Nikos I and Sherrat, Katharine and Thompson, Robin N
+               and White, Laura F and Huisman, Jana S and Scire, Jérémie and
+               Bonhoeffer, Sebastian and Stadler, Tanja and Wallinga, Jacco and
+               Funk, Sebastian and Lipsitch, Marc and Cobey, Sarah",
+  journal   = "PLoS Comput. Biol.",
+  publisher = "Public Library of Science (PLoS)",
+  volume    =  16,
+  number    =  12,
+  pages     = "e1008409",
+  abstract  = "Estimation of the effective reproductive number Rt is important
+               for detecting changes in disease transmission over time. During
+               the Coronavirus Disease 2019 (COVID-19) pandemic, policy makers
+               and public health officials are using Rt to assess the
+               effectiveness of interventions and to inform policy. However,
+               estimation of Rt from available data presents several challenges,
+               with critical implications for the interpretation of the course
+               of the pandemic. The purpose of this document is to summarize
+               these challenges, illustrate them with examples from synthetic
+               data, and, where possible, make recommendations. For near
+               real-time estimation of Rt, we recommend the approach of Cori and
+               colleagues, which uses data from before time t and empirical
+               estimates of the distribution of time between infections. Methods
+               that require data from after time t, such as Wallinga and Teunis,
+               are conceptually and methodologically less suited for near
+               real-time estimation, but may be appropriate for retrospective
+               analyses of how individuals infected at different time points
+               contributed to the spread. We advise caution when using methods
+               derived from the approach of Bettencourt and Ribeiro, as the
+               resulting Rt estimates may be biased if the underlying structural
+               assumptions are not met. Two key challenges common to all
+               approaches are accurate specification of the generation interval
+               and reconstruction of the time series of new infections from
+               observations occurring long after the moment of transmission.
+               Naive approaches for dealing with observation delays, such as
+               subtracting delays sampled from a distribution, can introduce
+               bias. We provide suggestions for how to mitigate this and other
+               technical challenges and highlight open problems in Rt
+               estimation.",
+  month     =  dec,
+  year      =  2020,
+  language  = "en"
+}
+
+@ARTICLE{cauchemez2006a,
+  title     = "Real-time estimates in early detection of {SARS}",
+  author    = "Cauchemez, Simon and Boelle, Pierre-Yves and Donnelly, Christi A
+               and Ferguson, Neil M and Thomas, Guy and Leung, Gabriel M and
+               Hedley, Anthony J and Anderson, Roy M and Valleron, Alain-Jacques",
+  journal   = "Emerg. Infect. Dis.",
+  publisher = "Centers for Disease Control and Prevention (CDC)",
+  volume    =  12,
+  number    =  1,
+  pages     = "110--113",
+  abstract  = "We propose a Bayesian statistical framework for estimating the
+               reproduction number R early in an epidemic. This method allows
+               for the yet-unrecorded secondary cases if the estimate is
+               obtained before the epidemic has ended. We applied our approach
+               to the severe acute respiratory syndrome (SARS) epidemic that
+               started in February 2003 in Hong Kong. Temporal patterns of R
+               estimated after 5, 10, and 20 days were similar. Ninety-five
+               percent credible intervals narrowed when more data were available
+               but stabilized after 10 days. Using simulation studies of
+               SARS-like outbreaks, we have shown that the method may be used
+               for early monitoring of the effect of control measures.",
+  month     =  jan,
+  year      =  2006,
+  language  = "en"
+}
+
+@ARTICLE{cauchemez2006b,
+  title     = "Estimating in real time the efficacy of measures to control
+               emerging communicable diseases",
+  author    = "Cauchemez, Simon and Boëlle, Pierre-Yves and Thomas, Guy and
+               Valleron, Alain-Jacques",
+  journal   = "Am. J. Epidemiol.",
+  publisher = "Oxford University Press (OUP)",
+  volume    =  164,
+  number    =  6,
+  pages     = "591--597",
+  abstract  = "Controlling an emerging communicable disease requires prompt
+               adoption of measures such as quarantine. Assessment of the
+               efficacy of these measures must be rapid as well. In this paper,
+               the authors present a framework to monitor the efficacy of
+               control measures in real time. Bayesian estimation of the
+               reproduction number R (mean number of cases generated by a single
+               infectious person) during an outbreak allows them to judge
+               rapidly whether the epidemic is under control (R or = 1.1) could
+               be detected after 2 weeks in at least 70\% of the epidemics, with
+               less than a 5\% probability of a wrong conclusion. When control
+               measures are efficacious (R = 0.5), this situation may be
+               evidenced in 68\% of the epidemics after 2 weeks and 92\% of the
+               epidemics after 3 weeks, with less than a 5\% probability of a
+               wrong conclusion.",
+  month     =  sep,
+  year      =  2006,
+  language  = "en"
+}
 
 @Manual{fdrtool,
     title = {fdrtool: Estimation of (Local) False Discovery Rates and Higher Criticism},
