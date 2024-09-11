@@ -8,8 +8,6 @@
 #' @param mean_si numeric; mean of serial interval distribution
 #' @param sd_si numeric; standard deviation of serial interval distribution
 #' @param dist_si string; distribution to be assumed for serial interval. Accepts "normal" or "gamma".
-#' @param cut_tail numeric; number of days beyond which the likelihood of transmission between two events is 0. Defaults to NULL.
-#' @param pos_only logical; if TRUE, only positive serial intervals are considered. If the serial interval is negative, the function returns 0.
 #' @param n_bootstrap integer; number of bootstrap samples of the serial interval distribution
 #' @return A numeric vector with the expected reproduction number for each day.
 #' @export
@@ -20,7 +18,7 @@
 #' @importFrom stats rnorm
 #' @importFrom stats rgamma
 rt_estim_w_boot <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
-                            cut_tail = NULL, pos_only = TRUE, n_bootstrap = 100){
+                            n_bootstrap = 100){
 
   # uncount inc_dat, so that individual cases can be samples from
   inc_dat_uncount <- inc_dat %>%
@@ -28,7 +26,8 @@ rt_estim_w_boot <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
     mutate(inc = 1)
 
   # get bootstrap samples
-  boot_samples <- map(1:n_bootstrap, ~inc_dat_uncount[sample(nrow(inc_dat_uncount), replace = TRUE), ])
+  boot_samples <- map(1:n_bootstrap,
+                      ~inc_dat_uncount[sample(nrow(inc_dat_uncount), replace = TRUE), ])
 
   # a little wrangling of each bootstrapped data frame:
   # 1. order by onset_date
@@ -47,14 +46,15 @@ rt_estim_w_boot <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
                              )
 
   # Apply rt_estim to each bootstrap sample
-  boot_rt <- map(boot_samples_wrangled, ~rt_estim(inc_dat = .x, mean_si = mean_si, sd_si = sd_si, dist_si = dist_si,
-                                         cut_tail = cut_tail, pos_only = pos_only))
+  boot_rt <- map(boot_samples_wrangled,
+                 ~rt_estim(inc_dat = .x, mean_si = mean_si, sd_si = sd_si,
+                           dist_si = dist_si, cut_tail = cut_tail, pos_only = pos_only))
 
   # Calculate the mean R_t and confidence intervals across bootstrap samples
-  rt_mean <- lapply(boot_rt, 2, mean)
-  rt_lower <- lapply(boot_rt, 2, quantile, probs = 0.025)
-  rt_upper <- lapply(boot_rt, 2, quantile, probs = 0.975)
+  # rt_mean <- apply(boot_rt, 2, mean)
+  # rt_lower <- apply(boot_rt, 2, quantile, probs = 0.025)
+  # rt_upper <- apply(boot_rt, 2, quantile, probs = 0.975)
 
-  return(list(rt_mean = rt_mean, rt_lower = rt_lower, rt_upper = rt_upper))
-
+  #return(list(rt_mean = rt_mean, rt_lower = rt_lower, rt_upper = rt_upper))
+  return(boot_rt)
 }

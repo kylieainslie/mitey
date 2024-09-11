@@ -4,27 +4,16 @@
 \alias{get_likelihood}
 \title{Compute the likelihood of a transmission pair given the serial interval distribution}
 \usage{
-get_likelihood(
-  serial_interval,
-  mu,
-  sigma,
-  distn = "normal",
-  tail_cut = NULL,
-  positive_only = TRUE
-)
+get_likelihood(serial_intervals, mu, sigma, distn = "normal")
 }
 \arguments{
-\item{serial_interval}{numeric; Time difference \( t_1 - t_2 \) (in days) between two events.}
+\item{serial_intervals}{numeric vector of serial intervals}
 
 \item{mu}{numeric; mean of serial interval distribution}
 
 \item{sigma}{numeric; standard deviation of serial interval distribution}
 
 \item{distn}{string; distribution to be assumed for serial interval. Defaults to "normal", but also accepts "gamma".}
-
-\item{tail_cut}{numeric; number of days beyond which the likelihood of transmission between two events is 0. Defaults to NULL.}
-
-\item{positive_only}{logical; if TRUE, only positive serial intervals are considered. If the serial interval is negative, the function returns 0.}
 }
 \value{
 Likelihood of the transmission pair.

@@ -9,38 +9,42 @@
 #' \alpha = \left(\frac{\mu}{\beta}\right)^2
 #' }
 #'
-#' @param serial_interval numeric; Time difference \( t_1 - t_2 \) (in days) between two events.
+#' @param serial_intervals numeric vector of serial intervals
 #' @param mu numeric; mean of serial interval distribution
 #' @param sigma numeric; standard deviation of serial interval distribution
 #' @param distn string; distribution to be assumed for serial interval. Defaults to "normal", but also accepts "gamma".
-#' @param tail_cut numeric; number of days beyond which the likelihood of transmission between two events is 0. Defaults to NULL.
-#' @param positive_only logical; if TRUE, only positive serial intervals are considered. If the serial interval is negative, the function returns 0.
 #' @return Likelihood of the transmission pair.
 #' @export
 #' @importFrom stats dgamma
 #'
-get_likelihood <- function(serial_interval, mu, sigma, distn = "normal",
-                           tail_cut = NULL, positive_only = TRUE) {
+get_likelihood <- function(serial_intervals, mu, sigma, distn = "normal") {
 
-  # cut tail
-  if(!is.null(tail_cut) & serial_interval > tail_cut){
-    return(0)
+  ### Checks
+  # Ensure serial_intervals is numeric
+  if(!is.numeric(serial_intervals)) {
+    stop("serial_intervals must be numeric")
   }
 
-  # consider only positive serial intervals
-  if(distn == "gamma"){positive_only = TRUE}
-
-  if(positive_only & serial_interval <= 0){
-    return(0)
+  # Ensure no non-numeric values
+  if(any(is.na(serial_intervals))) {
+    stop("serial_intervals contains NA values")
   }
 
-  # get likelihood based on distribution
+  if(any(is.nan(serial_intervals))) {
+    stop("serial_intervals contains NaN values")
+  }
+
+  if(any(is.null(serial_intervals))) {
+    stop("serial_intervals contains NULL values")
+  }
+
+  ### Compute likelihood
   if (distn == "normal"){
-    likelihood <- dnorm(serial_interval, mean = mu, sd = sigma)
+    likelihood <- dnorm(serial_intervals, mean = mu, sd = sigma)
   } else if (distn == "gamma"){
     beta <- mu/sigma^2
     alpha <- (mu/beta)^2
-    likelihood <- dgamma(serial_interval, shape = alpha, rate = beta)
+    likelihood <- dgamma(serial_intervals, shape = alpha, rate = beta)
   } else{
     stop("Incorrect serial distribution specified.
          Allowable inputs are distn = c('normal', 'gamma')")
