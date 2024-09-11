@@ -68,40 +68,87 @@ df <- nivel_daily_data %>%
   arrange(onset_date) %>%
   mutate(num_date = as.numeric(onset_date)) %>%
   ungroup() %>%
-  rename(date = num_date,
-         inc = count)
+  rename(inc = count) %>%
+  select(onset_date, inc)
 
 # si dist parameters
 si_mean <- 123.24
 si_sd <- 31.55
 
 # Calculate the initial R_t
-df$R_t <- rt_estim(df, mean_si = si_mean, sd_si = si_sd, dist_si = "normal",
-                   cut_tail = 180, pos_only = TRUE)
+rt_estimates <- rt_estim(df, mean_si = si_mean, sd_si = si_sd, dist_si = "normal")
 
-# Bootstrapping to get confidence intervals for R_t
-set.seed(123)  # For reproducibility
-num_bootstraps <- 1000
-bootstrap_rt <- matrix(0, nrow = num_bootstraps, ncol = nrow(df))
+# bootstrap to get 95% CIs
+rt_bootstap <- rt_estim_w_boot(df, mean_si = si_mean, sd_si = si_sd, dist_si = "normal",
+                               n_bootstrap = 100)
 
-for (b in 1:num_bootstraps) {
-  boot_indices <- sample(1:nrow(df), replace = TRUE)
-  boot_data <- df[boot_indices, ]
-  boot_rt <- rt_estim(boot_data, mean_si = si_mean, sd_si = si_sd,
-                      dist_si = "normal", cut_tail = 180, pos_only = TRUE)
-  bootstrap_rt[b, ] <- boot_rt
-}
+# plot
+rt_df_for_plot <- left_join(rt_estimates, rt_bootstap$results, by = "onset_date") %>%
+  # filter out first serial interval
+  filter(onset_date > min(onset_date) + 123,
+         onset_date < max(onset_date) - 21)
+saveRDS(rt_df_for_plot, "vignettes/data/rt_df_for_plot.rds")
 
-# Calculate confidence intervals
-rt_mean <- apply(bootstrap_rt, 2, mean)
-rt_lower <- apply(bootstrap_rt, 2, quantile, probs = 0.025)
-rt_upper <- apply(bootstrap_rt, 2, quantile, probs = 0.975)
+# compare rt unadjusted to adjusted
+rt_plot_comparison <- ggplot(rt_df_for_plot, aes(x = onset_date)) +
+  geom_line(aes(y = rollmean(rt, 35, fill = NA), color = "Rt unadjusted")) +
+  geom_line(aes(y = rollmean(rt_adjusted, 35, fill = NA), color = "Rt adjusted")) +
+  #geom_ribbon(aes(ymin = rollmean(lower_rt, 35, fill = NA), ymax = rollmean(upper_rt, 35, fill = NA)), alpha = 0.2) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "black", linewidth = 0.8) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  # Customizing the plot
+  labs(
+    x = "Date of symptom onset",
+    y = "Reproduction number (Rt)",
+    color = "Legend"
+  ) +
+  theme_minimal()
 
-# Add to data frame
-df <- df %>%
-  mutate(R_t_mean = rt_mean,
-         R_t_lower = rt_lower,
-         R_t_upper = rt_upper)
+# plot rt_adjusted with confidence bounds (and season bars)
+# Breaks for background rectangles
+start_breaks <- c(as.Date("2011-01-01"),
+                  seq(as.Date("2011-03-01"), tail(rt_df_for_plot$onset_date, 1), by = "quarter"))
+end_breaks <- c(start_breaks[-1] - 1, tail(rt_df_for_plot$onset_date,1))
+rects <- data.frame(xstart = start_breaks,
+                    xend = end_breaks,
+                    season = factor(c(rep(c("winter", "spring", "summer", "autumn"),
+                                          length.out = length(start_breaks))),
+                                    levels = c("winter", "spring", "summer", "autumn")))
+
+p <- ggplot() +
+  geom_rect(data = rects, aes(xmin = xstart, xmax = xend, ymin = -Inf, ymax = Inf,
+                              fill = season), alpha = 0.4) +
+  scale_fill_viridis_d() +
+  geom_line(data = rt_df_for_plot, aes(x = onset_date,
+                                       y = rollmean(rt_adjusted, 35, fill = NA))) +
+  geom_ribbon(data = rt_df_for_plot, aes(x = onset_date,
+                                         ymin = rollmean(lower_rt_adjusted, 35, fill = NA),
+                                         ymax = rollmean(upper_rt_adjusted, 35, fill = NA)),
+              alpha = 0.3) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "black", linewidth = 0.8) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(x = "Date of Symptom Onset", y = "Reproduction Number") +
+  theme(
+    panel.background = element_blank()
+  )
+
+p
+
+# plot epidemic curve
+epidemic_curve <- ggplot(df, aes(x = onset_date, y = inc)) +
+  geom_col(fill = "steelblue") +
+  #geom_smooth(method = "loess", color = "red", se = FALSE) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(
+    x = "Date of Symptom Onset",
+    y = "Incidence (Number of Cases)"
+  ) +
+  theme_minimal()
+
+ggsave("vignettes/figures/nivel_epidemic_curve.png", plot = epidemic_curve, width = 7, height = 5, dpi = 300)
+
+
+### Checks ---------------------------------------------------------------------
 
 # estimate using EpiEstim (specifying the Wallinga and Teunis method) as a check
 window <- 1 # time window (in days) over which to calculate Rt
@@ -128,16 +175,16 @@ df_epiestim <- rt_epiestim$R %>%
 
 df_rt_check <- left_join(df, df_epiestim, by = "onset_date")
 
-# Comapre estimates graphically
-ggplot(df_rt_check %>%
+# Compare estimates graphically
+ggplot(df %>%
          filter(onset_date > min(onset_date) + 123),
        aes(x = onset_date)) +
   # R_t with confidence intervals
-  #geom_ribbon(aes(ymin = R_t_lower, ymax = R_t_upper), fill = "blue", alpha = 0.2) +
-  geom_line(aes(y = R_t, color = "R_t"), size = 1) +
+  #geom_ribbon(aes(ymin = rt_lower, ymax = rt_upper), fill = "blue", alpha = 0.2) +
+  geom_line(aes(y = rt_mean, color = "R_t"), size = 1) +
   # Mean(R) with confidence intervals
-  #geom_ribbon(aes(ymin = `Quantile.0.025(R)`, ymax = `Quantile.0.975(R)`), fill = "red", alpha = 0.2) +
-  geom_line(aes(y = `Mean(R)`, color = "Mean(R)`"), size = 1) +
+  # geom_ribbon(aes(ymin = `Quantile.0.025(R)`, ymax = `Quantile.0.975(R)`), fill = "red", alpha = 0.2) +
+  #geom_line(aes(y = `Mean(R)`, color = "Mean(R)`"), size = 1) +
   # Horizontal line at Rt = 1
   geom_hline(yintercept = 1, linetype = "dashed", color = "black", size = 0.8) +
   # Customizing the plot
@@ -148,53 +195,12 @@ ggplot(df_rt_check %>%
     color = "Legend"
   ) +
   # Setting colors
-  scale_color_manual(values = c("R_t" = "blue", "Mean(R)" = "red")) +
+  #scale_color_manual(values = c("R_t" = "blue", "Mean(R)" = "red")) +
   # Theme adjustments
   theme_minimal()
 
 # adjust for right-trunctation using the method of Cauchemez et al. 2006
 
 # save r_t data set, so that we don't have to re-run bootstrapping
-saveRDS(df, "inst/extdata/data/rt_df.rds")
+#saveRDS(df, "inst/extdata/data/rt_df.rds")
 
-# Plot using ggplot2
-# filter out first 123 days (equivalent to 1 mean serial interval)
-ggplot(df %>%
-         filter(onset_date > min(onset_date) + 123),
-       aes(x = onset_date)) +
-  geom_line(aes(y = R_t), color = "blue", size = 1) +
-  geom_ribbon(aes(ymin = R_t_lower, ymax = R_t_upper), alpha = 0.2, fill = "blue") +
-  labs(title = "Estimated Reproduction Number (R_t) with Confidence Intervals",
-       x = "Date", y = "R_t") +
-  theme_minimal()
-# plot -------------------------------------------------------------------------
-df_plot <- df %>%
-  # create new variable for plotting Rt where the first 95 days (equivalent to
-  # 1 mean serial interval) are NA
-  mutate(rt_plot = if_else(onset_date < min(onset_date) + 95, NA, R_t),
-         rt_plot_rolling_avg = rollmean(rt_plot, k = 14, fill = NA, align = "right")
-         ) %>%
-  filter(onset_date < as.Date("2024-01-01"))
-
-# Breaks for background rectangles
-start_breaks <- c(as.Date("2011-01-01"),
-                  seq(as.Date("2011-03-01"), tail(df_plot$onset_date, 1), by = "quarter"))
-end_breaks <- c(start_breaks[-1] - 1, tail(df_plot$onset_date,1))
-rects <- data.frame(xstart = start_breaks,
-                    xend = end_breaks,
-                    season = factor(c(rep(c("winter", "spring", "summer", "autumn"),
-                                          length.out = length(start_breaks))),
-                                    levels = c("winter", "spring", "summer", "autumn")))
-
-p <- ggplot() +
-  geom_rect(data = rects, aes(xmin = xstart, xmax = xend, ymin = -Inf, ymax = Inf,
-                              fill = season), alpha = 0.4) +
-  scale_fill_viridis_d() +
-  geom_line(data = df_plot, aes(x = onset_date, y = rt_plot_rolling_avg)) +
-  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
-  labs(x = "Date of Symptom Onset", y = "Reproduction Number") +
-  theme(
-    panel.background = element_blank()
-  )
-
-p
