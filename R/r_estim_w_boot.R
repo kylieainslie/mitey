@@ -9,7 +9,7 @@
 #' @param sd_si numeric; standard deviation of serial interval distribution
 #' @param dist_si string; distribution to be assumed for serial interval. Accepts "normal" or "gamma".
 #' @param n_bootstrap integer; number of bootstrap samples of the serial interval distribution
-#' @return A numeric vector with the expected reproduction number for each day.
+#' @return A named list of two data frames. The first data frame (`results`) contains the mean, mediean, 2.5th percentile, and 97.5th percentile from all of the boot strapped samples. The second data frame (`boot_samples`) contains all boot strap samples for each time point.
 #' @export
 #' @import dplyr
 #' @import tidyr
@@ -50,11 +50,20 @@ rt_estim_w_boot <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
                  ~rt_estim(inc_dat = .x, mean_si = mean_si, sd_si = sd_si,
                            dist_si = dist_si, cut_tail = cut_tail, pos_only = pos_only))
 
-  # Calculate the mean R_t and confidence intervals across bootstrap samples
-  # rt_mean <- apply(boot_rt, 2, mean)
-  # rt_lower <- apply(boot_rt, 2, quantile, probs = 0.025)
-  # rt_upper <- apply(boot_rt, 2, quantile, probs = 0.975)
+  df_boot_rt <- bind_rows(boot_rt, .id = "sample")
 
-  #return(list(rt_mean = rt_mean, rt_lower = rt_lower, rt_upper = rt_upper))
-  return(boot_rt)
+  df_boot_results <- df_boot_rt %>%
+    group_by(onset_date) %>%
+    summarise(
+      mean_rt = mean(rt),
+      median_rt = median(rt),
+      lower_rt = quantile(rt, 0.025),
+      upper_rt = quantile(rt, 0.975),
+      mean_rt_adjusted = mean(rt_adjusted),
+      median_rt_adjusted = median(rt_adjusted),
+      lower_rt_adjusted = quantile(rt_adjusted, 0.025),
+      upper_rt_adjusted = quantile(rt_adjusted, 0.975)
+    )
+
+  return(list(results = df_boot_results, boot_samples = df_boot_rt))
 }
