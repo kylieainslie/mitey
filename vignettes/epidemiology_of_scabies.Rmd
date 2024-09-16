@@ -588,7 +588,7 @@ ggplot(scabies_plot_df, aes(x = time, y = log(cases_mean), color = type, fill = 
 
 ## Time-varying Reproduction Number
 
-To determine the pattern of scabies spread over time, particularly if the incidence of scabies infections display any sort of repeating temporal pattern (e.g., seasonal waves), we estimated time-varying case reproduction number of weekly scabies incidence in The Netherlands from 2011 to 2023 (Figure \@ref(fig:rt_plot)). We see yearly waves of incidence when looking at the incidence of scabies infections over time with the amplitude of incidence gradually increasing over time (Figure \@ref(fig:epidemic_curve)). When examining the time-varying reproduction number we see similar waves of incidence annually (Figure \@ref(fig:rt_plot)), with Rt oscillating around 1. To better determine if these waves of incidence occur within a certain season annually, we plotted time-varying reproduction number against Northern Hemisphere season (colored bars in Figure \@ref(fig:rt_plot)). We found that peak transmission consistently occurred in autumn and winter season, while the lowest transmission occurred in the summer. 
+To determine the pattern of scabies spread over time, particularly if the incidence of scabies infections display any sort of repeating temporal pattern (e.g., seasonal waves), we estimated time-varying case reproduction number of weekly scabies incidence in The Netherlands from 2011 to 2023 (Figure \@ref(fig:rt_plot)). We see yearly waves of incidence when looking at the incidence of scabies infections over time with the amplitude of incidence gradually increasing over time (Figure \@ref(fig:epidemic_curve)). When examining the time-varying reproduction number we see similar waves of incidence annually (Figure \@ref(fig:rt_plot)), with Rt oscillating around 1. To better determine if these waves of incidence occur within a certain season annually, we plotted time-varying reproduction number against Northern Hemisphere season (colored bars in Figure \@ref(fig:rt_plot)). We found that peaks in transmission occurred most often in autumn and winter season, while the lowest transmission occurred in the summer. 
 
 ```{r epidemic_curve, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Incidence of scabies infections per 1,000 people in the Netherlands by date of symptom onset. The red line represents a LOESS smoothed trend line, illustrating the overall pattern in the incidence over time.", out.width="100%"}
 knitr::include_graphics("figures/nivel_epidemic_curve.png")
@@ -634,14 +634,15 @@ p
 
  - Discuss time-series trends and population that it typically occurs in in NL (young adults/college students)
     - for policy implications, Rt oscillates around 1, so control efforts would not need to be extreme to control epidemics
+    - discuss seasonal pattern in peaks in transmission. Offer possible explanation for why peak transmission tends to occur in late autumn/early winter. Perhaps, increased contact indoors [see Mimouni et al. Br J Dermatol. 2003]. Compare this finding with other findings on seasonality of scabies transmission -> this has been seen in other European countries [See van Deursen 2022 for more references]
 
  - Discuss why estimates of mean serial interval across studies are so
 different (different populations and identification of symptom onset may
 be delayed).
 
  - Discuss limitations of the approach and caveats for interpretation.
-  - we assume each infection is a person's first infection. 
-  - for estimates of Rt, we used the pooled mean and standard deviation from the meta-analysis.
+    - we assume each infection is a person's first infection. 
+    - for estimates of Rt, we used the pooled mean and standard deviation from the meta-analysis.
 
 # References
 
@@ -826,14 +827,6 @@ results_tab <- data.frame(
 
 results_tab
 ```
-
-## TODO:
-
--   implement right-truncation adjustment for Rt estimates [Cauchemez et al. 2006a](https://wwwnc.cdc.gov/eid/article/12/1/05-0593_article); [Cauchemez et al. 2006b](https://doi.org/10.1093/aje/kwj274)
-
-- determine (roughly) age distribution of Nivel scabies cases
-
-- DISCUSSION
 
 ## Computing details
 
