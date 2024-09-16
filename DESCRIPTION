@@ -19,15 +19,27 @@ Imports:
 URL: https://github.com/kylieainslie/mitey, https://kylieainslie.github.io/mitey/
 BugReports: https://github.com/kylieainslie/mitey/issues
 Suggests: 
+    bookdown,
     brms,
+    broom,
     cowplot,
     devtools,
     flextable,
+    forcats,
     ftExtra,
+    ggridges,
+    glue,
     knitr,
+    nls2,
     officer,
+    openxlsx,
     rmarkdown,
-    testthat (>= 3.0.0)
+    stringr,
+    testthat (>= 3.0.0),
+    tidybayes,
+    tidyverse,
+    viridis,
+    zoo
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Depends: 
