@@ -17,6 +17,7 @@
 #' @importFrom stats quantile
 #' @importFrom stats rnorm
 #' @importFrom stats rgamma
+#' @importFrom stats median
 rt_estim_w_boot <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
                             n_bootstrap = 100){
 
@@ -37,8 +38,8 @@ rt_estim_w_boot <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
   all_dates <- seq(min(inc_dat$onset_date), max(inc_dat$onset_date), by = "day")
 
   boot_samples_wrangled <- map(boot_samples, ~.x %>%
-                                arrange(onset_date) %>%
-                                group_by(onset_date) %>%
+                                arrange(.data$onset_date) %>%
+                                group_by(.data$onset_date) %>%
                                 summarise(inc = sum(inc), .groups = "drop") %>%
                                 complete(onset_date = all_dates,
                                          fill = list(inc = 0)
@@ -53,16 +54,16 @@ rt_estim_w_boot <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
   df_boot_rt <- bind_rows(boot_rt, .id = "sample")
 
   df_boot_results <- df_boot_rt %>%
-    group_by(onset_date) %>%
+    group_by(.data$onset_date) %>%
     summarise(
-      mean_rt = mean(rt),
-      median_rt = median(rt),
-      lower_rt = quantile(rt, 0.025),
-      upper_rt = quantile(rt, 0.975),
-      mean_rt_adjusted = mean(rt_adjusted),
-      median_rt_adjusted = median(rt_adjusted),
-      lower_rt_adjusted = quantile(rt_adjusted, 0.025),
-      upper_rt_adjusted = quantile(rt_adjusted, 0.975)
+      mean_rt = mean(.data$rt),
+      median_rt = median(.data$rt),
+      lower_rt = quantile(.data$rt, 0.025),
+      upper_rt = quantile(.data$rt, 0.975),
+      mean_rt_adjusted = mean(.data$rt_adjusted),
+      median_rt_adjusted = median(.data$rt_adjusted),
+      lower_rt_adjusted = quantile(.data$rt_adjusted, 0.025),
+      upper_rt_adjusted = quantile(.data$rt_adjusted, 0.975)
     )
 
   return(list(results = df_boot_results, boot_samples = df_boot_rt))
