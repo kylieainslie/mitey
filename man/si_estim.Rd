@@ -4,7 +4,7 @@
 \alias{si_estim}
 \title{Estimate serial interval using the EM Algorithm as developed by Vink et al. (2014)}
 \usage{
-si_estim(dat, n = 50, dist = "normal", init = c(mean(dat), sd(dat)))
+si_estim(dat, n = 50, dist = "normal", init = NULL)
 }
 \arguments{
 \item{dat}{vector; a numeric vector of index case to case intervals}
@@ -13,7 +13,7 @@ si_estim(dat, n = 50, dist = "normal", init = c(mean(dat), sd(dat)))
 
 \item{dist}{string; assumed distribution of the serial interval; takes "normal" or "gamma"; defaults to "normal".}
 
-\item{init}{numeric vector of length 2 specifying the initial values to use for the mean and standard deviation. Defaults to the sample mean and sample standard deviation.}
+\item{init}{numeric vector of length 2 specifying the initial values to use for the mean and standard deviation. If init= NULL, then the sample mean and sample standard deviation each divided by 4 is used.}
 }
 \value{
 vector with estimates for the mean and standard deviation of the primary-secondary infection component
