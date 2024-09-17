@@ -2,7 +2,7 @@
 % Please edit documentation in R/wt_loglik.R
 \name{wt_loglik}
 \alias{wt_loglik}
-\title{weighted likelihood
+\title{weighted likelihood for optimising parameters assuming underlying gamma distribution
 each point adds to likelihood given weight belonging to component 2: w2}
 \usage{
 wt_loglik(par, dat, tau2)
@@ -18,6 +18,6 @@ wt_loglik(par, dat, tau2)
 value of the negative sum of the weighted log likelihood
 }
 \description{
-weighted likelihood
+weighted likelihood for optimising parameters assuming underlying gamma distribution
 each point adds to likelihood given weight belonging to component 2: w2
 }
