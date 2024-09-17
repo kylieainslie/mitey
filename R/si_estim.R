@@ -5,6 +5,7 @@
 #' @param dat vector; a numeric vector of index case to case intervals
 #' @param n integer; number of iterations for EM algorithm; defaults to n = 50
 #' @param dist string; assumed distribution of the serial interval; takes "normal" or "gamma"; defaults to "normal".
+#' @param init numeric vector of length 2 specifying the initial values to use for the mean and standard deviation. Defaults to the sample mean and sample standard deviation.
 #' @return vector with estimates for the mean and standard deviation of the primary-secondary infection component
 #' @export
 #' @importFrom stats weighted.mean
@@ -15,14 +16,14 @@
 #'
 #' si_estim(my_data)
 
-si_estim <- function(dat, n = 50, dist = "normal") {
+si_estim <- function(dat, n = 50, dist = "normal", init = c(mean(dat), sd(dat))) {
 
   j <- length(dat)
   dat <- ifelse(dat == 0, 0.00001, dat)
 
   # Initial guesses
-  mu <- mean(dat)
-  sigma <- sd(dat)
+  mu <- init[1]
+  sigma <- init[2]
 
   # components depend on specified distribution
   if(dist == "normal"){ comp_vec <- 1:7
