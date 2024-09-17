@@ -19,10 +19,6 @@ library(devtools)
 load_all()
 ```
 
-```{r load_val_data, echo=FALSE}
-val_data <- readRDS("validation_data.rds")
-```
-
 # Introduction
 In this article we will validate that the code used within the `mitey` package produces the same results as those reported in [Vink et al. 2014](https://doi.org/10.1093/aje/kwu209).  
 
@@ -89,16 +85,18 @@ Next, we will estimate the mean serial interval using the method by Vink et al. 
   - `ICC_interval`: the ICC intervals for each case described in the manuscript
 
 ```{r head_val_data, echo = FALSE}
+val_data <- readRDS("validation_data.rds")
 head(val_data)
 ```
 
-A useful feature of `si_estim` is that it can be applied to multiple vectors of ICC intervals that are stored within a long-format data frame using `dplyr::summarise`. An example of how to do this is shown below using `val_data`. We first select only the necessary columns, here Author, Pathogen, and ICC_interval. Then, we group the data, using `group_by`, by Author and Pathogen, so that `si_estim` is applied to the ICC intervals of only one study and one pathogen at a time. Finally, we apply `si_estim` to each set of ICC intervals using `summarise`. Due to the format of `si_estim`'s output as a named list, we create new column for each estimate using `mutate` and `purrr:map_dbl`.
+A useful feature of `si_estim` is that it can be applied to multiple vectors of ICC intervals that are stored within a long-format data frame using `dplyr::summarise`. An example of how to do this is shown below using `val_data`. We first select only the necessary columns, here Author, Pathogen, and ICC_interval. Then, we group the data, using `group_by`, by Author and Pathogen, so that `si_estim` is applied to the ICC intervals of only one study and one pathogen at a time. Finally, we apply `si_estim` to each set of ICC intervals using `summarise`. We can also specify the initial values used to estimate the mean and standard deviation of the serial interval. The default is the sample mean and sample standard deviation each divided by 4. The EM algorithm is sensitive to the choice of initial value. Due to the format of `si_estim`'s output as a named list, we create new column for each estimate using `mutate` and `purrr:map_dbl`.
 
 ```{r si_estim_historical_data, message=FALSE}
 results_historical <- val_data %>%
   select(Author, Pathogen, Country, ICC_interval) %>%
   group_by(Author, Pathogen, Country) %>%
-  summarise(result = list(si_estim(.data$ICC_interval))) %>%
+  summarise(result = list(si_estim(.data$ICC_interval, 
+                                   init = c(mean(.data$ICC_interval)/4, sd(.data$ICC_interval)/4)))) %>%
   mutate(
     mean = map_dbl(result, "mean"),
     sd = map_dbl(result, "sd"),
