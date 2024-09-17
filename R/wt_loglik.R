@@ -1,4 +1,4 @@
-#' weighted likelihood
+#' weighted likelihood for optimising parameters assuming underlying gamma distribution
 #' each point adds to likelihood given weight belonging to component 2: w2
 #'
 #' @param par parameters to be maximised

@@ -23,8 +23,8 @@ si_estim <- function(dat, n = 50, dist = "normal", init = NULL) {
 
   # Initial guesses
   if(is.null(init)){
-    mu <- mean(dat)/4
-    sigma <- sd(dat)/4
+    mu <- mean(dat)
+    sigma <- sd(dat)
   } else {
     mu <- init[1]
     sigma <- init[2]
@@ -68,7 +68,6 @@ si_estim <- function(dat, n = 50, dist = "normal", init = NULL) {
     if (dist == "normal"){
       mu <- weighted.mean(dat, tau[2, ])
       sigma <- sqrt(weighted_var(dat, tau[2, ]))
-
     } else if (dist == "gamma"){
       # estimates for the mean and standard deviation of the primary-secondary
       # infection component
