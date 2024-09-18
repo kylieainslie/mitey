@@ -26,14 +26,14 @@ load_all()
 ```
 
 # Introduction
-One of the motivations behind creating the `mitey` package was to provide flexible, documented code for methods that can help estimate epidemiological quantities of interest, such as the serial interval, the time between the onset of symptoms in a primary case and the onset of symptoms in a secondary case. In this article, we describe a method developed by [Vink et al. 2014](https://doi.org/10.1093/aje/kwu209) [@vink2014] to estimate the mean and standard deviation of the serial interval distribution using data on symptom onset times (see {#methods} for details). Further, we demonstrate how to use `mitey` to apply this method to data, and validate that we are able to produce the same estimates as those in the original manuscript [ref Vink et al.].
+One of the motivations behind creating the `mitey` package was to provide flexible, documented code for methods that can help estimate epidemiological quantities of interest, such as the serial interval, the time between the onset of symptoms in a primary case and the onset of symptoms in a secondary case. In this article, we describe a method developed by [Vink et al. 2014](https://doi.org/10.1093/aje/kwu209) [@vink2014] to estimate the mean and standard deviation of the serial interval distribution using data on symptom onset times (see Methods for details). Further, we demonstrate how to use `mitey` to apply this method to data, and validate that we are able to produce the same estimates as those in the original manuscript [@vink2014].
 
 <!--- code available in original manuscript in the appendix, but not in a usable format
 - we reprogrammed the method within a package and a series of easy to use functions with options to change the assumed serial interval distribution
 - we re-estimate the mean and standard deviation of the serial interval distribution for a simulated distribution and for historical data sets and then compare them to the estimates obtained in Vink et al.
 - in this short report, we will demonstrate how to use the `mitey` package to estimate the mean and standard deviation of the serial interval while assuming an underlying Normal or Gamma distribution. We will also verify that we obtain the same mean and standard deviation estimates as those obtained by Vink et al. --->
 
-## Methods {#methods}
+## Methods
 The method proposed by Vink et al. [@vink2014] was developed to estimate characteristics of the serial interval distribution, namely the mean and standard deviation, using data describing the the dates of symptom onset for cases infected with a particular pathogen. The method involves calculating the index case-to-case (ICC) interval for each person, where the person with the greatest value for number of days since symptom onset will be considered the index case. The rest of the individuals will have an ICC interval calculated as the number of days between their symptom onset date and the symptom onset date of the index case. The method assumes that the ICC intervals can be split into different routes of transmission: Co-Primary (CP), Primary-Secondary (PS), Primary-Tertiary (PT), and Primary-Quaternary (PQ) based on the length their ICC interval. The method constructs a likelihood function for ICC intervals using a mixture model in which the mixture components are the different transmission routes. Then, using the Expectation-Maximization (EM) algorithm, the method iteratively calculates the probability that an ICC interval falls into one of the four routes of transmission. The method assumes an underlying Normal distribution for the serial interval distribution, and has been extended to assume and an underlying Gamma distribution. Both distributions can be specified in `si_estim` using the `dist = ` option. 
 
 # Simulated Data
@@ -149,7 +149,7 @@ df_comparison <- left_join(vink_estimates,
           Author == "Fine" ~ "Fine [@fine2003]",
           Author == "Vally" ~ "Vally [@vally2007]",
           Author == "Lai" ~ "Lai [@lai2011]",
-          Author == "Greeff" ~ "de Greeft [@greeft2010]",
+          Author == "Greeff" ~ "de Greeff [@greeff2010]",
           Author == "Crowcroft" ~ "Crowcroft [@crowcroft2008]",
           Author == "Aycock" ~ "Aycock [@aycock1946]",
         )
@@ -212,7 +212,7 @@ As with `si_estim`, the plotting function `plot_si_fit` can be applied to numeri
 head(df_merged, 10)
 ```
 
-```{r plot_results_historical, echo = TRUE, eval=TRUE, fig.cap="Figure 3. Fitted serial interval curves plotted over symptom onset data for a random sample of the historical data studies from Table 1. Red line is the fitted serial interval curves assuming an underlying Normal distribution.", fig.width=8, fig.height=6}
+```{r plot_results_historical, echo = TRUE, eval=TRUE}
 # Apply the plot_si_fit function by study
 plots <- df_merged %>%
   group_by(Author, Pathogen, Country) %>%
@@ -247,12 +247,12 @@ final_plot <- plot_grid(
 )
 ```
 
-```{r print_final_plot}
+```{r print_final_plot, fig.cap="Figure 3. Fitted serial interval curves plotted over symptom onset data for a random sample of the historical data studies from Table 1. Red line is the fitted serial interval curves assuming an underlying Normal distribution.", fig.width=8, fig.height=6}
 print(final_plot)
 ```
 
 # Discussion
-Here we demonstrate how to use the `mitey` package to estimate characteristics of the serial interval distribution by applying a method developed by Vink et al. to commonly available symptom onset data. We show that we are able to reproduce the estimates of the mean and standard deviation of the serial interval distribution from the original study when applying the method to numerous historical data sets for a variety of pathogens. 
+Here, we demonstrate how to use the `mitey` package to estimate characteristics of the serial interval distribution by applying a method developed by Vink et al. to commonly available symptom onset data. We show that we are able to reproduce the estimates of the mean and standard deviation of the serial interval distribution from the original study when applying the method to numerous historical data sets for a variety of pathogens. 
 
 # References
 ::: {#refs}
