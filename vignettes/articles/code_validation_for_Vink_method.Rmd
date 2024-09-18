@@ -1,5 +1,9 @@
 ---
 title: "Code validation for Vink method"
+author: "Kylie Ainslie"
+date: "`r Sys.Date()`"
+bibliography: references.bib
+csl: nature.csl
 ---
 
 ```{r, include = FALSE}
@@ -14,22 +18,23 @@ library(dplyr)
 library(purrr)
 library(fdrtool)
 library(flextable)
+library(ftExtra)
 library(officer)
+library(cowplot)
 library(devtools)
 load_all()
 ```
 
 # Introduction
-In this article we will validate that the code used within the `mitey` package produces the same results as those reported in [Vink et al. 2014](https://doi.org/10.1093/aje/kwu209).  
+One of the motivations behind creating the `mitey` package was to provide flexible, documented code for methods that can help estimate epidemiological quantities of interest, such as the serial interval, the time between the onset of symptoms in a primary case and the onset of symptoms in a secondary case. In this article, we describe a method developed by [Vink et al. 2014](https://doi.org/10.1093/aje/kwu209) [@vink2014] to estimate the mean and standard deviation of the serial interval distribution using data on symptom onset times (see {#methods} for details). Further, we demonstrate how to use `mitey` to apply this method to data, and validate that we are able to produce the same estimates as those in the original manuscript [ref Vink et al.].
 
-- code available in original manuscript in the appendix, but not in a usable format
+<!--- code available in original manuscript in the appendix, but not in a usable format
 - we reprogrammed the method within a package and a series of easy to use functions with options to change the assumed serial interval distribution
 - we re-estimate the mean and standard deviation of the serial interval distribution for a simulated distribution and for historical data sets and then compare them to the estimates obtained in Vink et al.
-- in this short report, we will demonstrate how to use the `mitey` package to estimate the mean and standard deviation of the serial interval while assuming an underlying Normal or Gamma distribution. We will also verify that we obtain the same mean and standard deviation estimates as those obtained by Vink et al.
+- in this short report, we will demonstrate how to use the `mitey` package to estimate the mean and standard deviation of the serial interval while assuming an underlying Normal or Gamma distribution. We will also verify that we obtain the same mean and standard deviation estimates as those obtained by Vink et al. --->
 
-## The Method
-The method proposed by Vink et al. was developed to estimate characteristics of the serial interval distribution, namely the mean and standard deviation, using data describing the the dates of symptom onset for cases infected with a particular pathogen. The method involves calculating the index case-to-case (ICC) interval for each person, where the person with the greatest value for number of days since symptom onset will be considered the index case. The rest of the individuals will have an ICC interval calculated as the number of days between their symptom onset date and the symptom onset date of the index case. The method assumes that the ICC intervals can be
-split into different routes of transmission: Co-Primary (CP), Primary-Secondary (PS), Primary-Tertiary (PT), and Primary-Quaternary (PQ). Then, using the Expectation-Maximization (EM) algorithm, the method iteratively calculates the probability that the ICC interval falls into one of the four routes of transmission. The method assumes an underlying Normal distribution for the serial interval distribution, and has been extended to assume and an underlying Gamma distribution. Both distributions can be specified in `si_estim` using the `dist = ` option. 
+## Methods {#methods}
+The method proposed by Vink et al. [@vink2014] was developed to estimate characteristics of the serial interval distribution, namely the mean and standard deviation, using data describing the the dates of symptom onset for cases infected with a particular pathogen. The method involves calculating the index case-to-case (ICC) interval for each person, where the person with the greatest value for number of days since symptom onset will be considered the index case. The rest of the individuals will have an ICC interval calculated as the number of days between their symptom onset date and the symptom onset date of the index case. The method assumes that the ICC intervals can be split into different routes of transmission: Co-Primary (CP), Primary-Secondary (PS), Primary-Tertiary (PT), and Primary-Quaternary (PQ) based on the length their ICC interval. The method constructs a likelihood function for ICC intervals using a mixture model in which the mixture components are the different transmission routes. Then, using the Expectation-Maximization (EM) algorithm, the method iteratively calculates the probability that an ICC interval falls into one of the four routes of transmission. The method assumes an underlying Normal distribution for the serial interval distribution, and has been extended to assume and an underlying Gamma distribution. Both distributions can be specified in `si_estim` using the `dist = ` option. 
 
 # Simulated Data
 First we use simulated ICC intervals set to determine if we are able to correctly estimate the mean and standard deviation of the simulated serial interval using the `si_estim` function in the `mitey` package. Here, we directly simulate the ICC intervals based on their route of transmission. These simulated data are the same as those provided in the supplemental material of Vink et al. The specified mean serial interval `hmu` is 15 and the specified standard deviation `hsigma` is 3. The weights for each route of transmission are specified as `hw1`, `hw2`, `hw3`, and `hw4`, respectively.
@@ -51,7 +56,7 @@ sim_data <- round(c(CP,PS,PT,PQ))
 head(sim_data,10)
 ```
 
-```{r plot_sim_data, echo=FALSE}
+```{r plot_sim_data, echo=FALSE, fig.cap="Figure 1. Histogram of index-case to case intervals (in days) for simulated data."}
 breaks<-seq(-.5,(max(sim_data)+1),by=1)
 hist(sim_data,breaks=breaks,prob=TRUE,main="",xlab="Index-case to case interval (days)", ylab="frequency", ylim=c(0,0.07))
 ```
@@ -62,9 +67,8 @@ results
 ```
 The output of `si_estim` is a named list with elements `mean`, `sd`, and `wts`, which contain the estimated mean, standard deviation, and weights of the serial interval distribution, respectively. We see that using the simulated data and assuming an underlying normal distribution, we obtain estimates very close to the input values: a mean serial interval estimate of `r round(results$mean[1], 2)` and a standard deviation of `r round(results$sd[1], 2)`. We are also able to recapture the input weights: hw1 = `r round(results$wts[1], 2)`, hw2 = `r round(results$wts[2] + results$wts[3], 2)`, hw3 = `r round(results$wts[4] + results$wts[5], 2)`, hw4 = `r round(results$wts[6] + results$wts[7], 2)`.
 
-
 Using the `plot_si_fit` function, we can use the outputs of `si_estim` to plot the fitted serial interval over the symptom onset data.
-```{r plot_sim_data_fit}
+```{r plot_sim_data_fit, fig.cap="Figure 2. Fitted serial interval curves plotted over symptom onset data for simulated symptom onset data. Red line is the fitted serial interval curves assuming an underlying Normal distribution."}
 plot_si_fit(
     dat = sim_data,
     mean = results$mean[1],
@@ -76,7 +80,7 @@ plot_si_fit(
 ```
 
 # Historical Data
-Next, we will estimate the mean serial interval using the method by Vink et al. from different historical data sets. The historical data are stored in `articles/validation_data.rds`. The data set contains 5 columns:
+Next, we will estimate the mean serial interval using the method by Vink et al. [@vink2014] from different historical data sets. The historical data are stored in `articles/validation_data.rds`. The data set contains 5 columns:
 
   - `Author`: the first author of the published manuscript describing the data
   - `Year`: the year the manuscript was published
@@ -89,14 +93,19 @@ val_data <- readRDS("validation_data.rds")
 head(val_data)
 ```
 
-A useful feature of `si_estim` is that it can be applied to multiple vectors of ICC intervals that are stored within a long-format data frame using `dplyr::summarise`. An example of how to do this is shown below using `val_data`. We first select only the necessary columns, here Author, Pathogen, and ICC_interval. Then, we group the data, using `group_by`, by Author and Pathogen, so that `si_estim` is applied to the ICC intervals of only one study and one pathogen at a time. Finally, we apply `si_estim` to each set of ICC intervals using `summarise`. We can also specify the initial values used to estimate the mean and standard deviation of the serial interval. The default is the sample mean and sample standard deviation each divided by 4. The EM algorithm is sensitive to the choice of initial value. Due to the format of `si_estim`'s output as a named list, we create new column for each estimate using `mutate` and `purrr:map_dbl`.
+A useful feature of `si_estim` is that it can be applied to multiple vectors of ICC intervals that are stored within a long-format data frame using `dplyr::summarise`. An example of how to do this is shown below using `val_data`. We first select only the necessary columns, here Author, Pathogen, Country, and ICC_interval. Then, we group the data, using `group_by`, by Author, Pathogen, and Country, so that `si_estim` is applied to the ICC intervals of only one study and one pathogen at a time. Finally, we apply `si_estim` to each set of ICC intervals using `summarise`. We can also specify the initial values used to estimate the mean and standard deviation of the serial interval. The default is the sample mean and sample standard deviation. The EM algorithm is sensitive to the choice of initial value, so we will specify the initial values from Table 2 in Vink et al. The initial values are stored in `articles/initial_values.rds`. The initial values for standard deviation are the minimum of the mean serial interval divided by 2 or a random value drawn from uniform distribution between 2 and 5. Finally, Due to the format of `si_estim`'s output as a named list, we create new column for each estimate using `mutate` and `purrr:map_dbl`.
 
-```{r si_estim_historical_data, message=FALSE}
-results_historical <- val_data %>%
-  select(Author, Pathogen, Country, ICC_interval) %>%
+```{r add_initial_values}
+initial_values <- readRDS("initial_values.rds")
+val_data_w_init <- left_join(val_data, initial_values, by = "Pathogen")
+```
+
+```{r si_estim_historical_data, message=FALSE, results='hide', warning=FALSE}
+results_historical <- val_data_w_init %>%
   group_by(Author, Pathogen, Country) %>%
   summarise(result = list(si_estim(.data$ICC_interval, 
-                                   init = c(mean(.data$ICC_interval)/4, sd(.data$ICC_interval)/4)))) %>%
+                                   init = c(first(.data$mean_si), first(.data$sd_si))
+            ))) %>%
   mutate(
     mean = map_dbl(result, "mean"),
     sd = map_dbl(result, "sd"),
@@ -105,32 +114,58 @@ results_historical <- val_data %>%
   select(-result)
 ```
 
-The resulting output is a tibble with columns: Author, Pathogen, mean, sd, and wts. The mean and sd columns refer to the estimates for the mean and standard deviation of the serial interval distribution. The wts column refers to the weights for the different transmission routes, and can be used as inputs when plotting the fitted serial interval distribution using `plot_si_fit`. The weights are stored as a list, so are not visible when printing the results, but can be accessed using `results_historical$wts`.
+The resulting output is a tibble with columns: Author, Pathogen, Country, mean, sd, and wts. The mean and sd columns refer to the estimates for the mean and standard deviation of the serial interval distribution. The wts column refers to the weights for the different transmission routes, and can be used as inputs when plotting the fitted serial interval distribution using `plot_si_fit`. The weights are stored as a list, so are not visible when printing the results, but can be accessed using `results_historical$wts`.
 
 ```{r results_historical, echo = FALSE}
 results_historical
 ```
 
-To determine if our estimates match those reported in Vink et al. we show a table of the estimated mean and standard deviation of serial interval estimated by `si_estim` and the estimates presented in Vink et al. \@ref(tab:results_comparison_table). shows that we successfully recapture the estimates of the original study.
+When comparing the estimates produced by `si_estim` and the estimates presented in Vink et al., we see that si_estim successfully recaptures the estimates of the original study (Table 1).
 
-```{r results_comparison_table, echo = FALSE}
+```{r results_comparison_table, echo = FALSE, tab.cap="Table 1. Estimates of mean and standard deviation (SD) of the serial interval distribution from Vink et al. and from `si_estim` for different historical data sets."}
 vink_estimates <- readRDS("vink_estimates.rds") %>%
   select(-`95% CI of Mean`)
-df_comparison <- left_join(vink_estimates, results_historical %>% select(-wts), 
+df_comparison <- left_join(vink_estimates, 
+                           results_historical %>% 
+                             select(-wts) %>%
+                             mutate(Country = recode(Country, "USA" = "United States")), 
                            by = c("Author", "Pathogen", "Country")) %>%
   mutate(mean = round(mean, 1),
          SD = round(SD, 1),
-         sd = round(sd, 1))
+         sd = round(sd, 1),
+# add references
+        Author = case_when(
+          Author == "Hahne" ~ "Hahne [@hahne2009]",
+          Author == "Cauchemez" ~ "Cauchemez [@cauchemez2009]",
+          Author == "Savage" ~ "Savage [@savage2011]",
+          Author == "Papenburg" ~ "Papenburg [@papenburg2010]",
+          Author == "France" ~ "France [@france2010]",
+          Author == "Morgan" ~ "Morgan [@morgan2010]",
+          Author == "Viboud" ~ "Viboud [@viboud2004]",
+          Author == "Aaby" ~ "Aaby [@aaby1990]",
+          Author == "Bailey" ~ "Bailey [@bailey1954]",
+          Author == "Simpson" ~ "Simpson [@simpson1952]",
+          Author == "Chapin" ~ "Chapin [@chapin1925]",
+          Author == "Fine" ~ "Fine [@fine2003]",
+          Author == "Vally" ~ "Vally [@vally2007]",
+          Author == "Lai" ~ "Lai [@lai2011]",
+          Author == "Greeff" ~ "de Greeft [@greeft2010]",
+          Author == "Crowcroft" ~ "Crowcroft [@crowcroft2008]",
+          Author == "Aycock" ~ "Aycock [@aycock1946]",
+        )
+        )
 
 ft_comparison <- flextable(df_comparison) %>%
-  colformat_int(big.mark = "")
+  colformat_num(j = "Year", big.mark = "") %>%
+  ftExtra::colformat_md()
 
 ft_comparison %>%
   add_header_row(
-  x = ft_comparison, values = c("", "Vink et al. Estimates", "si_estim Estimates"),
-  colwidths = c(3, 2, 2)) %>%
+  values = c("", "Vink et al. Estimates", "si_estim Estimates"),
+  colwidths = c(4, 2, 2)) %>%
+  align(align = "center", part = "header") %>%
   set_header_labels(
-    mean = "Mean", 
+    mean = "Mean",
     sd = "SD"
   ) %>%
   autofit(add_w = 0.2) %>%
@@ -141,11 +176,7 @@ ft_comparison %>%
   border(i = nrow(df_comparison), border.bottom = officer::fp_border(width = 1), part = "body") 
 ```
 
-```{r show_results_comparison_table, echo=FALSE}
-results_comparison_table
-```
-
-```{r results_historical_wrangling, echo = FALSE, eval = FALSE}
+```{r results_historical_wrangling, echo = FALSE, eval = TRUE}
 results_historical2 <- results_historical %>%
   unnest(wts) %>% # Unnest the wts column if needed %>%
   pivot_longer(
@@ -153,7 +184,7 @@ results_historical2 <- results_historical %>%
     names_to = "statistic",
     values_to = "value"
   ) %>%
-  group_by(Author, Pathogen, statistic) %>%
+  group_by(Author, Pathogen, Country, statistic) %>%
   mutate(
     occurrence = row_number(),
     statistic = if_else(statistic == "wts", paste0("weight_", occurrence), statistic)
@@ -171,14 +202,20 @@ results_hist_wide <- results_historical2 %>%
   )
 
 df_merged <- val_data %>%
-  select(Author, Pathogen, ICC_interval) %>%
-  left_join(results_histwide, by = c("Author", "Pathogen"), relationship = "many-to-many")
+  select(Author, Pathogen, Country, ICC_interval) %>%
+  left_join(results_hist_wide, by = c("Author", "Pathogen", "Country"), relationship = "many-to-many")
 ```
 
-```{r plot_results_historical, echo = FALSE, eval=FALSE}
+As with `si_estim`, the plotting function `plot_si_fit` can be applied to numerious vectors of ICC intervals using `purrr:group_map`. The results outputted from `si_estim` cannot be used directly and must be merged with the original ICC interval data. We will call this new data frame `df_merged` and it should contain column(s) identifying the study from which the ICC intervals correspond, as well as the mean, standard deviation, and weights outputted from `si_estim`.
+
+```{r head_df_merged, echo=FALSE}
+head(df_merged, 10)
+```
+
+```{r plot_results_historical, echo = TRUE, eval=TRUE, fig.cap="Figure 3. Fitted serial interval curves plotted over symptom onset data for a random sample of the historical data studies from Table 1. Red line is the fitted serial interval curves assuming an underlying Normal distribution.", fig.width=8, fig.height=6}
 # Apply the plot_si_fit function by study
 plots <- df_merged %>%
-  group_by(Author, Pathogen) %>%
+  group_by(Author, Pathogen, Country) %>%
   group_map(~ plot_si_fit(
     dat = .x$ICC_interval,
     mean = .x$mean[1],
@@ -191,23 +228,32 @@ plots <- df_merged %>%
 # Annotate plots with study names and labels
 # Find the order of the groups
 group_order <- df_merged %>%
-  group_by(study) %>%
+  group_by(Author, Pathogen, Country) %>%
   group_keys()
 
 labeled_plots <- lapply(seq_along(plots), function(i) {
   plots[[i]] +
-    ggtitle(group_order[i,1]) +            # Add study names as titles
-    theme(plot.title = element_text(hjust = 0.5))  # Center the title
+    ggtitle(paste(group_order[i,1], group_order[i,2], group_order[i,3])) +          
+    theme(plot.title = element_text(size = 8, hjust = 0.5),
+          axis.title.x = element_text(size = 10))  
 })
 
 # Combine plots into a multi-pane figure
 final_plot <- plot_grid(
-  plotlist = labeled_plots, # exclude DPBH and Larrosa
+  plotlist = labeled_plots[sample(1:22, 8)], # select studies to display randomly
   labels = "AUTO",      # Automatically adds labels (A, B, C, etc.)
   label_size = 12,      # Size of the labels
-  ncol = 5              # Number of columns; adjust as needed
+  ncol = 4              # Number of columns; adjust as needed
 )
+```
 
+```{r print_final_plot}
 print(final_plot)
 ```
+
 # Discussion
+Here we demonstrate how to use the `mitey` package to estimate characteristics of the serial interval distribution by applying a method developed by Vink et al. to commonly available symptom onset data. We show that we are able to reproduce the estimates of the mean and standard deviation of the serial interval distribution from the original study when applying the method to numerous historical data sets for a variety of pathogens. 
+
+# References
+::: {#refs}
+:::
