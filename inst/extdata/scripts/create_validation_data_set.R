@@ -165,3 +165,17 @@ df <- tribble(
 )
 
 saveRDS(df, "vignettes/articles/vink_estimates.rds")
+
+# initial values
+# mean estimates are taken from Table 2 in Vink et al.
+# sd are chosen as max(mean/2, 5)
+initial_values <- data.frame(
+  Pathogen = c("Influenza A(H1N1)pdm09", "Influenza A(H3N2)", "Measles", "Mumps",
+               "Pertussis", "RSV", "Rubella", "Smallpox", "Varicella"),
+  mean_si = c(2.3, 3.1, 12, 18.3, 7, 7, 15, 18.6, 14)
+)  %>%
+  group_by(Pathogen) %>%
+  mutate(sd_si = min(mean_si/2, runif(1, min = 2, max = 5))) %>%
+  ungroup()
+
+saveRDS(initial_values, "vignettes/articles/initial_values.rds")
