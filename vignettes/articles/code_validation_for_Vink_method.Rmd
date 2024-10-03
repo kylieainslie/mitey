@@ -235,7 +235,7 @@ labeled_plots <- lapply(seq_along(plots), function(i) {
   plots[[i]] +
     ggtitle(paste(group_order[i,1], group_order[i,2], group_order[i,3])) +          
     theme(plot.title = element_text(size = 8, hjust = 0.5),
-          axis.title.x = element_text(size = 10))  
+          axis.title.x = element_text(size = 8))  
 })
 
 # Combine plots into a multi-pane figure
@@ -247,7 +247,7 @@ final_plot <- plot_grid(
 )
 ```
 
-```{r print_final_plot, fig.cap="Figure 3. Fitted serial interval curves plotted over symptom onset data for a random sample of the historical data studies from Table 1. Red line is the fitted serial interval curves assuming an underlying Normal distribution.", fig.width=8, fig.height=6}
+```{r print_final_plot, echo=FALSE, fig.cap="Figure 3. Fitted serial interval curves plotted over symptom onset data for a random sample of the historical data studies from Table 1. Red line is the fitted serial interval curves assuming an underlying Normal distribution.", fig.width=10, fig.height=6}
 print(final_plot)
 ```
 
