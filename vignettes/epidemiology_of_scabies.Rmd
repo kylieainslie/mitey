@@ -50,54 +50,44 @@ library(glue)
 library(zoo)
 library(stringr)
 library(forcats)
+library(Hmisc)
 library(devtools)
 load_all()
 ```
+# Abstract
+Introduction: Scabies is a contagious skin disease caused by the infestation of the skin by the Sarcopes scabiei mite, causing an itchy rash. Scabies affects over 400 million people annually worldwide, and a rise in scabies cases has been observed in recent years throughout Western Europe. Despite the prevalence of scabies, some fundamental epidemiological characteristics of scabies infections have not been described. 
+Methods: In this work we use publicly available data on date of symptom onset during scabies outbreaks to determine the serial interval, time between symptom onset in an infector and symptom onset in an infectee, of scabies infection. We also use weekly case counts from sentinel surveillance in the Netherlands from 2011-2023 to determine quantities related to the spread of scabies over time, namely, the time-varying reproduction number, growth rate, and basic reproduction number.
+Results: We found that there was considerable heterogeneity in estimates of the serial interval from different data sources, with mean serial interval estimates ranging from XX days to XX days. We performed a meta-analysis and estimated a pooled mean serial interval of 123.24 days (95% credible interval: 91.44, 153.41 days). An analysis of annual incidence of scabies per 1000 people in the Netherlands resulted in an estimated annual growth rate of 0.353 cases per 1000 people per year. Using the estimated growth rate and mean and standard deviation of the serial interval distribution we estimated the basic reproduction number, $R_0 = 1.13$. We estimated the time-varying reproduction number over time we saw yearly waves of infections, with the amplitude of incidence gradually increasing over time. The time-varying reproduction number oscillated around the geometric mean.
+Discussion: 
+
 
 # Introduction
 
-Scabies is classified as a neglected tropical disease caused by
-infestation of the skin with a microscopic mite (Sarcoptes scabiei)
-[@who]. Symptoms are characterized by itchiness and rash at the site of
-infestation. Scabies affects around 400 million people per year, and
-accounts for a large proportion of skin disease in many low- and
-middle-income countries [@who]. A rise in scabies cases has been
-observed through out Europe in recent years [@deursen2022;
-@reichert2021; @redondo-bravo2021; @lugovic-mihic2020; @amato2019;
-@dona2023].
+Scabies is classified as a neglected tropical disease caused by infestation of the skin with a microscopic mite (Sarcoptes scabiei) [@who]. Symptoms are characterized by itchiness and rash at the site of infestation. Scabies affects around 400 million people per year, and accounts for a large proportion of skin disease in many low- and middle-income countries [@who], particularly in tropical regions such as Asia, South America, and Oceania [@karimkhani2017]. Historically, scabies infections were a common affliction in Europe in the late 1800s and early 1900s with incidence peaking in 1918 and 1945 [@savin2005; @christophersen1978]. After the end of World War II, scabies incidence in Europe fell and remained low for decades [@savin2005; @christophersen1978; @downs1999]. However, a rise in scabies cases has been observed through out Europe in recent years [@deursen2022; @reichert2021; @redondo-bravo2021; @lugovic-mihic2020; @amato2019; @dona2023], which may increase the burden on healthcare systems due to scabies if the rising trend continues.
 
-Despite the considerable burden scabies poses annually, little is known
-about the disease dynamics of scabies transmission, such as the
-generation time (time between infection of an index case and a secondary case), serial
-interval (the time from onset of symptoms in an index case to the time
-of symptom onset in a secondary case), growth rate, and reproduction
-number (the average number of secondary cases resulting from one index
-case). A series of studies in the 1940s by Kenneth Mellanby and colleagues
-[@mellanby1944; @mellanby1972] form much of the basis of our current understanding of
-scabies transmission. Some important results from the experiments performed in the 1940s by Mellanby and colleagues include an estimation of the incubation period, or time to symptom onset, of 4-6 weeks; the change in parasite rate, defined as the number of mature female mites, over time, which was shown to increase rapidly, peak around 100 days, and then decline quickly; and the probability of transmission via a secondary object (e.g., bed sheets) is low and most transmission occurs from person-to-person contact [@mellanby1944].
+The global disease burden of scabies, expressed in disability-adjusted life years (DALY), is low compared to other infectious diseases. A 2017 study found that scabies was responsible for only 0.21% of DALYs from all conditions studied worldwide [@karimkhani2017]. However, areas with high scabies prevalence have been shown to have high disease burden of scabies partially due to secondary infections which can lead to severe outcomes  [@karimkhani2017]. Additionally, there is no simple diagnostic test for scabies, so diagnosis relies on clinical assessment [@cox2021], which can increase the workload of general practitioners (GPs) during periods of high scabies incidence. Furthermore, individuals infected with scabies can suffer from stigma, discrimination and distress [@cox2021; @white2001] in addition to the physical manifestations of the disease, making them less likely to seek medical care and further promoting transmission [@mitja2017]. While there is a dearth of data on the economic implications of scabies; research has shown that scabies can have economic implications for both the patients and the healthcare system due to ineffective and long duration of treatment [@cox2021].
 
-In this work, we aim to estimate epidemiological characteristics of
-scabies. It is critical to better understand the underlying disease
-dynamics of scabies to 1) assess current spread and 2) inform infection
-control policy. Some modelling work has been performed to study the
+Despite the considerable burden scabies poses, little is known about the disease dynamics of scabies transmission, such as the generation time (time between infection of an index case and a secondary case), serial
+interval (the time from onset of symptoms in an index case to the time of symptom onset in a secondary case), growth rate, and reproduction number (the average number of secondary cases resulting from one index
+case). A series of studies in the 1940s by Kenneth Mellanby and colleagues [@mellanby1944; @mellanby1972] form much of the basis of our current understanding of scabies transmission. Some important results from the experiments performed in the 1940s by Mellanby and colleagues include an estimation of the incubation period, or time to symptom onset, of 4-6 weeks; the change in parasite rate, defined as the number of mature female mites, over time, which was shown to increase rapidly, peak around 100 days, and then decline quickly; and the probability of transmission via a secondary object (e.g., bed sheets) is low and most transmission occurs from person-to-person contact [@mellanby1944]. However, these studies were performed using healthy volunteers, so may not be representative of scabies transmission dynamics on other populations.
+
+In this work, we aim to estimate key epidemiological characteristics of
+scabies, such as the serial interval, growth rate, and reproduction number, to better describe scabies transmission dynamics. Specifically, we use time series of reported symptom onset dates of scabies outbreaks from the
+literature to estimate the mean serial interval of scabies. We also use data on the number of scabies diagnoses each week in the Netherlands to estimate time-varying reproduction number and annual growth rate. To our knowledge, this is the first study to estimate these quantities for scabies, and can provide critical information for the design of appropriate infection control policy.  
+
+<!-- Some modelling work has been performed to study the
 potential impacts of intervention strategies, such as mass drug
 administration, on scabies transmission [@kinyanjui2018; @lydeamore2019;
 @tellioglu2023]; however, the values used to parameterise these models
-are based largely on Mellanby's 1944 study and use information about the
-mite life-cycle to approximate quantities such as latent period and
-infectious period. However, this information doesn't necessarily provide
-good estimates for transmission potential in humans. For example,
-Kinyanjui et al. [@kinyanjui2018] assume a latent period of 7-14 days to
-allow for the time for the time it takes for a fertilised female mite to
-reproduce and incorporate it into a susceptible-exposed-infectious model
-of scabies transmission. However, this assumes an equal chance of
+are based largely on Mellanby's 1944 study [@mellanby1944] and use information about the mite life-cycle to approximate the time scales of scabies infection cycles.
+For example, Kinyanjui et al. [@kinyanjui2018] assume a latent period of 7-14 days to allow for the time for the time it takes for a fertilised female mite to reproduce and incorporate it into a susceptible-exposed-infectious model of scabies transmission. However, this assumes an equal chance of
 infectiousness despite the number of mites inhabiting an infested
 individual. Mellanby [@mellanby1944] shows that the probability of onward
 transmission of scabies is rare when the number of mites on an
 individual is low and increases as the mite population grows. A better
 approximation of the disease process can be obtained using the
 generation time or serial interval; however, no such estimates exist for
-scabies.
+scabies. 
 
 Additionally, the growth rate and reproduction number are quantities
 that describe how fast an infectious disease spreads. They are also used
@@ -111,12 +101,8 @@ needed to contain disease spread. As evidence continues to suggest that
 scabies is a growing problem in European countries and remains a large
 problem elsewhere, it is important to describe the epidemiological
 characteristics of scabies so that the required control efforts to curb
-scabies epidemics can be determined.
+scabies epidemics can be determined. -->
 
-In this study, we use epidemic curves of scabies outbreaks from the
-literature to estimate the mean serial interval of scabies. We use also data on weekly
-scabies cases in the Netherlands to estimate time-varying reproduction
-number and annual growth rate. To our knowledge, this is the first study to estimate these quantities for scabies.
 
 # Methods
 
@@ -366,14 +352,10 @@ We obtained weekly reported cases of scabies per 1000 people from 2011
 to 2023 in the Netherlands [@nivel; @deursen2022]. To estimate
 time-varying reproduction number, we first randomly assigned each
 reported case a date of symptom onset in the week in which the case was
-reported. Since scabies is very hard to diagnose prior to symptom onset [@mellanby1972], and reported cases are captured as part of sentinel surveillance based on GP diagnosis [@nivel], we assume reporting date is consistent with date of symptom onset. Using the constructed daily time series of date of symptom onset, we applied the method proposed by
-Wallinga and Teunis [@wallinga_teunis2004] to estimate the time-varying
+reported. Since scabies is very hard to diagnose prior to symptom onset [@mellanby1972], and reported cases are captured as part of sentinel surveillance based on GP diagnosis [@nivel], we assume reporting date is consistent with date of symptom onset. Using the constructed daily time series of date of symptom onset, we applied the method proposed by Wallinga and Teunis [@wallinga_teunis2004] to estimate the time-varying
 case reproduction number. The case reproduction number is defined as the average number of new infections that an individual who becomes infected, or symptomatic, at a particular time point will go on to cause [@gostic2020], and is useful in retrospective analyses such as the one presented here. The method of Wallinga and Teunis estimates the time-varying case reproduction number by determining the likelihood of an event occurring for every pair of time points [@wallinga2007]. The method requires the specification of the serial interval distribution. We assumed a Normal serial interval distribution with mean 123.24 days and standard deviation 31.55 days, as estimated previously. Due to unobserved onward cases at the end of the time series, we adjusted for right truncation [@cauchemez2006a; @cauchemez2006b]. To obtain 95% confidence intervals on the daily reproduction number, we generated 100 bootstrapped samples by resampling each case with replacement and reconstructing the incidence time series for each sample. Reproduction number estimates were then smoothed using a rolling average of 5 weeks. 
 
-[Do we need to do this?] We performed a sensitivity analysis in which we assumed the serial interval was Gamma distributed.
-
-All analyses were performed in R 4.4.0 [@R-base]. Additional R packages
-used in this work are cited in the Appendix.
+All analyses were performed in R 4.4.0 [@R-base]. Additional R packages used in this work are cited in the Appendix.
 
 # Results
 
@@ -384,10 +366,7 @@ using the epidemic curves from each study (Table
 \@ref(tab:si_results_tab)). There was considerable variation between
 studies with the largest estimated mean serial interval of 167.34 days
 (SD = 9.72 days) from data from Kaburi et al. [@kaburi2019] which
-describes an outbreak in a preschool in Ghana. The smallest estimated
-mean serial interval was 16.11 days (SD = 2.42 days), and was estimated
-from data from Larrosa et al. [@larrosa2003] which describes an outbreak
-in a hospital in Spain. We performed a sensitivity analysis in which we estimated the mean and standard deviation of the serial interval assuming an underlying Gamma distribution (Table \@ref(tab:tab_si_gam) and Figure \@ref(fig:gam_si_plots)). We found that we obtained similar mean estimates as compared to assuming an underlying Normal distribution (albeit lower for most studies), but the estimated standard deviations were large. Model fit was assessed visually by plotting the estimated densities over the epidemic curves (Figure \@ref(fig:gam_si_plot)) and we found that the Gamma distribution was not a good fit of the data.
+describes an outbreak in a preschool in Ghana. We performed a sensitivity analysis in which we estimated the mean and standard deviation of the serial interval assuming an underlying Gamma distribution (Table \@ref(tab:tab_si_gam) and Figure \@ref(fig:gam_si_plots)). We found that we obtained similar mean estimates as compared to assuming an underlying Normal distribution (albeit lower for most studies), but the estimated standard deviations were large. Model fit was assessed visually by plotting the estimated densities over the epidemic curves (Figure \@ref(fig:gam_si_plot)) and we found that the Gamma distribution was not a good fit of the data.
 
 ```{r si_results_tab, echo=FALSE, tab.cap="Estimated mean and standard deviation (SD) of serial interval distribution, in days, for each study."}
 df_si <- result_norm_wide %>%
@@ -458,11 +437,11 @@ Bayesian meta-analysis with random intercepts for each study. We
 excluded studies with study periods less than 100 days as it was
 unlikely to observe a primary-secondary infection in that time. We
 estimated a pooled mean serial interval of 123.24 days (95% credible
-interval: 91.44, 153.41) (Figure \@ref(fig:forest_plot). As we saw
+interval: 91.44, 153.41 days) (Figure \@ref(fig:forest_plot). As we saw
 with the individual study estimates (Table \@ref(tab:si_results_tab)),
 the meta-analysis provided further evidence of substantial heterogeneity
 among studies due to a large value of the standard deviation of the
-random intercepts (31.55). The large variation in the mean serial
+random intercepts (31.55 days). The large variation in the mean serial
 interval estimates can be visualised by plotting the estimated
 distributions of each study's serial interval shown in Figure
 \@ref(si_dist_plot). A normal distribution is assumed, and is
@@ -545,19 +524,12 @@ print(forest_plot)
 We estimated the annual growth rate of scabies cases by fitting an
 exponential growth model to annual incidence of scabies per 1000 people
 from 2011 to 2023 in the Netherlands [@nivel]. We estimated an annual
-growth rate of 0.353 (95% CI: 0.152, 0.452). Using the estimated growth
-rate, we can estimate the basic reproduction number as R0 = 1 + (0.353
-\* 1/b), where b is the generation time in days [@wallinga2007]. Using
-the previously estimated pooled mean serial interval (123.24 days) as a
-proxy for generation time, we estimate R0 = 1.002 (1.001, 1.004). Using
-the fitted exponential growth model and the estimated growth rate, we
-then determined the projected incidence of scabies per 1000 people until
-2033 if no interventions are implemented. We found that there could be a
-substantial increase in scabies incidence in the next 10 years in the
-Netherlands if no measures are taken to mitigate scabies spread (Figure
+growth rate of 0.353 (95% CI: 0.152, 0.452). Using the estimated annual growth
+rate, we can estimate the basic reproduction number as $R_0 = \exp(r*T – (1/2) r^2 s^2)$, where $r$ is the annual growth rate, $T$ is the mean generation time (in years), and $s^2$ is the variance of the generation time distribution [@wallinga2007]. Using the previously estimated pooled mean serial interval (123.24 days or 0.34 years) and standard deviation of the serial interval (31.55 days or 0.09 years) as a proxy for the generation time, we estimate $R_0=1.13$. Using the fitted exponential growth model and the estimated growth rate, we
+then determined the projected incidence of scabies per 1000 people until 2033 if no interventions are implemented. We found that there could be a substantial increase in scabies incidence in the next 10 years in the Netherlands if no measures are taken to mitigate scabies spread (Figure
 \@ref(fig:growth_rate_fig)). 
 
-```{r growth_rate_fig, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center', fig.cap="Scabies incidence per 1000 people from 2011 to 2023 (points) and then projected scabies indcidence per 1000 people for 2024 to 2033 (line) using an exponential growth model with annual growth rate = 0.353. Shaded regions represent 95% confidence intervals for projected scabies incidence. The y-axis is displayed on the log-scale and represents the natural log of scabies incidence per 1000 people.", out.width="100%"}
+```{r growth_rate_fig, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center', fig.cap="Scabies incidence per 1000 people from 2011 to 2023 (points) and then projected scabies indcidence per 1000 people for 2024 to 2033 (line) using an exponential growth model with annual growth rate = 0.353 cases per 1000 people. Shaded regions represent 95% confidence intervals for projected scabies incidence. The y-axis is displayed on the log-scale and represents the natural log of scabies incidence per 1000 people.", out.width="100%"}
 
 # read in df for plot
 #scabies_plot_df <- readRDS("data/scabies_gr_proj_df.rds")
@@ -599,6 +571,14 @@ knitr::include_graphics("figures/nivel_epidemic_curve.png")
 
 # read in data
 rt_df_for_plot <- readRDS("data/rt_df_for_plot.rds")
+
+# calculate summary stats of Rt by year
+rt_summary <- rt_df_for_plot %>%
+  mutate(year = year(onset_date)) %>%
+  group_by(year) %>%
+  summarise(geom_mean = exp(mean(log(rt_adjusted[rt_adjusted > 0]))),
+            arith_mean = mean(rt_adjusted))
+
 # plot rt_adjusted with confidence bounds (and season bars)
 # Breaks for background rectangles
 start_breaks <- c(as.Date("2011-01-01"),
@@ -639,6 +619,8 @@ p
  - Discuss why estimates of mean serial interval across studies are so
 different (different populations and identification of symptom onset may
 be delayed).
+
+- lack of data on incubation period beyond the range provided by Mellanby 1943 (4-6 weeks). Future research should focus on obtaining more precise information on the incubation period.
 
  - Discuss limitations of the approach and caveats for interpretation.
     - we assume each infection is a person's first infection. 
