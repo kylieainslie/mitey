@@ -77,7 +77,7 @@
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>This is a basic example of estimating the mean serial interval from data on time of symptom onset for an infectious disease. We first simulate index case-to-case (ICC) intervals. Then, we estimate the mean and standard deviation of the simulated serial interval using the <code>si_estim</code> function. Here, we directly simulate the ICC intervals based on their route of transmission. The specified mean serial interval <code>hmu</code> is 15 and the specified standard deviation <code>hsigma</code> is 3. The weights for each route of transmission are specified as <code>hw1</code>, <code>hw2</code>, <code>hw3</code>, and <code>hw4</code>, respectively.</p>
+<p>This is a basic example of estimating the mean serial interval from data on time of symptom onset for an infectious disease. We first simulate index case-to-case (ICC) intervals. Here, we directly simulate the ICC intervals based on their route of transmission. The specified mean serial interval <code>hmu</code> is 15 and the specified standard deviation <code>hsigma</code> is 3. The weights for each route of transmission are specified as <code>hw1</code>, <code>hw2</code>, <code>hw3</code>, and <code>hw4</code>, respectively.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kylieainslie/mitey" class="external-link">mitey</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://strimmerlab.github.io/software/fdrtool/" class="external-link">fdrtool</a></span><span class="op">)</span></span></code></pre></div>
@@ -92,13 +92,14 @@
 <span><span class="va">PQ</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">hw4</span><span class="op">*</span><span class="va">N</span>,mean<span class="op">=</span><span class="fl">3</span><span class="op">*</span><span class="va">hmu</span>,sd<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">*</span><span class="va">hsigma</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">sim_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">CP</span>,<span class="va">PS</span>,<span class="va">PT</span>,<span class="va">PQ</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co">#&gt;  [1]  5  1  5 10  2  2  2  2  2  4</span></span></code></pre></div>
+<p>We can look at our simulated data by plotting them as a histogram.</p>
 <div class="figure">
 <img src="reference/figures/README-plot_sim_data-1.png" alt="Figure 1. Histogram of index-case to case intervals (in days) for simulated data." width="100%"><p class="caption">
 Figure 1. Histogram of index-case to case intervals (in days) for simulated data.
 </p>
 </div>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>Then, we estimate the mean and standard deviation of the simulated serial interval using the <code>si_estim</code> function.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/si_estim.html">si_estim</a></span><span class="op">(</span><span class="va">sim_data</span>, dist <span class="op">=</span> <span class="st">"normal"</span><span class="op">)</span></span>
 <span><span class="va">results</span></span>
 <span><span class="co">#&gt; $mean</span></span>
@@ -112,7 +113,7 @@ Figure 1. Histogram of index-case to case intervals (in days) for simulated data
 <span><span class="co">#&gt; [6] 1.072676e-01 9.057491e-22</span></span></code></pre></div>
 <p>The output of <code>si_estim</code> is a named list with elements <code>mean</code>, <code>sd</code>, and <code>wts</code>, which contain the estimated mean, standard deviation, and weights of the serial interval distribution, respectively. We see that using the simulated data and assuming an underlying normal distribution, we obtain estimates very close to the input values: a mean serial interval estimate of 15.03 and a standard deviation of 2.79. We are also able to recapture the input weights: hw1 = 0.21, hw2 = 0.48, hw3 = 0.2, hw4 = 0.11.</p>
 <p>Using the <code>plot_si_fit</code> function, we can use the outputs of <code>si_estim</code> to plot the fitted serial interval over the symptom onset data.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plot_si_fit.html">plot_si_fit</a></span><span class="op">(</span></span>
 <span>    dat <span class="op">=</span> <span class="va">sim_data</span>,</span>
 <span>    mean <span class="op">=</span> <span class="va">results</span><span class="op">$</span><span class="va">mean</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
