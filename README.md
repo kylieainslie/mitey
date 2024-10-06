@@ -37,13 +37,11 @@ al. 2014](https://doi.org/10.1093/aje/kwu209) can be found [here]()
 
 This is a basic example of estimating the mean serial interval from data
 on time of symptom onset for an infectious disease. We first simulate
-index case-to-case (ICC) intervals. Then, we estimate the mean and
-standard deviation of the simulated serial interval using the `si_estim`
-function. Here, we directly simulate the ICC intervals based on their
-route of transmission. The specified mean serial interval `hmu` is 15
-and the specified standard deviation `hsigma` is 3. The weights for each
-route of transmission are specified as `hw1`, `hw2`, `hw3`, and `hw4`,
-respectively.
+index case-to-case (ICC) intervals. Here, we directly simulate the ICC
+intervals based on their route of transmission. The specified mean
+serial interval `hmu` is 15 and the specified standard deviation
+`hsigma` is 3. The weights for each route of transmission are specified
+as `hw1`, `hw2`, `hw3`, and `hw4`, respectively.
 
 ``` r
 library(mitey)
@@ -63,7 +61,7 @@ PQ <- rnorm(hw4*N,mean=3*hmu,sd=sqrt(3)*hsigma)
 sim_data <- round(c(CP,PS,PT,PQ))
 ```
 
-    #>  [1]  5  1  5 10  2  2  2  2  2  4
+We can look at our simulated data by plotting them as a histogram.
 
 <div class="figure">
 
@@ -74,6 +72,9 @@ simulated data.
 </p>
 
 </div>
+
+Then, we estimate the mean and standard deviation of the simulated
+serial interval using the `si_estim` function.
 
 ``` r
 results<- si_estim(sim_data, dist = "normal")
