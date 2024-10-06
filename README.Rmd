@@ -59,10 +59,7 @@ PQ <- rnorm(hw4*N,mean=3*hmu,sd=sqrt(3)*hsigma)
 sim_data <- round(c(CP,PS,PT,PQ))
 ```
 
-```{r head_sim_data, echo = FALSE}
-head(sim_data,10)
-```
-
+We can look at our simulated data by plotting them as a histogram.
 ```{r plot_sim_data, echo=FALSE, fig.cap="Figure 1. Histogram of index-case to case intervals (in days) for simulated data."}
 breaks<-seq(-.5,(max(sim_data)+1),by=1)
 hist(sim_data,breaks=breaks,prob=TRUE,main="",xlab="Index-case to case interval (days)", ylab="frequency", ylim=c(0,0.07))
