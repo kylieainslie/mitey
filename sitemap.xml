@@ -2,12 +2,14 @@
 <url><loc>https://kylieainslie.github.io/mitey/404.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/LICENSE-text.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/LICENSE.html</loc></url>
-<url><loc>https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html</loc></url>
+<url><loc>https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/articles/index.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/authors.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/index.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/reference/conv_tri_dist.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/reference/f0.html</loc></url>
+<url><loc>https://kylieainslie.github.io/mitey/reference/f_gam.html</loc></url>
+<url><loc>https://kylieainslie.github.io/mitey/reference/f_norm.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/reference/flower.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/reference/fupper.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/reference/get_likelihood.html</loc></url>
@@ -15,7 +17,10 @@
 <url><loc>https://kylieainslie.github.io/mitey/reference/integrate_component.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/reference/integrate_components_wrapper.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/reference/mitey-package.html</loc></url>
+<url><loc>https://kylieainslie.github.io/mitey/reference/plot_si_fit.html</loc></url>
+<url><loc>https://kylieainslie.github.io/mitey/reference/right_truncation_correction.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/reference/rt_estim.html</loc></url>
+<url><loc>https://kylieainslie.github.io/mitey/reference/rt_estim_w_boot.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/reference/si_estim.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/reference/weighted_var.html</loc></url>
 <url><loc>https://kylieainslie.github.io/mitey/reference/wt_loglik.html</loc></url>

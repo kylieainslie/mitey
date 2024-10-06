@@ -18,7 +18,7 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/epidemiology_of_scabies.html">The Epidemiology of Scabies</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/code_validation_for_Vink_method.html">Code validation for Vink method</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -59,6 +59,18 @@
         <dd>Calculate f0 for Different Components</dd>
       </dl><dl><dt>
 
+          <code><a href="f_gam.html">f_gam()</a></code>
+
+        </dt>
+        <dd>Helper function to plot the fit of the serial interval distribution assuming an underlying gamma distribution</dd>
+      </dl><dl><dt>
+
+          <code><a href="f_norm.html">f_norm()</a></code>
+
+        </dt>
+        <dd>Helper function to plot the fit of the serial interval distribution assuming an underlying normal distribution</dd>
+      </dl><dl><dt>
+
           <code><a href="flower.html">flower()</a></code>
 
         </dt>
@@ -89,7 +101,25 @@
         <dd>Wrapper function to for integrate_components()</dd>
       </dl><dl><dt>
 
+          <code><a href="plot_si_fit.html">plot_si_fit()</a></code>
+
+        </dt>
+        <dd>Plot the epidemic curve and fitted serial interval distribution</dd>
+      </dl><dl><dt>
+
+          <code><a href="right_truncation_correction.html">right_truncation_correction()</a></code>
+
+        </dt>
+        <dd>Correct for right truncation in estimates of time-varying reproduction number</dd>
+      </dl><dl><dt>
+
           <code><a href="rt_estim.html">rt_estim()</a></code>
+
+        </dt>
+        <dd>Estimate Time-varying Reproduction Number</dd>
+      </dl><dl><dt>
+
+          <code><a href="rt_estim_w_boot.html">rt_estim_w_boot()</a></code>
 
         </dt>
         <dd>Estimate Time-varying Reproduction Number</dd>
@@ -110,7 +140,7 @@
           <code><a href="wt_loglik.html">wt_loglik()</a></code>
 
         </dt>
-        <dd>weighted likelihood each point adds to likelihood given weight belonging to component 2: w2</dd>
+        <dd>weighted likelihood for optimising parameters assuming underlying gamma distribution each point adds to likelihood given weight belonging to component 2: w2</dd>
       </dl></div>
   </main></div>
 
@@ -120,7 +150,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

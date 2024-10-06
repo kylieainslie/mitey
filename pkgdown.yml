@@ -1,9 +1,9 @@
 pandoc: 3.1.11
-pkgdown: 2.1.0
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
-  epidemiology_of_scabies: epidemiology_of_scabies.html
-last_built: 2024-08-14T14:52Z
+  articles/code_validation_for_Vink_method: code_validation_for_Vink_method.html
+last_built: 2024-10-06T13:56Z
 urls:
   reference: https://kylieainslie.github.io/mitey/reference
   article: https://kylieainslie.github.io/mitey/articles
