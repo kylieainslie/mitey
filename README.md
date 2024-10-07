@@ -6,12 +6,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The motivation behind creating the `mitey` package was twofold: 1) to
-provide the data and code to reproduce the results in Ainslie, K,
-Hooiveld, M, and Wallinga, J. 2024. On the epidemiological
-characteristics of scabies. , and 2) to provide flexible, documented
-code for methods not previously available in `R` that can help estimate
-epidemiological quantities of interest.
+The motivation behind creating the `mitey` package was twofold: 1) to provide the data and code to reproduce the results in Ainslie, K, M. Hooiveld, and J. Wallinga. 2024. On the epidemiological characteristics of scabies. *(in preparations)*, and 2) to provide flexible, documented code for methods not previously available in `R` that can help estimate epidemiological quantities of interest.
 
 ## Installation
 
@@ -51,7 +46,7 @@ library(fdrtool)
 ``` r
 set.seed(1234)
 
-N <- 10000; hmu<-15; hsigma<-3; hw1 <- 0.2; hw2 <- 0.5; hw3 <- 0.2; hw4 <- 0.1
+N <- 2500; hmu<-15; hsigma<-3; hw1 <- 0.2; hw2 <- 0.5; hw3 <- 0.2; hw4 <- 0.1
 
 CP <- rhalfnorm((hw1*N),theta=sqrt(pi/2)/(sqrt(2)*hsigma))
 PS <- rnorm(hw2*N,mean=hmu,sd=hsigma)
