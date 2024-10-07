@@ -26,7 +26,7 @@ A quick start guide and detailed vignettes are still in development.
 
 Validation of the method used to estimate the mean and standard
 deviation of the serial interval proposed by [Vink et
-al. 2014](https://doi.org/10.1093/aje/kwu209) can be found [here]()
+al. 2014](https://doi.org/10.1093/aje/kwu209) can be found [here](https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.html)
 
 ## Example
 
