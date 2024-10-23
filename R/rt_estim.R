@@ -54,7 +54,7 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
 
   likelihood_values_mat <- matrix(likelihood_values, nrow = nt, ncol = nt)
   # Calculation the likelihood matrix
-  likelihood_mat <- likelihood_values_mat * outer(rep(1, nt), inc_dat$inc)
+  likelihood_mat <- likelihood_values_mat * outer(inc_dat$inc, inc_dat$inc) #outer(rep(1, nt), inc_dat$inc)
 
   # Zero out upper triangle and diagonal
   likelihood_mat[upper.tri(likelihood_mat, diag = TRUE)] <- 0
@@ -67,7 +67,7 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
   prob_mat[is.nan(prob_mat)] <- 0
 
   # Calculate the expected reproduction number per day (R_t)
-  expected_rt <- colSums(prob_mat, na.rm = TRUE)
+  expected_rt <- colSums(prob_mat, na.rm = TRUE) / inc_dat$inc
 
   # correct for right-truncation using the method of Cauchemez et al. 2006
   # Apply the right truncation correction to each observation
