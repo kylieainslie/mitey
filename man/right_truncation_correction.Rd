@@ -4,7 +4,13 @@
 \alias{right_truncation_correction}
 \title{Correct for right truncation in estimates of time-varying reproduction number}
 \usage{
-right_truncation_correction(t, T_now, mean_serial_interval, sd_serial_interval)
+right_truncation_correction(
+  t,
+  T_now,
+  mean_serial_interval,
+  sd_serial_interval,
+  distribution = "normal"
+)
 }
 \arguments{
 \item{t}{integer; time point of infection or symptom onset}
@@ -14,6 +20,8 @@ right_truncation_correction(t, T_now, mean_serial_interval, sd_serial_interval)
 \item{mean_serial_interval}{numeric; mean of serial interval distribution}
 
 \item{sd_serial_interval}{numeric; standard deviation of serial interval distribution}
+
+\item{distribution}{character string; assumed serial interval distribution, takes arguments "normal" or "gamma".}
 }
 \value{
 vector of correction weights
