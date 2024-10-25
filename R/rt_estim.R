@@ -29,7 +29,7 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
 
   nt <- nrow(inc_dat)
 
-  # Pre-compute the likelihood values for all possible serial intervals
+  # Pre-compute the likelihood values for all possible serial intervals (t-u)
   serial_intervals <- as.vector(outer(inc_dat$onset_date, inc_dat$onset_date, "-"),
                                 mode = "numeric")
 
@@ -47,27 +47,35 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
       mean_si <- mean(si_distribution)
       sd_si <- sd(si_distribution)
     }
+  # Rt = sum{b(t)g(t-u)/sum(b(t-a)g(a))},
+  # where b(t) is the incidence on day t and g(t) is the probability density of
+  # the serial interval distribution
 
-  # Loop over all pairs of serial intervals
+  # Get likelihood for each serial interval based on probability density (g(t-u))
   likelihood_values <- get_likelihood(serial_intervals, mu = mean_si,
                                       sigma = sd_si, distn = dist_si)
 
+  # convert vector of likelihood values into a nt x nt matrix
   likelihood_values_mat <- matrix(likelihood_values, nrow = nt, ncol = nt)
-  # Calculation the likelihood matrix
-  likelihood_mat <- likelihood_values_mat * outer(inc_dat$inc, inc_dat$inc) #outer(rep(1, nt), inc_dat$inc)
 
-  # Zero out upper triangle and diagonal
-  likelihood_mat[upper.tri(likelihood_mat, diag = TRUE)] <- 0
+  # b(u)g(t-u): multiply columns of likelihood matrix by the incidence
+  likelihood_mat <- likelihood_values_mat * outer(inc_dat$inc, rep(1, nt))
 
-  # Get the marginal likelihood by summing each row
+    # Zero out upper triangle and diagonal
+    likelihood_mat[upper.tri(likelihood_mat, diag = TRUE)] <- 0
+
+  # sum(b(t-a)g(a)): calculate marginal likelihood by summing over rows
   marginal_likelihood <- rowSums(likelihood_mat)
 
-  # Calculate the probability matrix
-  prob_mat <- sweep(likelihood_mat, 1, marginal_likelihood, FUN = "/")
+  # b(u)g(t-u)/sum(b(t-a)g(a)): divide likelihood matrix columns by marginal likelihood
+  prob_mat <- sweep(likelihood_mat, 2, marginal_likelihood, FUN = "/")
   prob_mat[is.nan(prob_mat)] <- 0
 
-  # Calculate the expected reproduction number per day (R_t)
-  expected_rt <- colSums(prob_mat, na.rm = TRUE) / inc_dat$inc
+  # b(t) * [b(u)g(t-u)/sum(b(t-a)g(a))]: multiply by incidence
+  prob_mat2 <- prob_mat * outer(rep(1, nt), inc_dat$inc)
+
+  # sum_t{b(t) * [b(u)g(t-u)/sum(b(t-a)g(a))]} * 1/(b(u)): sum over columns and divide by incidence
+  expected_rt <- colSums(prob_mat2, na.rm = TRUE) / inc_dat$inc
 
   # correct for right-truncation using the method of Cauchemez et al. 2006
   # Apply the right truncation correction to each observation
