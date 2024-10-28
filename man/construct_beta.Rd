@@ -14,7 +14,7 @@ construct_beta(arnaught, t_I, n_t)
 \item{n_t}{integer; Number of units of time to simulate.}
 }
 \value{
-vector of transmission rates for each time point
+a function that determines the transmission rate at each time point t
 }
 \description{
 Function to construct the transmission rate from $R_0$, $t_I$ (mean infectious period), and $n_t$.

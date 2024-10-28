@@ -39,7 +39,11 @@ integrate_Rt(
 \item{T_inf}{Final time in SEIR integration. Should be at least one generation interval higher than T_final.}
 }
 \value{
-Data frame with estimated case reproduction number for evert time point.
+Named list with two data frames:
+\enumerate{
+\item \code{case_rt_df} with estimated case reproduction number for every time point, and
+\item \code{ode_output} with the output from the compartmental model used to estimate Rt
+}
 }
 \description{
 Calculate the instantaneous case reproductive number using the deterministic SEIR output
