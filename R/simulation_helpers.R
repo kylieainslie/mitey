@@ -54,7 +54,7 @@ check_args <- function(
 #' @param arnaught Basic reproduction number (ratio), squiggly-R-0. Average number of new infections produced by an infection in a susceptible population. A scalar or a vector of length `n_t + 1`, which specifies R0 at the start of each timestep. R0 is linearly interpolated between timesteps.
 #' @param t_I numeric; Mean duration of infectiousness.
 #' @param n_t integer; Number of units of time to simulate.
-#' @returns vector of transmission rates for each time point
+#' @returns a function that determines the transmission rate at each time point t
 #' @export
 #' @importFrom stats approxfun
 construct_beta <- function(arnaught, t_I, n_t) {
@@ -64,5 +64,4 @@ construct_beta <- function(arnaught, t_I, n_t) {
   } else {
     approxfun(0:n_t, beta_t_all)
   }
-  return(beta_t_all)
 }
