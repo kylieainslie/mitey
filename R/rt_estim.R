@@ -20,7 +20,7 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
                      perturb_si_dist = FALSE){
 
   # fill in missing dates, set inc = 0
-  if(is.Date(inc_date$onset_date)){
+  if(is.Date(inc_dat$onset_date)){
     all_dates <- seq(min(inc_dat$onset_date), max(inc_dat$onset_date), by = "day")
   } else{
     all_dates <- seq(min(inc_dat$onset_date), max(inc_dat$onset_date), by = 1)
