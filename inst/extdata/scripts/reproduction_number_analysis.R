@@ -37,6 +37,43 @@ nivel_wkly_data <-
   mutate(yr_wk = paste(year, week_num, sep = "_"),
          year = as.factor(year))
 
+# create table of scabies incidence per month per year
+cases_by_month <- nivel_wkly_data %>%
+  mutate(
+    week_num = ifelse(week_num > 52, 52, week_num),
+    date = ISOweek2date(paste0(year, "-W", sprintf("%02d", week_num), "-1")),
+    month = format(date, "%B")) %>%
+  group_by(year, month) %>%
+  summarise(cases_by_month = sum(cases))
+
+# Define standard month abbreviations
+month_abbreviations <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+#plot
+p_supp <- ggplot(data = cases_by_month %>%
+         filter(year != "2024"),
+       aes(x = factor(month, levels = month.name),
+           y = cases_by_month,
+           fill = factor(month, levels = month.name))) +
+  geom_col(position = "dodge") +  # Position dodge to separate bars for each year
+  scale_fill_viridis_d() +  # Viridis color palette for better readability
+  labs(
+    #title = "Monthly Cases by Year",
+    x = "Month",
+    y = "Cumulative Incidence",
+    fill = "Year"
+  ) +
+  facet_wrap(~year) +
+  scale_x_discrete(labels = month_abbreviations) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "none"
+  )
+
+ggsave("vignettes/figures/nivel_cases_by_month.png", plot = p_supp, width = 7, height = 5, dpi = 300)
+
 # 1. randomly assign a date within reporting date for symptom onset date -------
 nivel_daily_data <- nivel_wkly_data %>%
   uncount(cases) %>% # Repeat rows based on the number of cases
@@ -79,21 +116,21 @@ si_sd <- 31.55
 rt_estimates <- rt_estim(df, mean_si = si_mean, sd_si = si_sd, dist_si = "normal")
 
 # quick visual check!
-rt_estimates1 <- rt_estimates %>%
-  filter(!is.nan(rt),
-         onset_date > min(onset_date) + 123, # trim first serial interval
-         onset_date < max(onset_date) - 123  # trim last serial interval
-         ) %>%
-  mutate(
-    rt_rollmean = rollmean(rt, 35, fill = NA),
-    rt_adj_rollmean = rollmean(rt_adjusted, 35, fill = NA)
-    )
-
-ggplot(data = rt_estimates1, aes(x = onset_date, y = rt_rollmean)) +
-  geom_line() +
-  geom_hline(yintercept = 1.1, linetype = "dashed", color = "gray") +
-  geom_hline(yintercept = 1, linetype = "solid", color = "black") +
-  theme_minimal()
+# rt_estimates1 <- rt_estimates %>%
+#   filter(!is.nan(rt),
+#          onset_date > min(onset_date) + 123, # trim first serial interval
+#          onset_date < max(onset_date) - 123  # trim last serial interval
+#          ) %>%
+#   mutate(
+#     rt_rollmean = rollmean(rt, 35, fill = NA),
+#     rt_adj_rollmean = rollmean(rt_adjusted, 35, fill = NA)
+#     )
+#
+# ggplot(data = rt_estimates1, aes(x = onset_date, y = rt_rollmean)) +
+#   geom_line() +
+#   geom_hline(yintercept = 1.1, linetype = "dashed", color = "gray") +
+#   geom_hline(yintercept = 1, linetype = "solid", color = "black") +
+#   theme_minimal()
 
 # bootstrap to get 95% CIs
 rt_bootstrap <- rt_estim_w_boot(df, mean_si = si_mean, sd_si = si_sd, dist_si = "normal",
@@ -102,22 +139,28 @@ rt_bootstrap <- rt_estim_w_boot(df, mean_si = si_mean, sd_si = si_sd, dist_si = 
 # plot
 rt_df_for_plot <- left_join(rt_estimates, rt_bootstrap$results, by = "onset_date") %>%
   # filter out first serial interval
-  filter(onset_date > min(onset_date) + 123,
-         onset_date < max(onset_date) - 21)
+  filter(
+    !is.na(rt),
+    !is.nan(rt),
+    onset_date > min(onset_date) + 123,
+    onset_date < max(onset_date) - 123
+    )
+
 saveRDS(rt_df_for_plot, "vignettes/data/rt_df_for_plot.rds")
 
 # compare rt unadjusted to adjusted
-rt_plot_comparison <- ggplot(rt_df_for_plot, aes(x = onset_date)) +
-  geom_line(aes(y = rollmean(rt, 35, fill = NA), color = "Rt unadjusted")) +
-  #geom_line(aes(y = rollmean(rt_adjusted, 35, fill = NA), color = "Rt adjusted")) +
-  #geom_ribbon(aes(ymin = rollmean(lower_rt, 35, fill = NA), ymax = rollmean(upper_rt, 35, fill = NA)), alpha = 0.2) +
+  ggplot(rt_df_for_plot, aes(x = onset_date)) +
+  #geom_line(aes(y = rollmean(rt, 35, fill = NA), color = "Rt unadjusted")) +
+  geom_line(aes(y = rollmean(rt_adjusted, 35, fill = NA))) + #, color = "Rt adjusted"
+  geom_ribbon(aes(ymin = rollmean(lower_rt, 35, fill = NA), ymax = rollmean(upper_rt, 35, fill = NA)), alpha = 0.2) +
   geom_hline(yintercept = 1, linetype = "dashed", color = "black", linewidth = 0.8) +
+  geom_hline(yintercept = 1.16, linetype = "dashed", color = "blue", linewidth = 0.6) +
   scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
   # Customizing the plot
   labs(
-    x = "Date of symptom onset",
-    y = "Reproduction number (Rt)",
-    color = "Legend"
+    x = "Date of diagnosis",
+    y = "Reproduction number (Rt)"#,
+    #color = "Legend"
   ) +
   theme_minimal()
 
@@ -254,6 +297,8 @@ rt_df_for_plot_sa <- left_join(rt_estimates_sa, rt_bootstrap_sa$results, by = "o
   # filter out first serial interval
   filter(onset_date > min(onset_date) + 123,
          onset_date < as.Date("2024-01-01", format = "%Y-%m-%d"))
+
+saveRDS(rt_df_for_plot_sa, "vignettes/data/rt_df_for_plot_sa.rds")
 
 # calculate geometric mean
 geom_mean_rt_sa <- exp(mean(log(rt_df_for_plot_sa$rt_adjusted[rt_df_for_plot_sa$rt_adjusted != 0])))
