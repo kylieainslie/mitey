@@ -4,12 +4,9 @@
 .httr-oauth
 .DS_Store
 .quarto
+.docx
 docs
 inst/doc
 /doc/
 /Meta/
-/inst/extdata/presentation
-/inst/extdata/depricated
-/vignettes/epidemiology_of_scabies.Rmd
-/vignettes/figures
-.docx
+
