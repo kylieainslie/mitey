@@ -8,7 +8,7 @@ format:
     theme: default
     preview-links: auto
 #logo: resources_main/mRtine.png
-incremental: false
+incremental: true
 progress: true   # default
 footer: University of Liverpool | 13 November 2024 | Kylie Ainslie
 slide-number: false 
@@ -61,7 +61,7 @@ chalkboard: true       # comment out when wanting to make a selfcontained html
 - Accounts for a large proportion of skin disease in many low- and middle-income countries     
 
 <div style="text-align: center;">
-  ![Karimkhani et al. 2017. Lancet Infect. Dis. 17(12):1247 - 1254](scabies_disease_burden_map_cropped.png){width="600" height="325" style="font-size: 0.5em;"}
+  ![Karimkhani et al. 2017. Lancet Infect. Dis. 17(12):1247 - 1254](scabies_disease_burden_map_cropped.png){.fragment width="600" height="325" style="font-size: 0.5em;"}
 </div>
  
 ## Scabies in Europe (then)
@@ -69,7 +69,7 @@ chalkboard: true       # comment out when wanting to make a selfcontained html
   - Highest incidence seen in 1918 and 1945. 
 
 <div style="text-align: center;">
-![Scabies in Edinburgh from 1896 to 1970. Savin 2005. J R Soc Med; 98(3):124–129.4](scabies_in_scotland.jpg){width="600" height="350" style="font-size: 0.7em;"}
+![Scabies in Edinburgh from 1896 to 1970. Savin 2005. J R Soc Med; 98(3):124–129.4](scabies_in_scotland.jpg){.fragment width="600" height="350" style="font-size: 0.7em;"}
 </div>
 
 ## Scabies in Europe (now)
@@ -82,27 +82,46 @@ chalkboard: true       # comment out when wanting to make a selfcontained html
 ## Scabies in Europe (now)
 - A rise in scabies cases has been observed through out Europe in recent years.
 
+### Croatia
+
 ![The scabies incidence rates in Croatia in the period 2007-2017. Lugović-Mihić et al. 2020. Zdravstveno Varstvo; 59(4):264-272 ](scabies_in_croatia.jpeg){width="500" height="300" style="font-size: 0.7em;"}
 
 ## Scabies in Europe (now)
 - A rise in scabies cases has been observed through out Europe in recent years.
+
+### Norway
 
 ![Number of mite infestation consultations vs sales of permethrin in Norway, 2006–2018. Amato et al. 2019. Eurosurveillance; 24(23):pii=190020](scabies_in_norway.jpg){width="500" height="300" style="font-size: 0.7em;"}
 
 ## Scabies in Europe (now)
 - A rise in scabies cases has been observed through out Europe in recent years.
 
+### The Netherlands
+
 ![The incidence of scabies diagnoses per 1,000 persons as recorded by the general physicians from 2011–2020, the Netherlands. van Deursen et al. 2022. PLoS One; 17:e0268865](scabies_in_NL.png){width="500" height="300" style="font-size: 0.7em;"}
 
 ## Ok, so what's the big deal?
-- Not going to die
-- blah blah blah
+::: columns
+::: {.column width="50%"}
+- The global disease burden of scabies is low compared to other infectious diseases
+- Disease severity is also low - you're not going to die
+BUT
+:::
+
+::: {.column .fragment width="50%"}
+- Secondary infections can lead to severe outcomes
+- No simple diagnostic test for scabies
+  - diagnoses rely on clinical assessment (more GP visits)
+- scabies can have economic implications for both the patients and the healthcare system
+
+:::
+:::
 
 # What can we do about it?
 
 ## What we know
 - Surprisingly little.
-- A series of studies in the 1940s form much of the basis of our current understanding of scabies transmission. 
+- Most of what we know about scabies transmission comes from a series of studies in the 1940s.
 
 ## What we know
 - the incubation period, or time to symptom onset, 
