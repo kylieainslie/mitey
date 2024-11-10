@@ -10,6 +10,7 @@
 #' @return vector of correction weights
 #' @export
 #' @importFrom stats pnorm
+#' @importFrom stats pgamma
 right_truncation_correction <- function(t, T_now, mean_serial_interval,
                                         sd_serial_interval, distribution = "normal") {
   if (distribution == "normal") {

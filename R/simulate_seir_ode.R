@@ -17,7 +17,7 @@
 #' @export
 #' @import deSolve
 #' @import tidyr
-#'
+#' @importFrom stats pgamma
 simulate_seir_ode <- function(
     arnaught, t_E, t_I, N, S_init, E_init, I_init, n_t,
     n_steps_per_t = 1 # Ignored; included so the function signature matches stochastic version
@@ -70,9 +70,9 @@ simulate_seir_ode <- function(
   results_ode <- ode(y = y_init, times = 0:n_t, func = d_dt, parms = NULL)
 
   rtn <- as.data.frame(results_ode) %>%
-    mutate(dS = cum_dS - lag(cum_dS, 1)) %>%
-    mutate(dEI = cum_dEI - lag(cum_dEI, 1)) %>%
-    mutate(dIR = R - lag(R, 1))
+    mutate(dS = .data$cum_dS - lag(.data$cum_dS, 1)) %>%
+    mutate(dEI = .data$cum_dEI - lag(.data$cum_dEI, 1)) %>%
+    mutate(dIR = .data$R - lag(.data$R, 1))
 
   return(rtn)
 }
