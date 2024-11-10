@@ -325,7 +325,10 @@ We performed a sensitivity analysis in which we estimated the mean and standard 
 df_si <- result_norm_wide %>%
   select(study, mean, sd) %>%
   filter(study %in% c("Akunzirwe et al.", "Ariza et al.", "Kaburi et al.", 
-                      "Tjon-Kon-Fat et al."))
+                      "Tjon-Kon-Fat et al")) %>%
+  mutate(mean = round(mean, 2),
+         sd = round(sd, 2))
+
 ft_si <- flextable(df_si) %>%
   set_header_labels(
     study = "Study", 
@@ -601,6 +604,10 @@ In conclusion, this study has provided some of the first estimates of the epidem
 # Data Availability
 
 All code, data, and scripts which reproduce the results of this paper can be found at [https://github.com/kylieainslie/mitey](https://github.com/kylieainslie/mitey).
+
+# Funding Statement
+The study was financed by the Netherlands Ministry of Health, Welfare and Sport. 
+<!-- include ESCAPE? -->
 
 # References
 
