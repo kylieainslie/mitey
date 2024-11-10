@@ -1,0 +1,248 @@
+---
+title: "Validation of time-varying reproduction number estimation"
+author: "Kylie Ainslie"
+date: "`r Sys.Date()`"
+bibliography: references.bib
+csl: nature.csl
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, echo = FALSE, message=FALSE, results='hide'}
+library(tidyr)
+library(dplyr)
+library(readxl)
+library(devtools)
+load_all()
+```
+
+# Introduction
+The `mitey` package is a lightweight package designed as a companion to the analyses presented by Ainsie et al. on scabies transmission. However, these methods are more widely applicable than in the context of scabies. One of the key functionalities of `mitey` is the estimation of the time-varying case reproduction number using data on time of symptom onset. The case reproduction number ($R^c_t$) is defined as the average number of new infections that an individual who becomes infected, or symptomatic, at a particular time point will go on to cause [@gostic2020], and is useful in retrospective analyses. The method of Wallinga and Teunis estimates the time-varying case reproduction number by determining the likelihood of an event occurring for every pair of time points [@wallinga2007]. The method requires the specification of the serial interval distribution. In this article, we will demonstrate how to use `mitey` to estimate the case reproduction number for a synthetic data set, validate that the method is able to estimate the true reproduction number, and show several checks that can be used in practice when the true reproduction number is not known. We will also highlight other R packages that can be used for similar analyses.
+
+# Synthetic data
+First, we will generate synthetic data which we will then use to estimate the time-varying case reproduction number. To generate the synthetic data we borrow code from [Gostic et al.](https://github.com/cobeylab/Rt_estimation) [@gostic2020]. Briefly, the synthetic data were generated from a deterministic SEIR model in which the transmission rate changes abruptly. We will use the synthetic time series of new infections (observed at the S→E transition) as input into the $R^c_t$ estimation method of Wallinga and Teunis. We will also test the Wallinga and Teunis estimator using a synthetic time series of symptom onset events, extracted daily from the E→I transition. In the synthetic data, R0 was set to 2.0 initially, then to 0.8 and 1.15, to simulate the adoption and, later, the partial lifting of public health interventions, respectively.
+
+```{r simulate_data}
+n <- 1e6 # total population size
+n_I <- 10
+
+sim_data <- simulate_seir_ode(
+  arnaught = 2.0, 
+  t_E = 4, 
+  t_I = 4, 
+  N = n, 
+  S_init = n-n_I, 
+  E_init = 0, 
+  I_init = n_I, 
+  n_t = 1000, 
+  n_steps_per_t = 1
+  )
+```
+
+```{r show_head_data, echo = FALSE}
+head(sim_data)
+```
+
+```{r plot_states, echo = FALSE, fig.cap="Figure 1. Dynamics of an SEIR model showing the number of individuals in each state (Susceptible, Exposed, Infectious, and Recovered) over time."}
+sim_data %>%
+  pivot_longer(S:dIR) %>%
+  rename(State = name) %>%
+  filter(State %in% c("S", "E", "I", "R")) %>%
+  mutate(State = factor(State, levels = c("S", "E", "I", "R"))) %>%
+  ggplot()+
+  geom_line(aes(x = time, y = value, color = State)) +
+  labs(x = "Time (days)", y = "Number of Individuals") + 
+  #facet_wrap(.~name, scales = 'free_y') +
+  #xlim(c(0, 200))
+  theme_minimal()
+```
+
+```{r Rt_comparison}
+
+arnaught <- 2.0
+t_E <- 4
+t_I <- 4
+
+## Calculate true case reproduction number
+Rt_output <- integrate_Rt(
+  beta_t = function(t) { arnaught / t_I }, 
+  sigma = 1/t_E, 
+  gamma = 1/t_I, 
+  N = 1, 
+  T_final = 300, 
+  E0 = 0.001, 
+  I0 = 0)
+ 
+## Calculate Rt with WT method using mitey and symptom onset data from simulated data
+df_sim <- sim_data %>%
+  select(time, dEI) %>%
+  rename(onset_date = time,
+         inc = dEI)
+
+rt_estimates <- rt_estim(df_sim[-1,], mean_si = 8, sd_si = 5.66, dist_si = "gamma")
+
+```
+
+# Real data
+When estimating $R_t$ in practice, it is impossible to know the underlying true $R_t$; however there are a few checks that can be used to help ensure your estimates make sense. We will use data on weekly scabies cases in the Netherlands from 2011 to 2023 as our real data set. Below is a peak at the data.
+```{r load_wrangle_real_data, echo=FALSE}
+nivel_wkly_data <-
+  read_xlsx("~/Dropbox/Kylie/Projects/RIVM/Projects/scabies/data/scabies_data_weekly.xlsx") %>%
+  # fix/translate variable names
+  rename(diagnosis_code = `Diagnose (ICPC)`,
+         year = `ISO-jaar`,
+         week_num = `ISO-weeknr (ma-zo)`,
+         pop_size = `Aantal populatie`,
+         cases = `Aantal prevalente cases`,
+         prev_per_100000 = `Prevalentie per 100.000`) %>%
+  # drop diagnosis var
+  select(-diagnosis_code) %>%
+  # create new var that combines year and week
+  mutate(yr_wk = paste(year, week_num, sep = "_"),
+         year = as.factor(year))
+
+# 1. randomly assign a date within reporting date for symptom onset date -------
+nivel_daily_data <- nivel_wkly_data %>%
+  uncount(cases) %>% # Repeat rows based on the number of cases
+  mutate(
+    iso_week = paste0(year, "-W", sprintf("%02d", as.numeric(week_num))),
+    first_day = ISOweek2date(paste0(iso_week, "-1")),
+    random_day = sample(0:6, n(), replace = TRUE),
+    onset_date = first_day + days(random_day)
+  ) %>%
+  select(-iso_week, -first_day, -random_day)
+
+# n <- dim(nivel_daily_data)[1]
+
+# Group data by onset_date and calculate the daily incidence
+df_real <- nivel_daily_data %>%
+  group_by(onset_date) %>%
+  mutate(count = n()) %>%
+  distinct(onset_date, count) %>%
+  arrange(onset_date) %>%
+  mutate(num_date = as.numeric(onset_date)) %>%
+  ungroup() %>%
+  rename(inc = count) %>%
+  select(onset_date, inc)
+
+head(df_real)
+```
+
+```{r estimate_rt}
+# si dist parameters
+si_mean <- 123.24
+si_sd <- 31.55
+
+# Calculate the initial R_t
+rt_estimates <- rt_estim(df_real, mean_si = si_mean, sd_si = si_sd, dist_si = "normal")
+
+# a little data wrangling
+rt_estimates1 <- rt_estimates %>%
+  filter(!is.nan(rt),
+         onset_date > min(onset_date) + 123, # trim first serial interval
+         onset_date < max(onset_date) - 123  # trim last serial interval
+         )
+```
+
+```{r rt_plot, echo = FALSE}
+ggplot(data = rt_estimates1, aes(x = onset_date, y = rt_rollmean)) +
+  geom_line() +
+  geom_hline(yintercept = 1.1, linetype = "dashed", color = "gray") +
+  geom_hline(yintercept = 1, linetype = "solid", color = "black") +
+  theme_minimal()
+```
+
+Checks for sense-checking estimates of the reproduction number:
+  1. Growth rate method: calculate $R_t = b(t+u)/b(t)$ where $b()$ is the incidence, t is the current time point, and u is the mean generation time (here, approximated with the mean serial interval).
+  
+```{r rt_growth_rate_method}
+  # 1. Calculate b(t+u)/b(t) where b() is the incidence, t is the current time
+#    point, and u is the mean SI
+seq1 <- 1:(nrow(df_real))
+seq2 <- seq1 + 123
+rt_check1 <- data.frame(
+  onset_date = (seq1 - 1) + min(df$onset_date),
+  rt_check1 = df_real$inc[seq2]/df_real$inc[seq1]
+) 
+```
+  
+  2. Calculate the geometric mean of the time series of time-varying reproduction number. The geometric mean should be ~$R_0$.
+```{r rt_geom_mean}  
+# 2. Calculate geometric mean
+# This should be approx R0 = 1.1
+rt_check2 <- exp(mean(log(rt_estimates1$rt), na.rm = TRUE))
+rt_check2
+```  
+  
+  3. Use a different R package to check that estimates are similar, here we will use the implementation of the Wallinga and Teunis method from `EpiEstim`.
+```{r rt_epiestim}
+# 3. Calculate rt using EpiEstim
+
+# set-up before Rt estimation
+# use discritized normal distribution
+discretize_normal <- function(mean, sd, lower, upper) {
+  bins <- lower:upper
+  probs <- diff(pnorm(c(bins, Inf), mean, sd))  # Probabilities for each bin
+  return(probs)
+}
+
+distr_si <- discretize_normal(mean = si_mean, sd = si_sd, lower = 0, upper = 250)
+
+# define time windows over which to calculate Rt
+window <- 1
+ts <- 1:nrow(df)
+ts <- ts[ts > 1 & ts <= (max(ts)-window+1)]
+te <- ts+(window-1)
+
+# define config option 
+config <- make_config(incid = df$inc,
+                      si_distr = c(0,distr_si),
+                      t_start = ts,
+                      t_end = te)
+config$n_sim <- 100
+
+# estimate Rt using WT method
+rt_epiestim <- wallinga_teunis(
+  incid = df$inc,
+  method = "non_parametric_si",
+  config = config)
+
+rt_check3 <- rt_epiestim$R %>%
+  mutate(onset_date = t_start + min(df_real$onset_date)) %>%
+  select(onset_date, `Mean(R)`)
+```
+
+Now let's have a look by plotting the different methods to estimate $R_t$ together.
+```{rt_check_plot}
+# plot checks
+df_check <- rt_estimates1 %>%
+  select(onset_date, rt) %>%
+  left_join(., rt_check1, by = "onset_date") %>%
+  left_join(., rt_check3, by = "onset_date") %>%
+  pivot_longer(-onset_date) %>%
+  mutate(Method = factor(
+    case_when(
+      name == "rt" ~ "WT (mitey)",
+      name == "Mean(R)" ~ "WT (EpiEstim)",
+      name == "rt_check1" ~ "Growth Rate"
+    ), levels = c("Growth Rate", "WT (mitey)", "WT (EpiEstim)")
+  )
+  )
+
+p_check <- ggplot(data = df_check,
+                  aes(x = onset_date, y = value, color = Method)) +
+  geom_line() +
+  geom_hline(yintercept = rt_check2, linetype = "dashed", col = "grey") +
+  scale_color_viridis_d(option = "D") +
+  labs(title = "Compare Methods To Estimate Rt",
+       x = "Onset Date",
+       y = "Daily Reproduction Number",
+       color = "Method") +
+  theme_minimal()
+p_check
+```

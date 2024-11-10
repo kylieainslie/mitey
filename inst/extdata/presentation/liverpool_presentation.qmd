@@ -1,0 +1,188 @@
+---
+title: "Scabies? Who cares?"
+subtitle: North West Seminar Series of Mathematical Biology and Data Science
+author: Kylie Ainslie
+format:
+  revealjs: 
+    # embed-resources: true  # uncomment for making a selfcontained html for sharing
+    theme: default
+    preview-links: auto
+#logo: resources_main/mRtine.png
+incremental: false
+progress: true   # default
+footer: University of Liverpool | 13 November 2024 | Kylie Ainslie
+slide-number: false 
+header-includes:
+    - |
+      <style>
+        .reveal {
+            font-size: 2.0em;  /* Adjust this value to make text smaller */
+        }
+      </style>
+#title-slide-attributes: 
+#  data-background-image: "resources_main/watercolour_sys02_img41_stormy-seas.jpg"
+#  center-title-slide: false
+engine: knitr
+execute: 
+  echo: false
+  eval: false
+#webr:
+#  packages: ['ggplot2'] # Install R packages on document open
+#  show-startup-message: false  # to keep the surprise :)
+#filters: 
+#  - timer
+#  - webr
+from: markdown+emoji
+chalkboard: true       # comment out when wanting to make a selfcontained html
+---
+
+```{r setup, eval=TRUE}
+#library(ggplot2)
+```
+
+# What even is scabies?
+
+## *Sarcoptes scabiei*
+::: columns
+::: {.column width="60%"}
+  - Scabies is a disease caused by infestation of the skin with a microscopic mite.
+  - Symptoms are characterized by itchiness and rash at the site of infestation.
+:::
+
+::: {.column .fragment width="40%"}
+![Scabies mite. Image Credit: Aliaksei Marozau / Shutterstock.com](scabies_mite.png){style="font-size: 0.7em;"}
+:::
+:::
+
+# Do people still get scabies?
+
+## Scabies Worldwide
+- Scabies affects around 400 million people per year.
+- Accounts for a large proportion of skin disease in many low- and middle-income countries     
+
+<div style="text-align: center;">
+  ![Karimkhani et al. 2017. Lancet Infect. Dis. 17(12):1247 - 1254](scabies_disease_burden_map_cropped.png){width="600" height="325" style="font-size: 0.5em;"}
+</div>
+ 
+## Scabies in Europe (then)
+- Scabies infections were a common affliction in Europe in the late 1800s and early 1900s 
+  - Highest incidence seen in 1918 and 1945. 
+
+<div style="text-align: center;">
+![Scabies in Edinburgh from 1896 to 1970. Savin 2005. J R Soc Med; 98(3):124–129.4](scabies_in_scotland.jpg){width="600" height="350" style="font-size: 0.7em;"}
+</div>
+
+## Scabies in Europe (now)
+- A rise in scabies cases has been observed through out Europe in recent years.
+
+### Germany
+
+![Scabies diagnoses in outpatient clinics among members of statutory health insurance funds and in hospitals, by year, Germany, 1994–2018. Reichert et al. 2021. Emerg Infect Dis.;27(6):1693–1696.](scabies_in_germany.jpg){width="500" height="300" style="font-size: 0.7em;"}
+
+## Scabies in Europe (now)
+- A rise in scabies cases has been observed through out Europe in recent years.
+
+![The scabies incidence rates in Croatia in the period 2007-2017. Lugović-Mihić et al. 2020. Zdravstveno Varstvo; 59(4):264-272 ](scabies_in_croatia.jpeg){width="500" height="300" style="font-size: 0.7em;"}
+
+## Scabies in Europe (now)
+- A rise in scabies cases has been observed through out Europe in recent years.
+
+![Number of mite infestation consultations vs sales of permethrin in Norway, 2006–2018. Amato et al. 2019. Eurosurveillance; 24(23):pii=190020](scabies_in_norway.jpg){width="500" height="300" style="font-size: 0.7em;"}
+
+## Scabies in Europe (now)
+- A rise in scabies cases has been observed through out Europe in recent years.
+
+![The incidence of scabies diagnoses per 1,000 persons as recorded by the general physicians from 2011–2020, the Netherlands. van Deursen et al. 2022. PLoS One; 17:e0268865](scabies_in_NL.png){width="500" height="300" style="font-size: 0.7em;"}
+
+## Ok, so what's the big deal?
+- Not going to die
+- blah blah blah
+
+# What can we do about it?
+
+## What we know
+- Surprisingly little.
+- A series of studies in the 1940s form much of the basis of our current understanding of scabies transmission. 
+
+## What we know
+- the incubation period, or time to symptom onset, 
+  - is 4-6 weeks for first infections and 
+  - 24 hours for subsequent infections; 
+- the number of parasites on a person's body peaks at around 100 days
+- the probability of transmission via a secondary object (e.g., bed sheets) is low
+    - i.e., most transmissions occurs from person-to-person contact. 
+
+## What we don't know
+- Little is known about the disease dynamics of scabies transmission, such as 
+  - *generation time:* time between infection of an index case and a secondary case), 
+  - *serial interval:* the time from onset of symptoms in an index case to the time of symptom onset in a secondary case
+  - *growth rate*
+  - *reproduction number:* the average number of secondary cases resulting from one index case.
+
+## The point of all this
+We aim to estimate key epidemiological characteristics of scabies
+  - serial interval
+  - growth rate
+  - reproduction number
+
+# Let's dive in!
+
+## Serial Interval
+Using the dates of symptom onset for scabies cases from four different
+studies [@ariza2013; @kaburi2019; @tjon-kon-fat2021; @akunzirwe2023] of scabies outbreaks, we
+estimated the mean and standard deviation of the serial interval
+distribution using the method proposed by Vink et al. [@vink2014].
+
+[epidemic curves from 4 studies here]
+
+## Serial Interval
+The method involves calculating the index case-to-case (ICC) interval for
+each person, where the person with the greatest value for number of days since symptom onset will be considered the index case. The rest of the individuals will have an ICC interval calculated as the number of days between their symptom onset and the index case. We assumed that serial interval distributions for scabies can be approximated by a normal (Gaussian) distribution.
+
+[include graphic of ICC interval]
+
+## Serial Interval
+[Include table of results and epidemic curve with fitted distribution]
+
+## Serial Interval
+- To obtain a pooled estimate of mean serial interval, we performed a
+Bayesian meta-analysis with random intercepts for each study. 
+- We estimated a pooled mean serial interval of 123.24 days (95% credible
+interval: 91.44, 153.41 days)
+
+[Meta-analysis figure]
+
+## Growth Rate
+- We estimated the annual growth rate of scabies cases by fitting a generalized linear model (GLM) with a quasipoisson link to the annual number of scabies diagnoses per 1000 people from 2011 to 2023 in the Netherlands.
+
+- We estimated an annual growth rate of 0.25 (95% CI: 0.2, 0.3)
+
+[growth rate figure]
+
+## Basic Reproduction Number $R_0$
+- We can relate the growth rate to the basic reproduction number as
+$R_0 = \exp(r*T – (1/2) r^2 s^2)$, 
+where $r$ is the annual growth rate, $T$ is the mean generation time (in years), and $s^2$ is the variance of the generation time distribution.
+
+- This gives us an $R_0 = 1.09 (95% CI: 1.07, 1.11)$
+
+## Time-varying Reproduction Number $R_t$
+
+![Incidence of scabies infections per 1000 people in the Netherlands by date of diagnosis.](nivel_epidemic_curve.png){.absolute bottom="0" right="0"}
+## Time-varying Reproduction Number $R_t$
+
+[Rt plot here]
+
+# Now what?
+
+## Policy Implications
+ - We estimated that $R_0=1.09$
+ - Therefore, minimal control measures could be employed to decrease the reproduction number below one, such as 
+    - educating the age groups (adolescents and young adults) in which scabies are most prevalent about the causes and symptoms of scabies infections, 
+    - requiring a scabies check for university students prior to the school year, or 
+    - informing GPs about the higher risk of scabies in certain groups to more quickly diagnose patients with symptoms consistent with a scabies infestation. 
+    
+## This is only the beginning
+
+## Your turn
+[`mitey` package](https://github.com/kylieainslie/mitey){preview-link="true"}
