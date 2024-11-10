@@ -207,13 +207,18 @@ We aim to estimate key epidemiological characteristics of scabies - serial inter
 
 ## Serial Interval
 
-Using the dates of symptom onset for scabies cases from four different studies [@ariza2013; @kaburi2019; @tjon-kon-fat2021; @akunzirwe2023] of scabies outbreaks, we estimated the mean and standard deviation of the serial interval distribution using the method proposed by Vink et al. [@vink2014].
+- We used data on date of symptom onset for scabies cases from four different outbreaks 
+- **Aim:** Estimated the mean and standard deviation of the serial interval distribution
 
 \[epidemic curves from 4 studies here\]
 
 ## Serial Interval
 
-The method involves calculating the index case-to-case (ICC) interval for each person, where the person with the greatest value for number of days since symptom onset will be considered the index case. The rest of the individuals will have an ICC interval calculated as the number of days between their symptom onset and the index case. We assumed that serial interval distributions for scabies can be approximated by a normal (Gaussian) distribution.
+- First, we calculate the index case-to-case (ICC) interval for each person,
+  - **index case:** the person with the greatest value for number of days since symptom onset. 
+  - **"secondary" cases:** have an ICC interval calculated as the number of days between their symptom onset day and the index case. 
+  
+*Assumption:* Serial interval distributions for scabies can be approximated by a Normal distribution.
 
 \[include graphic of ICC interval\]
 
@@ -291,7 +296,7 @@ $$R_0 = \exp(r*T – (1/2) r^2 s^2)$$
 
 ## This is only the beginning
 
-- The estimated epidemiological quantities can be used to parameterize mathematical models of scabies spread 
+- The estimated epidemiological quantities can be used to parameterise mathematical models of scabies spread 
 - There is still a lot that we don't know
   - Future work should focus on obtaining more precise estimates of the underlying quantities that govern scabies spread.
   
