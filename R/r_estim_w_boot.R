@@ -56,14 +56,14 @@ rt_estim_w_boot <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
   df_boot_results <- df_boot_rt %>%
     group_by(.data$onset_date) %>%
     summarise(
-      mean_rt = mean(.data$rt),
-      median_rt = median(.data$rt),
-      lower_rt = quantile(.data$rt, 0.025),
-      upper_rt = quantile(.data$rt, 0.975),
-      mean_rt_adjusted = mean(.data$rt_adjusted),
-      median_rt_adjusted = median(.data$rt_adjusted),
-      lower_rt_adjusted = quantile(.data$rt_adjusted, 0.025),
-      upper_rt_adjusted = quantile(.data$rt_adjusted, 0.975)
+      mean_rt = mean(.data$rt, na.rm = TRUE),
+      median_rt = median(.data$rt, na.rm = TRUE),
+      lower_rt = quantile(.data$rt, 0.025, na.rm = TRUE),
+      upper_rt = quantile(.data$rt, 0.975, na.rm = TRUE),
+      mean_rt_adjusted = mean(.data$rt_adjusted, na.rm = TRUE),
+      median_rt_adjusted = median(.data$rt_adjusted, na.rm = TRUE),
+      lower_rt_adjusted = quantile(.data$rt_adjusted, 0.025, na.rm = TRUE),
+      upper_rt_adjusted = quantile(.data$rt_adjusted, 0.975, na.rm = TRUE)
     )
 
   return(list(results = df_boot_results, boot_samples = df_boot_rt))

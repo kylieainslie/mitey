@@ -42,9 +42,10 @@ get_likelihood <- function(serial_intervals, mu, sigma, distn = "normal") {
   if (distn == "normal"){
     likelihood <- dnorm(serial_intervals, mean = mu, sd = sigma)
   } else if (distn == "gamma"){
-    beta <- mu/sigma^2
-    alpha <- (mu/beta)^2
-    likelihood <- dgamma(serial_intervals, shape = alpha, rate = beta)
+    k <- (mu^2) / (sigma^2)
+    theta <- (sigma^2) / mu
+
+    likelihood <- dgamma(serial_intervals, shape = k, scale = theta)
   } else{
     stop("Incorrect serial distribution specified.
          Allowable inputs are distn = c('normal', 'gamma')")

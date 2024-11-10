@@ -10,9 +10,11 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Imports: 
+    deSolve,
     dplyr,
     fdrtool,
     ggplot2,
+    lubridate,
     purrr,
     stats,
     tidyr
@@ -29,6 +31,7 @@ Suggests:
     ftExtra,
     ggridges,
     glue,
+    Hmisc,
     knitr,
     nls2,
     officer,
