@@ -62,7 +62,7 @@ sim_data %>%
   theme_minimal()
 ```
 
-```{r Rt_comparison}
+```{r Rt_comparison, echo=TRUE, eval=FALSE}
 
 arnaught <- 2.0
 t_E <- 4
