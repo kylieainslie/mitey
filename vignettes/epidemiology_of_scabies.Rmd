@@ -14,7 +14,7 @@ bibliography:
   - appendix_references.bib
 csl: nature.csl
 vignette: >
-  %\VignetteIndexEntry{epidemiology_of_scabies}
+  %\VignetteIndexEntry{The Epidemiology of Scabies}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
