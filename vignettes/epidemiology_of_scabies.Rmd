@@ -66,6 +66,8 @@ load_all()
 
 4. Department of Biomedical Data Sciences, Leiden University Medical Center, Leiden, the Netherlands
 
+**This manuscript has not been peer-reviewed.**
+
 # Abstract
 **Introduction:** Scabies is a contagious skin disease caused by the infestation of the skin by the Sarcopes scabiei mite, causing an itchy rash. Scabies affects over 400 million people annually worldwide, and a rise in scabies cases has been observed in recent years throughout Western Europe. Despite the large number of people infected with scabies annually, some fundamental epidemiological characteristics of scabies infections have not been described. 
 
