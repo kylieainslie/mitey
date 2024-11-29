@@ -16,6 +16,11 @@ knitr::opts_chunk$set(
 # The `mitey` package
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-check.yaml)
+<!--[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/your-package)](https://CRAN.R-project.org/package=your-package) -->
+[![codecov](https://codecov.io/gh/kylieainslie/mitey/branch/main/graph/badge.svg)](https://codecov.io/gh/kylieainslie/mitey)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/your-package)](https://CRAN.R-project.org/package=your-package)
 <!-- badges: end -->
 
 The motivation behind creating the `mitey` package was twofold: 
