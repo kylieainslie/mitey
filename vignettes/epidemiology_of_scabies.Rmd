@@ -667,7 +667,9 @@ result_gam_wide <- result_gam %>%
 ```
 
 ```{r make_gam_table, echo=FALSE}
-si_tab_sa <- left_join(result_norm_wide[,c(1:3)], result_gam_wide[,c(1:3)], by = "study")
+si_tab_sa <- left_join(result_norm_wide[,c(1:3)], result_gam_wide[,c(1:3)], by = "study") %>%
+  filter(study %in% c("Kaburi et al.", "Ariza et al.", "Akunzirwe et al.",
+                      "Tjon-Kon-Fat et al"))
 
 tab_si_gam <- flextable(si_tab_sa) %>%
   add_header_row(values = c("Study", "Normal", "Gamma"), colwidths = c(1,2,2)) %>%
