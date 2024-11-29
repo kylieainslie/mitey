@@ -21,6 +21,7 @@ Imports:
 URL: https://github.com/kylieainslie/mitey, https://kylieainslie.github.io/mitey/
 BugReports: https://github.com/kylieainslie/mitey/issues
 Suggests: 
+    BH,
     bookdown,
     brms,
     broom,

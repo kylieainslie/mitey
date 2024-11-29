@@ -1,5 +1,5 @@
 ---
-title: "The Epidemiology of Scabies"
+title: "On the epidemiological characteristics of scabies"
 author: "Kylie E. C. Ainslie<sup>1,2</sup>, Mariette Hooiveld<sup>3</sup>, Jacco Wallinga<sup>1,4</sup>"
 date: "`r Sys.Date()`"
 output: 
@@ -14,7 +14,7 @@ bibliography:
   - appendix_references.bib
 csl: nature.csl
 vignette: >
-  %\VignetteIndexEntry{The Epidemiology of Scabies}
+  %\VignetteIndexEntry{On the epidemiological characteristics of scabies}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
