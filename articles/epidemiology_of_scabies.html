@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>The Epidemiology of Scabies • mitey</title>
+<title>On the epidemiological characteristics of scabies • mitey</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="The Epidemiology of Scabies">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="On the epidemiological characteristics of scabies">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -33,7 +33,9 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/epidemiology_of_scabies.html">The Epidemiology of Scabies</a></li>
+<li><a class="dropdown-item" href="../articles/code_validation_for_Vink_method.html">Code validation for Vink method</a></li>
+    <li><a class="dropdown-item" href="../articles/epidemiology_of_scabies.html">On the epidemiological characteristics of scabies</a></li>
+    <li><a class="dropdown-item" href="../articles/rt_estimation_validation.html">Validation of time-varying reproduction number estimation</a></li>
   </ul>
 </li>
       </ul>
@@ -55,11 +57,13 @@
 <script src="epidemiology_of_scabies_files/tabwid-1.1.3/tabwid.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>The Epidemiology of Scabies</h1>
-                        <h4 data-toc-skip class="author">Kylie Ainslie,
-Mariette Hooiveld, Jacco Wallinga</h4>
+      <h1>On the epidemiological characteristics of scabies</h1>
+                        <h4 data-toc-skip class="author">Kylie E. C.
+Ainslie<sup>1,2</sup>, Mariette Hooiveld<sup>3</sup>, Jacco
+Wallinga<sup>1,4</sup>
+</h4>
             
-            <h4 data-toc-skip class="date">2024-08-14</h4>
+            <h4 data-toc-skip class="date">2024-11-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kylieainslie/mitey/blob/main/vignettes/epidemiology_of_scabies.Rmd" class="external-link"><code>vignettes/epidemiology_of_scabies.Rmd</code></a></small>
       <div class="d-none name"><code>epidemiology_of_scabies.Rmd</code></div>
@@ -67,52 +71,139 @@ Mariette Hooiveld, Jacco Wallinga</h4>
 
     
     
-<div class="section level3">
-<h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
-</h3>
-<p>Scabies is a neglected tropical disease caused by infestation of the
-skin with a microscopic mite (Sarcoptes scabiei). Symptoms are
-characterized by itchiness and rash at the site of infestation. Scabies
-affects around 400 million people per year, and accounts for a large
-proportion of skin disease in many low- and middle-income countries<span class="citation"><sup>1</sup></span>. A rise in scabies cases has been
-observed through out Europe in recent years<span class="citation"><sup>2–7</sup></span>, putting pressure on local health
-services. [Elaborate?]</p>
-<p>Despite the considerable burden scabies poses annually, little is
-known about the disease dynamics of scabies transmission, such as the
-incubation time (time from exposure to symptom onset), generation time
-(time between infection of an index case and a secondary case), serial
+<p><strong>Affiliations</strong></p>
+<ol style="list-style-type: decimal">
+<li><p>Centre for Infectious Disease Control, National Institute for
+Public Health and the Environment (RIVM), Bilthoven, the
+Netherlands</p></li>
+<li><p>School of Public Health, University of Hong Kong, Hong Kong SAR,
+China</p></li>
+<li><p>Nivel, Utrecht, the Netherlands</p></li>
+<li><p>Department of Biomedical Data Sciences, Leiden University Medical
+Center, Leiden, the Netherlands</p></li>
+</ol>
+<p><strong>This manuscript has not been peer-reviewed.</strong></p>
+<div class="section level2">
+<h2 id="abstract">Abstract<a class="anchor" aria-label="anchor" href="#abstract"></a>
+</h2>
+<p><strong>Introduction:</strong> Scabies is a contagious skin disease
+caused by the infestation of the skin by the Sarcopes scabiei mite,
+causing an itchy rash. Scabies affects over 400 million people annually
+worldwide, and a rise in scabies cases has been observed in recent years
+throughout Western Europe. Despite the large number of people infected
+with scabies annually, some fundamental epidemiological characteristics
+of scabies infections have not been described.</p>
+<p><strong>Methods:</strong> In this work we use publicly available data
+on date of symptom onset during scabies outbreaks to determine the mean
+serial interval, time between symptom onset in an infector and symptom
+onset in an infectee, of scabies infection. We also use weekly diagnoses
+of reported scabies infections from sentinel surveillance in the
+Netherlands from 2011-2023 to determine quantities related to the spread
+of scabies over time, namely, the time-varying reproduction number,
+growth rate, and basic reproduction number.</p>
+<p><strong>Results:</strong> We found that there was considerable
+heterogeneity in estimates of the serial interval from different data
+sources, with mean serial interval estimates ranging from 98.4 days to
+167.3 days. We estimated a pooled mean serial interval of 123.24 days
+(95% credible interval: 91.44, 153.41 days). An analysis of annual
+incidence of scabies per 1000 people in the Netherlands resulted in an
+estimated annual growth rate of 0.25 cases per 1000 people per year.
+Using the estimated growth rate and mean and standard deviation of the
+serial interval distribution we estimated the basic reproduction number,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mn>0</mn></msub><mo>=</mo><mn>1.09</mn></mrow><annotation encoding="application/x-tex">R_0 = 1.09</annotation></semantics></math>.
+When looking at scabies incidence over may years in the Netherlands, we
+saw yearly waves of infections, with the amplitude of incidence
+gradually increasing over time. We estimated the time-varying
+reproduction number by time of diagnosis and found that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>t</mi></msub><annotation encoding="application/x-tex">R_t</annotation></semantics></math>
+peaked for cases diagnosed in August.</p>
+<p><strong>Discussion:</strong> This study offers new insights into
+scabies transmission dynamics and suggests that additional interventions
+with limited efficacy that could prevent 8% of secondary infections
+would suffice to bring the reproduction number to below one. This may be
+achieved by increasing public awareness and targeted measures. These
+strategies may be effective in similar European settings. Our findings
+also underscore the need for precise data on scabies transmission, which
+could improve model accuracy for control strategies. Future research
+should focus on detailed characterization of scabies’ natural history to
+enhance intervention modeling and better inform containment efforts.</p>
+</div>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p>Scabies is classified as a neglected tropical disease caused by
+infestation of the skin with a microscopic mite (Sarcoptes scabiei)<span class="citation"><sup>1</sup></span>. Symptoms are characterized by
+itchiness and rash at the site of infestation. Scabies affects around
+400 million people per year, and accounts for a large proportion of skin
+disease in many low- and middle-income countries<span class="citation"><sup>1</sup></span>, particularly in tropical regions
+such as Asia, South America, and Oceania<span class="citation"><sup>2</sup></span>. Historically, scabies infections
+were a common affliction in Europe in the late 1800s and early 1900s
+with incidence peaking in 1918 and 1945<span class="citation"><sup>3,4</sup></span>. After the end of World War II,
+scabies incidence in Europe fell and remained low for decades<span class="citation"><sup>3–5</sup></span>. However, a rise in scabies cases
+has been observed through out Europe in recent years<span class="citation"><sup>6–11</sup></span>, which may increase the burden
+on healthcare systems due to scabies if the rising trend continues.</p>
+<p>The global disease burden of scabies, expressed in
+disability-adjusted life years (DALY), is low compared to other
+infectious diseases. A 2017 study found that scabies was responsible for
+only 0.21% of DALYs from all conditions studied worldwide<span class="citation"><sup>2</sup></span>. However, areas with high scabies
+prevalence have been shown to have high disease burden of scabies
+partially due to secondary infections which can lead to severe
+outcomes<span class="citation"><sup>2</sup></span>. Additionally, there
+is no simple diagnostic test for scabies, so diagnosis relies on
+clinical assessment<span class="citation"><sup>12</sup></span>, which
+can increase the workload of general practitioners (GPs) during periods
+of high scabies incidence. Furthermore, individuals infected with
+scabies can suffer from stigma, discrimination and distress<span class="citation"><sup>12,13</sup></span> in addition to the physical
+manifestations of the disease, making them less likely to seek medical
+care and further promoting transmission<span class="citation"><sup>14</sup></span>. Research has also shown that
+scabies can have economic implications for both the patients and the
+healthcare system due to ineffective and long duration of treatment<span class="citation"><sup>12</sup></span>.</p>
+<p>Despite the considerable burden scabies poses, little is known about
+the dynamics of scabies transmission, such as the generation time (time
+between infection of an index case and a secondary case), serial
 interval (the time from onset of symptoms in an index case to the time
 of symptom onset in a secondary case), growth rate, and reproduction
 number (the average number of secondary cases resulting from one index
-case). A 1944 study by Mellanby<span class="citation"><sup>8</sup></span> forms much of the basis of our
-current understanding of scabies transmission; however, the study was
-carried out on a small number of healthy volunteers and may not be
-representative of the natural history of scabies in populations in which
-scabies in widespread. Some important results from Mellanby include…
-[Add key results from Mellanby 1944: curve of mites over time, time to
-symptom onset, probability of transmission from secondary objects]</p>
-<p>In this work, we aim to estimate epidemiological characteristics of
-scabies. It is critical to better understand the underlying disease
-dynamics of scabies to 1) assess current spread and 2) inform infection
-control policy. Some modelling work has been performed to study the
+case). A series of studies in the 1940s by Kenneth Mellanby and
+colleagues<span class="citation"><sup>15,16</sup></span> form much of
+the basis of our current understanding of scabies transmission. Some
+important results from the experiments performed in the 1940s by
+Mellanby and colleagues include an estimation of the incubation period,
+or time to symptom onset, of 4-6 weeks for first infections and 24 hours
+for subsequent infections; the parasite rate, defined as the number of
+mature female mites per person, over time, which was shown to increase
+rapidly, peak around 100 days after infection, and then decline quickly;
+and the probability of transmission via a secondary object (e.g., bed
+sheets) is low and most transmission occurs from person-to-person
+contact<span class="citation"><sup>15</sup></span>. However, these
+studies were performed using healthy volunteers, so may not be
+representative of scabies transmission dynamics in other
+populations.</p>
+<p>In this work, we aim to estimate key epidemiological characteristics
+of scabies, such as the serial interval, growth rate, and reproduction
+number, to better describe scabies transmission dynamics. Specifically,
+we use time series of reported symptom onset dates of scabies outbreaks
+from the literature to estimate the mean serial interval of scabies. We
+also use data on the number of scabies diagnoses each week in the
+Netherlands to estimate time-varying reproduction number and annual
+growth rate. To our knowledge, this is the first study to estimate these
+quantities for scabies, and can provide critical information for the
+design of appropriate infection control policy.</p>
+<!-- Some modelling work has been performed to study the
 potential impacts of intervention strategies, such as mass drug
-administration, on scabies transmission<span class="citation"><sup>9–11</sup></span>; however, the values used to
-parameterise these models are based largely on Mellanby’s 1944 study and
-use information about the mite life-cycle to approximate quantities such
-as latent period and infectious period. However, this information
-doesn’t necessarily provide good estimates for transmission potential in
-humans. For example, Kinyanjui et al.<span class="citation"><sup>9</sup></span> assume a latent period of 7-14 days
-to allow for the time for the time it takes for a fertilised female mite
-to reproduce and incorporate it into a susceptible-exposed-infectious
-model of scabies transmission. However, this assumes an equal chance of
+administration, on scabies transmission [@kinyanjui2018; @lydeamore2019;
+@tellioglu2023]; however, the values used to parameterise these models
+are based largely on Mellanby's 1944 study [@mellanby1944] and use information about the mite life-cycle to approximate the time scales of scabies infection cycles.
+For example, Kinyanjui et al. [@kinyanjui2018] assume a latent period of 7-14 days to allow for the time for the time it takes for a fertilised female mite to reproduce and incorporate it into a susceptible-exposed-infectious model of scabies transmission. However, this assumes an equal chance of
 infectiousness despite the number of mites inhabiting an infested
-indivual. Mellanby<span class="citation"><sup>8</sup></span> shows that
-the probability of onward transmission of scabies is rare when the
-number of mites on an individual is low and increases as the mite
-population grows. A better approximation of the disease process can be
-obtained using the generation time or serial interval; however, no such
-estimates exist for scabies.</p>
-<p>Additionally, the growth rate and reproduction number are quantities
+individual. Mellanby [@mellanby1944] shows that the probability of onward
+transmission of scabies is rare when the number of mites on an
+individual is low and increases as the mite population grows. A better
+approximation of the disease process can be obtained using the
+generation time or serial interval; however, no such estimates exist for
+scabies. 
+
+Additionally, the growth rate and reproduction number are quantities
 that describe how fast an infectious disease spreads. They are also used
 to determine appropriate control measures to reduce the number of
 secondary infections so that an epidemic dies out. However, in the case
@@ -124,357 +215,594 @@ needed to contain disease spread. As evidence continues to suggest that
 scabies is a growing problem in European countries and remains a large
 problem elsewhere, it is important to describe the epidemiological
 characteristics of scabies so that the required control efforts to curb
-scabies epidemics can be determined.</p>
-<p>In this study, we use epidemic curves of scabies outbreaks from the
-literature to estimate the serial interval. We use data on weekly
-scabies cases in the Netherlands to estimate time-varying reproduction
-number and annual growth rate. [not sure this should be in the
-intro]</p>
+scabies epidemics can be determined. -->
+</div>
+<div class="section level2">
+<h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a>
+</h2>
+<div class="section level3">
+<h3 id="data-sources">Data Sources<a class="anchor" aria-label="anchor" href="#data-sources"></a>
+</h3>
+<p>To estimate the mean serial interval for scabies infections, we
+conducted a rapid literature search to identify papers with publicly
+available data on date of symptom onset for scabies outbreaks. We
+searched Google images using the terms “scabies” and “epidemic curve” to
+find papers that featured symptom onset data over time and found 8
+papers. Papers were excluded if data on date of symptom onset was not
+available or we were not able to reconstruct the date of symptom onset
+time series from the paper. We further excluded studies whose data did
+not span a sufficiently long time window for secondary infections to
+occur. We defined “sufficiently long” as 100 days based on the average
+peak parasite rate described by Mellanby<span class="citation"><sup>15</sup></span>. After excluding papers that did
+not meet our criteria, we included a total of 4 papers in our
+analysis.</p>
+<p>In addition to publicly available data on date of scabies symptom
+onset, we used high resolution data on the number of diagnoses of
+scabies over time in the Netherlands to estimate the time-varying
+reproduction number and growth rate. These data have been described
+elsewhere<span class="citation"><sup>6,17</sup></span>. Briefly, we
+obtained weekly incidence of scabies (per 1000 people) from 2011 to 2023
+as diagnosed by general practitioners (GPs) that are stored in a
+nationally representative primary care database of GPs hosted by the
+Netherlands Institute for Health Services Research (Nivel)<span class="citation"><sup>17</sup></span>. Scabies is not a notifiable
+disease in the Netherlands, thus information on trends in incidence of
+scabies cases can only be obtained from GP diagnoses and dispensation of
+scabicides. Individuals in institutions (e.g., care homes) are generally
+not taken into account in these registrations.</p>
 </div>
 <div class="section level3">
-<h3 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a>
+<h3 id="serial-interval">Serial Interval<a class="anchor" aria-label="anchor" href="#serial-interval"></a>
 </h3>
-<div class="section level4">
-<h4 id="data-sources">Data Sources<a class="anchor" aria-label="anchor" href="#data-sources"></a>
-</h4>
-<p>We used reported symptom onset dates of cases from previously
-published studies of scabies outbreaks (Table
-@ref(tab:data_sources_table)) to estimate the serial interval of
-scabies. When the original study data was not provided, we reconstructed
-the data from the published epidemic curves.</p>
-</div>
-<div class="section level4">
-<h4 id="serial-interval">Serial Interval<a class="anchor" aria-label="anchor" href="#serial-interval"></a>
-</h4>
-<p>Using the dates of symptom onset for scabies cases from six different
-studies of scabies outbreaks (Table @ref(tab:si_results_tab)), we
+<p>Using the dates of symptom onset for scabies cases from four
+different studies<span class="citation"><sup>18–21</sup></span> of
+scabies outbreaks (Table 1<!--\@ref(tab:si_results_tab)-->), we
 estimated the mean and standard deviation of the serial interval
-distribution using the method proposed by Vink et al.<span class="citation"><sup>12</sup></span>. The method involves calculating
+distribution using the method proposed by Vink et al.<span class="citation"><sup>22</sup></span>. The method involves calculating
 the index case-to-case (ICC) interval for each person, where the person
 with the greatest value for number of days since symptom onset will be
 considered the index case. The rest of the individuals will have an ICC
 interval calculated as the number of days between their symptom onset
-and the index case. We assumed a Normal serial interval distribution. We
-performed a sensitivity analysis in which a Gamma distribution was
-assumed as the serial interval distribution [TODO!].</p>
-<p>We also performed a Bayesian meta-analysis using the
-<code>brms</code> package in R<span class="citation"><sup>13</sup></span> to estimate the pooled mean serial
-interval. We used a Bayesian hierarchical random-effects model. We chose
-to use a random effects model because we assume that each study has its
-own “true” serial interval, which has been sampled from an overarching
-distribution of true serial intervals<span class="citation"><sup>14</sup></span>. We specified a prior distribution
-N(100, 50) for the true pooled mean and Cauchy(0,1) for the
-between-study heterogeneity. We performed sensitivity analyses on our
-choices of prior distributions [TODO!].</p>
-</div>
-<div class="section level4">
-<h4 id="growth-rate">Growth rate<a class="anchor" aria-label="anchor" href="#growth-rate"></a>
-</h4>
-<p>We estimated the annual growth rate of scabies cases by fitting an
-exponential growth model to annual incidence of scabies per 1000 people
-from 2011 to 2023 in the Netherlands<span class="citation"><sup>15</sup></span>. Using the fitted exponential
-growth model and the estimated growth rate, we then determined the
-projected incidence of scabies per 1000 people until 2033 if no
-interventions are implemented. We used bootstrapping with 1000 samples
-to obtain 95% confidence bounds for the projected incidence of scabies
-per 1000 people.</p>
-</div>
-<div class="section level4">
-<h4 id="reproduction-number">Reproduction Number<a class="anchor" aria-label="anchor" href="#reproduction-number"></a>
-</h4>
-<p>We obtained weekly reported cases of scabies from 2011 to 2023 in the
-Netherlands<span class="citation"><sup>2,15</sup></span>. We performed
-spectral analysis on the time series of weekly scabies cases using a
-modified Daniell kernel (m = 2) for smoothing to identify typical
-frequencies within the time series. To estimate time-varying
-reproduction number, we first randomly assigned each reported case a
-date of symptom onset in the week in which the case was reported. Using
-the daily time series, we applied the method proposed by Wallinga and
-Teunis<span class="citation"><sup>16</sup></span> to estimate the
-time-varying reproduction number by determining the likelihood of an
-event occurring for every pair of time points<span class="citation"><sup>17</sup></span>. The method requires the
-specification of the serial interval distribution. We assumed a Normal
-serial interval distribution with mean 91.2 and standard deviation
-22.79, as estimated previously. To obtain confidence intervals on the
-daily reproduction number, we used bootstrapping.</p>
-<p>All analyses were performed in R 4.4.0<span class="citation"><sup>18</sup></span>.</p>
-</div>
+and the index case. We assumed that serial interval distributions for
+scabies can be approximated by a normal (Gaussian) distribution. Since
+serial intervals can be negative, albeit with low probability, the use
+of a distribution on a continuous scale is appropriate. The Gamma
+distribution has a more flexible shape, but as it is only defined for
+positive values of the serial interval it can only be used when the
+probability of negative values is very low. We performed a sensitivity
+analysis in which we assume the serial intervals for scabies can be
+approximated by a Gamma distribution (see Appendix).</p>
+<p>We used the <code>brms</code> package in R<span class="citation"><sup>23</sup></span> to estimate the pooled mean serial
+interval. We used a Bayesian hierarchical random-effects model in which
+we assume that there is a typical distribution for serial intervals,
+from which an outbreak-specific mean serial interval is sampled<span class="citation"><sup>24</sup></span>. We specified the prior
+distribution for the pooled mean as a normal distribution with a mean of
+100 days, based on Mellanby’s reports on parasite rate and a standard
+deviation of 50 days to make sure the prior is not very informative. We
+used a Cauchy(0,1) distribution for the between-study heterogeneity. We
+performed sensitivity analyses on our choices of prior distributions
+(see Appendix).</p>
 </div>
 <div class="section level3">
-<h3 id="results">Results<a class="anchor" aria-label="anchor" href="#results"></a>
+<h3 id="growth-rate-and-basic-reproduction-number-r_0">Growth Rate and Basic Reproduction Number
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mn>0</mn></msub><annotation encoding="application/x-tex">R_0</annotation></semantics></math>)<a class="anchor" aria-label="anchor" href="#growth-rate-and-basic-reproduction-number-r_0"></a>
 </h3>
-<div class="section level4">
-<h4 id="serial-interval-1">Serial Interval<a class="anchor" aria-label="anchor" href="#serial-interval-1"></a>
-</h4>
+<p>We estimated the annual growth rate of scabies cases by fitting a
+generalized linear model (GLM) with a log link and a quasipoisson family
+to the annual number of scabies diagnoses per 1000 people from 2011 to
+2023 in the Netherlands<span class="citation"><sup>25</sup></span>. This
+approach accounts for the overdispersion commonly observed in count data
+and allows for non-integer values in the data. The GLM with a log link
+assumes an exponential growth model, where the logarithm of the expected
+count of scabies cases is linearly related to time and assumes
+quasipoisson distributed errors.
+<!--, which adjusts for the variance proportional to the mean. --></p>
+<p>Using the fitted quasipoisson model, we determined the projected
+incidence of scabies per 1000 people until 2033, assuming no
+interventions are implemented and that the growth rate remains constant.
+We calculated 95% prediction intervals for the predicted incidence using
+standard error values adjusted to takes into account the dispersion
+parameter derived from the model, ensuring that our estimates
+appropriately reflect the uncertainty in the predictions.</p>
+<p>Using the estimated annual growth rate, we can estimate the basic
+reproduction number as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mn>0</mn></msub><mo>=</mo><mo>exp</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo>*</mo><mi>T</mi><mi>–</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mi>/</mi><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow><msup><mi>r</mi><mn>2</mn></msup><msup><mi>s</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">R_0 = \exp(r*T – (1/2) r^2 s^2)</annotation></semantics></math>,
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>
+is the annual growth rate,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>
+is the mean generation time (in years), and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>s</mi><mn>2</mn></msup><annotation encoding="application/x-tex">s^2</annotation></semantics></math>
+is the variance of the generation time distribution<span class="citation"><sup>26</sup></span>. We assume that nearly everyone
+exposed has not been previously infected.</p>
+<!-- We estimated the annual growth rate of scabies cases by fitting an
+exponential growth model to annual number of scabies diagnoses per 1000 people
+from 2011 to 2023 in the Netherlands [@nivel]. We assumed normally
+distributed errors, with mean zero and constant variance. Using the
+fitted exponential growth model and the estimated growth rate, we then
+determined the projected incidence of scabies per 1000 people until 2033
+if no interventions are implemented and the growth rate remains
+constant. We used bootstrapping with 1000 samples to obtain 95%
+confidence bounds for the projected incidence of scabies per 1000
+people. -->
+</div>
+<div class="section level3">
+<h3 id="time-varying-reproduction-number">Time-varying Reproduction Number<a class="anchor" aria-label="anchor" href="#time-varying-reproduction-number"></a>
+</h3>
+<p>We obtained weekly reported diagnoses of scabies infections per 1000
+people from 2011 to 2023 in the Netherlands<span class="citation"><sup>6,25</sup></span>. To estimate time-varying case
+reproduction number, we first randomly assigned each reported scabies
+case a date of diagnosis in the week in which the case was reported.
+Since scabies is very hard to diagnose prior to symptom onset<span class="citation"><sup>16</sup></span>, and diagnosed cases are captured
+as part of sentinel surveillance based on GP diagnosis<span class="citation"><sup>25</sup></span>, we use the date of diagnosis
+rather than the date of symptom onset. Using the constructed daily time
+series of date of diagnosis, we applied the method proposed by Wallinga
+and Lipsitch<span class="citation"><sup>26</sup></span> to estimate the
+time-varying daily case reproduction number. The case reproduction
+number is defined as the average number of new infections that an
+individual who becomes diagnosed at a particular time point will go on
+to cause<span class="citation"><sup>27</sup></span>, and is useful in
+retrospective analyses such as the one presented here. The method of
+Wallinga and Lipsitch estimates the time-varying case reproduction
+number by determining the likelihood of an event occurring for every
+pair of time points<span class="citation"><sup>26</sup></span>. The
+method requires the specification of the serial interval distribution.
+We assumed a normal serial interval distribution with mean 123.24 days
+and standard deviation 31.55 days, as estimated previously. Due to
+unobserved onward cases at the end of the time series, we adjusted for
+right truncation<span class="citation"><sup>28,29</sup></span>. To
+obtain 95% confidence intervals on the daily case reproduction number,
+we generated 100 bootstrapped samples by resampling each case with
+replacement and reconstructing the incidence time series for each
+bootstrapped sample. Reproduction number estimates were then smoothed
+using a rolling average of 6 weeks.</p>
+<p>Because we are using the serial interval distribution as an
+approximation of the generation interval, which is strictly positive, we
+performed a sensitivity analysis in which we assumed the serial interval
+distribution is Gamma distributed with the same mean and variance.</p>
+<p>All analyses were performed in R 4.4.0<span class="citation"><sup>30</sup></span>. Additional R packages used in
+this work are cited in the Appendix.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="results">Results<a class="anchor" aria-label="anchor" href="#results"></a>
+</h2>
+<div class="section level3">
+<h3 id="serial-interval-1">Serial Interval<a class="anchor" aria-label="anchor" href="#serial-interval-1"></a>
+</h3>
 <p>We estimated the mean and standard deviation of the serial interval
-using the epidemic curves from each study (Table
-@ref(si_results_tab)).</p>
-<p>[Figure of epidemic curves!]</p>
-<p>There was considerable variation between studies with the largest
-estimated mean serial interval of 167.34 (SD = 9.72) from data from
-Kaburi et al.<span class="citation"><sup>19</sup></span> which describes
-an outbreak in a preschool in Ghana. The smallest estimated mean serial
-interval was 16.11 (SD = 2.42), and was estimated from data from Larrosa
-et al.<span class="citation"><sup>20</sup></span> which describes an
-outbreak in a hospital in Spain.</p>
+using the epidemic curves from each study assuming an underlying Normal
+distribution (Table 1<!--\@ref(tab:si_results_tab) -->). There was
+considerable variation in the estimates of mean serial interval between
+studies. The shortest estimated mean serial interval (98.4 days) was
+estimated from data from Ariza et al.<span class="citation"><sup>18</sup></span> describing an outbreak of scabies
+in a kindergarten in Germany. The largest estimated mean serial interval
+(167.34 days) was estimated from data from Kaburi et al.<span class="citation"><sup>19</sup></span> from an outbreak in a preschool in
+Ghana. Using data from an outbreak of scabies in a care home in the
+Netherlands<span class="citation"><sup>20</sup></span> we obtained an
+estimated mean serial interval of 110.7 days. Finally, we obtained an
+estimated mean serial interval of 122.9 days from data from an outbreak
+of scabies in a fishing community in the Hoima District of Uganda<span class="citation"><sup>21</sup></span>. We assessed the fitted derial
+interval distribution visually by plotting the estimated densities over
+the epidemic curves (Figure 1).</p>
+<p>We performed a sensitivity analysis in which we estimated the mean
+and standard deviation of the serial interval assuming an underlying
+Gamma distribution (Table S1<!-- \@ref(tab:tab_si_gam --> and Figure
+S1<!--\@ref(fig:gam_si_plots) -->). We found that we obtained similar
+mean estimates as compared to assuming an underlying Normal distribution
+(albeit lower for most studies), but the estimated standard deviations
+were larger. Model fit was assessed visually by plotting the estimated
+densities over the epidemic curves (Figure
+S1<!--\@ref(fig:gam_si_plots) -->) and we found that the Gamma
+distribution was a poorer fit of the data as compared to the normal
+distribution.</p>
 <div class="tabwid">
-<style>.cl-e4da0da0{}.cl-e4d3dc1e{font-family:'DejaVu Sans';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-e4d3dc32{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-e4d65a20{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-e4d65a2a{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-e4d67000{width:3.876in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e4d6700a{width:4.831in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e4d6700b{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e4d6700c{width:0.823in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e4d67014{width:1.935in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e4d67015{width:3.876in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e4d6701e{width:4.831in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e4d6701f{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e4d67020{width:0.823in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e4d67028{width:1.935in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e4d67029{width:3.876in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e4d67032{width:4.831in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e4d67033{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e4d67034{width:0.823in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-e4d6703c{width:1.935in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
-<table data-quarto-disable-processing="true" class="table cl-e4da0da0">
-<caption style="display:table-caption;"><span>Estimated mean and standard deviation (SD) of serial interval distribution, in days, for each study.</span></caption>
+<style>.cl-74f68288{}.cl-74f0adae{font-family:'DejaVu Sans';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-74f0adb8{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-74f30946{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-74f30950{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-74f32412{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-74f3241c{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-74f32426{width:1.862in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-74f32427{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-74f32430{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-74f32431{width:1.862in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-74f3243a{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-74f3243b{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-74f32444{width:1.862in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
+<table data-quarto-disable-processing="true" class="table cl-74f68288">
+<caption style="display:table-caption;"><span>Table 1. Estimated mean and standard deviation (SD) of serial interval distribution, in days, for each study.</span></caption>
 <thead><tr style="overflow-wrap:break-word;">
-<th class="cl-e4d67000"><p class="cl-e4d65a20"><span class="cl-e4d3dc1e">Study</span></p></th>
-<th class="cl-e4d6700a"><p class="cl-e4d65a20"><span class="cl-e4d3dc1e">Details</span></p></th>
-<th class="cl-e4d6700b"><p class="cl-e4d65a2a"><span class="cl-e4d3dc1e">Mean</span></p></th>
-<th class="cl-e4d6700c"><p class="cl-e4d65a2a"><span class="cl-e4d3dc1e">SD</span></p></th>
-<th class="cl-e4d67014"><p class="cl-e4d65a20"><span class="cl-e4d3dc1e">Reference</span></p></th>
+<th class="cl-74f32412"><p class="cl-74f30946"><span class="cl-74f0adae">Study</span></p></th>
+<th class="cl-74f3241c"><p class="cl-74f30950"><span class="cl-74f0adae">Mean</span></p></th>
+<th class="cl-74f32426"><p class="cl-74f30950"><span class="cl-74f0adae">Standard Deviation</span></p></th>
 </tr></thead>
 <tbody>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-e4d67015"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">Kaburi et al. 2019</span></p></td>
-<td class="cl-e4d6701e"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">Outbreak of scabies in a preschool in Ghana</span></p></td>
-<td class="cl-e4d6701f"><p class="cl-e4d65a2a"><span class="cl-e4d3dc32">167.34</span></p></td>
-<td class="cl-e4d67020"><p class="cl-e4d65a2a"><span class="cl-e4d3dc32">9.72</span></p></td>
-<td class="cl-e4d67028"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">[@kaburi2019]</span></p></td>
+<td class="cl-74f32427"><p class="cl-74f30946"><span class="cl-74f0adb8">Akunzirwe et al.</span></p></td>
+<td class="cl-74f32430"><p class="cl-74f30950"><span class="cl-74f0adb8">122.92</span></p></td>
+<td class="cl-74f32431"><p class="cl-74f30950"><span class="cl-74f0adb8">26.92</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-e4d67015"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">Ariza et al. 2013</span></p></td>
-<td class="cl-e4d6701e"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">Outbreak of scabies in a preschool in Germany</span></p></td>
-<td class="cl-e4d6701f"><p class="cl-e4d65a2a"><span class="cl-e4d3dc32">98.40</span></p></td>
-<td class="cl-e4d67020"><p class="cl-e4d65a2a"><span class="cl-e4d3dc32">8.54</span></p></td>
-<td class="cl-e4d67028"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">[@ariza2013]</span></p></td>
+<td class="cl-74f32427"><p class="cl-74f30946"><span class="cl-74f0adb8">Ariza et al.</span></p></td>
+<td class="cl-74f32430"><p class="cl-74f30950"><span class="cl-74f0adb8">98.40</span></p></td>
+<td class="cl-74f32431"><p class="cl-74f30950"><span class="cl-74f0adb8">8.54</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-e4d67015"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">Akunzirwe et al. 2023</span></p></td>
-<td class="cl-e4d6701e"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">Outbreak of scabies in a fishing community in Uganda</span></p></td>
-<td class="cl-e4d6701f"><p class="cl-e4d65a2a"><span class="cl-e4d3dc32">122.92</span></p></td>
-<td class="cl-e4d67020"><p class="cl-e4d65a2a"><span class="cl-e4d3dc32">26.92</span></p></td>
-<td class="cl-e4d67028"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">[@uganda]</span></p></td>
+<td class="cl-74f32427"><p class="cl-74f30946"><span class="cl-74f0adb8">Kaburi et al.</span></p></td>
+<td class="cl-74f32430"><p class="cl-74f30950"><span class="cl-74f0adb8">167.34</span></p></td>
+<td class="cl-74f32431"><p class="cl-74f30950"><span class="cl-74f0adb8">9.72</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-e4d67015"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">Tjon-Kon-Fat et al 2021.</span></p></td>
-<td class="cl-e4d6701e"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">Outbreak of scabies in a nursing home in the Netherlands</span></p></td>
-<td class="cl-e4d6701f"><p class="cl-e4d65a2a"><span class="cl-e4d3dc32">110.71</span></p></td>
-<td class="cl-e4d67020"><p class="cl-e4d65a2a"><span class="cl-e4d3dc32">16.14</span></p></td>
-<td class="cl-e4d67028"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">[@tjon-kon-fat2021]</span></p></td>
-</tr>
-<tr style="overflow-wrap:break-word;">
-<td class="cl-e4d67015"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">Larosa et al. 2003</span></p></td>
-<td class="cl-e4d6701e"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">Outbreak of scabies in a hospital in Spain</span></p></td>
-<td class="cl-e4d6701f"><p class="cl-e4d65a2a"><span class="cl-e4d3dc32">16.11</span></p></td>
-<td class="cl-e4d67020"><p class="cl-e4d65a2a"><span class="cl-e4d3dc32">2.42</span></p></td>
-<td class="cl-e4d67028"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">[@larrosa2003]</span></p></td>
-</tr>
-<tr style="overflow-wrap:break-word;">
-<td class="cl-e4d67029"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">Division of Public and Behavioral Health 2015</span></p></td>
-<td class="cl-e4d67032"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">Outbreak of scabies in a long-term care facility in the USA</span></p></td>
-<td class="cl-e4d67033"><p class="cl-e4d65a2a"><span class="cl-e4d3dc32">21.92</span></p></td>
-<td class="cl-e4d67034"><p class="cl-e4d65a2a"><span class="cl-e4d3dc32">15.24</span></p></td>
-<td class="cl-e4d6703c"><p class="cl-e4d65a20"><span class="cl-e4d3dc32">[@nevada]</span></p></td>
+<td class="cl-74f3243a"><p class="cl-74f30946"><span class="cl-74f0adb8">Tjon-Kon-Fat et al</span></p></td>
+<td class="cl-74f3243b"><p class="cl-74f30950"><span class="cl-74f0adb8">110.72</span></p></td>
+<td class="cl-74f32444"><p class="cl-74f30950"><span class="cl-74f0adb8">16.14</span></p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>To obtain a pooled estimate of mean serial interval, we performed a
-Bayesian meta-analysis with random intercepts for each study. We
-estimated a pooled mean serial interval of 91.20 (95% CI: 45.84, 138.04)
-(Figure @ref(fsi_multi-plot)B). As we saw with the individual study
-estimates (Table @ref(si_results_tab)), the meta-analysis provided
-further evidence of substantial heterogeneity among studies due to a
-large value of the standard deviation of the random intercepts (60.7).
-The large variation in the mean serial interval estimates can be
-visualised by plotting the estimated distributions of each study’s
-serial interval shown in Figure @ref(si_multi-plot)A. A normal
-distribution is assumed, and is parameterized by the estimated mean and
-standard deviation of serial interval for each study.</p>
 <div class="figure">
-<img src="epidemiology_of_scabies_files/figure-html/si_multi-plot-1.png" alt="A) Estimated serial interval distributions using data from epidemic curves from different scabies outbreaks. B) Forest plot of estimated mean serial interval and pooled mean." width="672"><p class="caption">
+<img src="epidemiology_of_scabies_files/figure-html/si_dist_plot-1.png" alt="Figure 1. Epidemic curves and estimated serial interval distributions from four scabies outbreaks. Red line indicates estimated serial interval density assuming an underlying normal distribution." width="672" id="fig-si-dist-plot-1"><p class="caption">
+Figure 1. Epidemic curves and estimated serial interval distributions
+from four scabies outbreaks. Red line indicates estimated serial
+interval density assuming an underlying normal distribution.
 </p>
-<ol style="list-style-type: upper-alpha"><li>Estimated serial interval distributions using data from epidemic
-curves from different scabies outbreaks. B) Forest plot of estimated
-mean serial interval and pooled mean.
-
-</li></ol>
 </div>
-
+<p>To obtain a pooled estimate of mean serial interval, we analysed the
+data as in a Bayesian meta-analysis with random intercepts for each
+study.
+<!--We excluded studies with study periods less than 100 days as it was unlikely to observe a primary-secondary infection in that time.-->
+We estimated a pooled mean serial interval of 123.24 days (95% credible
+interval: 91.44, 153.41 days) (Figure 2<!--\@ref(fig:forest_plot-->). As
+we saw with the individual study estimates (Table
+1<!--\@ref(tab:si_results_tab)-->), the analysis provided further
+evidence of substantial heterogeneity among studies due to a large value
+of the standard deviation of the random intercepts (31.55 days). The
+large variation in the mean serial interval estimates can be visualised
+by plotting the estimated distributions of each study’s serial interval
+shown in Figure 2<!--\@ref(forest_plot)-->). A normal distribution is
+assumed, and is parameterized by the estimated mean and standard
+deviation of serial interval for each study.</p>
+<div class="figure">
+<img src="epidemiology_of_scabies_files/figure-html/forest_plot-1.png" alt="Figure 2. Forest plot of estimated mean serial intervals and pooled mean." width="672"><p class="caption">
+Figure 2. Forest plot of estimated mean serial intervals and pooled
+mean.
+</p>
 </div>
-<div class="section level4">
-<h4 id="growth-rate-and-basic-reproduction-number">Growth Rate and Basic Reproduction Number<a class="anchor" aria-label="anchor" href="#growth-rate-and-basic-reproduction-number"></a>
-</h4>
+</div>
+<div class="section level3">
+<h3 id="growth-rate-and-basic-reproduction-number-r_0-1">Growth Rate and Basic Reproduction Number
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mn>0</mn></msub><annotation encoding="application/x-tex">R_0</annotation></semantics></math>)<a class="anchor" aria-label="anchor" href="#growth-rate-and-basic-reproduction-number-r_0-1"></a>
+</h3>
 <p>We estimated the annual growth rate of scabies cases by fitting an
 exponential growth model to annual incidence of scabies per 1000 people
-from 2011 to 2023 in the Netherlands<span class="citation"><sup>15</sup></span>. We estimated an annual growth
-rate of 0.353 (95% CI: 0.152, 0.452). Using the fitted exponential
-growth model and the estimated growth rate, we then determined the
-projected incidence of scabies per 1000 people until 2033 if no
-interventions are implemented. We found that there could be a
-substantial increase in scabies incidence in the next 10 years in the
-Netherlands if no measures are taken to mitigate scabies spread (Figure
-@ref(fig:growth_rate_fig)).</p>
-<p>[TODO] Add estimate of basic reproduction number based on growth rate
-and generation time (use mean serial interval). R0 = 1 + (0.353 * 1/b),
-where b is the generation time in days.</p>
+from 2011 to 2023 in the Netherlands<span class="citation"><sup>25</sup></span>. We estimated an annual growth
+rate of 0.25 (95% CI: 0.2, 0.3) <!-- 0.353 (95% CI: 0.152, 0.452) -->.
+Using the previously estimated pooled mean serial interval (123.24 days
+or 0.34 years) and standard deviation of the serial interval (31.55 days
+or 0.09 years) as a proxy for the generation time, we estimated the
+basic reproduction number
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mn>0</mn></msub><mo>=</mo></mrow><annotation encoding="application/x-tex">R_0 =</annotation></semantics></math>
+1.09 (95% CI: 1.07, 1.11) <!--$R_0=1.13$-->. Using the fitted
+exponential growth model and the estimated growth rate, we then
+determined the projected annual incidence of scabies per 1000 people
+until 2033 if no interventions are implemented. We found that there
+could be a substantial increase in scabies incidence in the next 10
+years in the Netherlands if no measures are taken to mitigate scabies
+spread (Figure 3<!--\@ref(fig:growth_rate_fig)-->).</p>
 <div class="figure" style="text-align: center">
-<img src="epidemiology_of_scabies_files/figure-html/growth_rate_fig-1.png" alt="Scabies incidence per 1000 people from 2011 to 2023 (points) and then projected scabies indcidence per 1000 people for 2024 to 2033 (line) using an exponential growth model with annual growth rate = 0.353. Shaded regions represent 95% confidence intervals for projected scabies incidence." width="100%"><p class="caption">
-Scabies incidence per 1000 people from 2011 to 2023 (points) and then
-projected scabies indcidence per 1000 people for 2024 to 2033 (line)
-using an exponential growth model with annual growth rate = 0.353.
-Shaded regions represent 95% confidence intervals for projected scabies
-incidence.
+<img src="epidemiology_of_scabies_files/figure-html/growth_rate_fig-1.png" alt="Figure 3. Annual scabies incidence per 1000 people from 2011 to 2023 (points) and then projected scabies indcidence per 1000 people for 2024 to 2033 (line) using an exponential growth model with annual growth rate of 0.25 (95% CI: 0.20, 0.30) cases per 1000 people. Shaded regions represent 95% prediction intervals for projected scabies incidence. The y-axis is displayed on the log-scale and represents the natural log of scabies incidence per 1000 people." width="100%"><p class="caption">
+Figure 3. Annual scabies incidence per 1000 people from 2011 to 2023
+(points) and then projected scabies indcidence per 1000 people for 2024
+to 2033 (line) using an exponential growth model with annual growth rate
+of 0.25 (95% CI: 0.20, 0.30) cases per 1000 people. Shaded regions
+represent 95% prediction intervals for projected scabies incidence. The
+y-axis is displayed on the log-scale and represents the natural log of
+scabies incidence per 1000 people.
 </p>
 </div>
 </div>
-<div class="section level4">
-<h4 id="reproduction-number-1">Reproduction Number<a class="anchor" aria-label="anchor" href="#reproduction-number-1"></a>
-</h4>
-<p>We first performed a spectral analysis on the time series of weekly
-scabies cases in Netherlands from 2011 to 2023 using a modified Daniell
-kernel (m = 2) for smoothing. We found typical frequencies at 1/51.4
-weeks and at 1/26.67 weeks (where 26.67 weeks is ~187 days). This
-suggests that there is a generation interval at 187 days and strong
-annual periodicity. We also estimated time-varying reproduction number
-and plotted it against season. It appears that peak transmissibility
-occurs in the autumn and in some years extend into winter (Figure
-\@ref(rt_plot)).</p>
+<div class="section level3">
+<h3 id="time-varying-reproduction-number-1">Time-varying Reproduction Number<a class="anchor" aria-label="anchor" href="#time-varying-reproduction-number-1"></a>
+</h3>
+<p>To determine the pattern of scabies spread over time, particularly if
+the incidence of scabies infections displays a repeating temporal
+pattern (e.g., seasonal waves), we first plotted weekly incidence of
+scabies infections per 1000 people in The Netherlands from 2011 to 2023
+(Figure 4<!-- \@ref(fig:epidemic_curve)-->). We observed approximate
+yearly peaks and troughs of incidence. Incidence was typically highest
+in October or November (however, in 2022, highest incidence occurred in
+December). There were additional rises in incidence in March-May (Figure
+S2) in most years. Cumulative incidence was typically lowest in the
+summer months June/July before rising again in August. We also observed
+that the amplitude of peak incidence gradually increasing over time.
+There were marked increases in peak incidence in 2022, 2023, and the
+beginning of 2024 (Figure 4<!--\@ref(fig:epidemic_curve)-->). The
+observed patterns in scabies incidence indicate that there are
+approximately three generations of infections per year (Figure S2). For
+example, in 2023, one generation gets diagnosed in October, the next
+generation gets diagnosed in January the third generation gets diagnosed
+in May.</p>
 <div class="figure">
-<img src="rt_plot.png" alt="Time-varying reproduction number of scabies transmission. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August. 31; Autumn = September 1 – November 31." width="100%"><p class="caption">
-Time-varying reproduction number of scabies transmission. Colored bands
-denote season. Winter = December 1 – February 28 (or 29 on leap year);
-Spring = March 1 – May 31; Summer = June 1 – August. 31; Autumn =
-September 1 – November 31.
+<img src="figures%2Fnivel_epidemic_curve.png" alt="Figure 4. Incidence of scabies infections per 1000 people in the Netherlands by date of diagnosis." width="100%"><p class="caption">
+Figure 4. Incidence of scabies infections per 1000 people in the
+Netherlands by date of diagnosis.
 </p>
 </div>
-<p>Note: This is a place-holder figure.</p>
+<p>Next, we estimated the time-varying case reproduction number of
+weekly scabies diagnoses (Figure 5<!--\@ref(fig:rt_plot)-->). As with
+weekly incidence, we see temporal waves of transmission, with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>t</mi></msub><annotation encoding="application/x-tex">R_t</annotation></semantics></math>
+peaking in August. The time difference in peak incidence
+(October-January, Figure S2) versus peak reproduction number
+(June-September) can be explained by the long serial interval of scabies
+(123 days with a 31-day standard deviation). Therefore, infections
+generated by diagnosed cases in October-January are likely to manifest
+several months later, due to the long serial interval.</p>
+<p>We performed a sensitivity analysis in which we estimated the
+time-varying reproduction number assuming an underlying gamma
+distribution for the serial interval with the same mean and standard
+deviation. We obtained similar estimates of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>t</mi></msub><annotation encoding="application/x-tex">R_t</annotation></semantics></math>
+as when we assumed the underlying serial interval distribution was a
+Normal distribution (Figure S3).</p>
+<div class="figure">
+<img src="epidemiology_of_scabies_files/figure-html/rt_plot-1.png" alt="Figure 5. Time-varying reproduction number of scabies transmission. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August 31; Autumn = September 1 – November 31. Shaded region represents the 95% confidence envelope." width="100%"><p class="caption">
+Figure 5. Time-varying reproduction number of scabies transmission.
+Colored bands denote season. Winter = December 1 – February 28 (or 29 on
+leap year); Spring = March 1 – May 31; Summer = June 1 – August 31;
+Autumn = September 1 – November 31. Shaded region represents the 95%
+confidence envelope.
+</p>
+</div>
 </div>
 </div>
 <div class="section level2">
 <h2 id="discussion">Discussion<a class="anchor" aria-label="anchor" href="#discussion"></a>
 </h2>
-<p>Still need to flush this out.</p>
-<p>Discuss time-series trends and population that it typically occurs in
-in NL (young adults/college students)</p>
-<p>Discuss why estimates of mean serial interval across studies are so
-different (different populations and identification of symptom onset may
-be delayed).</p>
-<p>Discuss limitations of the approach and caveats for
-interpretation.</p>
+<p>In this work, we aimed to characterize scabies transmission dynamics
+by estimating key epidemiological parameters namely, the mean and
+standard deviation of the serial interval distribution, the basic
+reproduction number, the annual growth rate, and the time-varying
+reproduction number. Here, we provide some of the first estimates of the
+serial interval of scabies infection. We used symptom onset data from
+four previously published studies of scabies outbreaks and found that
+estimates of mean serial interval ranged from 98 days to 167 days. The
+large range in serial interval may be due to difference is study setting
+(school, nursing home, general population), contact patterns within
+those settings, and data quality. We performed a meta-analysis and
+obtained a pooled estimate of mean serial interval of 123 days. This
+estimate is of the same order of magnitude as the duration to reach peak
+scabies parasite rate (100 days since infection) plus the incubation
+period (28-42 days) described by Mellanby<span class="citation"><sup>15</sup></span>. However, this estimate should be
+used with caution. It was estimated by pooling data from studies in
+different populations, geographical locations, and settings, and using
+data on time of symptom onset. For more precise estimates of mean serial
+interval, future studies should collect information on transmission
+pairs.</p>
+<p>We observed seasonality in scabies transmission, finding that scabies
+incidence was highest in the Octber and November, while the time-varying
+reproduction number peaked in the August. This pattern may be due to the
+long serial interval of scabies (123 days), whereby, the delayed onset
+of secondary cases shifts the peak in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>t</mi></msub><annotation encoding="application/x-tex">R_t</annotation></semantics></math>
+several months after the peak in incidence. The seasonal pattern in
+scabies incidence has been documented in other European countries<span class="citation"><sup>7–11,31</sup></span> as well as the Western
+Pacific<span class="citation"><sup>32</sup></span> and has been
+explained by increased indoor contact during colder months<span class="citation"><sup>33</sup></span>. The seasonal pattern in scabies
+transmission can also be partially explained by the school calendar.
+Since scabies transmission has been shown to be driven by adolescents
+and young adults<span class="citation"><sup>6,7</sup></span>, seasonal
+epidemics can be seeded at the start of the school year and peak in
+winter before reaching a trough in late spring and summer when the
+school year ends. Conversely, peak transmission could occur in summer
+when people are wearing less clothing; therefore, making skin-to-skin
+contact more probable, but cases are not detected until much later in
+the fall or winter.</p>
+<p>Interestingly, in contrast to almost all notifiable infectious
+diseases, we found that the numbers of scabies cases increased during
+the COVID-19 pandemic (relative to years prior to the pandemic). Other
+infectious diseases, such as non-SARS-CoV-2 respiratory viruses, saw
+decreased incidence during the COVID-19 pandemic due to effective
+control measures<span class="citation"><sup>34</sup></span> or
+underreporting and underdiagnosis<span class="citation"><sup>6</sup></span>. The increase in scabies infections
+during the COVID-19 pandemic has also been observed in other countries,
+such as Ireland<span class="citation"><sup>35</sup></span>, Spain<span class="citation"><sup>36</sup></span>, Ethiopia<span class="citation"><sup>37</sup></span>, and Turkey<span class="citation"><sup>38</sup></span>. The increases in scabies
+infestations are likely due to increased indoor contact as a result of
+COVID-19 lockdowns and other control measures that restricted personal
+movement, such as curfews<span class="citation"><sup>6</sup></span>,
+which often led to people staying overnight. With more time indoors,
+members of households share space for long periods, which may increase
+the risk of transmitting the scabies mites through direct contact or by
+fomites<span class="citation"><sup>35,36</sup></span>.</p>
+<p>Our study has several limitations. First, when estimating the serial
+interval and reproduction number, we assume that each infection is a
+person’s first infection. The time to symptom onset after infection
+(incubation period) has been described as 4-6 weeks for a person’s first
+infection, but only 24 hours for subsequent infections<span class="citation"><sup>15</sup></span>. If a significant portion of
+individuals were experiencing a post-primary infection, then the
+estimated mean serial interval would likely be overestimated. Therefore,
+our estimates should be considered upper bounds of the average serial
+interval.</p>
+<p>Second, when estimating the time-varying reproduction number, we used
+the pooled mean and standard deviation from the meta-analysis across
+studies of scabies epidemics. These studies varied in setting,
+geographic location, and study population, and the individual estimates
+of mean serial interval varied considerably across studies. It is
+possible that using the pooled mean and standard deviation from the
+meta-analysis does not represent the true mean serial interval among the
+Dutch population; however, no other estimates exist.</p>
+<p>Third, to estimate the time-varying reproduction number we use data
+on date of scabies diagnosis. Since we do not know the delay between
+infection and diagnosis, we cannot precisely pinpoint the time that most
+transmission events occur. In a study of a scabies epidemic in Germany,
+the index case was not diagnosed for approximately 3 months following
+symptom onset<span class="citation"><sup>18</sup></span>. This delay in
+diagnosis can be due to the fact that scabies symptoms are not unique to
+scabies (itching, rash) or are misdiagnosed at first, thus causing a
+delay between symptom onset and diagnosis. While correcting for the
+delay between symptom onset and diagnosis of scabies cases would improve
+estimates of the time-varying reproduction number based on time of
+infection, this information is not routinely collected making correction
+for this delay difficult. Future studies should focus on trying to
+gather information about the delay between symptom onset and diagnosis.
+Additionally, the only estimate of the incubation period for scabies is
+the range provided by Mellanby of 4-6 weeks<span class="citation"><sup>15</sup></span>. There is no data in the original
+study or in the literature to support this estimate or provide a point
+estimate with confidence bounds. Future research should aim to obtain
+more precise information on the incubation period of scabies
+infection.</p>
+<p>Scabies continues to be a problem globally and better understanding
+of the epidemiological characteristics that govern scabies transmission
+can help containment efforts. We estimated that, in the Netherlands,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mn>0</mn></msub><mo>=</mo><mn>1.09</mn></mrow><annotation encoding="application/x-tex">R_0=1.09</annotation></semantics></math>,
+which is just above one. The required control effort to prevent the
+epidemic from growing is to prevent
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mn>1</mn><mi>/</mi><msub><mi>R</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>*</mo><mn>100</mn><mi>%</mi><mo>=</mo><mn>8</mn><mi>%</mi></mrow><annotation encoding="application/x-tex">(1-1/R_0) * 100\% = 8\%</annotation></semantics></math>
+of all secondary infections. This reduction in secondary infections can
+be achieved with additional measures even if these have a low efficacy,
+such as educating the age groups (adolescents and young adults) in which
+scabies are most prevalent about the causes and symptoms of scabies
+infections, requiring a scabies check for university students prior to
+the school year, or informing GPs about the higher risk of scabies in
+certain groups to more quickly diagnose patients with symptoms
+consistent with a scabies infestation. While these strategies may not be
+effective in all locations where scabies is prevalent, they may help
+curb scabies infections in other European countries that have similar
+populations and scabies prevalence to the Netherlands.</p>
+<p>In conclusion, this study has provided some of the first estimates of
+the epidemiological parameters governing scabies transmission. As
+evidence continues to suggest that scabies is a growing problem in
+European countries and remains a large problem elsewhere, the estimates
+provided here can help determine required control efforts to curb
+scabies epidemics. For example, the estimated epidemiological quantities
+can be used to parameterize mathematical models of scabies spread to
+determine the projected impact of different control measures. Prior
+mathematical modelling of scabies transmission have had to rely on the
+work of Mellanby<span class="citation"><sup>15</sup></span> for model
+parameterisation<span class="citation"><sup>39–41</sup></span>. This
+work has also highlighted that very little is known about the
+transmission dynamics of scabies. Future work should focus on obtaining
+more precise information on the natural history of scabies infections to
+improve estimates of the underlying quantities that govern scabies
+spread.</p>
+</div>
+<div class="section level2">
+<h2 id="data-availability">Data Availability<a class="anchor" aria-label="anchor" href="#data-availability"></a>
+</h2>
+<p>All code, data, and scripts which reproduce the results of this paper
+can be found at <a href="https://github.com/kylieainslie/mitey" class="external-link">https://github.com/kylieainslie/mitey</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="funding-statement">Funding Statement<a class="anchor" aria-label="anchor" href="#funding-statement"></a>
+</h2>
+<p>The study was financed by the Netherlands Ministry of Health, Welfare
+and Sport. <!-- include ESCAPE? --></p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body" entry-spacing="0" line-spacing="2">
-<div id="ref-who" class="csl-entry">
+<div id="ref-who2024" class="csl-entry">
 <div class="csl-left-margin">1. </div>
-<div class="csl-right-inline">Scabies.</div>
+<div class="csl-right-inline">Control of Neglected Tropical Diseases (NTD).
+<em>Report of the First <span>WHO</span> Global Meeting on Skin-Related
+Neglected Tropical Diseases: Geneva, Switzerland, <span>27–31</span>
+March 2023</em>. (2024).</div>
+</div>
+<div id="ref-karimkhani2017" class="csl-entry">
+<div class="csl-left-margin">2. </div>
+<div class="csl-right-inline">Karimkhani, C. <em>et al.</em> The global
+burden of scabies: A cross-sectional analysis from the global burden of
+disease study 2015. <em>Lancet Infect. Dis.</em> <strong>17</strong>,
+1247–1254 (2017).</div>
+</div>
+<div id="ref-savin2005" class="csl-entry">
+<div class="csl-left-margin">3. </div>
+<div class="csl-right-inline">Savin, J. A. Scabies in <span>E</span>dinburgh
+from 1815 to 2000. <em>J. R. Soc. Med.</em> <strong>98</strong>, 124–129
+(2005).</div>
+</div>
+<div id="ref-christophersen1978" class="csl-entry">
+<div class="csl-left-margin">4. </div>
+<div class="csl-right-inline">Christophersen, J. The epidemiology of scabies
+in <span>D</span>enmark, 1900 to 1975. <em>Arch. Dermatol.</em>
+<strong>114</strong>, 747–750 (1978).</div>
+</div>
+<div id="ref-downs1999" class="csl-entry">
+<div class="csl-left-margin">5. </div>
+<div class="csl-right-inline">Downs, A. M., Harvey, I. &amp; Kennedy, C. T.
+The epidemiology of head lice and scabies in the <span>UK</span>.
+<em>Epidemiol. Infect.</em> <strong>122</strong>, 471–477 (1999).</div>
 </div>
 <div id="ref-deursen2022" class="csl-entry">
-<div class="csl-left-margin">2. </div>
+<div class="csl-left-margin">6. </div>
 <div class="csl-right-inline">Deursen, B. van <em>et al.</em> Increasing
 incidence of reported scabies infestations in the netherlands,
 2011-2021. <em>PLoS One</em> <strong>17</strong>, e0268865 (2022).</div>
 </div>
 <div id="ref-reichert2021" class="csl-entry">
-<div class="csl-left-margin">3. </div>
+<div class="csl-left-margin">7. </div>
 <div class="csl-right-inline">Reichert, F., Schulz, M., Mertens, E.,
 Lachmann, R. &amp; Aebischer, A. Reemergence of scabies driven by
 adolescents and young adults, germany, 2009-2018. <em>Emerg. Infect.
 Dis.</em> <strong>27</strong>, 1693–1696 (2021).</div>
 </div>
 <div id="ref-redondo-bravo2021" class="csl-entry">
-<div class="csl-left-margin">4. </div>
+<div class="csl-left-margin">8. </div>
 <div class="csl-right-inline">Redondo-Bravo, L. <em>et al.</em> Scabies in
 spain? A comprehensive epidemiological picture. <em>PLoS One</em>
 <strong>16</strong>, e0258780 (2021).</div>
 </div>
 <div id="ref-lugovic-mihic2020" class="csl-entry">
-<div class="csl-left-margin">5. </div>
+<div class="csl-left-margin">9. </div>
 <div class="csl-right-inline">Lugović-Mihić, L. <em>et al.</em> An increasing
 scabies incidence in croatia: A call for coordinated action among
 dermatologists, physicians and epidemiologists. <em>Zdr Varst</em>
 <strong>59</strong>, 264–272 (2020).</div>
 </div>
 <div id="ref-amato2019" class="csl-entry">
-<div class="csl-left-margin">6. </div>
+<div class="csl-left-margin">10. </div>
 <div class="csl-right-inline">Amato, E. <em>et al.</em> Increase of scabies
 infestations, norway, 2006 to 2018. <em>Euro Surveill.</em>
 <strong>24</strong>, (2019).</div>
 </div>
 <div id="ref-dona2023" class="csl-entry">
-<div class="csl-left-margin">7. </div>
+<div class="csl-left-margin">11. </div>
 <div class="csl-right-inline">Donà, M. G. <em>et al.</em> Increasing trend in
 confirmed scabies cases in the only public dermatological institute of
 scientific research and care in italy. <em>Eur. J. Dermatol.</em>
 <strong>33</strong>, 709–710 (2023).</div>
 </div>
-<div id="ref-mellanby1944" class="csl-entry">
-<div class="csl-left-margin">8. </div>
-<div class="csl-right-inline">Mellanby, K. <a href="https://doi.org/10.1017/S0031182000021612" class="external-link">The development of
-symptoms, parasitic infection and immunity in human scabies</a>.
-<em>Parasitology</em> <strong>35</strong>, 197–206 (1944).</div>
-</div>
-<div id="ref-kinyanjui2018" class="csl-entry">
-<div class="csl-left-margin">9. </div>
-<div class="csl-right-inline">Kinyanjui, T. <em>et al.</em> Scabies in
-residential care homes: Modelling, inference and interventions for
-well-connected population sub-units. <em>PLoS Comput. Biol.</em>
-<strong>14</strong>, e1006046 (2018).</div>
-</div>
-<div id="ref-lydeamore2019" class="csl-entry">
-<div class="csl-left-margin">10. </div>
-<div class="csl-right-inline">Lydeamore, M. J. <em>et al.</em> A biological
-model of scabies infection dynamics and treatment informs mass drug
-administration strategies to increase the likelihood of elimination.
-<em>Math. Biosci.</em> <strong>309</strong>, 163–173 (2019).</div>
-</div>
-<div id="ref-tellioglu2023" class="csl-entry">
-<div class="csl-left-margin">11. </div>
-<div class="csl-right-inline">Tellioglu, N. <em>et al.</em> Modelling mass
-drug administration strategies for reducing scabies burden in monrovia,
-liberia. <em>Epidemiol. Infect.</em> <strong>151</strong>, e153
-(2023).</div>
-</div>
-<div id="ref-vink2014" class="csl-entry">
+<div id="ref-cox2021" class="csl-entry">
 <div class="csl-left-margin">12. </div>
-<div class="csl-right-inline">Vink, M. A., Bootsma, M. C. J. &amp; Wallinga,
-J. Serial intervals of respiratory infectious diseases: A systematic
-review and analysis. <em>Am. J. Epidemiol.</em> <strong>180</strong>,
-865–875 (2014).</div>
+<div class="csl-right-inline">Cox, V., Fuller, L. C., Engelman, D., Steer, A.
+&amp; Hay, R. J. Estimating the global burden of scabies: What else do
+we need? <em>Br. J. Dermatol.</em> <strong>184</strong>, 237–242
+(2021).</div>
 </div>
-<div id="ref-burkner2017" class="csl-entry">
+<div id="ref-white2001" class="csl-entry">
 <div class="csl-left-margin">13. </div>
-<div class="csl-right-inline">Bürkner, P.-C. Brms: An <span>R</span> package
-for bayesian multilevel models using stan. <em>J. Stat. Softw.</em>
-<strong>80</strong>, 1–28 (2017).</div>
+<div class="csl-right-inline">White, A. V., Hoy, W. E. &amp; McCredie, D. A.
+Childhood post-streptococcal glomerulonephritis as a risk factor for
+chronic renal disease in later life. <em>Med. J. Aust.</em>
+<strong>174</strong>, 492–496 (2001).</div>
 </div>
-<div id="ref-harrer" class="csl-entry">
+<div id="ref-mitja2017" class="csl-entry">
 <div class="csl-left-margin">14. </div>
-<div class="csl-right-inline">Harrer, M., Cuijpers, P., Furukawa, T. A. &amp;
-Ebert, D. D. Chapter 13 bayesian <span>Meta-Analysis</span>.</div>
+<div class="csl-right-inline">Mitjà, O. <em>et al.</em> Integrated control
+and management of neglected tropical skin diseases. <em>PLoS Negl. Trop.
+Dis.</em> <strong>11</strong>, e0005136 (2017).</div>
 </div>
-<div id="ref-nivel" class="csl-entry">
+<div id="ref-mellanby1944" class="csl-entry">
 <div class="csl-left-margin">15. </div>
-<div class="csl-right-inline">NIVEL. Cijfers ziekten per week in
-nederland.</div>
+<div class="csl-right-inline">Mellanby, K. The development of symptoms,
+parasitic infection and immunity in human scabies. <em>Parasitology</em>
+<strong>35</strong>, 197–206 (1944).</div>
 </div>
-<div id="ref-wallinga_teunis2004" class="csl-entry">
+<div id="ref-mellanby1972" class="csl-entry">
 <div class="csl-left-margin">16. </div>
-<div class="csl-right-inline">Wallinga, J. &amp; Teunis, P. Different
-epidemic curves for severe acute respiratory syndrome reveal similar
-impacts of control measures. <em>Am. J. Epidemiol.</em>
-<strong>160</strong>, 509–516 (2004).</div>
+<div class="csl-right-inline">Mellanby, K. <em>Scabies</em>. (EW Classey,
+Faringdon, England, 1972).</div>
 </div>
-<div id="ref-wallinga2007" class="csl-entry">
+<div id="ref-hasselaar" class="csl-entry">
 <div class="csl-left-margin">17. </div>
-<div class="csl-right-inline">Wallinga, J. &amp; Lipsitch, M. How generation
-intervals shape the relationship between growth rates and reproductive
-numbers. <em>Proc. Biol. Sci.</em> <strong>274</strong>, 599–604
-(2007).</div>
+<div class="csl-right-inline">Hasselaar, J. Nivel primary care
+database.</div>
 </div>
-<div id="ref-R-base" class="csl-entry">
+<div id="ref-ariza2013" class="csl-entry">
 <div class="csl-left-margin">18. </div>
-<div class="csl-right-inline">R
-Core Team. <em><a href="https://www.R-project.org" class="external-link">R: A Language and
-Environment for Statistical Computing</a></em>. (R Foundation for
-Statistical Computing, Vienna, Austria, 2019).</div>
+<div class="csl-right-inline">Ariza, L. <em>et al.</em> Investigation of a
+scabies outbreak in a kindergarten in constance, germany. <em>Eur. J.
+Clin. Microbiol. Infect. Dis.</em> <strong>32</strong>, 373–380
+(2013).</div>
 </div>
 <div id="ref-kaburi2019" class="csl-entry">
 <div class="csl-left-margin">19. </div>
@@ -482,11 +810,258 @@ Statistical Computing, Vienna, Austria, 2019).</div>
 scabies among preschool children, accra, ghana, 2017. <em>BMC Public
 Health</em> <strong>19</strong>, 746 (2019).</div>
 </div>
-<div id="ref-larrosa2003" class="csl-entry">
+<div id="ref-tjon-kon-fat2021" class="csl-entry">
 <div class="csl-left-margin">20. </div>
-<div class="csl-right-inline">Larrosa, A. <em>et al.</em> Nosocomial outbreak
-of scabies in a hospital in spain. <em>Euro Surveill.</em>
-<strong>8</strong>, 199–203 (2003).</div>
+<div class="csl-right-inline">Tjon-Kon-Fat, R. <em>et al.</em> Short report:
+The potential of <span>PCR</span> on skin flakes from bed linens for
+diagnosis of scabies in an outbreak. <em>PLoS Negl. Trop. Dis.</em>
+<strong>15</strong>, e0009485 (2021).</div>
+</div>
+<div id="ref-akunzirwe2023" class="csl-entry">
+<div class="csl-left-margin">21. </div>
+<div class="csl-right-inline">Akunzirwe, R. <em>et al.</em> An outbreak of
+scabies in a fishing community in hoima district, uganda,
+<span>February−June</span>, 2022. <em>Research Square</em> (2023).</div>
+</div>
+<div id="ref-vink2014" class="csl-entry">
+<div class="csl-left-margin">22. </div>
+<div class="csl-right-inline">Vink, M. A., Bootsma, M. C. J. &amp; Wallinga,
+J. Serial intervals of respiratory infectious diseases: A systematic
+review and analysis. <em>Am. J. Epidemiol.</em> <strong>180</strong>,
+865–875 (2014).</div>
+</div>
+<div id="ref-burkner2017" class="csl-entry">
+<div class="csl-left-margin">23. </div>
+<div class="csl-right-inline">Bürkner, P.-C. Brms: An <span>R</span> package
+for bayesian multilevel models using stan. <em>J. Stat. Softw.</em>
+<strong>80</strong>, 1–28 (2017).</div>
+</div>
+<div id="ref-harrer" class="csl-entry">
+<div class="csl-left-margin">24. </div>
+<div class="csl-right-inline">Harrer, M., Cuijpers, P., Furukawa, T. A. &amp;
+Ebert, D. D. Chapter 13 bayesian <span>Meta-Analysis</span>.</div>
+</div>
+<div id="ref-nivel" class="csl-entry">
+<div class="csl-left-margin">25. </div>
+<div class="csl-right-inline">NIVEL. Cijfers ziekten per week in
+nederland.</div>
+</div>
+<div id="ref-wallinga2007" class="csl-entry">
+<div class="csl-left-margin">26. </div>
+<div class="csl-right-inline">Wallinga, J. &amp; Lipsitch, M. How generation
+intervals shape the relationship between growth rates and reproductive
+numbers. <em>Proc. Biol. Sci.</em> <strong>274</strong>, 599–604
+(2007).</div>
+</div>
+<div id="ref-gostic2020" class="csl-entry">
+<div class="csl-left-margin">27. </div>
+<div class="csl-right-inline">Gostic, K. M. <em>et al.</em> Practical
+considerations for measuring the effective reproductive number, rt.
+<em>PLoS Comput. Biol.</em> <strong>16</strong>, e1008409 (2020).</div>
+</div>
+<div id="ref-cauchemez2006a" class="csl-entry">
+<div class="csl-left-margin">28. </div>
+<div class="csl-right-inline">Cauchemez, S. <em>et al.</em> Real-time
+estimates in early detection of <span>SARS</span>. <em>Emerg. Infect.
+Dis.</em> <strong>12</strong>, 110–113 (2006).</div>
+</div>
+<div id="ref-cauchemez2006b" class="csl-entry">
+<div class="csl-left-margin">29. </div>
+<div class="csl-right-inline">Cauchemez, S., Boëlle, P.-Y., Thomas, G. &amp;
+Valleron, A.-J. Estimating in real time the efficacy of measures to
+control emerging communicable diseases. <em>Am. J. Epidemiol.</em>
+<strong>164</strong>, 591–597 (2006).</div>
+</div>
+<div id="ref-R-base" class="csl-entry">
+<div class="csl-left-margin">30. </div>
+<div class="csl-right-inline">R
+Core Team. <em><a href="https://www.R-project.org" class="external-link">R: A Language and
+Environment for Statistical Computing</a></em>. (R Foundation for
+Statistical Computing, Vienna, Austria, 2019).</div>
+</div>
+<div id="ref-korycinska2020" class="csl-entry">
+<div class="csl-left-margin">31. </div>
+<div class="csl-right-inline">Korycinska, J., Dzika, E. &amp; Kloch, M.
+Epidemiology of scabies in relation to socio-economic and selected
+climatic factors in north-east poland. <em>Ann. Agric. Environ.
+Med.</em> <strong>27</strong>, 374–378 (2020).</div>
+</div>
+<div id="ref-ducrot2022" class="csl-entry">
+<div class="csl-left-margin">32. </div>
+<div class="csl-right-inline">Ducrot, Y.-M. <em>et al.</em> Scabies incidence
+and association with skin and soft tissue infection in loyalty islands
+province, new caledonia: A 15-year retrospective observational study
+using electronic health records. <em>PLoS Negl. Trop. Dis.</em>
+<strong>16</strong>, e0010717 (2022).</div>
+</div>
+<div id="ref-mimouni2003" class="csl-entry">
+<div class="csl-left-margin">33. </div>
+<div class="csl-right-inline">Mimouni, D. <em>et al.</em> Seasonality trends
+of scabies in a young adult population: A 20-year follow-up. <em>Br. J.
+Dermatol.</em> <strong>149</strong>, 157–159 (2003).</div>
+</div>
+<div id="ref-chow2023" class="csl-entry">
+<div class="csl-left-margin">34. </div>
+<div class="csl-right-inline">Chow, E. J., Uyeki, T. M. &amp; Chu, H. Y. The
+effects of the <span>COVID</span>-19 pandemic on community respiratory
+virus activity. <em>Nat. Rev. Microbiol.</em> <strong>21</strong>,
+195–210 (2023).</div>
+</div>
+<div id="ref-griffin2022" class="csl-entry">
+<div class="csl-left-margin">35. </div>
+<div class="csl-right-inline">Griffin, L. R., Pender, E. K., Laing, M. E.
+&amp; Markham, T. Unexpected consequences of
+<span>SARS</span>-<span>CoV</span>-2 pandemic: Scabies infestation.
+<em>Clin. Exp. Dermatol.</em> <strong>47</strong>, 1196–1197
+(2022).</div>
+</div>
+<div id="ref-martinez-pallas2020" class="csl-entry">
+<div class="csl-left-margin">36. </div>
+<div class="csl-right-inline">Martínez-Pallás, I., Aldea-Manrique, B.,
+Ramírez-Lluch, M., Manuel Vinuesa-Hernando, J. &amp; Ara-Martín, M.
+Scabies outbreak during home confinement due to the
+<span>SARS</span>-<span>CoV</span>-2 pandemic. <em>J. Eur. Acad.
+Dermatol. Venereol.</em> <strong>34</strong>, e781–e783 (2020).</div>
+</div>
+<div id="ref-asgedom2024" class="csl-entry">
+<div class="csl-left-margin">37. </div>
+<div class="csl-right-inline">Asgedom, A. A., Debesay, M. H., Ugwu, C. L. J.
+&amp; Woldegerima, W. A. Detecting spatial clusters of human scabies in
+tigray, ethiopia from 2018 to 2023. <em>BMC Infect. Dis.</em>
+<strong>24</strong>, 1148 (2024).</div>
+</div>
+<div id="ref-akaslan2022" class="csl-entry">
+<div class="csl-left-margin">38. </div>
+<div class="csl-right-inline">Akaslan, T. Ç., Mert, Ö. &amp; Su Küçük, Ö.
+Scabies increase during the <span>COVID</span>-19 pandemic: Should we
+change our treatment strategy during the pandemic? <em>Ann.
+Parasitol.</em> <strong>68</strong>, 35–38 (2022).</div>
+</div>
+<div id="ref-kinyanjui2018" class="csl-entry">
+<div class="csl-left-margin">39. </div>
+<div class="csl-right-inline">Kinyanjui, T. <em>et al.</em> Scabies in
+residential care homes: Modelling, inference and interventions for
+well-connected population sub-units. <em>PLoS Comput. Biol.</em>
+<strong>14</strong>, e1006046 (2018).</div>
+</div>
+<div id="ref-lydeamore2019" class="csl-entry">
+<div class="csl-left-margin">40. </div>
+<div class="csl-right-inline">Lydeamore, M. J. <em>et al.</em> A biological
+model of scabies infection dynamics and treatment informs mass drug
+administration strategies to increase the likelihood of elimination.
+<em>Math. Biosci.</em> <strong>309</strong>, 163–173 (2019).</div>
+</div>
+<div id="ref-tellioglu2023" class="csl-entry">
+<div class="csl-left-margin">41. </div>
+<div class="csl-right-inline">Tellioglu, N. <em>et al.</em> Modelling mass
+drug administration strategies for reducing scabies burden in monrovia,
+liberia. <em>Epidemiol. Infect.</em> <strong>151</strong>, e153
+(2023).</div>
+</div>
+<div id="ref-fdrtool" class="csl-entry">
+<div class="csl-left-margin">42. </div>
+<div class="csl-right-inline">Klaus, B. &amp; Strimmer., K. <em><a href="https://CRAN.R-project.org/package=fdrtool" class="external-link">Fdrtool: Estimation of
+(Local) False Discovery Rates and Higher Criticism</a></em>.
+(2021).</div>
+</div>
+<div id="ref-cowplot" class="csl-entry">
+<div class="csl-left-margin">43. </div>
+<div class="csl-right-inline">Wilke, C. O. <em><a href="https://CRAN.R-project.org/package=cowplot" class="external-link">Cowplot: Streamlined
+Plot Theme and Plot Annotations for ’Ggplot2’</a></em>. (2024).</div>
+</div>
+<div id="ref-devtools" class="csl-entry">
+<div class="csl-left-margin">44. </div>
+<div class="csl-right-inline">Wickham, H., Hester, J., Chang, W. &amp; Bryan,
+J. <em><a href="https://CRAN.R-project.org/package=devtools" class="external-link">Devtools:
+Tools to Make Developing r Packages Easier</a></em>. (2022).</div>
+</div>
+<div id="ref-dplyr" class="csl-entry">
+<div class="csl-left-margin">45. </div>
+<div class="csl-right-inline">Wickham, H., François, R., Henry, L., Müller,
+K. &amp; Vaughan, D. <em><a href="https://CRAN.R-project.org/package=dplyr" class="external-link">Dplyr: A Grammar of Data
+Manipulation</a></em>. (2023).</div>
+</div>
+<div id="ref-usethis" class="csl-entry">
+<div class="csl-left-margin">46. </div>
+<div class="csl-right-inline">Wickham, H., Bryan, J., Barrett, M. &amp;
+Teucher, A. <em><a href="https://CRAN.R-project.org/package=usethis" class="external-link">Usethis: Automate
+Package and Project Setup</a></em>. (2024).</div>
+</div>
+<div id="ref-ggplot2" class="csl-entry">
+<div class="csl-left-margin">47. </div>
+<div class="csl-right-inline">Wickham, H. <em><a href="https://ggplot2.tidyverse.org" class="external-link">Ggplot2: Elegant Graphics for Data
+Analysis</a></em>. (Springer-Verlag New York, 2016).</div>
+</div>
+<div id="ref-flextable" class="csl-entry">
+<div class="csl-left-margin">48. </div>
+<div class="csl-right-inline">Gohel, D. &amp; Skintzos, P. <em><a href="https://CRAN.R-project.org/package=flextable" class="external-link">Flextable: Functions
+for Tabular Reporting</a></em>. (2024).</div>
+</div>
+<div id="ref-ftExtra" class="csl-entry">
+<div class="csl-left-margin">49. </div>
+<div class="csl-right-inline">Yasumoto, A. <em><a href="https://CRAN.R-project.org/package=ftExtra" class="external-link">ftExtra: Extensions
+for ’Flextable’</a></em>. (2024).</div>
+</div>
+<div id="ref-openxlsx" class="csl-entry">
+<div class="csl-left-margin">50. </div>
+<div class="csl-right-inline">Schauberger, P. &amp; Walker, A. <em><a href="https://CRAN.R-project.org/package=openxlsx" class="external-link">Openxlsx: Read, Write
+and Edit Xlsx Files</a></em>. (2023).</div>
+</div>
+<div id="ref-tidyverse" class="csl-entry">
+<div class="csl-left-margin">51. </div>
+<div class="csl-right-inline">Wickham, H. <em>et al.</em> <a href="https://doi.org/10.21105/joss.01686" class="external-link">Welcome to the <span class="nocase">tidyverse</span></a>. <em>Journal of Open Source
+Software</em> <strong>4</strong>, 1686 (2019).</div>
+</div>
+<div id="ref-broom" class="csl-entry">
+<div class="csl-left-margin">52. </div>
+<div class="csl-right-inline">Robinson, D., Hayes, A. &amp; Couch, S. <em><a href="https://CRAN.R-project.org/package=broom" class="external-link">Broom: Convert
+Statistical Objects into Tidy Tibbles</a></em>. (2024).</div>
+</div>
+<div id="ref-viridis" class="csl-entry">
+<div class="csl-left-margin">53. </div>
+<div class="csl-right-inline">Garnier <em>et al.</em> <em><span class="nocase">viridis(Lite)</span> - Colorblind-Friendly Color Maps for
+r</em>. (2024). doi:<a href="https://doi.org/10.5281/zenodo.4679423" class="external-link">10.5281/zenodo.4679423</a>.</div>
+</div>
+<div id="ref-officer" class="csl-entry">
+<div class="csl-left-margin">54. </div>
+<div class="csl-right-inline">Gohel, D. &amp; Moog, S. <em><a href="https://CRAN.R-project.org/package=officer" class="external-link">Officer: Manipulation
+of Microsoft Word and PowerPoint Documents</a></em>. (2024).</div>
+</div>
+<div id="ref-tidybayes" class="csl-entry">
+<div class="csl-left-margin">55. </div>
+<div class="csl-right-inline">Kay, M. <em><span class="nocase">tidybayes</span>: Tidy Data and Geoms for
+<span>Bayesian</span> Models</em>. (2023). doi:<a href="https://doi.org/10.5281/zenodo.1308151" class="external-link">10.5281/zenodo.1308151</a>.</div>
+</div>
+<div id="ref-ggridges" class="csl-entry">
+<div class="csl-left-margin">56. </div>
+<div class="csl-right-inline">Wilke, C. O. <em><a href="https://CRAN.R-project.org/package=ggridges" class="external-link">Ggridges: Ridgeline
+Plots in ’Ggplot2’</a></em>. (2024).</div>
+</div>
+<div id="ref-glue" class="csl-entry">
+<div class="csl-left-margin">57. </div>
+<div class="csl-right-inline">Hester, J. &amp; Bryan, J. <em><a href="https://CRAN.R-project.org/package=glue" class="external-link">Glue: Interpreted String
+Literals</a></em>. (2024).</div>
+</div>
+<div id="ref-zoo" class="csl-entry">
+<div class="csl-left-margin">58. </div>
+<div class="csl-right-inline">Zeileis, A. &amp; Grothendieck, G. <a href="https://doi.org/10.18637/jss.v014.i06" class="external-link">Zoo: S3 infrastructure for
+regular and irregular time series</a>. <em>Journal of Statistical
+Software</em> <strong>14</strong>, 1–27 (2005).</div>
+</div>
+<div id="ref-stringr" class="csl-entry">
+<div class="csl-left-margin">59. </div>
+<div class="csl-right-inline">Wickham, H. <em><a href="https://CRAN.R-project.org/package=stringr" class="external-link">Stringr: Simple,
+Consistent Wrappers for Common String Operations</a></em>. (2023).</div>
+</div>
+<div id="ref-forcats" class="csl-entry">
+<div class="csl-left-margin">60. </div>
+<div class="csl-right-inline">Wickham, H. <em><a href="https://CRAN.R-project.org/package=forcats" class="external-link">Forcats: Tools for
+Working with Categorical Variables (Factors)</a></em>. (2023).</div>
+</div>
+<div id="ref-hmisc" class="csl-entry">
+<div class="csl-left-margin">61. </div>
+<div class="csl-right-inline">Harrell Jr, F. E. <em><a href="https://CRAN.R-project.org/package=Hmisc" class="external-link">Hmisc: Harrell
+Miscellaneous</a></em>. (2024).</div>
 </div>
 </div>
 </div>
@@ -496,17 +1071,535 @@ of scabies in a hospital in spain. <em>Euro Surveill.</em>
 <div class="section level3">
 <h3 id="sensitivity-analyses">Sensitivity Analyses<a class="anchor" aria-label="anchor" href="#sensitivity-analyses"></a>
 </h3>
-<p>TODO:</p>
-<ul>
-<li><p>add gamma distribution to Vink et al. method and re-run
-estimation</p></li>
-<li><p>re-run meta-analysis assuming gamma distribution</p></li>
-<li><p>potentially remove Uganda estimate from meta-analysis because
-it’s community transmission and not a confined setting (e.g., school,
-hospital, care home)</p></li>
-<li><p>check prior assumptions for meta-analysis</p></li>
-<li><p>more in-depth analysis of Rt</p></li>
-</ul>
+<div class="section level4">
+<h4 id="serial-interval-2">Serial Interval<a class="anchor" aria-label="anchor" href="#serial-interval-2"></a>
+</h4>
+<p>We performed a sensitivity analysis on the underlying distribution of
+serial interval. In the main analysis we assumed the serial interval was
+normally distributed. In the sensitivity analysis we assumed the serial
+interval was Gamma distributed. The estimated mean and standard
+deviation of serial interval for each study is shown in Table S1
+<!--\@ref(tab:si_sa)-->. For all studies, except Larrosa et al., the
+mean is serial interval is lower when estimated assuming an underlying
+Gamma distribution. When assuming an underlying Gamma distribution, the
+standard deviations were higher than when assuming an underlying Normal
+distribution. We see from Figure S1 <!--\@ref(fig:gam_si_plots)--> that
+the Gamma distribution does not fit the data well. It is possible that
+the Gamma distribution fits scabies data poorly due to the long
+incubation period of scabies and the possibility of negative serial
+intervals.</p>
+<div class="tabwid">
+<style>.cl-78f36608{}.cl-78ed80d0{font-family:'DejaVu Sans';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-78ed80e4{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-78f01282{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-78f01296{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-78f02d1c{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-78f02d26{width:1.114in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-78f02d30{width:1.211in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-78f02d3a{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-78f02d3b{width:1.114in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-78f02d44{width:1.211in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-78f02d45{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-78f02d4e{width:1.114in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-78f02d58{width:1.211in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-78f02d62{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-78f02d63{width:1.114in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-78f02d6c{width:1.211in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-78f02d6d{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-78f02d76{width:1.114in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-78f02d77{width:1.211in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
+<table data-quarto-disable-processing="true" class="table cl-78f36608">
+<caption style="display:table-caption;margin:0pt;text-align:center;border-bottom: 0.00pt solid transparent;border-top: 0.00pt solid transparent;border-left: 0.00pt solid transparent;border-right: 0.00pt solid transparent;padding-top:3pt;padding-bottom:3pt;padding-left:3pt;padding-right:3pt;line-height: 1;background-color:transparent;" id="tab_si_sa"><span>Table S1. Estimated mean and standard deviation of serial interval from different studies assuming a Normal distribution or Gamma distribution.</span></caption>
+<thead>
+<tr style="overflow-wrap:break-word;">
+<th class="cl-78f02d1c"><p class="cl-78f01282"><span class="cl-78ed80d0">Study</span></p></th>
+<th colspan="2" class="cl-78f02d26"><p class="cl-78f01296"><span class="cl-78ed80d0">Normal</span></p></th>
+<th colspan="2" class="cl-78f02d30"><p class="cl-78f01296"><span class="cl-78ed80d0">Gamma</span></p></th>
+</tr>
+<tr style="overflow-wrap:break-word;">
+<th class="cl-78f02d3a"><p class="cl-78f01282"><span class="cl-78ed80d0"></span></p></th>
+<th class="cl-78f02d3b"><p class="cl-78f01296"><span class="cl-78ed80d0">Mean</span></p></th>
+<th class="cl-78f02d44"><p class="cl-78f01296"><span class="cl-78ed80d0">SD</span></p></th>
+<th class="cl-78f02d44"><p class="cl-78f01296"><span class="cl-78ed80d0">Mean</span></p></th>
+<th class="cl-78f02d44"><p class="cl-78f01296"><span class="cl-78ed80d0">SD</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr style="overflow-wrap:break-word;">
+<td class="cl-78f02d45"><p class="cl-78f01282"><span class="cl-78ed80e4">Akunzirwe et al.</span></p></td>
+<td class="cl-78f02d4e"><p class="cl-78f01296"><span class="cl-78ed80e4">122.9239</span></p></td>
+<td class="cl-78f02d58"><p class="cl-78f01296"><span class="cl-78ed80e4">26.920354</span></p></td>
+<td class="cl-78f02d58"><p class="cl-78f01296"><span class="cl-78ed80e4">105.29254</span></p></td>
+<td class="cl-78f02d58"><p class="cl-78f01296"><span class="cl-78ed80e4">92.61143</span></p></td>
+</tr>
+<tr style="overflow-wrap:break-word;">
+<td class="cl-78f02d45"><p class="cl-78f01282"><span class="cl-78ed80e4">Ariza et al.</span></p></td>
+<td class="cl-78f02d4e"><p class="cl-78f01296"><span class="cl-78ed80e4">98.4000</span></p></td>
+<td class="cl-78f02d58"><p class="cl-78f01296"><span class="cl-78ed80e4">8.542332</span></p></td>
+<td class="cl-78f02d58"><p class="cl-78f01296"><span class="cl-78ed80e4">91.49460</span></p></td>
+<td class="cl-78f02d58"><p class="cl-78f01296"><span class="cl-78ed80e4">113.66905</span></p></td>
+</tr>
+<tr style="overflow-wrap:break-word;">
+<td class="cl-78f02d45"><p class="cl-78f01282"><span class="cl-78ed80e4">Kaburi et al.</span></p></td>
+<td class="cl-78f02d4e"><p class="cl-78f01296"><span class="cl-78ed80e4">167.3444</span></p></td>
+<td class="cl-78f02d58"><p class="cl-78f01296"><span class="cl-78ed80e4">9.717630</span></p></td>
+<td class="cl-78f02d58"><p class="cl-78f01296"><span class="cl-78ed80e4">164.68478</span></p></td>
+<td class="cl-78f02d58"><p class="cl-78f01296"><span class="cl-78ed80e4">21.41681</span></p></td>
+</tr>
+<tr style="overflow-wrap:break-word;">
+<td class="cl-78f02d62"><p class="cl-78f01282"><span class="cl-78ed80e4">Tjon-Kon-Fat et al</span></p></td>
+<td class="cl-78f02d63"><p class="cl-78f01296"><span class="cl-78ed80e4">110.7157</span></p></td>
+<td class="cl-78f02d6c"><p class="cl-78f01296"><span class="cl-78ed80e4">16.138793</span></p></td>
+<td class="cl-78f02d6c"><p class="cl-78f01296"><span class="cl-78ed80e4">94.30272</span></p></td>
+<td class="cl-78f02d6c"><p class="cl-78f01296"><span class="cl-78ed80e4">107.28626</span></p></td>
+</tr>
+</tbody>
+<tfoot><tr style="overflow-wrap:break-word;"><td colspan="5" class="cl-78f02d6d"><p class="cl-78f01282"><span class="cl-78ed80e4">SD = standard deviation</span></p></td></tr></tfoot>
+</table>
+</div>
+<div class="figure" style="text-align: center">
+<img src="epidemiology_of_scabies_files/figure-html/gam_si_plots-1.png" alt="Figure S1. Epidemic curves and estimated serial interval distributions from four scabies outbreaks. Red line indicates estimated serial interval density assuming an underlying gamma distribution." width="672" id="fig-gam-si-plots-1"><p class="caption">
+Figure S1. Epidemic curves and estimated serial interval distributions
+from four scabies outbreaks. Red line indicates estimated serial
+interval density assuming an underlying gamma distribution.
+</p>
+</div>
+<!-- We also performed a meta-analysis results using Gamma distribution -->
+<p>We performed a sensitivity analysis in which we altered our choice of
+prior distribution for mean serial interval. In the main analysis we
+assumed a prior distribution of N(100,50). In the sensitivity analysis
+we assumed a prior distribution of N(50, 75) and N(150, 50). We obtained
+similar estimates of the pooled mean serial interval under the
+alternative prior distributions (Table
+S2<!--\@ref(tab:prior_sa_tab)-->).</p>
+<div class="tabwid">
+<style>.cl-79950940{}.cl-798faa18{font-family:'DejaVu Sans';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-798faa2c{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-7991ea94{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-7991ea9e{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-799203bc{width:1.202in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-799203c6{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-799203c7{width:0.823in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-799203d0{width:1.202in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-799203da{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-799203db{width:0.823in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-799203e4{width:1.202in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-799203e5{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-799203ee{width:0.823in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
+<table data-quarto-disable-processing="true" class="table cl-79950940">
+<caption style="display:table-caption;"><span>Table S2. Estimated pooled mean and standard deviation of serial interval under different prior distributions.</span></caption>
+<thead><tr style="overflow-wrap:break-word;">
+<th class="cl-799203bc"><p class="cl-7991ea94"><span class="cl-798faa18">Prior</span></p></th>
+<th class="cl-799203c6"><p class="cl-7991ea9e"><span class="cl-798faa18">Mean</span></p></th>
+<th class="cl-799203c7"><p class="cl-7991ea9e"><span class="cl-798faa18">SD</span></p></th>
+</tr></thead>
+<tbody>
+<tr style="overflow-wrap:break-word;">
+<td class="cl-799203d0"><p class="cl-7991ea94"><span class="cl-798faa2c">N(100, 50)</span></p></td>
+<td class="cl-799203da"><p class="cl-7991ea9e"><span class="cl-798faa2c">123.24</span></p></td>
+<td class="cl-799203db"><p class="cl-7991ea9e"><span class="cl-798faa2c">31.55</span></p></td>
+</tr>
+<tr style="overflow-wrap:break-word;">
+<td class="cl-799203d0"><p class="cl-7991ea94"><span class="cl-798faa2c">N(50, 75)</span></p></td>
+<td class="cl-799203da"><p class="cl-7991ea9e"><span class="cl-798faa2c">120.87</span></p></td>
+<td class="cl-799203db"><p class="cl-7991ea9e"><span class="cl-798faa2c">32.22</span></p></td>
+</tr>
+<tr style="overflow-wrap:break-word;">
+<td class="cl-799203e4"><p class="cl-7991ea94"><span class="cl-798faa2c">N(150, 50)</span></p></td>
+<td class="cl-799203e5"><p class="cl-7991ea9e"><span class="cl-798faa2c">127.15</span></p></td>
+<td class="cl-799203ee"><p class="cl-7991ea9e"><span class="cl-798faa2c">31.73</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section level4">
+<h4 id="time-varying-reproduction-number-2">Time-varying Reproduction Number<a class="anchor" aria-label="anchor" href="#time-varying-reproduction-number-2"></a>
+</h4>
+To see how incidence of scabies varied by month, we plotted the
+cumulative incidence of scabies cases per 1000 people in the Netherlands
+by month for each year between 2011 and 2023 (Figure S2).
+<div class="figure">
+<img src="figures%2Fnivel_cases_by_month.png" alt="Figure S2. Cumulative incidence of scabies cases per 1000 people in the Netherlands by month and year." width="100%"><p class="caption">
+Figure S2. Cumulative incidence of scabies cases per 1000 people in the
+Netherlands by month and year.
+</p>
+</div>
+In the main analysis, when we estimate the time-varying reproduction
+number, we assume an underlying Normal distriubtion. However, because we
+are using the serial interval distribution as an approximation of the
+generation interval, which is strictly positive, we performed a
+sensitivity analysis in which we assumed the serial interval
+distribution is Gamma distributed with the same mean and variance
+(Figure S3).
+<div class="figure">
+<img src="epidemiology_of_scabies_files/figure-html/rt_gamma_sa-1.png" alt="Figure S3. Time-varying reproduction number of scabies transmission assuming a Gamma distributed serial interval distribution (black line). The time-varying reproduction number estimates assuming an underlying normal serial interval distribution are shown as the blue line. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August 31; Autumn = September 1 – November 31." width="100%"><p class="caption">
+Figure S3. Time-varying reproduction number of scabies transmission
+assuming a Gamma distributed serial interval distribution (black line).
+The time-varying reproduction number estimates assuming an underlying
+normal serial interval distribution are shown as the blue line. Colored
+bands denote season. Winter = December 1 – February 28 (or 29 on leap
+year); Spring = March 1 – May 31; Summer = June 1 – August 31; Autumn =
+September 1 – November 31.
+</p>
+</div>
+</div>
+</div>
+<div class="section level3">
+<h3 id="computing-details">Computing details<a class="anchor" aria-label="anchor" href="#computing-details"></a>
+</h3>
+<p>The additional R packages used in this work that have not previously
+been mentioned or cited in the main text are <code>fdrtool</code><span class="citation"><sup>42</sup></span>, <code>cowplot</code><span class="citation"><sup>43</sup></span>, <code>devtools</code><span class="citation"><sup>44</sup></span>, <code>dplyr</code><span class="citation"><sup>45</sup></span>, <code>usethis</code><span class="citation"><sup>46</sup></span>, <code>ggplot2</code><span class="citation"><sup>47</sup></span>, <code>flextable</code><span class="citation"><sup>48</sup></span>, <code>ftExtra</code><span class="citation"><sup>49</sup></span>, <code>openxlsx</code><span class="citation"><sup>50</sup></span>, <code>tidyverse</code><span class="citation"><sup>51</sup></span>, <code>broom</code><span class="citation"><sup>52</sup></span>, <code>viridis</code><span class="citation"><sup>53</sup></span>, <code>officer</code><span class="citation"><sup>54</sup></span>, <code>tidybayes</code><span class="citation"><sup>55</sup></span>, <code>ggridges</code><span class="citation"><sup>56</sup></span>, <code>glue</code><span class="citation"><sup>57</sup></span>, <code>zoo</code><span class="citation"><sup>58</sup></span>, <code>stringr</code><span class="citation"><sup>59</sup></span>, <code>forcats</code><span class="citation"><sup>60</sup></span>, <code>Hmisc</code><span class="citation"><sup>61</sup></span>.</p>
+</div>
+<div class="section level3">
+<h3 id="references-1">References<a class="anchor" aria-label="anchor" href="#references-1"></a>
+</h3>
+<div id="refs" class="references csl-bib-body" entry-spacing="0" line-spacing="2">
+<p>bibliography: appendix_references.bib</p>
+<div id="ref-who2024" class="csl-entry">
+<div class="csl-left-margin">1. </div>
+<div class="csl-right-inline">Control of Neglected Tropical Diseases (NTD).
+<em>Report of the First <span>WHO</span> Global Meeting on Skin-Related
+Neglected Tropical Diseases: Geneva, Switzerland, <span>27–31</span>
+March 2023</em>. (2024).</div>
+</div>
+<div id="ref-karimkhani2017" class="csl-entry">
+<div class="csl-left-margin">2. </div>
+<div class="csl-right-inline">Karimkhani, C. <em>et al.</em> The global
+burden of scabies: A cross-sectional analysis from the global burden of
+disease study 2015. <em>Lancet Infect. Dis.</em> <strong>17</strong>,
+1247–1254 (2017).</div>
+</div>
+<div id="ref-savin2005" class="csl-entry">
+<div class="csl-left-margin">3. </div>
+<div class="csl-right-inline">Savin, J. A. Scabies in <span>E</span>dinburgh
+from 1815 to 2000. <em>J. R. Soc. Med.</em> <strong>98</strong>, 124–129
+(2005).</div>
+</div>
+<div id="ref-christophersen1978" class="csl-entry">
+<div class="csl-left-margin">4. </div>
+<div class="csl-right-inline">Christophersen, J. The epidemiology of scabies
+in <span>D</span>enmark, 1900 to 1975. <em>Arch. Dermatol.</em>
+<strong>114</strong>, 747–750 (1978).</div>
+</div>
+<div id="ref-downs1999" class="csl-entry">
+<div class="csl-left-margin">5. </div>
+<div class="csl-right-inline">Downs, A. M., Harvey, I. &amp; Kennedy, C. T.
+The epidemiology of head lice and scabies in the <span>UK</span>.
+<em>Epidemiol. Infect.</em> <strong>122</strong>, 471–477 (1999).</div>
+</div>
+<div id="ref-deursen2022" class="csl-entry">
+<div class="csl-left-margin">6. </div>
+<div class="csl-right-inline">Deursen, B. van <em>et al.</em> Increasing
+incidence of reported scabies infestations in the netherlands,
+2011-2021. <em>PLoS One</em> <strong>17</strong>, e0268865 (2022).</div>
+</div>
+<div id="ref-reichert2021" class="csl-entry">
+<div class="csl-left-margin">7. </div>
+<div class="csl-right-inline">Reichert, F., Schulz, M., Mertens, E.,
+Lachmann, R. &amp; Aebischer, A. Reemergence of scabies driven by
+adolescents and young adults, germany, 2009-2018. <em>Emerg. Infect.
+Dis.</em> <strong>27</strong>, 1693–1696 (2021).</div>
+</div>
+<div id="ref-redondo-bravo2021" class="csl-entry">
+<div class="csl-left-margin">8. </div>
+<div class="csl-right-inline">Redondo-Bravo, L. <em>et al.</em> Scabies in
+spain? A comprehensive epidemiological picture. <em>PLoS One</em>
+<strong>16</strong>, e0258780 (2021).</div>
+</div>
+<div id="ref-lugovic-mihic2020" class="csl-entry">
+<div class="csl-left-margin">9. </div>
+<div class="csl-right-inline">Lugović-Mihić, L. <em>et al.</em> An increasing
+scabies incidence in croatia: A call for coordinated action among
+dermatologists, physicians and epidemiologists. <em>Zdr Varst</em>
+<strong>59</strong>, 264–272 (2020).</div>
+</div>
+<div id="ref-amato2019" class="csl-entry">
+<div class="csl-left-margin">10. </div>
+<div class="csl-right-inline">Amato, E. <em>et al.</em> Increase of scabies
+infestations, norway, 2006 to 2018. <em>Euro Surveill.</em>
+<strong>24</strong>, (2019).</div>
+</div>
+<div id="ref-dona2023" class="csl-entry">
+<div class="csl-left-margin">11. </div>
+<div class="csl-right-inline">Donà, M. G. <em>et al.</em> Increasing trend in
+confirmed scabies cases in the only public dermatological institute of
+scientific research and care in italy. <em>Eur. J. Dermatol.</em>
+<strong>33</strong>, 709–710 (2023).</div>
+</div>
+<div id="ref-cox2021" class="csl-entry">
+<div class="csl-left-margin">12. </div>
+<div class="csl-right-inline">Cox, V., Fuller, L. C., Engelman, D., Steer, A.
+&amp; Hay, R. J. Estimating the global burden of scabies: What else do
+we need? <em>Br. J. Dermatol.</em> <strong>184</strong>, 237–242
+(2021).</div>
+</div>
+<div id="ref-white2001" class="csl-entry">
+<div class="csl-left-margin">13. </div>
+<div class="csl-right-inline">White, A. V., Hoy, W. E. &amp; McCredie, D. A.
+Childhood post-streptococcal glomerulonephritis as a risk factor for
+chronic renal disease in later life. <em>Med. J. Aust.</em>
+<strong>174</strong>, 492–496 (2001).</div>
+</div>
+<div id="ref-mitja2017" class="csl-entry">
+<div class="csl-left-margin">14. </div>
+<div class="csl-right-inline">Mitjà, O. <em>et al.</em> Integrated control
+and management of neglected tropical skin diseases. <em>PLoS Negl. Trop.
+Dis.</em> <strong>11</strong>, e0005136 (2017).</div>
+</div>
+<div id="ref-mellanby1944" class="csl-entry">
+<div class="csl-left-margin">15. </div>
+<div class="csl-right-inline">Mellanby, K. The development of symptoms,
+parasitic infection and immunity in human scabies. <em>Parasitology</em>
+<strong>35</strong>, 197–206 (1944).</div>
+</div>
+<div id="ref-mellanby1972" class="csl-entry">
+<div class="csl-left-margin">16. </div>
+<div class="csl-right-inline">Mellanby, K. <em>Scabies</em>. (EW Classey,
+Faringdon, England, 1972).</div>
+</div>
+<div id="ref-hasselaar" class="csl-entry">
+<div class="csl-left-margin">17. </div>
+<div class="csl-right-inline">Hasselaar, J. Nivel primary care
+database.</div>
+</div>
+<div id="ref-ariza2013" class="csl-entry">
+<div class="csl-left-margin">18. </div>
+<div class="csl-right-inline">Ariza, L. <em>et al.</em> Investigation of a
+scabies outbreak in a kindergarten in constance, germany. <em>Eur. J.
+Clin. Microbiol. Infect. Dis.</em> <strong>32</strong>, 373–380
+(2013).</div>
+</div>
+<div id="ref-kaburi2019" class="csl-entry">
+<div class="csl-left-margin">19. </div>
+<div class="csl-right-inline">Kaburi, B. B. <em>et al.</em> Outbreak of
+scabies among preschool children, accra, ghana, 2017. <em>BMC Public
+Health</em> <strong>19</strong>, 746 (2019).</div>
+</div>
+<div id="ref-tjon-kon-fat2021" class="csl-entry">
+<div class="csl-left-margin">20. </div>
+<div class="csl-right-inline">Tjon-Kon-Fat, R. <em>et al.</em> Short report:
+The potential of <span>PCR</span> on skin flakes from bed linens for
+diagnosis of scabies in an outbreak. <em>PLoS Negl. Trop. Dis.</em>
+<strong>15</strong>, e0009485 (2021).</div>
+</div>
+<div id="ref-akunzirwe2023" class="csl-entry">
+<div class="csl-left-margin">21. </div>
+<div class="csl-right-inline">Akunzirwe, R. <em>et al.</em> An outbreak of
+scabies in a fishing community in hoima district, uganda,
+<span>February−June</span>, 2022. <em>Research Square</em> (2023).</div>
+</div>
+<div id="ref-vink2014" class="csl-entry">
+<div class="csl-left-margin">22. </div>
+<div class="csl-right-inline">Vink, M. A., Bootsma, M. C. J. &amp; Wallinga,
+J. Serial intervals of respiratory infectious diseases: A systematic
+review and analysis. <em>Am. J. Epidemiol.</em> <strong>180</strong>,
+865–875 (2014).</div>
+</div>
+<div id="ref-burkner2017" class="csl-entry">
+<div class="csl-left-margin">23. </div>
+<div class="csl-right-inline">Bürkner, P.-C. Brms: An <span>R</span> package
+for bayesian multilevel models using stan. <em>J. Stat. Softw.</em>
+<strong>80</strong>, 1–28 (2017).</div>
+</div>
+<div id="ref-harrer" class="csl-entry">
+<div class="csl-left-margin">24. </div>
+<div class="csl-right-inline">Harrer, M., Cuijpers, P., Furukawa, T. A. &amp;
+Ebert, D. D. Chapter 13 bayesian <span>Meta-Analysis</span>.</div>
+</div>
+<div id="ref-nivel" class="csl-entry">
+<div class="csl-left-margin">25. </div>
+<div class="csl-right-inline">NIVEL. Cijfers ziekten per week in
+nederland.</div>
+</div>
+<div id="ref-wallinga2007" class="csl-entry">
+<div class="csl-left-margin">26. </div>
+<div class="csl-right-inline">Wallinga, J. &amp; Lipsitch, M. How generation
+intervals shape the relationship between growth rates and reproductive
+numbers. <em>Proc. Biol. Sci.</em> <strong>274</strong>, 599–604
+(2007).</div>
+</div>
+<div id="ref-gostic2020" class="csl-entry">
+<div class="csl-left-margin">27. </div>
+<div class="csl-right-inline">Gostic, K. M. <em>et al.</em> Practical
+considerations for measuring the effective reproductive number, rt.
+<em>PLoS Comput. Biol.</em> <strong>16</strong>, e1008409 (2020).</div>
+</div>
+<div id="ref-cauchemez2006a" class="csl-entry">
+<div class="csl-left-margin">28. </div>
+<div class="csl-right-inline">Cauchemez, S. <em>et al.</em> Real-time
+estimates in early detection of <span>SARS</span>. <em>Emerg. Infect.
+Dis.</em> <strong>12</strong>, 110–113 (2006).</div>
+</div>
+<div id="ref-cauchemez2006b" class="csl-entry">
+<div class="csl-left-margin">29. </div>
+<div class="csl-right-inline">Cauchemez, S., Boëlle, P.-Y., Thomas, G. &amp;
+Valleron, A.-J. Estimating in real time the efficacy of measures to
+control emerging communicable diseases. <em>Am. J. Epidemiol.</em>
+<strong>164</strong>, 591–597 (2006).</div>
+</div>
+<div id="ref-R-base" class="csl-entry">
+<div class="csl-left-margin">30. </div>
+<div class="csl-right-inline">R
+Core Team. <em><a href="https://www.R-project.org" class="external-link">R: A Language and
+Environment for Statistical Computing</a></em>. (R Foundation for
+Statistical Computing, Vienna, Austria, 2019).</div>
+</div>
+<div id="ref-korycinska2020" class="csl-entry">
+<div class="csl-left-margin">31. </div>
+<div class="csl-right-inline">Korycinska, J., Dzika, E. &amp; Kloch, M.
+Epidemiology of scabies in relation to socio-economic and selected
+climatic factors in north-east poland. <em>Ann. Agric. Environ.
+Med.</em> <strong>27</strong>, 374–378 (2020).</div>
+</div>
+<div id="ref-ducrot2022" class="csl-entry">
+<div class="csl-left-margin">32. </div>
+<div class="csl-right-inline">Ducrot, Y.-M. <em>et al.</em> Scabies incidence
+and association with skin and soft tissue infection in loyalty islands
+province, new caledonia: A 15-year retrospective observational study
+using electronic health records. <em>PLoS Negl. Trop. Dis.</em>
+<strong>16</strong>, e0010717 (2022).</div>
+</div>
+<div id="ref-mimouni2003" class="csl-entry">
+<div class="csl-left-margin">33. </div>
+<div class="csl-right-inline">Mimouni, D. <em>et al.</em> Seasonality trends
+of scabies in a young adult population: A 20-year follow-up. <em>Br. J.
+Dermatol.</em> <strong>149</strong>, 157–159 (2003).</div>
+</div>
+<div id="ref-chow2023" class="csl-entry">
+<div class="csl-left-margin">34. </div>
+<div class="csl-right-inline">Chow, E. J., Uyeki, T. M. &amp; Chu, H. Y. The
+effects of the <span>COVID</span>-19 pandemic on community respiratory
+virus activity. <em>Nat. Rev. Microbiol.</em> <strong>21</strong>,
+195–210 (2023).</div>
+</div>
+<div id="ref-griffin2022" class="csl-entry">
+<div class="csl-left-margin">35. </div>
+<div class="csl-right-inline">Griffin, L. R., Pender, E. K., Laing, M. E.
+&amp; Markham, T. Unexpected consequences of
+<span>SARS</span>-<span>CoV</span>-2 pandemic: Scabies infestation.
+<em>Clin. Exp. Dermatol.</em> <strong>47</strong>, 1196–1197
+(2022).</div>
+</div>
+<div id="ref-martinez-pallas2020" class="csl-entry">
+<div class="csl-left-margin">36. </div>
+<div class="csl-right-inline">Martínez-Pallás, I., Aldea-Manrique, B.,
+Ramírez-Lluch, M., Manuel Vinuesa-Hernando, J. &amp; Ara-Martín, M.
+Scabies outbreak during home confinement due to the
+<span>SARS</span>-<span>CoV</span>-2 pandemic. <em>J. Eur. Acad.
+Dermatol. Venereol.</em> <strong>34</strong>, e781–e783 (2020).</div>
+</div>
+<div id="ref-asgedom2024" class="csl-entry">
+<div class="csl-left-margin">37. </div>
+<div class="csl-right-inline">Asgedom, A. A., Debesay, M. H., Ugwu, C. L. J.
+&amp; Woldegerima, W. A. Detecting spatial clusters of human scabies in
+tigray, ethiopia from 2018 to 2023. <em>BMC Infect. Dis.</em>
+<strong>24</strong>, 1148 (2024).</div>
+</div>
+<div id="ref-akaslan2022" class="csl-entry">
+<div class="csl-left-margin">38. </div>
+<div class="csl-right-inline">Akaslan, T. Ç., Mert, Ö. &amp; Su Küçük, Ö.
+Scabies increase during the <span>COVID</span>-19 pandemic: Should we
+change our treatment strategy during the pandemic? <em>Ann.
+Parasitol.</em> <strong>68</strong>, 35–38 (2022).</div>
+</div>
+<div id="ref-kinyanjui2018" class="csl-entry">
+<div class="csl-left-margin">39. </div>
+<div class="csl-right-inline">Kinyanjui, T. <em>et al.</em> Scabies in
+residential care homes: Modelling, inference and interventions for
+well-connected population sub-units. <em>PLoS Comput. Biol.</em>
+<strong>14</strong>, e1006046 (2018).</div>
+</div>
+<div id="ref-lydeamore2019" class="csl-entry">
+<div class="csl-left-margin">40. </div>
+<div class="csl-right-inline">Lydeamore, M. J. <em>et al.</em> A biological
+model of scabies infection dynamics and treatment informs mass drug
+administration strategies to increase the likelihood of elimination.
+<em>Math. Biosci.</em> <strong>309</strong>, 163–173 (2019).</div>
+</div>
+<div id="ref-tellioglu2023" class="csl-entry">
+<div class="csl-left-margin">41. </div>
+<div class="csl-right-inline">Tellioglu, N. <em>et al.</em> Modelling mass
+drug administration strategies for reducing scabies burden in monrovia,
+liberia. <em>Epidemiol. Infect.</em> <strong>151</strong>, e153
+(2023).</div>
+</div>
+<div id="ref-fdrtool" class="csl-entry">
+<div class="csl-left-margin">42. </div>
+<div class="csl-right-inline">Klaus, B. &amp; Strimmer., K. <em><a href="https://CRAN.R-project.org/package=fdrtool" class="external-link">Fdrtool: Estimation of
+(Local) False Discovery Rates and Higher Criticism</a></em>.
+(2021).</div>
+</div>
+<div id="ref-cowplot" class="csl-entry">
+<div class="csl-left-margin">43. </div>
+<div class="csl-right-inline">Wilke, C. O. <em><a href="https://CRAN.R-project.org/package=cowplot" class="external-link">Cowplot: Streamlined
+Plot Theme and Plot Annotations for ’Ggplot2’</a></em>. (2024).</div>
+</div>
+<div id="ref-devtools" class="csl-entry">
+<div class="csl-left-margin">44. </div>
+<div class="csl-right-inline">Wickham, H., Hester, J., Chang, W. &amp; Bryan,
+J. <em><a href="https://CRAN.R-project.org/package=devtools" class="external-link">Devtools:
+Tools to Make Developing r Packages Easier</a></em>. (2022).</div>
+</div>
+<div id="ref-dplyr" class="csl-entry">
+<div class="csl-left-margin">45. </div>
+<div class="csl-right-inline">Wickham, H., François, R., Henry, L., Müller,
+K. &amp; Vaughan, D. <em><a href="https://CRAN.R-project.org/package=dplyr" class="external-link">Dplyr: A Grammar of Data
+Manipulation</a></em>. (2023).</div>
+</div>
+<div id="ref-usethis" class="csl-entry">
+<div class="csl-left-margin">46. </div>
+<div class="csl-right-inline">Wickham, H., Bryan, J., Barrett, M. &amp;
+Teucher, A. <em><a href="https://CRAN.R-project.org/package=usethis" class="external-link">Usethis: Automate
+Package and Project Setup</a></em>. (2024).</div>
+</div>
+<div id="ref-ggplot2" class="csl-entry">
+<div class="csl-left-margin">47. </div>
+<div class="csl-right-inline">Wickham, H. <em><a href="https://ggplot2.tidyverse.org" class="external-link">Ggplot2: Elegant Graphics for Data
+Analysis</a></em>. (Springer-Verlag New York, 2016).</div>
+</div>
+<div id="ref-flextable" class="csl-entry">
+<div class="csl-left-margin">48. </div>
+<div class="csl-right-inline">Gohel, D. &amp; Skintzos, P. <em><a href="https://CRAN.R-project.org/package=flextable" class="external-link">Flextable: Functions
+for Tabular Reporting</a></em>. (2024).</div>
+</div>
+<div id="ref-ftExtra" class="csl-entry">
+<div class="csl-left-margin">49. </div>
+<div class="csl-right-inline">Yasumoto, A. <em><a href="https://CRAN.R-project.org/package=ftExtra" class="external-link">ftExtra: Extensions
+for ’Flextable’</a></em>. (2024).</div>
+</div>
+<div id="ref-openxlsx" class="csl-entry">
+<div class="csl-left-margin">50. </div>
+<div class="csl-right-inline">Schauberger, P. &amp; Walker, A. <em><a href="https://CRAN.R-project.org/package=openxlsx" class="external-link">Openxlsx: Read, Write
+and Edit Xlsx Files</a></em>. (2023).</div>
+</div>
+<div id="ref-tidyverse" class="csl-entry">
+<div class="csl-left-margin">51. </div>
+<div class="csl-right-inline">Wickham, H. <em>et al.</em> <a href="https://doi.org/10.21105/joss.01686" class="external-link">Welcome to the <span class="nocase">tidyverse</span></a>. <em>Journal of Open Source
+Software</em> <strong>4</strong>, 1686 (2019).</div>
+</div>
+<div id="ref-broom" class="csl-entry">
+<div class="csl-left-margin">52. </div>
+<div class="csl-right-inline">Robinson, D., Hayes, A. &amp; Couch, S. <em><a href="https://CRAN.R-project.org/package=broom" class="external-link">Broom: Convert
+Statistical Objects into Tidy Tibbles</a></em>. (2024).</div>
+</div>
+<div id="ref-viridis" class="csl-entry">
+<div class="csl-left-margin">53. </div>
+<div class="csl-right-inline">Garnier <em>et al.</em> <em><span class="nocase">viridis(Lite)</span> - Colorblind-Friendly Color Maps for
+r</em>. (2024). doi:<a href="https://doi.org/10.5281/zenodo.4679423" class="external-link">10.5281/zenodo.4679423</a>.</div>
+</div>
+<div id="ref-officer" class="csl-entry">
+<div class="csl-left-margin">54. </div>
+<div class="csl-right-inline">Gohel, D. &amp; Moog, S. <em><a href="https://CRAN.R-project.org/package=officer" class="external-link">Officer: Manipulation
+of Microsoft Word and PowerPoint Documents</a></em>. (2024).</div>
+</div>
+<div id="ref-tidybayes" class="csl-entry">
+<div class="csl-left-margin">55. </div>
+<div class="csl-right-inline">Kay, M. <em><span class="nocase">tidybayes</span>: Tidy Data and Geoms for
+<span>Bayesian</span> Models</em>. (2023). doi:<a href="https://doi.org/10.5281/zenodo.1308151" class="external-link">10.5281/zenodo.1308151</a>.</div>
+</div>
+<div id="ref-ggridges" class="csl-entry">
+<div class="csl-left-margin">56. </div>
+<div class="csl-right-inline">Wilke, C. O. <em><a href="https://CRAN.R-project.org/package=ggridges" class="external-link">Ggridges: Ridgeline
+Plots in ’Ggplot2’</a></em>. (2024).</div>
+</div>
+<div id="ref-glue" class="csl-entry">
+<div class="csl-left-margin">57. </div>
+<div class="csl-right-inline">Hester, J. &amp; Bryan, J. <em><a href="https://CRAN.R-project.org/package=glue" class="external-link">Glue: Interpreted String
+Literals</a></em>. (2024).</div>
+</div>
+<div id="ref-zoo" class="csl-entry">
+<div class="csl-left-margin">58. </div>
+<div class="csl-right-inline">Zeileis, A. &amp; Grothendieck, G. <a href="https://doi.org/10.18637/jss.v014.i06" class="external-link">Zoo: S3 infrastructure for
+regular and irregular time series</a>. <em>Journal of Statistical
+Software</em> <strong>14</strong>, 1–27 (2005).</div>
+</div>
+<div id="ref-stringr" class="csl-entry">
+<div class="csl-left-margin">59. </div>
+<div class="csl-right-inline">Wickham, H. <em><a href="https://CRAN.R-project.org/package=stringr" class="external-link">Stringr: Simple,
+Consistent Wrappers for Common String Operations</a></em>. (2023).</div>
+</div>
+<div id="ref-forcats" class="csl-entry">
+<div class="csl-left-margin">60. </div>
+<div class="csl-right-inline">Wickham, H. <em><a href="https://CRAN.R-project.org/package=forcats" class="external-link">Forcats: Tools for
+Working with Categorical Variables (Factors)</a></em>. (2023).</div>
+</div>
+<div id="ref-hmisc" class="csl-entry">
+<div class="csl-left-margin">61. </div>
+<div class="csl-right-inline">Harrell Jr, F. E. <em><a href="https://CRAN.R-project.org/package=Hmisc" class="external-link">Hmisc: Harrell
+Miscellaneous</a></em>. (2024).</div>
+</div>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -520,7 +1613,7 @@ hospital, care home)</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
