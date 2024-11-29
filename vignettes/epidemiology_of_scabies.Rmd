@@ -1,14 +1,14 @@
 ---
 title: "The Epidemiology of Scabies"
-author: "Kylie Ainslie, Mariette Hooiveld, Jacco Wallinga"
+author: "Kylie E. C. Ainslie<sup>1,2</sup>, Mariette Hooiveld<sup>3</sup>, Jacco Wallinga<sup>1,4</sup>"
 date: "`r Sys.Date()`"
 output: 
   bookdown::html_document2:
     base_format: rmarkdown::html_vignette
-    toc: true
+    toc: false
     fig_caption: true
   bookdown::word_document2:
-    toc: true
+    toc: false
 bibliography: 
   - references.bib
   - appendix_references.bib
@@ -20,7 +20,7 @@ vignette: >
 editor_options: 
   markdown: 
     wrap: 72
-link_citations: false
+link_citations: true
 ---
 
 ```{r, include = FALSE}
@@ -55,6 +55,17 @@ library(Hmisc)
 library(devtools)
 load_all()
 ```
+
+**Affiliations**
+
+1. Centre for Infectious Disease Control, National Institute for Public Health and the Environment (RIVM), Bilthoven, the Netherlands
+
+2. School of Public Health, University of Hong Kong, Hong Kong SAR, China
+
+3. Nivel, Utrecht, the Netherlands
+
+4. Department of Biomedical Data Sciences, Leiden University Medical Center, Leiden, the Netherlands
+
 # Abstract
 **Introduction:** Scabies is a contagious skin disease caused by the infestation of the skin by the Sarcopes scabiei mite, causing an itchy rash. Scabies affects over 400 million people annually worldwide, and a rise in scabies cases has been observed in recent years throughout Western Europe. Despite the large number of people infected with scabies annually, some fundamental epidemiological characteristics of scabies infections have not been described. 
 
