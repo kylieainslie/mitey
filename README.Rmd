@@ -36,7 +36,9 @@ devtools::install_github("kylieainslie/mitey")
 
 A quick start guide and detailed vignettes are still in development. 
 
-Validation of the method used to estimate the mean and standard deviation of the serial interval proposed by [Vink et al. 2014](https://doi.org/10.1093/aje/kwu209) can be found [here]()
+Validation of the method used to estimate the mean and standard deviation of the serial interval proposed by [Vink et al. 2014](https://doi.org/10.1093/aje/kwu209) can be found [here](https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.html).
+
+The manuscript pre-print that motivated the development of this package can be found [here]().
 
 ## Example
 This is a basic example of estimating the mean serial interval from data on time of symptom onset for an infectious disease. We first simulate index case-to-case (ICC) intervals. Here, we directly simulate the ICC intervals based on their route of transmission. The specified mean serial interval `hmu` is 15 and the specified standard deviation `hsigma` is 3. The weights for each route of transmission are specified as `hw1`, `hw2`, `hw3`, and `hw4`, respectively.
@@ -49,7 +51,7 @@ library(fdrtool)
 ```{r simulated_data}
 set.seed(1234)
 
-N <- 10000; hmu<-15; hsigma<-3; hw1 <- 0.2; hw2 <- 0.5; hw3 <- 0.2; hw4 <- 0.1
+N <- 5000; hmu<-15; hsigma<-3; hw1 <- 0.2; hw2 <- 0.5; hw3 <- 0.2; hw4 <- 0.1
 
 CP <- rhalfnorm((hw1*N),theta=sqrt(pi/2)/(sqrt(2)*hsigma))
 PS <- rnorm(hw2*N,mean=hmu,sd=hsigma)
@@ -67,7 +69,7 @@ hist(sim_data,breaks=breaks,prob=TRUE,main="",xlab="Index-case to case interval 
 
 Then, we estimate the mean and standard deviation of the simulated serial interval using the `si_estim` function.
 ```{r si_estim_sim_data}
-results<- si_estim(sim_data, dist = "normal")
+results <- si_estim(sim_data)
 results
 ```
 The output of `si_estim` is a named list with elements `mean`, `sd`, and `wts`, which contain the estimated mean, standard deviation, and weights of the serial interval distribution, respectively. We see that using the simulated data and assuming an underlying normal distribution, we obtain estimates very close to the input values: a mean serial interval estimate of `r round(results$mean[1], 2)` and a standard deviation of `r round(results$sd[1], 2)`. We are also able to recapture the input weights: hw1 = `r round(results$wts[1], 2)`, hw2 = `r round(results$wts[2] + results$wts[3], 2)`, hw3 = `r round(results$wts[4] + results$wts[5], 2)`, hw4 = `r round(results$wts[6] + results$wts[7], 2)`.

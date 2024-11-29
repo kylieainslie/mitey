@@ -6,7 +6,12 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The motivation behind creating the `mitey` package was twofold: 1) to provide the data and code to reproduce the results in Ainslie, K, M. Hooiveld, and J. Wallinga. 2024. On the epidemiological characteristics of scabies. *(in preparations)*, and 2) to provide flexible, documented code for methods not previously available in `R` that can help estimate epidemiological quantities of interest.
+The motivation behind creating the `mitey` package was twofold: 1) to
+provide the data and code to reproduce the results in Ainslie, K,
+Hooiveld, M, and Wallinga, J. 2024. On the epidemiological
+characteristics of scabies. , and 2) to provide flexible, documented
+code for methods not previously available in `R` that can help estimate
+epidemiological quantities of interest.
 
 ## Installation
 
@@ -26,7 +31,11 @@ A quick start guide and detailed vignettes are still in development.
 
 Validation of the method used to estimate the mean and standard
 deviation of the serial interval proposed by [Vink et
-al. 2014](https://doi.org/10.1093/aje/kwu209) can be found [here](https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.html)
+al. 2014](https://doi.org/10.1093/aje/kwu209) can be found
+[here](https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.html).
+
+The manuscript pre-print that motivated the development of this package
+can be found [here]().
 
 ## Example
 
@@ -46,7 +55,7 @@ library(fdrtool)
 ``` r
 set.seed(1234)
 
-N <- 2500; hmu<-15; hsigma<-3; hw1 <- 0.2; hw2 <- 0.5; hw3 <- 0.2; hw4 <- 0.1
+N <- 5000; hmu<-15; hsigma<-3; hw1 <- 0.2; hw2 <- 0.5; hw3 <- 0.2; hw4 <- 0.1
 
 CP <- rhalfnorm((hw1*N),theta=sqrt(pi/2)/(sqrt(2)*hsigma))
 PS <- rnorm(hw2*N,mean=hmu,sd=hsigma)
@@ -72,17 +81,17 @@ Then, we estimate the mean and standard deviation of the simulated
 serial interval using the `si_estim` function.
 
 ``` r
-results<- si_estim(sim_data, dist = "normal")
+results <- si_estim(sim_data)
 results
 #> $mean
-#> [1] 15.03357
+#> [1] 15.16373
 #> 
 #> $sd
-#> [1] 2.786672
+#> [1] 2.823293
 #> 
 #> $wts
-#> [1] 2.100299e-01 4.823883e-01 6.706310e-09 2.003141e-01 2.304775e-15
-#> [6] 1.072676e-01 9.057491e-22
+#> [1] 2.113966e-01 4.841131e-01 7.836824e-09 2.021913e-01 3.062666e-15
+#> [6] 1.022991e-01 1.368660e-21
 ```
 
 The output of `si_estim` is a named list with elements `mean`, `sd`, and
@@ -90,9 +99,9 @@ The output of `si_estim` is a named list with elements `mean`, `sd`, and
 of the serial interval distribution, respectively. We see that using the
 simulated data and assuming an underlying normal distribution, we obtain
 estimates very close to the input values: a mean serial interval
-estimate of 15.03 and a standard deviation of 2.79. We are also able to
+estimate of 15.16 and a standard deviation of 2.82. We are also able to
 recapture the input weights: hw1 = 0.21, hw2 = 0.48, hw3 = 0.2, hw4 =
-0.11.
+0.1.
 
 Using the `plot_si_fit` function, we can use the outputs of `si_estim`
 to plot the fitted serial interval over the symptom onset data.
