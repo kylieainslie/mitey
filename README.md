@@ -6,12 +6,17 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The motivation behind creating the `mitey` package was twofold: 1) to
-provide the data and code to reproduce the results in Ainslie, K,
-Hooiveld, M, and Wallinga, J. 2024. On the epidemiological
-characteristics of scabies. , and 2) to provide flexible, documented
-code for methods not previously available in `R` that can help estimate
-epidemiological quantities of interest.
+The motivation behind creating the `mitey` package was twofold:
+
+1.  to provide the data and code to reproduce the results in Ainslie, K,
+    Hooiveld, M, and Wallinga, J. 2024. On the epidemiological
+    characteristics of scabies.
+    [pre-print](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html),
+    and
+
+2.  to provide flexible, documented code for methods not previously
+    available in `R` that can help estimate epidemiological quantities
+    of interest.
 
 ## Installation
 
@@ -35,7 +40,14 @@ al. 2014](https://doi.org/10.1093/aje/kwu209) can be found
 [here](https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.html).
 
 The manuscript pre-print that motivated the development of this package
-can be found [here]().
+can be found
+[here](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html).
+
+Validation of the method used to estimate the time-varying reproduction
+number proposed by [Wallinga and Lipsitch
+2007](https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/) can be found
+[here](https://kylieainslie.github.io/mitey/articles/rt_estimation_validation.html).
+*Note: this vignette is still under development, so is incomplete.*
 
 ## Example
 

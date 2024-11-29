@@ -18,7 +18,11 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The motivation behind creating the `mitey` package was twofold: 1) to provide the data and code to reproduce the results in Ainslie, K, Hooiveld, M, and Wallinga, J. 2024. On the epidemiological characteristics of scabies. \textit{(in preparation)}, and 2) to provide flexible, documented code for methods not previously available in `R` that can help estimate epidemiological quantities of interest. 
+The motivation behind creating the `mitey` package was twofold: 
+
+1. to provide the data and code to reproduce the results in Ainslie, K, Hooiveld, M, and Wallinga, J. 2024. On the epidemiological characteristics of scabies. [pre-print](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html), and 
+
+2. to provide flexible, documented code for methods not previously available in `R` that can help estimate epidemiological quantities of interest. 
 
 ## Installation
 
@@ -38,7 +42,9 @@ A quick start guide and detailed vignettes are still in development.
 
 Validation of the method used to estimate the mean and standard deviation of the serial interval proposed by [Vink et al. 2014](https://doi.org/10.1093/aje/kwu209) can be found [here](https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.html).
 
-The manuscript pre-print that motivated the development of this package can be found [here]().
+The manuscript pre-print that motivated the development of this package can be found [here](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html).
+
+Validation of the method used to estimate the time-varying reproduction number proposed by [Wallinga and Lipsitch 2007](https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/) can be found [here](https://kylieainslie.github.io/mitey/articles/rt_estimation_validation.html). *Note: this vignette is still under development, so is incomplete.*
 
 ## Example
 This is a basic example of estimating the mean serial interval from data on time of symptom onset for an infectious disease. We first simulate index case-to-case (ICC) intervals. Here, we directly simulate the ICC intervals based on their route of transmission. The specified mean serial interval `hmu` is 15 and the specified standard deviation `hsigma` is 3. The weights for each route of transmission are specified as `hw1`, `hw2`, `hw3`, and `hw4`, respectively.
