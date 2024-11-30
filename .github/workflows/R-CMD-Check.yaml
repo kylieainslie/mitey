@@ -37,6 +37,9 @@ jobs:
       # Step 4: Install dependencies and run R CMD Check
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2
+        with:
+          build-vignettes: true
+          upload-logs: true
 
       # Step 5: Upload check results (optional)
       - name: Upload R CMD check results
