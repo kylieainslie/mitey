@@ -31,7 +31,8 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           use-public-rspm: true
-          extra-packages: covr
+          install-suggests: true
+          extra-packages: covr, RcppEigen
 
       # Step 4: Install dependencies and run R CMD Check
       - name: Run R CMD check
