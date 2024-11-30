@@ -9,7 +9,9 @@
 <!--[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/your-package)](https://CRAN.R-project.org/package=your-package) -->
 [![codecov](https://codecov.io/gh/kylieainslie/mitey/branch/main/graph/badge.svg)](https://codecov.io/gh/kylieainslie/mitey)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/your-package)](https://CRAN.R-project.org/package=your-package)
+![GitHub Stars](https://img.shields.io/github/stars/kylieainslie/mitey)
+<!-- [![DOI](https://zenodo.org/badge/DOI/<DOI>.svg)](https://doi.org/<DOI>)  -->
+<!--[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/mitey)](https://CRAN.R-project.org/package=mitey) -->
 <!-- badges: end -->
 
 The motivation behind creating the `mitey` package was twofold:
