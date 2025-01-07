@@ -58,11 +58,13 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>The motivation behind creating the <code>mitey</code> package was twofold:</p>
-<ol style="list-style-type: decimal">
-<li><p>to provide the data and code to reproduce the results in Ainslie, K, Hooiveld, M, and Wallinga, J. 2024. On the epidemiological characteristics of scabies. <a href="https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html">pre-print</a>, and</p></li>
-<li><p>to provide flexible, documented code for methods not previously available in <code>R</code> that can help estimate epidemiological quantities of interest.</p></li>
-</ol>
+<p>The <code>mitey</code> package is a lightweight package designed originally as a companion to the analyses presented by <a href="https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html">Ainsie et al. 2024</a> on scabies transmission. However, these methods are more widely applicable than in the context of scabies, thus the motivation behind creating the <code>mitey</code> package was twofold and also provides flexible, documented code for methods to estimate epidemiological quantities of interest.</p>
+<p>Currently, <code>mitey</code> includes methods to estimate a) the mean and standard deviation of the serial interval distribution using a maximum likelihood framework developed by <a href="https://doi.org/10.1093/aje/kwu209" class="external-link">Vink et al. 2014</a> and b) the time-varying reproduction number using the method developed by <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/" class="external-link">Walling and Lipsitch 2007</a>.</p>
+<div class="section level3">
+<h3 id="estimating-the-serial-interval">Estimating the serial interval<a class="anchor" aria-label="anchor" href="#estimating-the-serial-interval"></a>
+</h3>
+<p>The method developed by Vink et al. uses data about the time of symptom onset with no precise information about transmission pairs and an assumed underlying serial interval distribution (either Gaussian or Gamma) to estimate the mean and standard deviation of the serial interval distribution. Briefly, the method involves calculating the index case-to-case (ICC) interval for each person, where the person with the earliest date of symptom onset will be considered the index case. The rest of the individuals will have an ICC interval calculated as the number of days between their symptom onset and the index case.</p>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -150,7 +152,7 @@ Figure 2. Fitted serial interval curves plotted over symptom onset data for simu
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
+<li><small>file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
 
