@@ -14,17 +14,33 @@
 <!--[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/mitey)](https://CRAN.R-project.org/package=mitey) -->
 <!-- badges: end -->
 
-The motivation behind creating the `mitey` package was twofold:
+The `mitey` package is a lightweight package designed originally as a
+companion to the analyses presented by [Ainsie et
+al. 2024](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html)
+on scabies transmission. However, these methods are more widely
+applicable than in the context of scabies, thus the motivation behind
+creating the `mitey` package was twofold and also provides flexible,
+documented code for methods to estimate epidemiological quantities of
+interest.
 
-1.  to provide the data and code to reproduce the results in Ainslie, K,
-    Hooiveld, M, and Wallinga, J. 2024. On the epidemiological
-    characteristics of scabies.
-    [pre-print](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html),
-    and
+Currently, `mitey` includes methods to estimate a) the mean and standard
+deviation of the serial interval distribution using a maximum likelihood
+framework developed by [Vink et
+al. 2014](https://doi.org/10.1093/aje/kwu209) and b) the time-varying
+reproduction number using the method developed by [Walling and Lipsitch
+2007](https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/).
 
-2.  to provide flexible, documented code for methods not previously
-    available in `R` that can help estimate epidemiological quantities
-    of interest.
+### Estimating the serial interval
+
+The method developed by Vink et al. uses data about the time of symptom
+onset with no precise information about transmission pairs and an
+assumed underlying serial interval distribution (either Gaussian or
+Gamma) to estimate the mean and standard deviation of the serial
+interval distribution. Briefly, the method involves calculating the
+index case-to-case (ICC) interval for each person, where the person with
+the earliest date of symptom onset will be considered the index case.
+The rest of the individuals will have an ICC interval calculated as the
+number of days between their symptom onset and the index case.
 
 ## Installation
 
