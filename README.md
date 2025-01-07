@@ -46,7 +46,7 @@ number of days between their symptom onset and the index case.
 
 1.  Install [R](http://cran.r-project.org)
 
-2.  Install the development version of serosolver from
+2.  Install the development version of `mitey` from
     [GitHub](https://github.com/kylieainslie/mitey):
 
 ``` r
