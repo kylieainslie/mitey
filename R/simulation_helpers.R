@@ -38,7 +38,7 @@ check_args <- function(
       n_steps_per_t >= 1
   )
   stopifnot(
-    is.numeric(arnaught) && arnaught > 0 &&
+    is.numeric(arnaught) && all(arnaught > 0) &&
       (length(arnaught) == 1 || length(arnaught) == n_t + 1)
   )
   stopifnot(
