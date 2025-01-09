@@ -234,7 +234,7 @@ people. -->
 ```{r, growth_rate_code, echo = FALSE, message=FALSE, warning=FALSE, results='hide'}
 
 # read in data set
-file_path <- "data/scabies_data_yearly.xlsx"
+file_path <- "data/scabies_data_incidence_yearly.xlsx"
 scabies_inc_total <- read.xlsx(file_path, sheet = "total") 
 
 scabies_inc_total <- scabies_inc_total %>%
@@ -545,6 +545,16 @@ ggplot(
 To determine the pattern of scabies spread over time, particularly if the incidence of scabies infections displays a repeating temporal pattern (e.g., seasonal waves), we first plotted weekly incidence of scabies infections per 1000 people in The Netherlands from 2011 to 2023 (Figure 4<!-- \@ref(fig:epidemic_curve)-->). We observed approximate yearly peaks and troughs of incidence. Incidence was typically highest in October or November (however, in 2022, highest incidence occurred in December). There were additional rises in incidence in March-May (Figure S2) in most years. Cumulative incidence was typically lowest in the summer months June/July before rising again in August. We also observed that the amplitude of peak incidence gradually increasing over time. There were marked increases in peak incidence in 2022, 2023, and the beginning of 2024 (Figure 4<!--\@ref(fig:epidemic_curve)-->). The observed patterns in scabies incidence indicate that there are approximately three generations of infections per year (Figure S2). For example, in 2023, one generation gets diagnosed in October, the next generation gets diagnosed in January the third generation gets diagnosed in May. 
 
 ```{r epidemic_curve, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 4. Incidence of scabies infections per 1000 people in the Netherlands by date of consultation.", out.width="100%"}
+# ggplot(df, aes(x = onset_date, y = inc)) +
+#   geom_col(fill = "steelblue") +
+#   #geom_smooth(method = "loess", color = "red", se = FALSE) +
+#   scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+#   labs(
+#     x = "Date of Diagnosis",
+#     y = "Incidence of scabies infections per 1000 people"
+#   ) +
+#   theme_minimal()
+# epidemic_curve
 knitr::include_graphics("figures/nivel_epidemic_curve.png")
 ```
 
