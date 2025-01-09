@@ -243,7 +243,7 @@ rt_estimated_boot <- rt_estim_w_boot(
 When estimating $R_t$ in practice, it is impossible to know the underlying true $R_t$; however there are a few checks that can be used to help ensure your estimates make sense. We will use data on weekly scabies cases in the Netherlands from 2011 to 2023 as our real data set. Below is a peak at the data.
 ```{r load_wrangle_real_data, eval=FALSE, echo=FALSE}
 nivel_wkly_data <-
-  read_xlsx("~/Dropbox/Kylie/Projects/RIVM/Projects/scabies/data/scabies_data_weekly.xlsx") %>%
+  read_xlsx("../inst/extdata/data/scabies_data_consultations_weekly.xlsx") %>%
   # fix/translate variable names
   rename(diagnosis_code = `Diagnose (ICPC)`,
          year = `ISO-jaar`,
