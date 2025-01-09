@@ -1,7 +1,7 @@
 #' Estimate Time-varying Reproduction Number
 #'
-#' This function estimates the time-varying reproduction number (R_t) using the method proposed by Wallinga and Teunis (AJE 2004).
-#' The function takes as input a data frame with incidence data and requires the specification of the serial interval distribution.
+#' This function estimates the time-varying case reproduction number (R_t) using the method proposed by Wallinga and Lipsitch (Proc. Biol. Sci. 2007).
+#' The function takes as input a data frame with incidence data and requires the specification of the serial interval distribution. Note, We assume the average generation interval (time between infections of infector and infectee) is equal to the average serial interval (time between symptom onsets of infector and infectee).
 #' The user must input the mean and standard deviation of the serial interval distribution and select the functional form: Normal or Gamma.
 #'
 #' @param inc_dat data frame; data frame with incidence data. The data frame should have two columns: inc (daily incidence) and onset_date (date of onset of symptoms).
@@ -51,6 +51,7 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
       mean_si <- mean(si_distribution)
       sd_si <- sd(si_distribution)
     }
+
   # Rt = sum{b(t)g(t-u)/sum(b(t-a)g(a))},
   # where b(t) is the incidence on day t and g(t) is the probability density of
   # the serial interval distribution
@@ -81,7 +82,7 @@ rt_estim <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
   # sum_t{b(t) * [b(u)g(t-u)/sum(b(t-a)g(a))]} * 1/(b(u)): sum over columns and divide by incidence
   expected_rt <- colSums(prob_mat2, na.rm = TRUE) / inc_dat$inc
 
-  # correct for right-truncation using the method of Cauchemez et al. 2006
+  # correct for right-truncation using the specified serial interval distribution
   # Apply the right truncation correction to each observation
   onset_times <- 1:nt
   correction_factors <- sapply(onset_times, function(t) {

@@ -21,7 +21,7 @@ rt_estim(inc_dat, mean_si, sd_si, dist_si = "normal", perturb_si_dist = FALSE)
 A numeric vector with the expected reproduction number for each day.
 }
 \description{
-This function estimates the time-varying reproduction number (R_t) using the method proposed by Wallinga and Teunis (AJE 2004).
-The function takes as input a data frame with incidence data and requires the specification of the serial interval distribution.
+This function estimates the time-varying case reproduction number (R_t) using the method proposed by Wallinga and Lipsitch (Proc. Biol. Sci. 2007).
+The function takes as input a data frame with incidence data and requires the specification of the serial interval distribution. Note, We assume the average generation interval (time between infections of infector and infectee) is equal to the average serial interval (time between symptom onsets of infector and infectee).
 The user must input the mean and standard deviation of the serial interval distribution and select the functional form: Normal or Gamma.
 }
