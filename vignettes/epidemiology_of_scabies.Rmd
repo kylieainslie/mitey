@@ -52,6 +52,7 @@ library(zoo)
 library(stringr)
 library(forcats)
 library(Hmisc)
+library(ISOweek)
 library(devtools)
 load_all()
 ```
@@ -234,7 +235,7 @@ people. -->
 ```{r, growth_rate_code, echo = FALSE, message=FALSE, warning=FALSE, results='hide'}
 
 # read in data set
-file_path <- "data/scabies_data_incidence_yearly.xlsx"
+file_path <- "../inst/extdata/data/scabies_data_incidence_yearly.xlsx"
 scabies_inc_total <- read.xlsx(file_path, sheet = "total") 
 
 scabies_inc_total <- scabies_inc_total %>%
@@ -319,7 +320,7 @@ row.names(scabies_plot_df) <- NULL
 
 ## Time-varying Reproduction Number
 
-To estimate time-varying case reproduction number, we first randomly assigned each scabiesconsultation a date of diagnosis in the week in which the consulation is reported. Since scabies is very hard to diagnose prior to symptom onset [@mellanby1972], and diagnosed cases are captured as part of sentinel surveillance based on GP diagnosis [@nivel], we use the date of diagnosis rather than the date of symptom onset. Using the constructed daily time series of date of diagnosis, we applied the method proposed by Wallinga and Lipsitch [@wallinga2007] to estimate the time-varying daily case reproduction number. The case reproduction number is defined as the average number of new infections that an individual who becomes diagnosed at a particular time point will go on to cause [@gostic2020], and is useful in retrospective analyses such as the one presented here. The method of Wallinga and Lipsitch estimates the time-varying case reproduction number by determining the likelihood of an event occurring for every pair of time points [@wallinga2007]. The method requires the specification of the serial interval distribution. We assumed a normal serial interval distribution with mean 123.24 days and standard deviation 31.55 days, as estimated previously. Due to unobserved onward cases at the end of the time series, we adjusted for right truncation [@cauchemez2006a; @cauchemez2006b]. To obtain 95% confidence intervals on the daily case reproduction number, we generated 100 bootstrapped samples by resampling each case with replacement and reconstructing the incidence time series for each bootstrapped sample. Reproduction number estimates were then smoothed using a rolling average of 6 weeks. 
+To estimate time-varying case reproduction number, we first randomly assigned each scabies consultation a date of diagnosis in the week in which the consulation is reported. Since scabies is very hard to diagnose prior to symptom onset [@mellanby1972], and diagnosed cases are captured as part of sentinel surveillance based on GP diagnosis [@nivel], we use the date of diagnosis rather than the date of symptom onset. Using the constructed daily time series of date of diagnosis, we applied the method proposed by Wallinga and Lipsitch [@wallinga2007] to estimate the time-varying daily case reproduction number. The case reproduction number is defined as the average number of new infections that an individual who becomes diagnosed at a particular time point will go on to cause [@gostic2020], and is useful in retrospective analyses such as the one presented here. The method of Wallinga and Lipsitch estimates the time-varying case reproduction number by determining the likelihood of an event occurring for every pair of time points [@wallinga2007]. The method requires the specification of the serial interval distribution. We assumed a normal serial interval distribution with mean 123.24 days and standard deviation 31.55 days, as estimated previously. Due to unobserved onward cases at the end of the time series, we adjusted for right truncation [@cauchemez2006a; @cauchemez2006b]. To obtain 95% confidence intervals on the daily case reproduction number, we generated 100 bootstrapped samples by resampling each case with replacement and reconstructing the incidence time series for each bootstrapped sample. Reproduction number estimates were then smoothed using a rolling average of 6 weeks. 
 
 Because we are using the serial interval distribution as an approximation of the generation interval, which is strictly positive, we performed a sensitivity analysis in which we assumed the serial interval distribution is Gamma distributed with the same mean and variance.
 
@@ -544,18 +545,56 @@ ggplot(
 
 To determine the pattern of scabies spread over time, particularly if the incidence of scabies infections displays a repeating temporal pattern (e.g., seasonal waves), we first plotted weekly incidence of scabies infections per 1000 people in The Netherlands from 2011 to 2023 (Figure 4<!-- \@ref(fig:epidemic_curve)-->). We observed approximate yearly peaks and troughs of incidence. Incidence was typically highest in October or November (however, in 2022, highest incidence occurred in December). There were additional rises in incidence in March-May (Figure S2) in most years. Cumulative incidence was typically lowest in the summer months June/July before rising again in August. We also observed that the amplitude of peak incidence gradually increasing over time. There were marked increases in peak incidence in 2022, 2023, and the beginning of 2024 (Figure 4<!--\@ref(fig:epidemic_curve)-->). The observed patterns in scabies incidence indicate that there are approximately three generations of infections per year (Figure S2). For example, in 2023, one generation gets diagnosed in October, the next generation gets diagnosed in January the third generation gets diagnosed in May. 
 
-```{r epidemic_curve, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 4. Incidence of scabies infections per 1000 people in the Netherlands by date of consultation.", out.width="100%"}
-# ggplot(df, aes(x = onset_date, y = inc)) +
-#   geom_col(fill = "steelblue") +
-#   #geom_smooth(method = "loess", color = "red", se = FALSE) +
-#   scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
-#   labs(
-#     x = "Date of Diagnosis",
-#     y = "Incidence of scabies infections per 1000 people"
-#   ) +
-#   theme_minimal()
+```{r epidemic_curve, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 4. Number of scabies consultations per week per 100,000 people in the Netherlands by date of consultation.", out.width="100%"}
+
+# read in consultations data 
+nivel_wkly_data <-
+  read.xlsx("../inst/extdata/data/scabies_data_consultations_weekly.xlsx") %>%
+  # fix/translate variable names
+  rename(diagnosis_code = `Diagnose.(ICPC)`,
+         year = `ISO-jaar`,
+         week_num = `ISO-weeknr.(ma-zo)`,
+         pop_size = `Aantal.populatie`,
+         cases = `Aantal.prevalente.cases`,
+         prev_per_100000 = `Prevalentie.per.100.000`) %>%
+  # drop diagnosis var
+  select(-diagnosis_code) %>%
+  # create new var that combines year and week
+  mutate(yr_wk = paste(year, week_num, sep = "_"),
+         year = as.factor(year))
+
+nivel_daily_data <- nivel_wkly_data %>%
+  uncount(cases) %>% # Repeat rows based on the number of cases
+  mutate(
+    iso_week = paste0(year, "-W", sprintf("%02d", as.numeric(week_num))),
+    first_day = ISOweek2date(paste0(iso_week, "-1")),
+    random_day = sample(0:6, n(), replace = TRUE),
+    onset_date = first_day + days(random_day)
+  ) %>%
+  select(-iso_week, -first_day, -random_day)
+
+# Group data by onset_date and calculate the daily incidence
+df <- nivel_daily_data %>%
+  group_by(onset_date) %>%
+  mutate(count = n()) %>%
+  distinct(onset_date, count) %>%
+  arrange(onset_date) %>%
+  mutate(num_date = as.numeric(onset_date)) %>%
+  ungroup() %>%
+  rename(inc = count) %>%
+  select(onset_date, inc)
+
+ggplot(df, aes(x = onset_date, y = inc)) +
+  geom_col(fill = "steelblue") +
+  #geom_smooth(method = "loess", color = "red", se = FALSE) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(
+    x = "Date of Consultation",
+    y = "Number of scabies consultations per 100,000 people"
+  ) +
+  theme_minimal()
 # epidemic_curve
-knitr::include_graphics("figures/nivel_epidemic_curve.png")
+# knitr::include_graphics("figures/nivel_epidemic_curve.png")
 ```
 
 Next, we estimated the time-varying case reproduction number of weekly scabies diagnoses (Figure 5<!--\@ref(fig:rt_plot)-->). As with weekly incidence, we see temporal waves of transmission, with $R_t$ peaking in August. The time difference in peak incidence (October-January, Figure S2) versus peak reproduction number (June-September) can be explained by the long serial interval of scabies (123 days with a 31-day standard deviation). Therefore, infections generated by diagnosed cases in October-January are likely to manifest several months later, due to the long serial interval.
