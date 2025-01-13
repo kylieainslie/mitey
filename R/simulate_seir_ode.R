@@ -28,9 +28,13 @@ simulate_seir_ode <- function(
   )
 
   beta <- construct_beta(arnaught, t_I, n_t)
+
   d_dt <- function(t, y, params) {
     dS <- y['S'] * beta(t) * y['I'] / N
     dIR <- y['I'] / t_I
+
+    # Calculate R(t)
+    R_t <- beta(t) * y['S'] / N
 
     if(t_E > 0) {
       # SEIR model
@@ -41,7 +45,8 @@ simulate_seir_ode <- function(
         I = dEI - dIR,
         R = dIR,
         cum_dS = dS,
-        cum_dEI = dEI
+        cum_dEI = dEI,
+        Rt = R_t
       ), NULL)
     }
     else {
@@ -52,7 +57,8 @@ simulate_seir_ode <- function(
         I = dS - dIR,
         R = dIR,
         cum_dS = dS,
-        cum_dEI = dS
+        cum_dEI = dS,
+        Rt = R_t
       ), NULL)
     }
   }
@@ -63,7 +69,8 @@ simulate_seir_ode <- function(
     I = if(t_E > 0) I_init else E_init + I_init,
     R = 0,
     cum_dS = 0,
-    cum_dEI = 0
+    cum_dEI = 0,
+    Rt = NA
   )
 
   # automatic ode solver is lsoda, an "automatic stiff/non-stiff solver"
