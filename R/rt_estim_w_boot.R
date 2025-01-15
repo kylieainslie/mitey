@@ -4,7 +4,7 @@
 #' The function takes as input a data frame with incidence data and requires the specification of the serial interval distribution.
 #' The user must input the mean and standard deviation of the serial interval distribution and select the functional form: Normal or Gamma.
 #'
-#' @param inc_dat data frame; data frame with incidence data. The data frame should have two columns: inc (daily incidence) and date.
+#' @param inc_dat data frame; data frame with incidence data. The data frame should have two columns: inc (daily incidence) and onset_date. Onset_date does not have to be in date format, it can be a column of days, such as c(1,2,3,4, ... ),
 #' @param mean_si numeric; mean of serial interval distribution
 #' @param sd_si numeric; standard deviation of serial interval distribution
 #' @param dist_si string; distribution to be assumed for serial interval. Accepts "normal" or "gamma".
@@ -35,7 +35,11 @@ rt_estim_w_boot <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
   # 2. collapse rows with the same onset_date and increase the count of inc
   # 3. complete the time series by filling in missing dates
   # get all dates
-  all_dates <- seq(min(inc_dat$onset_date), max(inc_dat$onset_date), by = "day")
+  if(is.Date(inc_dat$onset_date)){
+    all_dates <- seq(min(inc_dat$onset_date), max(inc_dat$onset_date), by = "day")
+  } else {
+    all_dates <- seq(min(inc_dat$onset_date), max(inc_dat$onset_date), by = 1)
+  }
 
   boot_samples_wrangled <- map(boot_samples, ~.x %>%
                                 arrange(.data$onset_date) %>%
