@@ -18,185 +18,59 @@ library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(readxl)
+library(EpiLPS)
+library(zoo)
+library(outbreaks)
 library(devtools)
 load_all()
 ```
 
-**This article is still under development!**
-
 # Introduction
-The `mitey` package is a lightweight package designed to provide easy implementation of the methods used in [Ainsie et al. 2024](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html) to estimate epidemiological characteristics of scabies transmission. However, these methods are more widely applicable than in the context of scabies. One of the key functionalities of `mitey` is the estimation of the time-varying case reproduction number using data on time of symptom onset. The case reproduction number ($R^c_t$) is defined as the average number of new infections that an individual who becomes infected, or symptomatic, at a particular time point will go on to cause [@gostic2020], and is useful in retrospective analyses. The method of Wallinga and Lipsitch estimates the time-varying case reproduction number by determining the likelihood of an event occurring for every pair of time points [@wallinga2007]. The method requires the specification of the serial interval distribution. In this article, we will demonstrate how to use `mitey` to estimate the case reproduction number for a synthetic data set, validate that the method is able to estimate the true reproduction number, and show several checks that can be used in practice when the true reproduction number is not known. We will also highlight other R packages that can be used for similar analyses.
+The `mitey` package is a lightweight package designed to provide easy implementation of the methods used in [Ainsie et al. 2024](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html) to estimate epidemiological characteristics of scabies transmission. However, these methods are more widely applicable than in the context of scabies. One of the key functionalities of `mitey` is the estimation of the time-varying case reproduction number using data on time of symptom onset. The case reproduction number ($R^c_t$) is defined as the average number of new infections that an individual who becomes infected, or symptomatic, at a particular time point will go on to cause [@gostic2020], and is useful in retrospective analyses. The method of Wallinga and Lipsitch estimates the time-varying case reproduction number by determining the likelihood of an event occurring for every pair of time points [@wallinga2007]. The method requires no assumptions beyond the specification of the serial interval distribution, making it straightforward and easy to implement. 
+
+In this article, we will demonstrate how to use `mitey` to estimate $R^c_t$ using a synthetic data set, estimate $R^c_t$ using real data, and show several checks that can be used in practice when the true reproduction number is not known. We will also compare the estimates from `mitey` to estimates from other R packages that can be used for similar analyses, namely `EpiEstim` [@cori2013] and `EpiLPS` [@gressani2022].
 
 # Synthetic data
-First, we will generate synthetic data which, we will then use to estimate the time-varying case reproduction number. we first generate synthetic time-varying reproduction number ($R_t$) values that follow a sine wave pattern to mimic periodic changes in transmission dynamics, such as seasonal variations. The sine wave is parameterized with a baseline value $R_t = 1.5$, an amplitude of 0.5, and a frequency representing the number of cycles per year (four cycles). To make the $R_t$ values more realistic, we add random noise and ensure they remain non-negative. These values are then used to simulate the progression of an infectious disease outbreak over two years (730 days). 
+First, we will generate a synthetic time series of incidence data using the `episim()` function from `EpiLPS` which uses a renewal equation model to generate the case incidence data based on a Poisson or negative binomial process [@gressani2022]. For full details see [here](https://doi.org/10.1371/journal.pcbi.1010618.s002). `episim()` requires the specification of the (discrete) serial interval distribution, which can be specified using the `Idist()` function.
 
-```{r simulate_rt_values}
-# Set seed
-set.seed(123)
+```{r generate_si_dist}
+# specify serial interval distribution
+mean_si <- 8
+sd_si <- 5.66
 
-# Parameters
-n_days <- 730                  # number of days
-time <- seq(1, n_days, by = 1) # time_vector
-amplitude <- 0.5               # Amplitude of the sine wave
-cycles <- 4                    # Number of cycles
-frequency <- cycles / 365      # Cycles per year
-phase <- 0                     # No phase shift
-baseline <- 1.5                # Average R_t value
-noise_sd <- 0.1                # Standard deviation of noise
-
-# Generate sine wave
-rt <- baseline + amplitude * sin(2 * pi * frequency * time + phase)
-
-# Add noise
-rt_noisy <- rt + rnorm(length(rt), mean = 0, sd = noise_sd)
-rt_noisy <- pmax(rt_noisy, 0)  # Ensure R_t values are positive
+# generate discrete serial interval distribution using EpiLPS::Idist
+si_spec <- Idist(mean = mean_si, sd = sd_si, dist = "gamma")
+plot(si_spec, titlesize = 12)
 ```
 
-```{r plot_sim_rt, echo=FALSE}
-# Plot
-data <- data.frame(time = time, R_t = rt_noisy)
-ggplot(data, aes(x = time, y = R_t)) +
-  geom_line() +
-  labs(title = "Synthetic R_t Data", x = "Time", y = "R_t") +
-  theme_minimal()
-```
+Now, using `episim()` we can generate incidence data by specifying the generated serial interval distribution, the functional form of the reproduction number (here `Rpattern = 5`), and the length of the epidemic (here 40 days).
 
-Next, using the simulated $R_t$ values as input, we simulate a synthetic time series of new infections. The simulation assumes a population where the number of new cases each day depends on the effective reproduction number $R_t$, the generation interval (time between successive infections in a chain), and the remaining susceptible population. The generation interval is modeled using a gamma distribution, and waning immunity is incorporated to allow for some recovery of susceptibility. Using this setup, new cases are simulated each day based on a Poisson process, adjusting for susceptible depletion. The simulation outputs daily case counts, cumulative infections, and onset dates, providing a synthetic data set to estimate $R_t$ using the method of Wallinga and Lipsitch [@wallinga2007].
+```{r simulate_inc_data}
+# set seed
+set.seed(1234)
 
-For the sake of transparency, the function used to simulate incidence data is shown below.
-```{r function_to_sim_cases}
-# Function to simulate new cases based on Rt
-simulate_new_cases <- function(rt_values,
-                                 generation_time,
-                                 initial_cases = 1,
-                                 days = 180,
-                                 population = 1e6,
-                                 waning_rate = 0.001) {
+# generate data
+t_end <- 40
+datasim <- episim(si = si_spec$pvec, Rpattern = 5, endepi = t_end,
+                  dist = "negbin", overdisp = 15)
 
-  # Normalize generation time, so it sums to 1
-  generation_time <- generation_time / sum(generation_time)
-
-  # Initialize variables
-  cases <- numeric(days)
-  cumulative_infections <- 0  # Start with no infections
-  cases[1] <- initial_cases
-  susceptible_pool <- population
-
-  # Track onset dates
-  onset_dates <- rep(1, initial_cases)
-
-  for (day in 2:days) {
-    # Compute remaining susceptibles
-    susceptible_pool <- susceptible_pool + waning_rate * (population - susceptible_pool)
-
-    # Compute expected new cases using convolution with generation interval
-    lambda <- sum(cases[max(1, day - length(generation_time)):(day - 1)] *
-                    rev(generation_time[1:min(day - 1, length(generation_time))]))
-
-    # Adjust Rt for susceptible depletion
-    effective_rt <- rt_values[day] * (susceptible_pool / population)
-
-    # Compute expected new cases
-    expected_new_cases <- effective_rt * lambda
-
-    # Simulate new cases
-    new_cases <- rpois(1, expected_new_cases)
-
-    # Update cases, cumulative infections, and onset dates
-    cases[day] <- new_cases
-    cumulative_infections <- cumulative_infections + new_cases
-
-    # Update susceptible pool
-    susceptible_pool <- susceptible_pool - new_cases
-    susceptible_pool <- max(susceptible_pool, 0)  # Ensure non-negative
-
-    if (new_cases > 0) {
-      onset_dates <- c(onset_dates, rep(day, new_cases))
-    }
-  }
-
-  # Return results
-  rtn <- list(
-    cases = cases, 
-    onset_dates = onset_dates, 
-    cumulative_infections = cumulative_infections
-    )
-  
-  return(rtn)
-}
-```
-
-Using `simulate_new_cases()` we then simulate our synthetic data, specifying a gamma distributed generation interval with shape = 2 and scale = 2. We specify the number of initial cases (5), the number of days to run the simulation (730, note: this should match the length of the `rt_values` vector), and the waning rate (0.025).
-```{r simulate_data, echo = TRUE}
-rt_values <- rt_noisy
-generation_time <- dgamma(1:30, shape = 2, scale = 2)  # Generation interval
-
-# Run simulation
-simulation_result <- simulate_new_cases(rt_values = rt_values,
-                                        generation_time = generation_time,
-                                        initial_cases = 5,
-                                        days = 730, #365,
-                                        waning_rate = 0.025)
+epicurve(datasim$y, title = "Simulated epidemic curve")
 
 ```
 
-To visualize the simulated cases along with the inputted $R_t$ values, we can scale the $R_t$ values by the cases to plot them on the same graph.
-```{r plot_sim_data, echo = FALSE, fig.cap=""}
-# Extract cases and scaled Rt
-cases <- simulation_result$cases
-days <- seq_along(cases)  # Day numbers
-scaled_rt <- rt_values * max(cases) / max(rt_values)
-
-# Combine into a data frame
-my_data <- data.frame(
-  Day = days,
-  New_Cases = cases,
-  Scaled_Rt = scaled_rt
-)
-
-# plot input (scaled Rt) with cases
-data_long <- my_data %>%
-  pivot_longer(cols = c("New_Cases", "Scaled_Rt"),
-               names_to = "Metric", values_to = "Value")
-
-# Plot using ggplot
-ggplot(data_long, aes(x = Day, y = Value, color = Metric, linetype = Metric)) +
-  geom_line(size = 1) +
-  scale_color_manual(values = c("New_Cases" = "blue",
-                                "Scaled_Rt" = "red")) +
-  scale_linetype_manual(values = c("New_Cases" = "solid",
-                                   "Scaled_Rt" = "solid")) +
-  labs(
-    x = "Day",
-    y = "Value",
-    color = "Legend",
-    linetype = "Legend"
-  ) +
-  theme_minimal() +
-  theme(
-    legend.position = "top",
-    plot.title = element_text(hjust = 0.5, face = "bold")
-  )
-
-```
-
-Next, we can use the simulated incidence data to estimate the time-varying reproduction number using the method developed by Wallinga and Lipsitch [@wallinga2007] using `rt_estim()`. `rt_estim()` expects an input data set (`inc_dat`) with two columns `inc` (the number of new cases for each time point) and `onset_date` (the date in which the new cases occurred, note: `onset_date` must be in date format if using `rt_estim_w_boot()`). `rt_estim()` also requires the specification of the mean and standard deviation of the serial interval distribution and the functional form of the distribution. We assume the mean generation time is equal to the mean serial interval and the standard deviation of the generation time is equal to the standard deviation time of the serial interval. Additionally, we assume the serial interval is gamma distributed.
+# Estimating the case reproduction number
+Next, using the simulated incidence data `datasim$y`, we can estimate the time-varying case reproduction number using the method developed by Wallinga and Lipsitch [@wallinga2007]. We will use the `rt_estim()` function within `mitey`. `rt_estim()` expects an input data set (`inc_dat`) with two columns `inc` (the number of new cases for each time point) and `onset_date` (the time or date in which the new cases occurred). `rt_estim()` also requires the specification of the mean and standard deviation of the serial interval distribution and the underlying serial interval distribution (it currently only accepts "normal" and "gamma").
 
 ```{r estimate_rt, echo=TRUE}
-# create incidence 
-inc_dat <- data.frame(
-  onset_date = seq_along(cases),
-  inc = cases) %>%
-  mutate(onset_date = as.Date("2023-01-01") + (onset_date - 1))
+# Estimate Rt with mitey::rt_estim()
 
-# Estimate Rt using rt_estim
-gi_mean <- sum(seq_along(generation_time) * generation_time)
-gi_sd <- sqrt(sum(generation_time * (seq_along(generation_time) - gi_mean)^2))
+t_vec <- seq(1, length(datasim$y), by = 1)
+inc_dat <- data.frame(onset_date = t_vec, inc = datasim$y)
 
 rt_estimated <- rt_estim(
   inc_dat = inc_dat,
-  mean_si = gi_mean,
-  sd_si = gi_sd,
+  mean_si = mean_si,
+  sd_si = sd_si,
   dist_si = "gamma"
 )
 ```
@@ -205,195 +79,156 @@ rt_estimated <- rt_estim(
 head(rt_estimated)
 ```
 
-Now, we can compare the estimated $R_t$ values to the inputted $R_t$ values.
-```{r plot_results, echo=FALSE}
-rt_results <- data.frame(
-  Day = 1:nrow(my_data),
-  True_Rt = rt_noisy,
-  Estimated_Rt = rt_estimated$rt_adjusted
-)
+Now, we can compare the estimated $R^c_t$ values (solid blue line) to the true $R_t$ that is outputted by `episim()`, here `datasim$Rtrue`. However, an important thing to note is that the "true" $R_t$ is the instantaneous reproduction number. We are estimating the case reproduction number, and therefore, our estimates should be shifted to the left by one serial interval. When we shift the estimates by a serial interval (blue dashed line), we see that our estimates are in agreement with the true $R_t$.
 
-# Plot True Rt vs Estimated Rt
-ggplot(rt_results %>%
-         filter(Day > (2 * gi_mean)), aes(x = Day)) +
-  geom_line(aes(y = True_Rt, color = "True Rt"), size = 1) +
-  geom_line(aes(y = Estimated_Rt, color = "Estimated Rt"), size = 1, linetype = "dashed") +
-  labs(
-    title = "Reconstructed vs True Rt",
-    x = "Day",
-    y = "Reproduction Number (Rt)",
-    color = "Legend"
-  ) +
-  scale_color_manual(values = c("True Rt" = "blue", "Estimated Rt" = "red")) +
-  theme_minimal()
+```{r plot_results, echo=FALSE}
+# time and true Rt vectors
+tt <- seq(mean_si + 1, t_end, by = 1)
+Rtrue <- sapply(tt, datasim$Rtrue)
+
+# clean-up the estimates a little
+rt_WL <- ifelse(is.nan(rt_estimated$rt), NA, rt_estimated$rt)
+rt_WL <- ifelse(is.infinite(rt_estimated$rt) | rt_estimated$rt > 15, NA, rt_estimated$rt)
+
+# smooth and shift estimated Rt
+rt_WL_smooth <- rollmean(rt_WL, k = 7, fill = NA, na.rm = TRUE)
+rt_WL_shift <- c(rep(NA, mean_si), rt_WL_smooth)
+
+# plot
+plot(tt, Rtrue, type = "l", xlab = "Time", ylab = "R", ylim = c(0,4),
+     lwd = 2)
+lines(tt, rt_WL_smooth[tt], col = "blue", lwd = 2)
+lines(tt, rt_WL_shift[tt], col = "blue", lty = 2, lwd = 2)
+legend("topright", col = c("black","blue","blue"),
+       c("True R","WL", "WL (shifted)"),
+       bty = "n", lty = c(1,1,2))
+
 ```
 
-To obtain confidence bounds for our estimated $R_t$ values, we can use `rt_estim_w_boot()` and specify the number of bootstrap samples using `n_boot = ` argument. 
+To obtain confidence bounds for our estimated $R_t$ values, we can use `rt_estim_w_boot()` and specify the number of bootstrap samples using `n_bootstrap = ` argument. 
+
 ```{r rt_boot, eval = FALSE}
 rt_estimated_boot <- rt_estim_w_boot(
   inc_dat = inc_dat,
   mean_si = gi_mean,
   sd_si = gi_sd,
   dist_si = "gamma",
-  n_bootstrap = 10
+  n_bootstrap = 100
 )
 ```
 
+# Comparing methods
+Using the `estimRmcmc` function within the `EpiLPS` package, we can compare our estimates to those produced my `EpiLPS` and `EpiEstim` (by specifying `Cori = TRUE`) for estimating the instantaneous reproduction number. We can also estimate the case reproduction number using the method of Wallinga and Teunis [@wallinga2004] as estimated by `EpiEstim` (by specifying `WTR = TRUE`).
+
+```{r compare_methods, results='hide'}
+fitmcmc <- estimRmcmc(incidence = datasim$y, si = si_spec$pvec,
+                      CoriR = TRUE, WTR = TRUE,
+                      niter = 5000, burnin = 2000)
+```
+
+```{r summary_fit}
+summary(fitmcmc)
+```
+
+```{r plot_comparison_methods, out.width = "100%"}
+plot(tt, Rtrue, type = "l", xlab = "Time", ylab = "R", ylim = c(0,4),
+     lwd = 2)
+lines(tt, fitmcmc$RLPS$R[-(1:mean_si)], col = "red", lwd = 2)
+lines(tt, fitmcmc$RCori$`Mean(R)`, col = "green", lwd = 2)
+lines(tt, fitmcmc$RWT$`Mean(R)`[-1], col = "purple", lwd = 2)
+lines(tt, rt_WL_smooth[tt], col = "blue", lwd = 2)
+lines(tt, rt_WL_shift[tt], col = "blue", lty = 2, lwd = 2)
+legend("topright", col = c("black","red","green", "purple", "blue", "blue"),
+       c("True R","EpiLPS","EpiEstim", "WT", "WL", "WL (shifted)"),
+       bty = "n", lty = c(1,1,1,1,1,2))
+```
+
 # Real data
-When estimating $R_t$ in practice, it is impossible to know the underlying true $R_t$; however there are a few checks that can be used to help ensure your estimates make sense. We will use data on weekly scabies cases in the Netherlands from 2011 to 2023 as our real data set. Below is a peak at the data.
-```{r load_wrangle_real_data, eval=FALSE, echo=FALSE}
-nivel_wkly_data <-
-  read_xlsx("../inst/extdata/data/scabies_data_consultations_weekly.xlsx") %>%
-  # fix/translate variable names
-  rename(diagnosis_code = `Diagnose (ICPC)`,
-         year = `ISO-jaar`,
-         week_num = `ISO-weeknr (ma-zo)`,
-         pop_size = `Aantal populatie`,
-         cases = `Aantal prevalente cases`,
-         prev_per_100000 = `Prevalentie per 100.000`) %>%
-  # drop diagnosis var
-  select(-diagnosis_code) %>%
-  # create new var that combines year and week
-  mutate(yr_wk = paste(year, week_num, sep = "_"),
-         year = as.factor(year))
 
-# 1. randomly assign a date within reporting date for symptom onset date -------
-nivel_daily_data <- nivel_wkly_data %>%
-  uncount(cases) %>% # Repeat rows based on the number of cases
-  mutate(
-    iso_week = paste0(year, "-W", sprintf("%02d", as.numeric(week_num))),
-    first_day = ISOweek2date(paste0(iso_week, "-1")),
-    random_day = sample(0:6, n(), replace = TRUE),
-    onset_date = first_day + days(random_day)
-  ) %>%
-  select(-iso_week, -first_day, -random_day)
+## Zika outbreak in Giradot, Colombia (2015)
+To illustrate how to apply `rt_estim()` to real data and compare it to other methods, we'll use data on daily incidence of the Zika virus disease in Giradot, Colombia from October 2015 to January 2016. The data is available from the `outbreaks` package and is called `zika2015`. 
 
-# n <- dim(nivel_daily_data)[1]
-
-# Group data by onset_date and calculate the daily incidence
-df_real <- nivel_daily_data %>%
-  group_by(onset_date) %>%
-  mutate(count = n()) %>%
-  distinct(onset_date, count) %>%
-  arrange(onset_date) %>%
-  mutate(num_date = as.numeric(onset_date)) %>%
-  ungroup() %>%
-  rename(inc = count) %>%
-  select(onset_date, inc)
-
-head(df_real)
+```{r zika_data}
+lapply(zika2015, head, 10)
 ```
 
-```{r estimate_rt_real, eval=FALSE}
-# si dist parameters
-si_mean <- 123.24
-si_sd <- 31.55
-
-# Calculate the initial R_t
-rt_estimates <- rt_estim(df_real, mean_si = si_mean, sd_si = si_sd, dist_si = "normal")
-
-# a little data wrangling
-rt_estimates1 <- rt_estimates %>%
-  filter(!is.nan(rt),
-         onset_date > min(onset_date) + 123, # trim first serial interval
-         onset_date < max(onset_date) - 123  # trim last serial interval
-         )
+```{r zika_epicurve}
+zika_epicurve <- epicurve(zika2015$incidence, dates = zika2015$date, datelab = "14d")
+zika_epicurve
 ```
 
-```{r rt_plot, echo = FALSE, eval=FALSE}
-ggplot(data = rt_estimates1, aes(x = onset_date, y = rt_rollmean)) +
-  geom_line() +
-  geom_hline(yintercept = 1.1, linetype = "dashed", color = "gray") +
-  geom_hline(yintercept = 1, linetype = "solid", color = "black") +
-  theme_minimal()
+Now we'll estimate the case reproduction number using `rt_estim()`.
+
+```{r use_mitey}
+# Estimate Rt with mitey::rt_estim()
+inc_dat <- data.frame(onset_date = zika2015$dates, inc = zika2015$incidence)
+
+rt_estimated <- rt_estim_w_boot(
+  inc_dat = inc_dat,
+  mean_si = 7,
+  sd_si = 1.5,
+  dist_si = "gamma",
+  n_bootstrap = 100
+)
 ```
 
-Checks for sense-checking estimates of the reproduction number:
-  1. Growth rate method: calculate $R_t = b(t+u)/b(t)$ where $b()$ is the incidence, t is the current time point, and u is the mean generation time (here, approximated with the mean serial interval).
-  
-```{r rt_growth_rate_method, eval=FALSE}
-  # 1. Calculate b(t+u)/b(t) where b() is the incidence, t is the current time
-#    point, and u is the mean SI
-seq1 <- 1:(nrow(df_real))
-seq2 <- seq1 + 123
-rt_check1 <- data.frame(
-  onset_date = (seq1 - 1) + min(df$onset_date),
-  rt_check1 = df_real$inc[seq2]/df_real$inc[seq1]
-) 
+```{r plot}
+# Create the plot
+r_plot <- ggplot(rt_estimated$results %>%
+         filter(onset_date > min(onset_date) + 7,
+                !is.na(median_rt_adjusted)), 
+       aes(x = onset_date)) +
+  geom_ribbon(aes(ymin = lower_rt_adjusted, ymax = upper_rt_adjusted), fill = "#21908C", alpha = 0.2) +
+  geom_line(aes(y = median_rt_adjusted, color = "WL"), size = 1) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "black") +
+  coord_cartesian(ylim = c(0,12)) +
+  scale_x_date(date_breaks = "7 days", date_labels = "%d-%m-%Y") +
+  scale_color_manual(values = c("WL" = "#21908C")) +  
+  scale_fill_manual(values = c("WL" = "#21908C")) + 
+  labs(x = "Time", y = "R", title = "Estimated R") +
+  guides(color = "none", fill = "none") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+# show Rt plot with epicurve
+gridExtra::grid.arrange(zika_epicurve, r_plot, nrow = 2, ncol = 1)
 ```
-  
-  2. Calculate the geometric mean of the time series of time-varying reproduction number. The geometric mean should be ~$R_0$.
-```{r rt_geom_mean, eval=FALSE}  
-# 2. Calculate geometric mean
-# This should be approx R0 = 1.1
-rt_check2 <- exp(mean(log(rt_estimates1$rt), na.rm = TRUE))
-rt_check2
-```  
-  
-  3. Use a different R package to check that estimates are similar, here we will use the implementation of the Wallinga and Teunis method from `EpiEstim`.
-```{r rt_epiestim, eval=FALSE}
-# 3. Calculate rt using EpiEstim
+### Compare with EpiLPS and EpiEstim
+Below we compare the estimates using the Walling and Lipsitch method (WL) with those of `EpiLPS` and the Wallinga and Teunis method (WT) produced by `EpiEstim`. We see similar results and see the expected shif in the estimates of EpiLPS because it is estimating the instantaneous reproduction number. Additionally, it is important to note that the below WL estimates have not been smoothed.
 
-# set-up before Rt estimation
-# use discritized normal distribution
-discretize_normal <- function(mean, sd, lower, upper) {
-  bins <- lower:upper
-  probs <- diff(pnorm(c(bins, Inf), mean, sd))  # Probabilities for each bin
-  return(probs)
-}
+```{r use_epilps, warning=FALSE}
+si <- Idist(mean = 7, sd = 1.5)
+epifit <- estimR(zika2015$incidence, dates = zika2015$dates, si = si$pvec, WTR = TRUE)
 
-distr_si <- discretize_normal(mean = si_mean, sd = si_sd, lower = 0, upper = 250)
+r_plot +
+  geom_line(data = epifit$RLPS[-c(1:7),], aes(x = Time, y = R, color = "EpiLPS"), size = 1, linetype = "solid") +
+  geom_line(data = epifit$RWT, aes(x = t_end + zika2015$dates[1], y = `Mean(R)`, color = "WT (EpiEstim)"), size = 1, linetype = "solid") +
+  scale_color_manual(values = c("WL" = "#21908C", "EpiLPS" = "#FDE725", "WT (EpiEstim)" = "#440154")) + 
+  labs(color = "Method")
 
-# define time windows over which to calculate Rt
-window <- 1
-ts <- 1:nrow(df)
-ts <- ts[ts > 1 & ts <= (max(ts)-window+1)]
-te <- ts+(window-1)
-
-# define config option 
-config <- make_config(incid = df$inc,
-                      si_distr = c(0,distr_si),
-                      t_start = ts,
-                      t_end = te)
-config$n_sim <- 100
-
-# estimate Rt using WT method
-rt_epiestim <- wallinga_teunis(
-  incid = df$inc,
-  method = "non_parametric_si",
-  config = config)
-
-rt_check3 <- rt_epiestim$R %>%
-  mutate(onset_date = t_start + min(df_real$onset_date)) %>%
-  select(onset_date, `Mean(R)`)
 ```
 
-Now let's have a look by plotting the different methods to estimate $R_t$ together.
-```{r rt_check_plot, eval=FALSE}
-# plot checks
-df_check <- rt_estimates1 %>%
-  select(onset_date, rt) %>%
-  left_join(., rt_check1, by = "onset_date") %>%
-  left_join(., rt_check3, by = "onset_date") %>%
-  pivot_longer(-onset_date) %>%
-  mutate(Method = factor(
-    case_when(
-      name == "rt" ~ "WT (mitey)",
-      name == "Mean(R)" ~ "WT (EpiEstim)",
-      name == "rt_check1" ~ "Growth Rate"
-    ), levels = c("Growth Rate", "WT (mitey)", "WT (EpiEstim)")
-  )
-  )
+# References
 
-p_check <- ggplot(data = df_check,
-                  aes(x = onset_date, y = value, color = Method)) +
-  geom_line() +
-  geom_hline(yintercept = rt_check2, linetype = "dashed", col = "grey") +
-  scale_color_viridis_d(option = "D") +
-  labs(title = "Compare Methods To Estimate Rt",
-       x = "Onset Date",
-       y = "Daily Reproduction Number",
-       color = "Method") +
-  theme_minimal()
-p_check
-```
+<!-- # Checks  -->
+<!-- To sense-check estimates of the reproduction number from real data, there are a couple of strategies : -->
+<!--   1. Growth rate method: calculate $R_t = b(t+u)/b(t)$ where $b()$ is the incidence, t is the current time point, and u is the mean generation time (here, approximated with the mean serial interval). -->
+
+<!-- ```{r rt_growth_rate_method, eval=FALSE} -->
+<!--   # 1. Calculate b(t+u)/b(t) where b() is the incidence, t is the current time -->
+<!-- #    point, and u is the mean SI -->
+<!-- seq1 <- 1:(nrow(df_real)) -->
+<!-- seq2 <- seq1 + 123 -->
+<!-- rt_check1 <- data.frame( -->
+<!--   onset_date = (seq1 - 1) + min(df$onset_date), -->
+<!--   rt_check1 = df_real$inc[seq2]/df_real$inc[seq1] -->
+<!-- )  -->
+<!-- ``` -->
+
+<!--   2. Calculate the geometric mean of the time series of time-varying reproduction number. The geometric mean should be ~$R_0$. -->
+<!-- ```{r rt_geom_mean, eval=FALSE}   -->
+<!-- # 2. Calculate geometric mean -->
+<!-- # This should be approx R0 = 1.1 -->
+<!-- rt_check2 <- exp(mean(log(rt_estimates1$rt), na.rm = TRUE)) -->
+<!-- rt_check2 -->
+<!-- ```   -->
+
