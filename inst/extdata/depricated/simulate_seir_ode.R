@@ -33,9 +33,6 @@ simulate_seir_ode <- function(
     dS <- y['S'] * beta(t) * y['I'] / N
     dIR <- y['I'] / t_I
 
-    # Calculate R(t)
-    R_t <- beta(t) * y['S'] / N
-
     if(t_E > 0) {
       # SEIR model
       dEI <- y['E'] / t_E
@@ -45,8 +42,7 @@ simulate_seir_ode <- function(
         I = dEI - dIR,
         R = dIR,
         cum_dS = dS,
-        cum_dEI = dEI,
-        Rt = R_t
+        cum_dEI = dEI
       ), NULL)
     }
     else {
@@ -57,8 +53,7 @@ simulate_seir_ode <- function(
         I = dS - dIR,
         R = dIR,
         cum_dS = dS,
-        cum_dEI = dS,
-        Rt = R_t
+        cum_dEI = dS
       ), NULL)
     }
   }
@@ -69,8 +64,7 @@ simulate_seir_ode <- function(
     I = if(t_E > 0) I_init else E_init + I_init,
     R = 0,
     cum_dS = 0,
-    cum_dEI = 0,
-    Rt = NA
+    cum_dEI = 0
   )
 
   # automatic ode solver is lsoda, an "automatic stiff/non-stiff solver"
@@ -79,7 +73,8 @@ simulate_seir_ode <- function(
   rtn <- as.data.frame(results_ode) %>%
     mutate(dS = .data$cum_dS - lag(.data$cum_dS, 1)) %>%
     mutate(dEI = .data$cum_dEI - lag(.data$cum_dEI, 1)) %>%
-    mutate(dIR = .data$R - lag(.data$R, 1))
+    mutate(dIR = .data$R - lag(.data$R, 1)) %>%
+    mutate(Rt = beta(time) * S / N)
 
   return(rtn)
 }

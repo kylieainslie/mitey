@@ -142,10 +142,6 @@ integrate_Rt <- function(beta_t,
       beta_val <- beta_t(u)
       p_inf_val <- p_infectious(u - time)
       s_n_val <- SoverN(u)
-      # cat("u:", u, "\n",
-      #     "beta_t:", beta_val, "\n",
-      #     "p_infectious:", p_inf_val, "\n",
-      #     "SoverN:", s_n_val, "\n")
       beta_val * p_inf_val * s_n_val
     }
 
