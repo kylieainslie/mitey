@@ -23,7 +23,7 @@ The user must input the mean and standard deviation of the serial interval distr
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/code_validation_for_Vink_method.html">Code validation for Vink method</a></li>
-    <li><a class="dropdown-item" href="../articles/epidemiology_of_scabies.html">Estimation of epidemiological characteristics of scabies</a></li>
+    <li><a class="dropdown-item" href="../articles/epidemiology_of_scabies.html">Estimation of the epidemiological characteristics of scabies</a></li>
     <li><a class="dropdown-item" href="../articles/rt_estimation_validation.html">Validation of time-varying reproduction number estimation</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -38,7 +38,7 @@ The user must input the mean and standard deviation of the serial interval distr
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Estimate Time-varying Reproduction Number</h1>
-      <small class="dont-index">Source: <a href="https://github.com/kylieainslie/mitey/blob/main/R/r_estim_w_boot.R" class="external-link"><code>R/r_estim_w_boot.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/kylieainslie/mitey/blob/main/R/rt_estim_w_boot.R" class="external-link"><code>R/rt_estim_w_boot.R</code></a></small>
       <div class="d-none name"><code>rt_estim_w_boot.Rd</code></div>
     </div>
 
@@ -58,7 +58,7 @@ The user must input the mean and standard deviation of the serial interval distr
 
 
 <dl><dt id="arg-inc-dat">inc_dat<a class="anchor" aria-label="anchor" href="#arg-inc-dat"></a></dt>
-<dd><p>data frame; data frame with incidence data. The data frame should have two columns: inc (daily incidence) and date.</p></dd>
+<dd><p>data frame; data frame with incidence data. The data frame should have two columns: inc (daily incidence) and onset_date. Onset_date does not have to be in date format, it can be a column of days, such as c(1,2,3,4, ... ),</p></dd>
 
 
 <dt id="arg-mean-si">mean_si<a class="anchor" aria-label="anchor" href="#arg-mean-si"></a></dt>
