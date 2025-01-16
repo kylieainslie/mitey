@@ -34,6 +34,7 @@ Suggests:
     ggridges,
     glue,
     Hmisc,
+    ISOweek,
     knitr,
     nls2,
     officer,
