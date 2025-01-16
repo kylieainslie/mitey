@@ -45,7 +45,8 @@ Suggests:
     tidybayes,
     tidyverse,
     viridis,
-    zoo
+    zoo,
+    outbreaks
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Depends: 
