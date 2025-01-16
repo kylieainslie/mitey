@@ -134,7 +134,7 @@ summary(fitmcmc)
 plot(tt, Rtrue, type = "l", xlab = "Time", ylab = "R", ylim = c(0,4),
      lwd = 2)
 lines(tt, fitmcmc$RLPS$R[-(1:mean_si)], col = "red", lwd = 2)
-lines(tt, fitmcmc$RCori$`Mean(R)`, col = "green", lwd = 2)
+lines(tt, fitmcmc$RCori$`Mean(R)`[1:length(tt)], col = "green", lwd = 2)
 lines(tt, fitmcmc$RWT$`Mean(R)`[-1], col = "purple", lwd = 2)
 lines(tt, rt_WL_smooth[tt], col = "blue", lwd = 2)
 lines(tt, rt_WL_shift[tt], col = "blue", lty = 2, lwd = 2)
