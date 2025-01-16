@@ -22,7 +22,12 @@ rt_estim_w_boot <- function(inc_dat, mean_si, sd_si, dist_si = "normal",
                             n_bootstrap = 100){
 
   # uncount inc_dat, so that individual cases can be samples from
+  if(!is.integer(inc_dat$inc)){
+    warning("The inputted incidence data is not an integer. Incidence will be rounded to the nearest whole number. This may affect results.")
+  }
+
   inc_dat_uncount <- inc_dat %>%
+    mutate(inc = as.integer(round(.data$inc))) %>%
     uncount(.data$inc) %>%
     mutate(inc = 1)
 
