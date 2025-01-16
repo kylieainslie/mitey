@@ -2,6 +2,7 @@
 library(ggplot2)
 library(tidyr)
 library(dplyr)
+library(zoo)
 
 ### Generate Rt values that follow a sine wave
 
@@ -24,13 +25,100 @@ rt <- baseline + amplitude * sin(2 * pi * frequency * time + phase)
 rt_noisy <- rt + rnorm(length(rt), mean = 0, sd = noise_sd)
 rt_noisy <- pmax(rt_noisy, 0)  # Ensure R_t values are positive
 
+# use EpiLPS to create a fake dataset
+library(EpiLPS)
+
+# set seed
+set.seed(1234)
+
+# specify serial interval distribution
+si_spec <- Idist(mean = 8, sd = 5.66, dist = "gamma")
+plot(si_spec)
+
+# generate data
+datasim <- episim(si = si_spec$pvec, Rpattern = 5, endepi = 40, dist = "negbin", overdisp = 15, plotsim = TRUE)
+
 # Plot
-data <- data.frame(time = time, R_t = rt_noisy)
-ggplot(data, aes(x = time, y = R_t)) +
+t_vec <- seq(0, length(datasim$y)-1, by = 1)
+rt_true <- datasim$Rtrue(t_vec)
+data <- data.frame(time = t_vec, inc = datasim$y, Rt_True = rt_true) %>%
+  mutate(onset_date = as.Date("2024-01-01") + time)
+
+ggplot(data, aes(x = time, y = Rt_True)) +
   geom_line() +
-  labs(title = "Synthetic R_t Data", x = "Time", y = "R_t") +
+  labs(x = "Days", y = "R") +
   theme_minimal()
 
+# use mitey::rt_estim()
+library(devtools)
+load_all()
+
+rt_estimated <- rt_estim(
+  inc_dat = data,
+  mean_si = 8,
+  sd_si = 5.66,
+  dist_si = "gamma"
+  )
+
+data$Rt_Estimated <- rt_estimated$rt_adjusted
+
+data %>%
+  select(time, onset_date, inc, Rt_True, Rt_Estimated) %>%
+  pivot_longer(Rt_True:Rt_Estimated) %>%
+  rename(Quantity = name) %>%
+  ggplot(aes(x = time, y = value, color = Quantity)) +
+  geom_line() +
+  labs(x = "Days", y = "R") +
+  theme_minimal()
+
+# repeat with bootstrap to get confidence bounds
+rt_boot <- rt_estim_w_boot(
+  inc_dat = data,
+  mean_si = 8,
+  sd_si = 5.66,
+  dist_si = "gamma",
+  n_bootstrap = 100
+)
+
+data$Rt_Lower <- rt_boot$results$lower_rt_adjusted
+data$Rt_Upper <- rt_boot$results$upper_rt_adjusted
+
+# smooth Rt_Estimated
+data_smoothed <- data %>%
+  filter(!is.infinite(Rt_Estimated),
+         !is.na(Rt_Estimated),
+         !is.nan(Rt_Estimated),
+         Rt_Estimated < 20) %>%
+  mutate(
+    Rt_Estimated_Smoothed = rollmean(Rt_Estimated, k = 7, fill = NA, align = "center"),
+    Rt_Lower_Smoothed = rollmean(Rt_Lower, k = 7, fill = NA, align = "center"),
+    Rt_Upper_Smoothed = rollmean(Rt_Upper, k = 7, fill = NA, align = "center"),
+    )
+
+# shift Rt_Estimated
+data_shifted <- data %>%
+  mutate(Rt_Estimated_Shifted = lag(Rt_Estimated, n = 8),
+         Rt_Lower_Shifted = lag(Rt_Lower, n = 8),
+         Rt_Upper_Shifted = lag(Rt_Upper, n = 8)
+         )
+
+data_smoothed %>%
+  ggplot(aes(x = time)) +
+  # Add confidence bounds as ribbon
+  geom_ribbon(aes(ymin = Rt_Lower_Smoothed, ymax = Rt_Upper_Smoothed),
+              fill = "blue", alpha = 0.2) +
+  # Add shifted Rt_Estimated line
+  # geom_line(aes(y = Rt_Estimated, color = "Rt_Estimated"), linewidth = 1, linetype = "solid") +
+  # Add original Rt_Estimated line
+  geom_line(aes(y = Rt_Estimated_Smoothed, color = "Rt_Estimated_Smoothed"), linewidth = 1) +
+  # Add true Rt line
+  geom_line(aes(y = Rt_True, color = "Rt_True"), linewidth = 1) +
+  # Customize labels and theme
+  labs(x = "Days", y = "R", color = "Legend") +
+  scale_color_manual(values = c("Rt_True" = "red", "Rt_Estimated_Smoothed" = "blue"
+                                # , "Rt_Estimated" = "green"
+                                )) +
+  theme_minimal()
 
 ### Create symptom onset data using the above Rt values
 
