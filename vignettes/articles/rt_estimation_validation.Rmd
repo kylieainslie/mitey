@@ -192,7 +192,9 @@ r_plot <- ggplot(rt_estimated$results %>%
 # show Rt plot with epicurve
 gridExtra::grid.arrange(zika_epicurve, r_plot, nrow = 2, ncol = 1)
 ```
+
 ### Compare with EpiLPS and EpiEstim
+
 Below we compare the estimates using the Walling and Lipsitch method (WL) with those of `EpiLPS` and the Wallinga and Teunis method (WT) produced by `EpiEstim`. We see similar results and see the expected shif in the estimates of EpiLPS because it is estimating the instantaneous reproduction number. Additionally, it is important to note that the below WL estimates have not been smoothed.
 
 ```{r use_epilps, warning=FALSE}
