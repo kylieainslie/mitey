@@ -57,8 +57,15 @@
 <div class="page-header"><h1 id="the-mitey-package">The <code>mitey</code> package<a class="anchor" aria-label="anchor" href="#the-mitey-package"></a>
 </h1></div>
 <!-- badges: start -->
-
-<p>The <code>mitey</code> package is a lightweight package designed originally as a companion to the analyses presented by <a href="https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html">Ainsie et al. 2024</a> on scabies transmission. However, these methods are more widely applicable than in the context of scabies, thus the motivation behind creating the <code>mitey</code> package was twofold and also provides flexible, documented code for methods to estimate epidemiological quantities of interest.</p>
+<!-- [![R-CMD-check](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-check.yaml) -->
+<!--[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/your-package)](https://CRAN.R-project.org/package=your-package) -->
+<!-- [![codecov](https://codecov.io/gh/kylieainslie/mitey/branch/main/graph/badge.svg)](https://codecov.io/gh/kylieainslie/mitey) -->
+<!-- [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE) -->
+<!-- ![GitHub Stars](https://img.shields.io/github/stars/kylieainslie/mitey) -->
+<!-- [![DOI](https://zenodo.org/badge/DOI/<DOI>.svg)](https://doi.org/<DOI>)  -->
+<!--[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/mitey)](https://CRAN.R-project.org/package=mitey) -->
+<!-- badges: end -->
+<p>The <code>mitey</code> package is a lightweight package designed originally as a companion to the analyses presented by <a href="https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html">Ainslie et al. 2025</a> on scabies transmission. However, these methods are more widely applicable than in the context of scabies, thus the motivation behind creating the <code>mitey</code> package was twofold and also provides flexible, documented code for methods to estimate epidemiological quantities of interest.</p>
 <p>Currently, <code>mitey</code> includes methods to estimate a) the mean and standard deviation of the serial interval distribution using a maximum likelihood framework developed by <a href="https://doi.org/10.1093/aje/kwu209" class="external-link">Vink et al. 2014</a> and b) the time-varying reproduction number using the method developed by <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/" class="external-link">Walling and Lipsitch 2007</a>.</p>
 <div class="section level3">
 <h3 id="estimating-the-serial-interval">Estimating the serial interval<a class="anchor" aria-label="anchor" href="#estimating-the-serial-interval"></a>
@@ -70,19 +77,64 @@
 </h2>
 <ol style="list-style-type: decimal">
 <li><p>Install <a href="http://cran.r-project.org" class="external-link">R</a></p></li>
-<li><p>Install the development version of <code>mitey</code> from <a href="https://github.com/kylieainslie/mitey" class="external-link">GitHub</a>:</p></li>
+<li><p>Install the development version of mitey from <a href="https://github.com/kylieainslie/mitey" class="external-link">GitHub</a>:</p></li>
 </ol>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"kylieainslie/mitey"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="guide-and-vignettes">Guide and vignettes<a class="anchor" aria-label="anchor" href="#guide-and-vignettes"></a>
+<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
 </h2>
-<p>A quick start guide and detailed vignettes are still in development.</p>
-<p>Validation of the method used to estimate the mean and standard deviation of the serial interval proposed by <a href="https://doi.org/10.1093/aje/kwu209" class="external-link">Vink et al. 2014</a> can be found <a href="https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.html">here</a>.</p>
-<p>The manuscript pre-print that motivated the development of this package can be found <a href="https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html">here</a>.</p>
-<p>Validation of the method used to estimate the time-varying reproduction number proposed by <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/" class="external-link">Wallinga and Lipsitch 2007</a> can be found <a href="https://kylieainslie.github.io/mitey/articles/rt_estimation_validation.html">here</a>. <em>Note: this vignette is still under development, so is incomplete.</em></p>
+<ul>
+<li><p>The manuscript pre-print that motivated the development of this package can be found <a href="https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html">here</a>.</p></li>
+<li><p>Validation of the method used to estimate the mean and standard deviation of the serial interval proposed by <a href="https://doi.org/10.1093/aje/kwu209" class="external-link">Vink et al. 2014</a> can be found <a href="https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.html">here</a>.</p></li>
+<li><p>Validation of the method used to estimate the time-varying reproduction number proposed by <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/" class="external-link">Wallinga and Lipsitch 2007</a> can be found <a href="https://kylieainslie.github.io/mitey/articles/rt_estimation_validation.html">here</a>.</p></li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
+</h2>
+<p>Several data files are stored in the repo so that the results presented in <a href="https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html">Ainslie et al. 2025</a> are reproducible. Data files are stored in <code>inst/extdata/data/</code>. Below is a brief description of the different files.</p>
+<ul>
+<li>
+<code>si_data.rds</code>
+<ul>
+<li>Description: Data on date of symptom onset for scabies outbreaks described by Kaburi et al., Akunzirwe et al., Tjon-Kon-Fat et al., and Ariza et al. For all outbreaks except Kaburi et al. the raw data was not available, thus the date of symptom onset data had to be reconstructed using the epidemic curve provided in the manuscript. The original data from Kaburi et al. is also available in the <code>data</code> directory (<code>Kaburi_et_al_data_scabies.xlsx</code>).</li>
+<li>
+<em>Source</em>:
+<ul>
+<li>
+<a href="https://doi.org/10.1186/s12889-019-7085-6" class="external-link">Kaburi et al.</a>,</li>
+<li>
+<a href="https://doi.org/10.21203/rs.3.rs-3205380/v1" class="external-link">Akunzirwe et al.</a>,</li>
+<li><a href="https://doi.org/10.1371/journal.pntd.0009485" class="external-link">Tjon-Kon-Fat et al.</a></li>
+<li>
+<a href="https://doi.org/10.1007/s10096-012-1752-1" class="external-link">Ariza et al.</a>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<code>scabies_data_yearly.xlsx</code>
+<ul>
+<li>
+<em>Description:</em> Annual scabies incidence per 1000 people in the Netherlands from 2011-2023.</li>
+<li>
+<em>Source:</em> <a href="https://www.nivel.nl/nl/zorg-en-ziekte-in-cijfers" class="external-link">Nivel</a>
+</li>
+</ul>
+</li>
+<li>
+<code>scabies_data_consultation_weekly.xslx</code>
+<ul>
+<li>
+<em>Description:</em> Weekly numbers of persons consulting for scabies (per 100,000 people) from 2011 to 2023 in the Neltherlands as diagnosed by general practitioners (GPs). <em>Note:</em> Individuals in institutions (e.g., care homes, prisons) usually have their own health care provider and are generally not taken into account in GP registrations.</li>
+<li>
+<em>Source:</em> Nivel</li>
+</ul>
+</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
@@ -171,14 +223,7 @@ Figure 2. Fitted serial interval curves plotted over symptom onset data for simu
 </ul>
 </div>
 
-<div class="dev-status">
-<h2 data-toc-skip>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://codecov.io/gh/kylieainslie/mitey" class="external-link"><img src="https://codecov.io/gh/kylieainslie/mitey/branch/main/graph/badge.svg" alt="codecov"></a></li>
-<li><a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a></li>
-</ul>
-</div>
+
 
   </aside>
 </div>

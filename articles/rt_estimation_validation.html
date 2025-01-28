@@ -61,7 +61,7 @@
                         <h4 data-toc-skip class="author">Kylie
 Ainslie</h4>
             
-            <h4 data-toc-skip class="date">2025-01-17</h4>
+            <h4 data-toc-skip class="date">2025-01-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kylieainslie/mitey/blob/main/vignettes/articles/rt_estimation_validation.Rmd" class="external-link"><code>vignettes/articles/rt_estimation_validation.Rmd</code></a></small>
       <div class="d-none name"><code>rt_estimation_validation.Rmd</code></div>
@@ -212,7 +212,7 @@ estimated by <code>EpiEstim</code> (by specifying
 <span><span class="co">#&gt; Estimation of the reproduction number with Laplacian-P-splines </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------- </span></span>
 <span><span class="co">#&gt; Total number of days:          40 </span></span>
-<span><span class="co">#&gt; Routine time (seconds):        3.107 </span></span>
+<span><span class="co">#&gt; Routine time (seconds):        3.108 </span></span>
 <span><span class="co">#&gt; Method:                        MCMC (with Langevin diffusion) </span></span>
 <span><span class="co">#&gt; Hyperparam. optim method:      Nelder-Mead </span></span>
 <span><span class="co">#&gt; Hyperparam. optim convergence: TRUE </span></span>
@@ -297,14 +297,17 @@ is called <code>zika2015</code>.</p>
 <span></span>
 <span><span class="co"># show Rt plot with epicurve</span></span>
 <span><span class="fu">gridExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html" class="external-link">grid.arrange</a></span><span class="op">(</span><span class="va">zika_epicurve</span>, <span class="va">r_plot</span>, nrow <span class="op">=</span> <span class="fl">2</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="rt_estimation_validation_files/figure-html/plot-1.png" width="700">
-### Compare with EpiLPS and EpiEstim Below we compare the estimates
-using the Walling and Lipsitch method (WL) with those of
-<code>EpiLPS</code> and the Wallinga and Teunis method (WT) produced by
-<code>EpiEstim</code>. We see similar results and see the expected shif
-in the estimates of EpiLPS because it is estimating the instantaneous
-reproduction number. Additionally, it is important to note that the
-below WL estimates have not been smoothed.</p>
+<p><img src="rt_estimation_validation_files/figure-html/plot-1.png" width="700"></p>
+<div class="section level4">
+<h4 id="compare-with-epilps-and-epiestim">Compare with EpiLPS and EpiEstim<a class="anchor" aria-label="anchor" href="#compare-with-epilps-and-epiestim"></a>
+</h4>
+<p>Below we compare the estimates using the Walling and Lipsitch method
+(WL) with those of <code>EpiLPS</code> and the Wallinga and Teunis
+method (WT) produced by <code>EpiEstim</code>. We see similar results
+and see the expected shif in the estimates of EpiLPS because it is
+estimating the instantaneous reproduction number. Additionally, it is
+important to note that the below WL estimates have not been
+smoothed.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">si</span> <span class="op">&lt;-</span> <span class="fu">Idist</span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">7</span>, sd <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span>
 <span><span class="va">epifit</span> <span class="op">&lt;-</span> <span class="fu">estimR</span><span class="op">(</span><span class="va">zika2015</span><span class="op">$</span><span class="va">incidence</span>, dates <span class="op">=</span> <span class="va">zika2015</span><span class="op">$</span><span class="va">dates</span>, si <span class="op">=</span> <span class="va">si</span><span class="op">$</span><span class="va">pvec</span>, WTR <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -317,6 +320,7 @@ below WL estimates have not been smoothed.</p>
 <span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
 <span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span></code></pre></div>
 <p><img src="rt_estimation_validation_files/figure-html/use_epilps-1.png" width="700"></p>
+</div>
 </div>
 </div>
 <div class="section level2">
