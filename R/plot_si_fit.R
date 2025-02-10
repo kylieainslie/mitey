@@ -7,11 +7,13 @@
 #' @param dist string; assumed distribution of the serial interval; takes "normal" or "gamma";
 #' defaults to "normal".
 #' @param scaling_factor numeric; scales the density to better match the height of the histogram; defaults to 1.
+#' @param x_scale numeric; scaling factor to control where the mean value is labelled along the x-axis. The mean value is positioned at `mean + (max(dat) * x_scale)`.
 #' @return ggplot object
 #' @export
 #' @import ggplot2
 #'
-plot_si_fit <- function(dat, mean, sd, weights, dist="normal", scaling_factor = 1){
+plot_si_fit <- function(dat, mean, sd, weights, dist="normal", scaling_factor = 1,
+                        x_scale = 0.04){
 
   if (dist == "gamma"){
 
@@ -40,7 +42,12 @@ plot_si_fit <- function(dat, mean, sd, weights, dist="normal", scaling_factor = 
                                           mu = mean, sigma = sd),
                     color = "red", linetype = "solid", linewidth = 1) +
       labs(x = "Index-case to case interval (days)", y = "Density") +
-      theme_minimal()
+      theme_minimal() +
+      # Add dashed vertical line at mean
+      geom_vline(xintercept = mean, linetype = "dashed", color = "black") +
+      # Annotate the mean value on the x-axis
+      annotate("text", x = mean + (max(dat) * x_scale), y = min(density(dat)$y) - 0.001,
+               label = paste0(round(mean, 1)), size = 3, color = "black", vjust = 1)
   }
 
   return(p)
