@@ -4,7 +4,15 @@
 \alias{plot_si_fit}
 \title{Plot the epidemic curve and fitted serial interval distribution}
 \usage{
-plot_si_fit(dat, mean, sd, weights, dist = "normal", scaling_factor = 1)
+plot_si_fit(
+  dat,
+  mean,
+  sd,
+  weights,
+  dist = "normal",
+  scaling_factor = 1,
+  x_scale = 0.04
+)
 }
 \arguments{
 \item{dat}{data frame containing a variable x with index case to case (ICC) intervals}
@@ -19,6 +27,8 @@ plot_si_fit(dat, mean, sd, weights, dist = "normal", scaling_factor = 1)
 defaults to "normal".}
 
 \item{scaling_factor}{numeric; scales the density to better match the height of the histogram; defaults to 1.}
+
+\item{x_scale}{numeric; scaling factor to control where the mean value is labelled along the x-axis. The mean value is positioned at \code{mean + (max(dat) * x_scale)}.}
 }
 \value{
 ggplot object
