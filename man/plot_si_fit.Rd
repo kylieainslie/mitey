@@ -4,7 +4,7 @@
 \alias{plot_si_fit}
 \title{Plot the epidemic curve and fitted serial interval distribution}
 \usage{
-plot_si_fit(dat, mean, sd, weights, dist = "normal")
+plot_si_fit(dat, mean, sd, weights, dist = "normal", scaling_factor = 1)
 }
 \arguments{
 \item{dat}{data frame containing a variable x with index case to case (ICC) intervals}
@@ -15,7 +15,10 @@ plot_si_fit(dat, mean, sd, weights, dist = "normal")
 
 \item{weights}{numeric vector of weights based on transmission route}
 
-\item{dist}{string; assumed distribution of the serial interval; takes "normal" or "gamma"; defaults to "normal".}
+\item{dist}{string; assumed distribution of the serial interval; takes "normal" or "gamma";
+defaults to "normal".}
+
+\item{scaling_factor}{numeric; scales the density to better match the height of the histogram; defaults to 1.}
 }
 \value{
 ggplot object
