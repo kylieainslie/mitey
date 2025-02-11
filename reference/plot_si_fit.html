@@ -44,7 +44,15 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_si_fit</span><span class="op">(</span><span class="va">dat</span>, <span class="va">mean</span>, <span class="va">sd</span>, <span class="va">weights</span>, dist <span class="op">=</span> <span class="st">"normal"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_si_fit</span><span class="op">(</span></span>
+<span>  <span class="va">dat</span>,</span>
+<span>  <span class="va">mean</span>,</span>
+<span>  <span class="va">sd</span>,</span>
+<span>  <span class="va">weights</span>,</span>
+<span>  dist <span class="op">=</span> <span class="st">"normal"</span>,</span>
+<span>  scaling_factor <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  x_scale <span class="op">=</span> <span class="fl">0.04</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -68,7 +76,16 @@
 
 
 <dt id="arg-dist">dist<a class="anchor" aria-label="anchor" href="#arg-dist"></a></dt>
-<dd><p>string; assumed distribution of the serial interval; takes "normal" or "gamma"; defaults to "normal".</p></dd>
+<dd><p>string; assumed distribution of the serial interval; takes "normal" or "gamma";
+defaults to "normal".</p></dd>
+
+
+<dt id="arg-scaling-factor">scaling_factor<a class="anchor" aria-label="anchor" href="#arg-scaling-factor"></a></dt>
+<dd><p>numeric; scales the density to better match the height of the histogram; defaults to 1.</p></dd>
+
+
+<dt id="arg-x-scale">x_scale<a class="anchor" aria-label="anchor" href="#arg-x-scale"></a></dt>
+<dd><p>numeric; scaling factor to control where the mean value is labelled along the x-axis. The mean value is positioned at <code>mean + (max(dat) * x_scale)</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
