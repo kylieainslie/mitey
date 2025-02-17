@@ -25,7 +25,7 @@ devtools::install_github("kylieainslie/mitey")
 library(mitey)
 library(fdrtool)
 
-# required for this analyses
+# required for this article
 library(dplyr)
 library(tidyr)
 library(purrr)
@@ -33,6 +33,7 @@ library(gt)
 library(ggplot2)
 library(brms)
 library(openxlsx)
+library(lubridate)
 library(broom)
 library(viridis)
 library(cowplot)
@@ -44,6 +45,7 @@ library(stringr)
 library(forcats)
 library(Hmisc)
 library(ISOweek)
+library(here)
 ```
 
 # Analyses
@@ -291,7 +293,8 @@ We estimated the annual growth rate of scabies cases by fitting a generalized li
 ```{r, growth_rate_code, echo = TRUE, message=FALSE, warning=FALSE, results='hide'}
 
 # read in data set
-file_path <- "../inst/extdata/data/scabies_data_incidence_yearly.xlsx"
+file_path <- system.file("extdata", "data/scabies_data_incidence_yearly.xlsx", 
+                         package = "mitey")
 scabies_inc_total <- read.xlsx(file_path, sheet = "total") 
 
 # some data wrangling to make the column names nicer
@@ -447,8 +450,10 @@ To estimate time-varying case reproduction number, we first randomly assigned ea
 ```{r epidemic_curve, echo=TRUE, message=FALSE, warning=FALSE, fig.cap="Figure 4. Number of scabies consultations per week per 100,000 people in the Netherlands by date of consultation.", out.width="100%"}
 
 # read in consultations data 
-nivel_wkly_data <-
-  read.xlsx("../inst/extdata/data/scabies_data_consultations_weekly.xlsx") %>%
+file_path2 <- system.file("extdata", "data/scabies_data_consultations_weekly.xlsx", 
+                          package = "mitey")
+
+nivel_wkly_data <- read.xlsx(file_path2) %>%
   # fix/translate variable names
   rename(diagnosis_code = `Diagnose.(ICPC)`,
          year = `ISO-jaar`,
@@ -500,7 +505,9 @@ Using the constructed daily time series of date of diagnosis, we applied the met
 ```{r rt_plot, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 5. Time-varying case reproduction number of scabies transmission. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August 31; Autumn = September 1 – November 31. Shaded region represents the 95% confidence envelope. Black horizontal dashed line indicates R = 1.", out.width="100%"}
 
 # read in data
-rt_df_for_plot <- readRDS("data/rt_df_for_plot.rds")
+file_path3 <-  here("vignettes", "data", "rt_df_for_plot.rds")
+
+rt_df_for_plot <- readRDS(file_path3)
 
 # plot rt_adjusted with confidence bounds (and season bars)
 # Breaks for background rectangles
@@ -716,7 +723,10 @@ results_tab <- data.frame(
   Prior = c("N(100, 50)", "N(50, 75)", "N(150, 50)"),
   Mean = c(123.24, 120.87, 127.15),
   SD = c(31.55, 32.22, 31.73)
-) %>%
+) 
+
+# convert to gt table
+results_gt <- results_tab %>%
   gt() %>%
   cols_label(
     Prior = "Prior",
