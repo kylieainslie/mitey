@@ -36,8 +36,7 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 
 ```{r setup, echo=FALSE, include = FALSE, results='hide'}
 library(bookdown)
-library(flextable)
-library(ftExtra)
+library(gt)
 library(openxlsx)
 library(tidyverse)
 library(broom)
@@ -356,25 +355,33 @@ We performed a sensitivity analysis in which we estimated the mean and standard 
 ```{r si_results_tab, echo=FALSE, tab.cap="Table 1. Estimated mean and standard deviation (SD) of serial interval distribution, in days, for each study."}
 df_si <- result_norm_wide %>%
   select(study, mean, sd) %>%
-  filter(study %in% c("Akunzirwe et al.", "Ariza et al.", "Kaburi et al.", 
-                      "Tjon-Kon-Fat et al")) %>%
   mutate(mean = round(mean, 2),
          sd = round(sd, 2))
 
-ft_si <- flextable(df_si) %>%
-  set_header_labels(
-    study = "Study", 
-    mean = "Mean", 
+si_table <- df_si %>%
+  gt() %>%
+  cols_label(
+    study = "Study",
+    mean = "Mean",
     sd = "Standard Deviation"
   ) %>%
-  autofit(add_w = 0.2) %>%
-  bold(part = "header") %>%
-  border_remove() %>%
-  border(i = 1, border.top = officer::fp_border(width = 1), part = "header") %>%
-  border(i = 1, border.bottom = officer::fp_border(width = 1), part = "header") %>%
-  border(i = nrow(df_si), border.bottom = officer::fp_border(width = 1), part = "body") 
+  tab_style(
+    style = cell_borders(sides = "top", weight = px(1)),
+    locations = cells_column_labels(everything())
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "bottom", weight = px(1)),
+    locations = cells_column_labels(everything())
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "bottom", weight = px(1)),
+    locations = cells_body(rows = nrow(df_si))
+  ) %>%
+  tab_options(
+    table.width = pct(100)
+  )
 
-ft_si
+si_table
 ```
 
 ```{r si_dist_plot, echo=FALSE, eval=TRUE, fig.cap="Figure 1. Model fit of the serial interval to index case–to–case (ICC) interval data. Each histogram shows the distribution of observed ICC intervals for scabies outbreaks described in A) Akunzirwe et al., B) Ariza et al., C) Kaburi et al., D) Tjon-Kon-Fat et al. The overlayed red line shows the estimated mixture density for each infection. The dashed vertical line indicates the mean serial interval. The value of the mean serial interval is shown to the right of the dashed line along the x-axis.", fig.id=TRUE}
@@ -412,7 +419,7 @@ labeled_plots <- lapply(seq_along(plots), function(i) {
 
 # Combine plots into a multi-pane figure
 final_plot <- plot_grid(
-  plotlist = labeled_plots[-c(3,5)], # exclude DPBH and Larrosa
+  plotlist = labeled_plots,
   labels = "AUTO",      # Automatically adds labels (A, B, C, etc.)
   label_size = 14,      # Size of the labels
   ncol = 2              # Number of columns; adjust as needed
@@ -699,7 +706,7 @@ rmarkdown::render("vignettes/epidemiology_of_scabies.Rmd", output_format = "word
 
 ### Serial Interval
 
-We performed a sensitivity analysis on the underlying distribution of serial interval. In the main analysis we assumed the serial interval was normally distributed. In the sensitivity analysis we assumed the serial interval was Gamma distributed. The estimated mean and standard deviation of serial interval for each study is shown in Table S1 <!--\@ref(tab:si_sa)-->. For all studies, except Larrosa et al., the mean is serial interval is lower when estimated assuming an underlying Gamma distribution. When assuming an underlying Gamma distribution, the standard deviations were higher than when assuming an underlying Normal distribution. We see from Figure S1 <!--\@ref(fig:gam_si_plots)--> that the Gamma distribution does not fit the data well. It is possible that the Gamma distribution fits scabies data poorly due to the long incubation period of scabies and the possibility of negative serial intervals.
+We performed a sensitivity analysis on the underlying distribution of serial interval. In the main analysis we assumed the serial interval was normally distributed. In the sensitivity analysis we assumed the serial interval was Gamma distributed. The estimated mean and standard deviation of serial interval for each study is shown in Table S1 <!--\@ref(tab:si_sa)-->. When assuming an underlying Gamma distribution, the standard deviations were higher than when assuming an underlying Normal distribution. We see from Figure S1 <!--\@ref(fig:gam_si_plots)--> that the Gamma distribution does not fit the data well. It is possible that the Gamma distribution fits scabies data poorly due to the long incubation period of scabies and the possibility of negative serial intervals.
 
 ```{r, si_results_gam, echo=FALSE, eval=TRUE}
 # read in data
@@ -748,21 +755,44 @@ si_tab_sa <- left_join(result_norm_wide[,c(1:3)], result_gam_wide[,c(1:3)], by =
   filter(study %in% c("Kaburi et al.", "Ariza et al.", "Akunzirwe et al.",
                       "Tjon-Kon-Fat et al"))
 
-tab_si_gam <- flextable(si_tab_sa) %>%
-  add_header_row(values = c("Study", "Normal", "Gamma"), colwidths = c(1,2,2)) %>%
-  set_header_labels(study = "", mean.x = "Mean", sd.x = "SD", mean.y = "Mean", sd.y = "SD") %>%
-  autofit(add_w = 0.2) %>%
-  bold(part = "header") %>%
-  border_remove() %>%
-  border(i = 1, border.top = officer::fp_border(width = 1), part = "header") %>%
-  border(i = 1, border.bottom = officer::fp_border(width = 1), part = "header") %>%
-  border(i = dim(result_gam_wide)[1], border.bottom = officer::fp_border(width = 1), part = "body") %>%
-  add_footer_lines("SD = standard deviation")
+tab_si_gam <- si_tab_sa %>%
+  gt() %>%
+  tab_spanner(
+    label = "Normal",
+    columns = c(mean.x, sd.x)
+  ) %>%
+  tab_spanner(
+    label = "Gamma",
+    columns = c(mean.y, sd.y)
+  ) %>%
+  cols_label(
+    study = "Study",
+    mean.x = "Mean",
+    sd.x = "SD",
+    mean.y = "Mean",
+    sd.y = "SD"
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "top", weight = px(1)),
+    locations = cells_column_labels(everything())
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "bottom", weight = px(1)),
+    locations = cells_column_labels(everything())
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "bottom", weight = px(1)),
+    locations = cells_body(rows = nrow(si_tab_sa))
+  ) %>%
+  tab_footnote(
+    footnote = "SD = standard deviation"
+  ) %>%
+  tab_options(
+    table.width = pct(100)
+  )
 
-set_caption(tab_si_gam, 
-  caption = "Table S1. Estimated mean and standard deviation of serial interval from different studies assuming a Normal distribution or Gamma distribution.", 
-  style = "Table Caption", 
-  autonum = run_autonum(seq_id = "tab", bkm = "tab_si_sa"))
+attr(tab_si_gam, "caption") <- "Table S1. Estimated mean and standard deviation of serial interval from different studies assuming a Normal distribution or Gamma distribution."
+
 ```
 
 ```{r, gam_si_plots, echo=FALSE, warning=FALSE, message=FALSE, fig.align='center', fig.cap="Figure S1. Epidemic curves and estimated serial interval distributions from four scabies outbreaks. Red line indicates estimated serial interval density assuming an underlying gamma distribution.", fig.id=TRUE}
@@ -856,13 +886,27 @@ results_tab <- data.frame(
   Mean = c(123.24, 120.87, 127.15),
   SD = c(31.55, 32.22, 31.73)
 ) %>%
-  flextable() %>%
-  autofit(add_w = 0.2) %>%
-  bold(part = "header") %>%
-  border_remove() %>%
-  border(i = 1, border.top = officer::fp_border(width = 1), part = "header") %>%
-  border(i = 1, border.bottom = officer::fp_border(width = 1), part = "header") %>%
-  border(i = 3, border.bottom = officer::fp_border(width = 1), part = "body") 
+  gt() %>%
+  cols_label(
+    Prior = "Prior",
+    Mean = "Mean",
+    SD = "SD"
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "top", weight = px(1)),
+    locations = cells_column_labels(everything())
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "bottom", weight = px(1)),
+    locations = cells_column_labels(everything())
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "bottom", weight = px(1)),
+    locations = cells_body(rows = nrow(results_tab))
+  ) %>%
+  tab_options(
+    table.width = pct(100)
+  )
 
 results_tab
 ```
