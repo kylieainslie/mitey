@@ -1,0 +1,816 @@
+---
+title: "Reproduce Results from Ainslie et al."
+author: "Kylie Ainslie"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width=7, 
+  fig.height=4
+)
+```
+
+# Introduction
+This article provides the code necessary to reproduce the results from [Ainslie et al. 2025](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html). Briefly, the article demonstrates how key epidemiological characteristics of scabies were estimated. Specifically, the article shows how to estimate 1) the serial interval using a method developed by [Vink et al.](https://doi.org/10.1093/aje/kwu209) by applying `mitey::si_estim()` to time series of symptom onset date data from scabies outbreaks; 2) the  growth rate from annual scabies incidence from 2011 to 2023 in the Netherlands; 3) the basic reproduction number; and 4)  time-varying reproduction number using a method developed by [Wallinga and Lipsitch](https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/) by applying `mitey::rt_estim()` to data on the number of scabies consultations each week in the Netherlands from 2011 to 2023. To our knowledge, this is the first study to estimate these quantities for scabies; however, the methods demonstrated here can be applied data sources describing the spread of other infectious diseases.
+
+# Setup
+```{r setup, echo=TRUE, include = FALSE, results='hide'}
+
+# required to run mitey
+devtools::install_github("kylieainslie/mitey")
+library(mitey)
+library(fdrtool)
+
+# required for this analyses
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(gt)
+library(ggplot2)
+library(brms)
+library(openxlsx)
+library(broom)
+library(viridis)
+library(cowplot)
+library(tidybayes)
+library(ggridges)
+library(glue)
+library(zoo)
+library(stringr)
+library(forcats)
+library(Hmisc)
+library(ISOweek)
+```
+
+# Analyses
+
+## Serial Interval
+
+### Estimate mean and standard deviation
+We use data on the dates of symptom onset for scabies cases from four different
+studies [@ariza2013; @kaburi2019; @tjon-kon-fat2021; @akunzirwe2023] of scabies outbreaks which are located in `vignettes/data/si_data.rds`. We apply the method proposed by Vink et al. [@vink2014] to estimate the mean and standard deviation of the serial interval distribution. The method requires the specification of the underlying serial interval distribution, either Gaussian (Normal) or Gamma. Here, we assumed that serial interval distributions for scabies can be approximated by a Normal distribution.
+
+```{r, si_analysis, echo=TRUE}
+# read in data
+si_data <- readRDS("../data/si_data.rds")
+
+# use method from Vink et al. to estimate SI for each study
+# assume a Normal distribution, then do some wrangling
+result_norm <- si_data %>%
+  select(icc_interval, study) %>%
+  group_by(study) %>%
+  summarise(result = list(si_estim(icc_interval))) %>%
+  mutate(
+    mean = map_dbl(result, "mean"),
+    sd = map_dbl(result, "sd"),
+    wts = map(result, "wts")  # Store wts as a list-column
+  ) %>%
+  select(-result) %>%
+  unnest(wts) %>% # Unnest the wts column if needed %>%
+  pivot_longer(
+    cols = c(mean, sd, wts),
+    names_to = "statistic",
+    values_to = "value"
+  ) %>%
+  group_by(study, statistic) %>%
+  mutate(
+    occurrence = row_number(),
+    statistic = if_else(statistic == "wts", paste0("weight_", occurrence), statistic)
+  ) %>%
+  filter(statistic != "mean" | occurrence == 1) %>%
+  filter(statistic != "sd" | occurrence == 1) %>%
+  select(-occurrence) %>%
+  ungroup()
+
+# Reshape results from long to wide format
+result_norm_wide <- result_norm %>%
+  pivot_wider(
+    names_from = statistic,
+    values_from = value
+  )
+
+```
+
+We summarise the results in a Table 1.
+```{r si_results_tab, echo=FALSE, tab.cap="Table 1. Estimated mean and standard deviation (SD) of serial interval distribution, in days, for each study."}
+df_si <- result_norm_wide %>%
+  select(study, mean, sd) %>%
+  mutate(mean = round(mean, 2),
+         sd = round(sd, 2))
+
+# use gt to make nice table
+si_table <- df_si %>%
+  gt() %>%
+  cols_label(
+    study = "Study",
+    mean = "Mean",
+    sd = "Standard Deviation"
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "top", weight = px(1)),
+    locations = cells_column_labels(everything())
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "bottom", weight = px(1)),
+    locations = cells_column_labels(everything())
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "bottom", weight = px(1)),
+    locations = cells_body(rows = nrow(df_si))
+  ) %>%
+  tab_options(
+    table.width = pct(100)
+  )
+
+si_table
+```
+
+Using `mitey::plot_si_fit()`, we can use the outputs of `si_estim` to plot the fitted mixture density over the symptom onset data. 
+
+```{r si_dist_plot, echo=TRUE, eval=TRUE, fig.cap="Figure 1. Model fit of the serial interval to index case–to–case (ICC) interval data. Each histogram shows the distribution of observed ICC intervals for scabies outbreaks described in A) Akunzirwe et al., B) Ariza et al., C) Kaburi et al., D) Tjon-Kon-Fat et al. The overlayed red line shows the estimated mixture density for each infection. The dashed vertical line indicates the mean serial interval. The value of the mean serial interval is shown to the right of the dashed line along the x-axis.", fig.id=TRUE}
+
+#knitr::include_graphics("figures/epidemic_curve_density_plot.png")
+# merge si_data and result_norm_wide for plotting
+df_merged <- si_data %>%
+  select(study, icc_interval) %>%
+  left_join(result_norm_wide, by = "study", relationship = "many-to-many")
+
+# Apply the plot_si_fit function by study
+plots <- df_merged %>%
+  group_by(study) %>%
+  group_map(~ plot_si_fit(
+    dat = .x$icc_interval,
+    mean = .x$mean[1],
+    sd = .x$sd[1],
+    weights = c(.x$weight_1[1], .x$weight_2[1] + .x$weight_3[1],
+                .x$weight_4[1] + .x$weight_5[1], .x$weight_6[1] + .x$weight_7[1]),
+    dist = "normal",
+    scaling_factor = 0.25
+  ))
+
+# Annotate plots with study names and labels
+# Find the order of the groups
+group_order <- df_merged %>%
+  group_by(study) %>%
+  group_keys()
+
+labeled_plots <- lapply(seq_along(plots), function(i) {
+  plots[[i]] +
+    ggtitle(group_order[i,1]) +            # Add study names as titles
+    theme(plot.title = element_text(hjust = 0.5))  # Center the title
+})
+
+# Combine plots into a multi-pane figure
+final_plot <- plot_grid(
+  plotlist = labeled_plots,
+  labels = "AUTO",      # Automatically adds labels (A, B, C, etc.)
+  label_size = 14,      # Size of the labels
+  ncol = 2              # Number of columns; adjust as needed
+)
+
+# Display the final combined plot
+print(final_plot)
+```
+
+
+### Meta-analysis
+We used the `brms` package in R [@burkner2017] to estimate the pooled mean serial interval. We used a Bayesian hierarchical random-effects model in which we assume that there is a typical distribution for serial intervals, from which an outbreak-specific mean serial interval is sampled [@harrer]. We specified the prior distribution for the pooled mean as a normal distribution with a mean of 100 days, based on Mellanby’s reports on parasite rate and a standard deviation of 50 days to make sure the prior is not very informative. We used a Cauchy(0,1) distribution for the between-study heterogeneity.
+
+```{r, meta_analysis, echo=TRUE, message=FALSE, results='hide', warning=FALSE}
+# merge si_data and result_norm_wide for plotting
+df_merged <- si_data %>%
+  select(study, icc_interval) %>%
+  left_join(result_norm_wide, by = "study", relationship = "many-to-many")
+
+# Perform a Bayesian meta-analysis
+df_ma <- df_merged %>%
+  group_by(study) %>%
+  mutate(n = n()) %>%
+  slice(1) %>%
+  ungroup() %>%
+  mutate(se = sd/sqrt(n)) %>%
+  select(study, n, mean, sd, se)
+
+# we will perform a Bayesian meta-analysis using the {brms} package
+# specify priors
+priors <- c(prior(normal(100,50), class = Intercept),
+            prior(cauchy(0,1), class = sd))
+
+# Fit a random effects model
+m.brm <- brm(
+  mean | se(se) ~ 1 + (1 | study),
+  data = df_ma,
+  prior = priors,
+  iter = 8000, 
+  warmup = 4000,
+  control = list(adapt_delta = 0.999, max_treedepth = 20) 
+)
+```
+
+We can visualise the results using a forest plot. 
+
+```{r forest_plot, echo = TRUE, eval = TRUE, fig.cap="Figure 2. Forest plot of the estimated mean serial interval (in days) for individual studies and the pooled effect. The posterior distributions for each study are shown as density ridges, with the pooled effect displayed at the bottom. Black points and horizontal lines represent the posterior mean and corresponding 95% credible intervals for each study and the pooled estimate. The solid vertical gray line indicates the pooled effect estimate, while the dashed gray lines represent its 95% credible interval.", warning=FALSE, message=FALSE}
+# Create forest plot with posteriors
+
+# get posterior draws from each study
+study.draws <- spread_draws(m.brm, r_study[study,], b_Intercept) %>%
+  mutate(b_Intercept = r_study + b_Intercept)
+
+# get pooled posterior draws
+pooled.effect.draws <- spread_draws(m.brm, b_Intercept) %>%
+  mutate(study = "Pooled Effect")
+
+# combine posterior draws from each study and pooled
+forest.data <- bind_rows(study.draws,
+                         pooled.effect.draws) %>%
+  ungroup() %>%
+  mutate(study = str_replace_all(study, "[.]", " ")) %>%
+  mutate(study = reorder(study, b_Intercept))
+
+# calculate mean and credible intervals
+forest.data.summary <- group_by(forest.data, study) %>%
+  mean_qi(b_Intercept)
+
+# plot
+forest_plot <- ggplot(aes(b_Intercept,
+           relevel(study, "Pooled Effect",
+                   after = Inf)),
+       data = forest.data) +
+
+  # Add vertical lines for pooled effect and CI
+  geom_vline(xintercept = fixef(m.brm)[1, 1],
+             color = "grey", linewidth = 1) +
+  geom_vline(xintercept = fixef(m.brm)[1, 3:4],
+             color = "grey", linetype = 2) +
+  #geom_vline(xintercept = 0, color = "black",
+  #           size = 1) +
+
+  # Add densities
+  geom_density_ridges(fill = "blue",
+                      rel_min_height = 0.01,
+                      col = NA, scale = 1,
+                      alpha = 0.8) +
+
+  geom_pointinterval(aes(y = study,
+                         x = b_Intercept,
+                         xmin = .lower,
+                         xmax = .upper),
+                     data = forest.data.summary,
+                     size = 1,
+                     orientation = "horizontal") +
+
+  # Add text and labels
+  # geom_text(data = mutate_if(forest.data.summary,
+  #                            is.numeric, round, 2),
+  #           aes(label = glue("{b_Intercept} [{.lower}, {.upper}]"),
+  #               x = Inf), hjust = "inward") +
+  labs(x = "Mean Serial Interval (days)", # summary measure
+       y = element_blank()) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_blank(),   # Remove major grid lines
+    panel.grid.minor = element_blank(),   # Remove minor grid lines
+    axis.line = element_line(color = "black", linewidth = 0.5), # Add axis lines
+    axis.ticks = element_line(color = "black"), # Add axis ticks
+    axis.title = element_text(size = 12, face = "bold"), # Customize axis titles
+    axis.text = element_text(size = 10) # Customize axis text
+    )
+
+print(forest_plot)
+```
+
+## Growth Rate and Basic Reproduction Number ($R_0$)
+
+### Growth Rate
+We estimated the annual growth rate of scabies cases by fitting a generalized linear model (GLM) with a log link and a quasipoisson family to the annual cumulative incidence of scabies diagnoses per 1000 people from 2011 to 2023 in the Netherlands [@nivel]. This approach accounts for the overdispersion commonly observed in count data and allows for non-integer values in the data. The GLM with a log link assumes an exponential growth model, where the logarithm of the expected count of scabies cases is linearly related to time and assumes quasipoisson distributed errors. 
+
+```{r, growth_rate_code, echo = TRUE, message=FALSE, warning=FALSE, results='hide'}
+
+# read in data set
+file_path <- "../inst/extdata/data/scabies_data_incidence_yearly.xlsx"
+scabies_inc_total <- read.xlsx(file_path, sheet = "total") 
+
+# some data wrangling to make the column names nicer
+scabies_inc_total <- scabies_inc_total %>%
+  rename(inc = `Inc.per.1.000`) %>%
+  mutate(cases = as.numeric(inc),
+         time = Year) %>%
+  select("time", "cases")
+
+scabies_inc_total <- scabies_inc_total %>%
+  filter(!is.na(cases) & !is.infinite(cases) & !is.na(time) & !is.infinite(time))
+
+# Fit an exponential model with Poisson errors
+poisson_model <- glm(cases ~ time, 
+                     family = quasipoisson(link = "log"), 
+                     data = scabies_inc_total)
+
+# Calculate 95% confidence intervals for the model parameters
+ci_coeff <- confint(poisson_model)
+
+## Fit to the original data ##
+
+# Calculate the fitted values on the linear scale (log scale)
+fitted_values_log <- predict(poisson_model, newdata = scabies_inc_total, type = "link")
+
+# Get the standard errors of the fitted values
+se_fitted_log <- predict(poisson_model, newdata = scabies_inc_total, type = "link", se.fit = TRUE)$se.fit
+
+# Get the dispersion parameter (phi) from the quasipoisson model
+phi <- summary(poisson_model)$dispersion
+
+# Adjust the standard errors by the dispersion parameter
+se_fitted_log_adjusted <- se_fitted_log * sqrt(phi)
+
+# Calculate the confidence intervals for the fitted values on the log scale
+alpha <- 0.05
+z_value <- qnorm(1 - alpha / 2)  # Z-value for 95% CI
+
+lower_log <- fitted_values_log - z_value * se_fitted_log_adjusted
+upper_log <- fitted_values_log + z_value * se_fitted_log_adjusted
+
+# Add these confidence intervals to the data frame
+scabies_inc_total$fitted <- exp(fitted_values_log)
+scabies_inc_total$lower_fitted <- exp(lower_log)
+scabies_inc_total$upper_fitted <- exp(upper_log)
+```
+
+Using the fitted quasipoisson model, we determined the projected incidence of scabies per 1000 people until 2033, assuming no interventions are implemented and that the growth rate remains constant. We calculated 95% prediction intervals for the predicted incidence using standard error values adjusted to takes into account the dispersion parameter derived from the model, ensuring that our estimates appropriately reflect the uncertainty in the predictions.
+
+```{r extrapolate, echo=TRUE}
+## Extrapolate to future time ##
+future_time <- seq(max(scabies_inc_total$time) + 1, 
+                   max(scabies_inc_total$time) + 10, by = 1)
+
+predicted_model <- predict(poisson_model, 
+                            newdata = data.frame(time = future_time), 
+                            type = "response", 
+                            se.fit = TRUE)
+
+# Extract predicted values and standard errors
+predicted_values <- predicted_model$fit
+standard_errors <- predicted_model$se.fit
+
+# Calculate confidence intervals using the dispersion parameter
+lower_ci <- predicted_values * exp(-z_value * standard_errors * sqrt(phi) / predicted_values)
+upper_ci <- predicted_values * exp(z_value * standard_errors * sqrt(phi) / predicted_values)
+
+# Create a data frame to hold the results
+results <- data.frame(
+  time = future_time,
+  fitted = predicted_values,
+  lower = lower_ci,
+  upper = upper_ci,
+  type = "Extrapolated Data"
+)
+
+# Combine original and extrapolated data for plotting
+scabies_plot_df <- bind_rows(
+  scabies_inc_total %>% 
+    mutate(type = "Original Data", lower = lower_fitted, upper = upper_fitted),
+  results
+) %>%
+  select( -lower_fitted, -upper_fitted)
+row.names(scabies_plot_df) <- NULL
+
+head(scabies_plot_df)
+```
+
+
+```{r growth_rate_fig, echo=TRUE, message = FALSE, warning = FALSE, fig.align='center', fig.cap="Figure 3. Annual scabies incidence per 1000 people from 2011 to 2023 (points) and then projected scabies indcidence per 1000 people for 2024 to 2033 (line) using an exponential growth model with annual growth rate of 0.25 (95% CI: 0.20, 0.30) cases per 1000 people. Shaded regions represent 95% prediction intervals for projected scabies incidence. The y-axis is displayed on the log-scale and represents the natural log of scabies incidence per 1000 people.", out.width="100%"}
+
+# Define the custom palette
+custom_palette <- c("Original Data" = "#440154",
+                    "Extrapolated Data" = "#21908C")
+#custom_palette <- c("#21908C", "#440154") # Custom colors
+
+ggplot(data = scabies_plot_df, aes(x = time, y = log(cases), color = type, fill = type)) +
+  # Points for the original data
+  geom_point(
+    data = filter(scabies_plot_df, type == "Original Data"),
+    aes(y = log(cases)), size = 2, shape = 16
+  ) +
+  # Line for both original fitted and extrapolated data
+  geom_line(data = scabies_plot_df,aes(y = log(fitted))
+  ) +
+  # Ribbon for confidence intervals for both original and extrapolated data
+  geom_ribbon(
+    aes(ymin = log(lower), ymax = log(upper), fill = type),
+    alpha = 0.2, color = NA
+  ) +
+  # Labels and theme
+  labs(x = "Year", y = "Incidence per 1000 people (log scale)",
+       color = "Data Type", fill = "Data Type") +
+  scale_color_manual(values = custom_palette) +
+  scale_fill_manual(values = custom_palette) +
+  #scale_y_log10() +  # Log scale for y-axis
+  theme_minimal() +
+  theme(legend.position = "right",
+        axis.text.y = element_text(size = 8))
+
+```
+
+### Basic Reproduction Number ($R_0$)
+
+Using the estimated annual growth rate, we can estimate the basic reproduction number as $R_0 = \exp(r*T – (1/2) r^2 s^2)$, where $r$ is the annual growth rate, $T$ is the mean generation time (in years), and $s^2$ is the variance of the generation time distribution [@wallinga2007]. We assume that nearly everyone exposed has not been previously infected.
+
+```{r calculate_R0, echo = FALSE}
+# Extract the estimated time coefficient (r)
+r <- coef(poisson_model)["time"]  # Replace with your actual coefficient name if different
+
+# Set the values for T and s
+T_ <- 123.24/365.25
+s <- 31.55/365.25
+
+# Calculate R0
+R0 <- exp(r * T_ - (1/2) * r^2 * s^2)
+
+# Calculate the lower and upper confidence intervals for the expression
+lower_r <- ci_coeff["time", 1]  # Lower CI for r
+upper_r <- ci_coeff["time", 2]  # Upper CI for r
+
+# Calculate the lower confidence interval for the expression
+lower_ci_R0 <- exp(lower_r * T_ - (1/2) * lower_r^2 * s^2)
+
+# Calculate the upper confidence interval for the expression
+upper_ci_R0 <- exp(upper_r * T_ - (1/2) * upper_r^2 * s^2)
+```
+
+## Time-varying Reproduction Number
+
+To estimate time-varying case reproduction number, we first randomly assigned each scabies consultation a date of diagnosis in the week in which the consultation is reported. Since scabies is very hard to diagnose prior to symptom onset [@mellanby1972], and scabies consultations are captured as part of sentinel surveillance based on GP consultations [@nivel], we use the date of consultation rather than the date of symptom onset. 
+
+```{r epidemic_curve, echo=TRUE, message=FALSE, warning=FALSE, fig.cap="Figure 4. Number of scabies consultations per week per 100,000 people in the Netherlands by date of consultation.", out.width="100%"}
+
+# read in consultations data 
+nivel_wkly_data <-
+  read.xlsx("../inst/extdata/data/scabies_data_consultations_weekly.xlsx") %>%
+  # fix/translate variable names
+  rename(diagnosis_code = `Diagnose.(ICPC)`,
+         year = `ISO-jaar`,
+         week_num = `ISO-weeknr.(ma-zo)`,
+         pop_size = `Aantal.populatie`,
+         cases = `Aantal.prevalente.cases`,
+         prev_per_100000 = `Prevalentie.per.100.000`) %>%
+  # drop diagnosis var
+  select(-diagnosis_code) %>%
+  # create new var that combines year and week
+  mutate(yr_wk = paste(year, week_num, sep = "_"),
+         year = as.factor(year))
+
+nivel_daily_data <- nivel_wkly_data %>%
+  uncount(cases) %>% # Repeat rows based on the number of cases
+  mutate(
+    iso_week = paste0(year, "-W", sprintf("%02d", as.numeric(week_num))),
+    first_day = ISOweek2date(paste0(iso_week, "-1")),
+    random_day = sample(0:6, n(), replace = TRUE),
+    onset_date = first_day + days(random_day)
+  ) %>%
+  select(-iso_week, -first_day, -random_day)
+
+# Group data by onset_date and calculate the daily incidence
+df <- nivel_daily_data %>%
+  group_by(onset_date) %>%
+  mutate(count = n()) %>%
+  distinct(onset_date, count) %>%
+  arrange(onset_date) %>%
+  mutate(num_date = as.numeric(onset_date)) %>%
+  ungroup() %>%
+  rename(inc = count) %>%
+  select(onset_date, inc)
+
+ggplot(df, aes(x = onset_date, y = inc)) +
+  geom_col(fill = "steelblue") +
+  #geom_smooth(method = "loess", color = "red", se = FALSE) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(
+    x = "Date of Consultation",
+    y = "Number of scabies consultations per 100,000 people"
+  ) +
+  theme_minimal()
+```
+
+
+Using the constructed daily time series of date of diagnosis, we applied the method proposed by Wallinga and Lipsitch (Eq. 4.1) [@wallinga2007] to estimate the time-varying daily case reproduction number. The method of Wallinga and Lipsitch estimates the time-varying case reproduction number by determining the likelihood of an event occurring for every pair of time points [@wallinga2007]. The method requires the specification of the serial interval distribution. We assumed a normal serial interval distribution with mean 123.24 days and standard deviation 31.55 days, as estimated above. Due to unobserved onward cases at the end of the time series, we adjusted for right truncation by applying a correction factor that accounts for unobserved cases with longer serial intervals. To obtain 95% confidence intervals on the daily case reproduction number, we generated 100 bootstrapped samples by resampling each case with replacement and reconstructing the incidence time series for each bootstrapped sample. Reproduction number estimates were then smoothed using a rolling average of 6 weeks. 
+
+```{r rt_plot, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 5. Time-varying case reproduction number of scabies transmission. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August 31; Autumn = September 1 – November 31. Shaded region represents the 95% confidence envelope. Black horizontal dashed line indicates R = 1.", out.width="100%"}
+
+# read in data
+rt_df_for_plot <- readRDS("data/rt_df_for_plot.rds")
+
+# plot rt_adjusted with confidence bounds (and season bars)
+# Breaks for background rectangles
+start_breaks <- c(as.Date("2011-01-01"),
+                  seq(as.Date("2011-03-01"), 
+                      tail(rt_df_for_plot$onset_date, 1), by = "quarter"))
+end_breaks <- c(start_breaks[-1] - 1, tail(rt_df_for_plot$onset_date,1))
+rects <- data.frame(xstart = start_breaks,
+                    xend = end_breaks,
+                    season = factor(c(rep(c("winter", "spring", "summer", "autumn"),
+                                          length.out = length(start_breaks))),
+                                    levels = c("winter", "spring", "summer", "autumn")))
+roll_days <- 42 # number of days to calculate rolling average over
+
+p <- ggplot() +
+  geom_rect(data = rects, aes(xmin = xstart, xmax = xend, ymin = -Inf, ymax = Inf,
+                              fill = season), alpha = 0.4) +
+  scale_fill_viridis_d() +
+  geom_line(data = rt_df_for_plot, aes(x = onset_date,
+                                       y = rollmean(rt_adjusted, roll_days, fill = NA))) +
+  geom_ribbon(data = rt_df_for_plot, aes(x = onset_date,
+                                         ymin = rollmean(lower_rt_adjusted, roll_days, fill = NA),
+                                         ymax = rollmean(upper_rt_adjusted, roll_days, fill = NA)),
+              alpha = 0.3) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "black", linewidth = 0.6) +
+  #geom_hline(yintercept = 1.1, linetype = "dashed", color = "grey", linewidth = 0.6) +
+  coord_cartesian(ylim = c(0, 5)) + 
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(x = "Date", y = "Reproduction Number") +
+  theme(
+    panel.background = element_blank()
+  )
+
+p
+```
+
+# References
+
+::: {#refs}
+:::
+
+# Appendix
+
+## Sensitivity Analyses
+
+### Serial Interval
+
+We performed a sensitivity analysis on the underlying distribution of serial interval. In the main analysis we assumed the serial interval was normally distributed. In the sensitivity analysis we assumed the serial interval was Gamma distributed. The estimated mean and standard deviation of serial interval for each study is shown in Table S1 <!--\@ref(tab:si_sa)-->. When assuming an underlying Gamma distribution, the standard deviations were higher than when assuming an underlying Normal distribution. We see from Figure S1 <!--\@ref(fig:gam_si_plots)--> that the Gamma distribution does not fit the data well. It is possible that the Gamma distribution fits scabies data poorly due to the long incubation period of scabies and the possibility of negative serial intervals.
+
+```{r, si_results_gam, echo=TRUE, eval=TRUE}
+# assume a gamma distribution
+result_gam <- si_data %>%
+  select(icc_interval, study) %>%
+  group_by(study) %>%
+  summarise(result = list(si_estim(icc_interval, dist = "gamma"))) %>%
+  mutate(
+    mean = map_dbl(result, "mean"),
+    sd = map_dbl(result, "sd"),
+    wts = map(result, "wts")  # Store wts as a list-column
+  ) %>%
+  select(-result) %>%
+  unnest(wts) %>% # Unnest the wts column if needed %>%
+  pivot_longer(
+    cols = c(mean, sd, wts),
+    names_to = "statistic",
+    values_to = "value"
+  ) %>%
+  group_by(study, statistic) %>%
+  mutate(
+    occurrence = row_number(),
+    statistic = if_else(statistic == "wts", paste0("weight_", occurrence), statistic)
+  ) %>%
+  filter(statistic != "mean" | occurrence == 1) %>%
+  filter(statistic != "sd" | occurrence == 1) %>%
+  select(-occurrence) %>%
+  ungroup()
+
+# Plot serial interval curves
+# Reshape results from long to wide format
+result_gam_wide <- result_gam %>%
+  pivot_wider(
+    names_from = statistic,
+    values_from = value
+  )
+```
+
+```{r make_gam_table, echo=TRUE}
+si_tab_sa <- left_join(result_norm_wide[,c(1:3)], result_gam_wide[,c(1:3)], by = "study") %>%
+  filter(study %in% c("Kaburi et al.", "Ariza et al.", "Akunzirwe et al.",
+                      "Tjon-Kon-Fat et al"))
+
+tab_si_gam <- si_tab_sa %>%
+  gt() %>%
+  tab_spanner(
+    label = "Normal",
+    columns = c(mean.x, sd.x)
+  ) %>%
+  tab_spanner(
+    label = "Gamma",
+    columns = c(mean.y, sd.y)
+  ) %>%
+  cols_label(
+    study = "Study",
+    mean.x = "Mean",
+    sd.x = "SD",
+    mean.y = "Mean",
+    sd.y = "SD"
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "top", weight = px(1)),
+    locations = cells_column_labels(everything())
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "bottom", weight = px(1)),
+    locations = cells_column_labels(everything())
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "bottom", weight = px(1)),
+    locations = cells_body(rows = nrow(si_tab_sa))
+  ) %>%
+  tab_footnote(
+    footnote = "SD = standard deviation"
+  ) %>%
+  tab_options(
+    table.width = pct(100)
+  )
+
+attr(tab_si_gam, "caption") <- "Table S1. Estimated mean and standard deviation of serial interval from different studies assuming a Normal distribution or Gamma distribution."
+
+```
+
+```{r, gam_si_plots, echo=TRUE, warning=FALSE, message=FALSE, fig.align='center', fig.cap="Figure S1. Epidemic curves and estimated serial interval distributions from four scabies outbreaks. Red line indicates estimated serial interval density assuming an underlying gamma distribution.", fig.id=TRUE}
+# merge si_data and result_norm_wide for plotting
+df_merged_gam <- si_data %>%
+  select(study, icc_interval) %>%
+  left_join(result_gam_wide, by = "study", relationship = "many-to-many")
+
+# Apply the plot_si_fit function by study
+plots_gam <- df_merged_gam %>%
+  group_by(study) %>%
+  group_map(~ plot_si_fit(
+    dat = .x$icc_interval,
+    mean = .x$mean[1],
+    sd = .x$sd[1],
+    weights = c(.x$weight_1[1], .x$weight_2[1], .x$weight_4[1]),
+    dist = "gamma"
+  ))
+
+# Annotate plots with study names and labels
+group_order_gam <- df_merged_gam %>%
+  group_by(study) %>%
+  group_keys()
+
+labeled_plots_gam <- lapply(seq_along(plots_gam), function(i) {
+  plots_gam[[i]] +
+    ggtitle(group_order_gam[i,1]) +            # Add study names as titles
+    theme(plot.title = element_text(hjust = 0.5))  # Center the title
+})
+
+# Combine plots into a multi-pane figure
+final_plot_gam <- plot_grid(
+  plotlist = labeled_plots_gam,
+  labels = "AUTO",      # Automatically adds labels (A, B, C, etc.)
+  label_size = 14,      # Size of the labels
+  ncol = 2              # Number of columns; adjust as needed
+)
+
+# Display the final combined plot
+print(final_plot_gam)
+```
+
+We performed a sensitivity analysis in which we altered our choice of
+prior distribution for mean serial interval. In the main analysis we
+assumed a prior distribution of N(100,50). In the sensitivity analysis
+we assumed a prior distribution of N(50, 75) and N(150, 50). We obtained similar estimates of the pooled mean serial interval under the alternative prior distributions (Table S2<!--\@ref(tab:prior_sa_tab)-->).
+
+```{r, meta_analysis_sa, echo=TRUE, eval=FALSE, message=FALSE, results='hide', warning=FALSE}
+
+# specify alternative priors
+priors2 <- c(prior(normal(50,75), class = Intercept),
+            prior(cauchy(0,1), class = sd))
+
+# fit a random effects model
+# Fit the random effects model with adjusted control parameters
+m.brm2 <- brm(
+  mean | se(se) ~ 1 + (1 | study),
+  data = df_ma,
+  prior = priors2,
+  iter = 8000,  # Increased number of iterations
+  warmup = 4000,  # Increased warmup
+  control = list(adapt_delta = 0.999, max_treedepth = 20)  # Increased adapt_delta and max_treedepth
+)
+
+# specify alternative priors
+priors3 <- c(prior(normal(150,75), class = Intercept),
+            prior(cauchy(0,1), class = sd))
+
+# fit a random effects model
+# Fit the random effects model with adjusted control parameters
+m.brm3 <- brm(
+  mean | se(se) ~ 1 + (1 | study),
+  data = df_ma,
+  prior = priors3,
+  iter = 8000,  # Increased number of iterations
+  warmup = 4000,  # Increased warmup
+  control = list(adapt_delta = 0.999, max_treedepth = 20)  # Increased adapt_delta and max_treedepth
+)
+
+```
+
+```{r, prior_sa_tab, echo=TRUE, tab.cap="Table S2. Estimated pooled mean and standard deviation of serial interval under different prior distributions."}
+results_tab <- data.frame(
+  Prior = c("N(100, 50)", "N(50, 75)", "N(150, 50)"),
+  Mean = c(123.24, 120.87, 127.15),
+  SD = c(31.55, 32.22, 31.73)
+) %>%
+  gt() %>%
+  cols_label(
+    Prior = "Prior",
+    Mean = "Mean",
+    SD = "SD"
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "top", weight = px(1)),
+    locations = cells_column_labels(everything())
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "bottom", weight = px(1)),
+    locations = cells_column_labels(everything())
+  ) %>%
+  tab_style(
+    style = cell_borders(sides = "bottom", weight = px(1)),
+    locations = cells_body(rows = nrow(results_tab))
+  ) %>%
+  tab_options(
+    table.width = pct(100)
+  )
+
+results_tab
+```
+
+### Time-varying Reproduction Number
+In the main analysis, when we estimate the time-varying reproduction number, we assume an underlying Normal distriubtion. However, because we are using the serial interval distribution as an approximation of the generation interval, which is strictly positive, we performed a sensitivity analysis in which we assumed the serial interval distribution is Gamma distributed with the same mean and variance (Figure S3).
+```{r rt_gamma_sa, echo=TRUE, message=FALSE, warning=FALSE, fig.cap="Figure S3. Time-varying reproduction number of scabies transmission assuming a Gamma distributed serial interval distribution (black line). The time-varying reproduction number estimates assuming an underlying normal serial interval distribution are shown as the blue line. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August 31; Autumn = September 1 – November 31.", out.width="100%"}
+# read in data
+rt_df_for_plot_sa <- readRDS("data/rt_df_for_plot_sa.rds") %>%
+  filter(!is.na(rt),
+         !is.nan(rt)
+         )
+
+# SA plot -------
+start_breaks <- c(as.Date("2011-01-01"),
+                  seq(as.Date("2011-03-01"), tail(rt_df_for_plot_sa$onset_date, 1), by = "quarter"))
+end_breaks <- c(start_breaks[-1] - 1, tail(rt_df_for_plot_sa$onset_date,1))
+rects <- data.frame(xstart = start_breaks,
+                    xend = end_breaks,
+                    season = factor(c(rep(c("winter", "spring", "summer", "autumn"),
+                                          length.out = length(start_breaks))),
+                                    levels = c("winter", "spring", "summer", "autumn")))
+
+roll_days <- 42
+
+p_sa <- ggplot() +
+  geom_rect(data = rects, aes(xmin = xstart, xmax = xend, ymin = -Inf, ymax = Inf,
+                              fill = season), alpha = 0.4) +
+  scale_fill_viridis_d() +
+  geom_line(data = rt_df_for_plot, aes(x = onset_date, y = rollmean(rt_adjusted, roll_days, fill = NA)), 
+            color = "blue", linetype = "solid", linewidth = 0.8) +
+  geom_line(data = rt_df_for_plot_sa, aes(x = onset_date,
+                                       y = rollmean(rt_adjusted, roll_days, fill = NA))) +
+  geom_ribbon(data = rt_df_for_plot_sa, aes(x = onset_date,
+                                         ymin = rollmean(lower_rt_adjusted, roll_days, fill = NA),
+                                         ymax = rollmean(upper_rt_adjusted, roll_days, fill = NA)),
+              alpha = 0.3) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "black", linewidth = 0.8) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  labs(x = "Date of Symptom Onset", y = "Reproduction Number") +
+  coord_cartesian(ylim = c(0, 6)) +
+  theme(
+    panel.background = element_blank()
+  )
+
+p_sa
+```
+
+### Annual Incidence by Age Group
+
+```{r annual_inc_by_age, echo=TRUE, message=FALSE, warning=FALSE, fig.cap="Figure S4. Annual scabies incidence per 1,000 people by age group in the Netherlands from 2011 to 2022.", out.width="100%"}
+file_path <- "../inst/extdata/data/scabies_data_incidence_yearly.xlsx"
+scabies_inc_age <- read.xlsx(file_path, sheet = "Scabies inc per 1.000 by age gr") 
+
+df_inc_age <- scabies_inc_age %>%
+  pivot_longer(-Year, names_to = "Age Group", names_pattern = "(.*)\\.year", values_to = "Incidence") %>%
+  mutate(Incidence = as.numeric(Incidence),
+         `Age Group` = factor(`Age Group`, 
+                              levels = c("0-4", "5-9", "10-14", "15-19", "20-24", 
+                                         "25-29", "30-34", "35-39", "40-44", "45-49", 
+                                         "50-54", "55-59", "60-64", "65+"))
+         )
+
+ggplot(df_inc_age, aes(x = Year, y = Incidence, color = `Age Group`)) +
+  geom_line(size = 1) +  # Line plot
+  geom_point(size = 2) +  # Optional: Add points
+  scale_color_viridis_d(option = "turbo") +  # Use a viridis color palette
+  scale_x_continuous(breaks = seq(min(df_inc_age$Year), max(df_inc_age$Year), by = 1)) +  
+  labs(
+    x = "Year",
+    y = "Incidence per 1,000",
+    color = "Age Group"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(legend.position = "right") 
+```
