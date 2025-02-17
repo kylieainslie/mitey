@@ -2,6 +2,8 @@
 title: "Reproduce Results from Ainslie et al."
 author: "Kylie Ainslie"
 date: "`r Sys.Date()`"
+bibliography: references.bib
+csl: nature.csl
 output: html_document
 ---
 
@@ -756,7 +758,8 @@ results_tab
 In the main analysis, when we estimate the time-varying reproduction number, we assume an underlying Normal distriubtion. However, because we are using the serial interval distribution as an approximation of the generation interval, which is strictly positive, we performed a sensitivity analysis in which we assumed the serial interval distribution is Gamma distributed with the same mean and variance (Figure S3).
 ```{r rt_gamma_sa, echo=TRUE, message=FALSE, warning=FALSE, fig.cap="Figure S3. Time-varying reproduction number of scabies transmission assuming a Gamma distributed serial interval distribution (black line). The time-varying reproduction number estimates assuming an underlying normal serial interval distribution are shown as the blue line. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August 31; Autumn = September 1 – November 31.", out.width="100%"}
 # read in data
-rt_df_for_plot_sa <- readRDS("data/rt_df_for_plot_sa.rds") %>%
+file_path4 <-  here("vignettes", "data", "rt_df_for_plot.rds")
+rt_df_for_plot_sa <- readRDS(file_path4) %>%
   filter(!is.na(rt),
          !is.nan(rt)
          )
@@ -799,7 +802,6 @@ p_sa
 ### Annual Incidence by Age Group
 
 ```{r annual_inc_by_age, echo=TRUE, message=FALSE, warning=FALSE, fig.cap="Figure S4. Annual scabies incidence per 1,000 people by age group in the Netherlands from 2011 to 2022.", out.width="100%"}
-file_path <- "../inst/extdata/data/scabies_data_incidence_yearly.xlsx"
 scabies_inc_age <- read.xlsx(file_path, sheet = "Scabies inc per 1.000 by age gr") 
 
 df_inc_age <- scabies_inc_age %>%
