@@ -47,7 +47,8 @@ Suggests:
     viridis,
     zoo,
     outbreaks,
-    gt
+    gt,
+    here
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Depends: 
