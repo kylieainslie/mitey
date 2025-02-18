@@ -885,7 +885,9 @@ results_tab <- data.frame(
   Prior = c("N(100, 50)", "N(50, 75)", "N(150, 50)"),
   Mean = c(123.24, 120.87, 127.15),
   SD = c(31.55, 32.22, 31.73)
-) %>%
+) 
+
+results_tab %>%
   gt() %>%
   cols_label(
     Prior = "Prior",
@@ -907,8 +909,6 @@ results_tab <- data.frame(
   tab_options(
     table.width = pct(100)
   )
-
-results_tab
 ```
 
 ### Time-varying Reproduction Number
