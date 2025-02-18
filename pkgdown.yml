@@ -4,8 +4,9 @@ pkgdown_sha: ~
 articles:
   articles/code_validation_for_Vink_method: code_validation_for_Vink_method.html
   epidemiology_of_scabies: epidemiology_of_scabies.html
+  articles/reproduce_results_ainslie_et_al: reproduce_results_ainslie_et_al.html
   articles/rt_estimation_validation: rt_estimation_validation.html
-last_built: 2025-02-11T11:19Z
+last_built: 2025-02-18T20:38Z
 urls:
   reference: https://kylieainslie.github.io/mitey/reference
   article: https://kylieainslie.github.io/mitey/articles

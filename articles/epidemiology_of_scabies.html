@@ -35,6 +35,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/code_validation_for_Vink_method.html">Code validation for Vink method</a></li>
     <li><a class="dropdown-item" href="../articles/epidemiology_of_scabies.html">Estimation of the epidemiological characteristics of scabies</a></li>
+    <li><a class="dropdown-item" href="../articles/reproduce_results_ainslie_et_al.html">Reproduce Results from Ainslie et al.</a></li>
     <li><a class="dropdown-item" href="../articles/rt_estimation_validation.html">Validation of time-varying reproduction number estimation</a></li>
   </ul>
 </li>
@@ -53,8 +54,8 @@
 
 
 
-<link href="epidemiology_of_scabies_files/tabwid-1.1.3/tabwid.css" rel="stylesheet">
-<script src="epidemiology_of_scabies_files/tabwid-1.1.3/tabwid.js"></script><div class="row">
+
+<div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Estimation of the epidemiological characteristics of scabies</h1>
@@ -63,7 +64,7 @@ Ainslie<sup>1,2</sup>, Mariette Hooiveld<sup>3</sup>, Jacco
 Wallinga<sup>1,4</sup>
 </h4>
             
-            <h4 data-toc-skip class="date">2025-02-11</h4>
+            <h4 data-toc-skip class="date">2025-02-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kylieainslie/mitey/blob/main/vignettes/epidemiology_of_scabies.Rmd" class="external-link"><code>vignettes/epidemiology_of_scabies.Rmd</code></a></small>
       <div class="d-none name"><code>epidemiology_of_scabies.Rmd</code></div>
@@ -410,35 +411,481 @@ densities over the epidemic curves (Figure
 S1<!--\@ref(fig:gam_si_plots) -->) and we found that the Gamma
 distribution was a poorer fit of the data as compared to the normal
 distribution.</p>
-<div class="tabwid">
-<style>.cl-3c78fad8{}.cl-3c73362a{font-family:'DejaVu Sans';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-3c73363e{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-3c7595f0{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-3c7595fa{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-3c75b148{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3c75b15c{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3c75b15d{width:1.862in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3c75b166{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3c75b170{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3c75b171{width:1.862in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3c75b172{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3c75b17a{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-3c75b17b{width:1.862in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
-<table data-quarto-disable-processing="true" class="table cl-3c78fad8">
-<caption style="display:table-caption;"><span>Table 1. Estimated mean and standard deviation (SD) of serial interval distribution, in days, for each study.</span></caption>
-<thead><tr style="overflow-wrap:break-word;">
-<th class="cl-3c75b148"><p class="cl-3c7595f0"><span class="cl-3c73362a">Study</span></p></th>
-<th class="cl-3c75b15c"><p class="cl-3c7595fa"><span class="cl-3c73362a">Mean</span></p></th>
-<th class="cl-3c75b15d"><p class="cl-3c7595fa"><span class="cl-3c73362a">Standard Deviation</span></p></th>
-</tr></thead>
-<tbody>
-<tr style="overflow-wrap:break-word;">
-<td class="cl-3c75b166"><p class="cl-3c7595f0"><span class="cl-3c73363e">Akunzirwe et al.</span></p></td>
-<td class="cl-3c75b170"><p class="cl-3c7595fa"><span class="cl-3c73363e">122.92</span></p></td>
-<td class="cl-3c75b171"><p class="cl-3c7595fa"><span class="cl-3c73363e">26.92</span></p></td>
+<div id="xumwvqtfxa" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#xumwvqtfxa table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#xumwvqtfxa thead, #xumwvqtfxa tbody, #xumwvqtfxa tfoot, #xumwvqtfxa tr, #xumwvqtfxa td, #xumwvqtfxa th {
+  border-style: none;
+}
+
+#xumwvqtfxa p {
+  margin: 0;
+  padding: 0;
+}
+
+#xumwvqtfxa .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: 100%;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#xumwvqtfxa .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#xumwvqtfxa .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#xumwvqtfxa .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#xumwvqtfxa .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xumwvqtfxa .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xumwvqtfxa .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xumwvqtfxa .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#xumwvqtfxa .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#xumwvqtfxa .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#xumwvqtfxa .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#xumwvqtfxa .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#xumwvqtfxa .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#xumwvqtfxa .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#xumwvqtfxa .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#xumwvqtfxa .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#xumwvqtfxa .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#xumwvqtfxa .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#xumwvqtfxa .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xumwvqtfxa .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#xumwvqtfxa .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#xumwvqtfxa .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#xumwvqtfxa .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xumwvqtfxa .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#xumwvqtfxa .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#xumwvqtfxa .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xumwvqtfxa .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xumwvqtfxa .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#xumwvqtfxa .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xumwvqtfxa .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#xumwvqtfxa .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xumwvqtfxa .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xumwvqtfxa .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xumwvqtfxa .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xumwvqtfxa .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xumwvqtfxa .gt_left {
+  text-align: left;
+}
+
+#xumwvqtfxa .gt_center {
+  text-align: center;
+}
+
+#xumwvqtfxa .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#xumwvqtfxa .gt_font_normal {
+  font-weight: normal;
+}
+
+#xumwvqtfxa .gt_font_bold {
+  font-weight: bold;
+}
+
+#xumwvqtfxa .gt_font_italic {
+  font-style: italic;
+}
+
+#xumwvqtfxa .gt_super {
+  font-size: 65%;
+}
+
+#xumwvqtfxa .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#xumwvqtfxa .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#xumwvqtfxa .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#xumwvqtfxa .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#xumwvqtfxa .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#xumwvqtfxa .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#xumwvqtfxa .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#xumwvqtfxa .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#xumwvqtfxa div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="table gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead><tr class="gt_col_headings">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="study">Study</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="mean">Mean</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="sd">Standard Deviation</th>
+    </tr></thead>
+<tbody class="gt_table_body">
+<tr>
+<td headers="study" class="gt_row gt_left">Akunzirwe et al.</td>
+<td headers="mean" class="gt_row gt_right">122.92</td>
+<td headers="sd" class="gt_row gt_right">26.92</td>
 </tr>
-<tr style="overflow-wrap:break-word;">
-<td class="cl-3c75b166"><p class="cl-3c7595f0"><span class="cl-3c73363e">Ariza et al.</span></p></td>
-<td class="cl-3c75b170"><p class="cl-3c7595fa"><span class="cl-3c73363e">98.40</span></p></td>
-<td class="cl-3c75b171"><p class="cl-3c7595fa"><span class="cl-3c73363e">8.54</span></p></td>
+<tr>
+<td headers="study" class="gt_row gt_left">Ariza et al.</td>
+<td headers="mean" class="gt_row gt_right">98.40</td>
+<td headers="sd" class="gt_row gt_right">8.54</td>
 </tr>
-<tr style="overflow-wrap:break-word;">
-<td class="cl-3c75b166"><p class="cl-3c7595f0"><span class="cl-3c73363e">Kaburi et al.</span></p></td>
-<td class="cl-3c75b170"><p class="cl-3c7595fa"><span class="cl-3c73363e">167.34</span></p></td>
-<td class="cl-3c75b171"><p class="cl-3c7595fa"><span class="cl-3c73363e">9.72</span></p></td>
+<tr>
+<td headers="study" class="gt_row gt_left">Kaburi et al.</td>
+<td headers="mean" class="gt_row gt_right">167.34</td>
+<td headers="sd" class="gt_row gt_right">9.72</td>
 </tr>
-<tr style="overflow-wrap:break-word;">
-<td class="cl-3c75b172"><p class="cl-3c7595f0"><span class="cl-3c73363e">Tjon-Kon-Fat et al</span></p></td>
-<td class="cl-3c75b17a"><p class="cl-3c7595fa"><span class="cl-3c73363e">110.72</span></p></td>
-<td class="cl-3c75b17b"><p class="cl-3c7595fa"><span class="cl-3c73363e">16.14</span></p></td>
+<tr>
+<td headers="study" class="gt_row gt_left" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">Tjon-Kon-Fat et al</td>
+<td headers="mean" class="gt_row gt_right" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">110.72</td>
+<td headers="sd" class="gt_row gt_right" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">16.14</td>
 </tr>
 </tbody>
 </table>
@@ -1130,66 +1577,13 @@ serial interval. In the main analysis we assumed the serial interval was
 normally distributed. In the sensitivity analysis we assumed the serial
 interval was Gamma distributed. The estimated mean and standard
 deviation of serial interval for each study is shown in Table S1
-<!--\@ref(tab:si_sa)-->. For all studies, except Larrosa et al., the
-mean is serial interval is lower when estimated assuming an underlying
-Gamma distribution. When assuming an underlying Gamma distribution, the
-standard deviations were higher than when assuming an underlying Normal
-distribution. We see from Figure S1 <!--\@ref(fig:gam_si_plots)--> that
-the Gamma distribution does not fit the data well. It is possible that
-the Gamma distribution fits scabies data poorly due to the long
-incubation period of scabies and the possibility of negative serial
-intervals.</p>
-<div class="tabwid">
-<style>.cl-415508d0{}.cl-414f249c{font-family:'DejaVu Sans';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-414f24b0{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-41519d4e{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-41519d62{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-4151b7c0{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4151b7ca{width:1.114in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4151b7cb{width:1.211in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4151b7d4{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4151b7de{width:1.114in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4151b7df{width:1.211in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4151b7e0{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4151b7e8{width:1.114in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4151b7f2{width:1.211in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4151b7f3{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4151b7fc{width:1.114in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4151b7fd{width:1.211in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4151b806{width:1.74in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4151b807{width:1.114in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-4151b810{width:1.211in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
-<table data-quarto-disable-processing="true" class="table cl-415508d0">
-<caption style="display:table-caption;margin:0pt;text-align:center;border-bottom: 0.00pt solid transparent;border-top: 0.00pt solid transparent;border-left: 0.00pt solid transparent;border-right: 0.00pt solid transparent;padding-top:3pt;padding-bottom:3pt;padding-left:3pt;padding-right:3pt;line-height: 1;background-color:transparent;" id="tab_si_sa"><span>Table S1. Estimated mean and standard deviation of serial interval from different studies assuming a Normal distribution or Gamma distribution.</span></caption>
-<thead>
-<tr style="overflow-wrap:break-word;">
-<th class="cl-4151b7c0"><p class="cl-41519d4e"><span class="cl-414f249c">Study</span></p></th>
-<th colspan="2" class="cl-4151b7ca"><p class="cl-41519d62"><span class="cl-414f249c">Normal</span></p></th>
-<th colspan="2" class="cl-4151b7cb"><p class="cl-41519d62"><span class="cl-414f249c">Gamma</span></p></th>
-</tr>
-<tr style="overflow-wrap:break-word;">
-<th class="cl-4151b7d4"><p class="cl-41519d4e"><span class="cl-414f249c"></span></p></th>
-<th class="cl-4151b7de"><p class="cl-41519d62"><span class="cl-414f249c">Mean</span></p></th>
-<th class="cl-4151b7df"><p class="cl-41519d62"><span class="cl-414f249c">SD</span></p></th>
-<th class="cl-4151b7df"><p class="cl-41519d62"><span class="cl-414f249c">Mean</span></p></th>
-<th class="cl-4151b7df"><p class="cl-41519d62"><span class="cl-414f249c">SD</span></p></th>
-</tr>
-</thead>
-<tbody>
-<tr style="overflow-wrap:break-word;">
-<td class="cl-4151b7e0"><p class="cl-41519d4e"><span class="cl-414f24b0">Akunzirwe et al.</span></p></td>
-<td class="cl-4151b7e8"><p class="cl-41519d62"><span class="cl-414f24b0">122.9239</span></p></td>
-<td class="cl-4151b7f2"><p class="cl-41519d62"><span class="cl-414f24b0">26.920354</span></p></td>
-<td class="cl-4151b7f2"><p class="cl-41519d62"><span class="cl-414f24b0">105.29254</span></p></td>
-<td class="cl-4151b7f2"><p class="cl-41519d62"><span class="cl-414f24b0">92.61143</span></p></td>
-</tr>
-<tr style="overflow-wrap:break-word;">
-<td class="cl-4151b7e0"><p class="cl-41519d4e"><span class="cl-414f24b0">Ariza et al.</span></p></td>
-<td class="cl-4151b7e8"><p class="cl-41519d62"><span class="cl-414f24b0">98.4000</span></p></td>
-<td class="cl-4151b7f2"><p class="cl-41519d62"><span class="cl-414f24b0">8.542332</span></p></td>
-<td class="cl-4151b7f2"><p class="cl-41519d62"><span class="cl-414f24b0">91.49460</span></p></td>
-<td class="cl-4151b7f2"><p class="cl-41519d62"><span class="cl-414f24b0">113.66905</span></p></td>
-</tr>
-<tr style="overflow-wrap:break-word;">
-<td class="cl-4151b7e0"><p class="cl-41519d4e"><span class="cl-414f24b0">Kaburi et al.</span></p></td>
-<td class="cl-4151b7e8"><p class="cl-41519d62"><span class="cl-414f24b0">167.3444</span></p></td>
-<td class="cl-4151b7f2"><p class="cl-41519d62"><span class="cl-414f24b0">9.717630</span></p></td>
-<td class="cl-4151b7f2"><p class="cl-41519d62"><span class="cl-414f24b0">164.68478</span></p></td>
-<td class="cl-4151b7f2"><p class="cl-41519d62"><span class="cl-414f24b0">21.41681</span></p></td>
-</tr>
-<tr style="overflow-wrap:break-word;">
-<td class="cl-4151b7f3"><p class="cl-41519d4e"><span class="cl-414f24b0">Tjon-Kon-Fat et al</span></p></td>
-<td class="cl-4151b7fc"><p class="cl-41519d62"><span class="cl-414f24b0">110.7157</span></p></td>
-<td class="cl-4151b7fd"><p class="cl-41519d62"><span class="cl-414f24b0">16.138793</span></p></td>
-<td class="cl-4151b7fd"><p class="cl-41519d62"><span class="cl-414f24b0">94.30272</span></p></td>
-<td class="cl-4151b7fd"><p class="cl-41519d62"><span class="cl-414f24b0">107.28626</span></p></td>
-</tr>
-</tbody>
-<tfoot><tr style="overflow-wrap:break-word;"><td colspan="5" class="cl-4151b806"><p class="cl-41519d4e"><span class="cl-414f24b0">SD = standard deviation</span></p></td></tr></tfoot>
-</table>
-</div>
+<!--\@ref(tab:si_sa)-->. When assuming an underlying Gamma distribution,
+the standard deviations were higher than when assuming an underlying
+Normal distribution. We see from Figure S1
+<!--\@ref(fig:gam_si_plots)--> that the Gamma distribution does not fit
+the data well. It is possible that the Gamma distribution fits scabies
+data poorly due to the long incubation period of scabies and the
+possibility of negative serial intervals.</p>
 <div class="figure" style="text-align: center">
 <img src="epidemiology_of_scabies_files/figure-html/gam_si_plots-1.png" alt="Figure S1. Epidemic curves and estimated serial interval distributions from four scabies outbreaks. Red line indicates estimated serial interval density assuming an underlying gamma distribution." width="672" id="fig-gam-si-plots-1"><p class="caption">
 Figure S1. Epidemic curves and estimated serial interval distributions
@@ -1205,30 +1599,476 @@ we assumed a prior distribution of N(50, 75) and N(150, 50). We obtained
 similar estimates of the pooled mean serial interval under the
 alternative prior distributions (Table
 S2<!--\@ref(tab:prior_sa_tab)-->).</p>
-<div class="tabwid">
-<style>.cl-42011760{}.cl-41fb82f0{font-family:'DejaVu Sans';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-41fb8304{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-41fdd6b8{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-41fdd6c2{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-41fdf116{width:1.202in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-41fdf120{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-41fdf12a{width:0.823in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-41fdf12b{width:1.202in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-41fdf134{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-41fdf135{width:0.823in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-41fdf136{width:1.202in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-41fdf13e{width:0.92in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-41fdf13f{width:0.823in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
-<table data-quarto-disable-processing="true" class="table cl-42011760">
-<caption style="display:table-caption;"><span>Table S2. Estimated pooled mean and standard deviation of serial interval under different prior distributions.</span></caption>
-<thead><tr style="overflow-wrap:break-word;">
-<th class="cl-41fdf116"><p class="cl-41fdd6b8"><span class="cl-41fb82f0">Prior</span></p></th>
-<th class="cl-41fdf120"><p class="cl-41fdd6c2"><span class="cl-41fb82f0">Mean</span></p></th>
-<th class="cl-41fdf12a"><p class="cl-41fdd6c2"><span class="cl-41fb82f0">SD</span></p></th>
-</tr></thead>
-<tbody>
-<tr style="overflow-wrap:break-word;">
-<td class="cl-41fdf12b"><p class="cl-41fdd6b8"><span class="cl-41fb8304">N(100, 50)</span></p></td>
-<td class="cl-41fdf134"><p class="cl-41fdd6c2"><span class="cl-41fb8304">123.24</span></p></td>
-<td class="cl-41fdf135"><p class="cl-41fdd6c2"><span class="cl-41fb8304">31.55</span></p></td>
+<div id="cekdgcllhb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#cekdgcllhb table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#cekdgcllhb thead, #cekdgcllhb tbody, #cekdgcllhb tfoot, #cekdgcllhb tr, #cekdgcllhb td, #cekdgcllhb th {
+  border-style: none;
+}
+
+#cekdgcllhb p {
+  margin: 0;
+  padding: 0;
+}
+
+#cekdgcllhb .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: 100%;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#cekdgcllhb .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#cekdgcllhb .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#cekdgcllhb .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#cekdgcllhb .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#cekdgcllhb .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#cekdgcllhb .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#cekdgcllhb .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#cekdgcllhb .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#cekdgcllhb .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#cekdgcllhb .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#cekdgcllhb .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#cekdgcllhb .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#cekdgcllhb .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#cekdgcllhb .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#cekdgcllhb .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#cekdgcllhb .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#cekdgcllhb .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#cekdgcllhb .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cekdgcllhb .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#cekdgcllhb .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#cekdgcllhb .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#cekdgcllhb .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cekdgcllhb .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#cekdgcllhb .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#cekdgcllhb .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#cekdgcllhb .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cekdgcllhb .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#cekdgcllhb .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#cekdgcllhb .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#cekdgcllhb .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#cekdgcllhb .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#cekdgcllhb .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cekdgcllhb .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#cekdgcllhb .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#cekdgcllhb .gt_left {
+  text-align: left;
+}
+
+#cekdgcllhb .gt_center {
+  text-align: center;
+}
+
+#cekdgcllhb .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#cekdgcllhb .gt_font_normal {
+  font-weight: normal;
+}
+
+#cekdgcllhb .gt_font_bold {
+  font-weight: bold;
+}
+
+#cekdgcllhb .gt_font_italic {
+  font-style: italic;
+}
+
+#cekdgcllhb .gt_super {
+  font-size: 65%;
+}
+
+#cekdgcllhb .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#cekdgcllhb .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#cekdgcllhb .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#cekdgcllhb .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#cekdgcllhb .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#cekdgcllhb .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#cekdgcllhb .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#cekdgcllhb .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#cekdgcllhb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="table gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead><tr class="gt_col_headings">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="Prior">Prior</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="Mean">Mean</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="SD">SD</th>
+    </tr></thead>
+<tbody class="gt_table_body">
+<tr>
+<td headers="Prior" class="gt_row gt_left">N(100, 50)</td>
+<td headers="Mean" class="gt_row gt_right">123.24</td>
+<td headers="SD" class="gt_row gt_right">31.55</td>
 </tr>
-<tr style="overflow-wrap:break-word;">
-<td class="cl-41fdf12b"><p class="cl-41fdd6b8"><span class="cl-41fb8304">N(50, 75)</span></p></td>
-<td class="cl-41fdf134"><p class="cl-41fdd6c2"><span class="cl-41fb8304">120.87</span></p></td>
-<td class="cl-41fdf135"><p class="cl-41fdd6c2"><span class="cl-41fb8304">32.22</span></p></td>
+<tr>
+<td headers="Prior" class="gt_row gt_left">N(50, 75)</td>
+<td headers="Mean" class="gt_row gt_right">120.87</td>
+<td headers="SD" class="gt_row gt_right">32.22</td>
 </tr>
-<tr style="overflow-wrap:break-word;">
-<td class="cl-41fdf136"><p class="cl-41fdd6b8"><span class="cl-41fb8304">N(150, 50)</span></p></td>
-<td class="cl-41fdf13e"><p class="cl-41fdd6c2"><span class="cl-41fb8304">127.15</span></p></td>
-<td class="cl-41fdf13f"><p class="cl-41fdd6c2"><span class="cl-41fb8304">31.73</span></p></td>
+<tr>
+<td headers="Prior" class="gt_row gt_left" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">N(150, 50)</td>
+<td headers="Mean" class="gt_row gt_right" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">127.15</td>
+<td headers="SD" class="gt_row gt_right" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">31.73</td>
 </tr>
 </tbody>
 </table>
