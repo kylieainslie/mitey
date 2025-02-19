@@ -11,6 +11,7 @@
 #' @return ggplot object
 #' @export
 #' @import ggplot2
+#' @importFrom stats density
 #'
 plot_si_fit <- function(dat, mean, sd, weights, dist="normal", scaling_factor = 1,
                         x_scale = 0.04){
