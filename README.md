@@ -59,6 +59,11 @@ devtools::install_github("kylieainslie/mitey")
   package can be found
   [here](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html).
 
+- A script that reproduces the results from [Ainslie et
+  al. 2025](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html)
+  can be found
+  [here](https://kylieainslie.github.io/mitey/articles/reproduce_results_ainslie_et_al.html).
+
 - Validation of the method used to estimate the mean and standard
   deviation of the serial interval proposed by [Vink et
   al. 2014](https://doi.org/10.1093/aje/kwu209) can be found
