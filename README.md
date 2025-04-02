@@ -26,7 +26,7 @@ Currently, `mitey` includes methods to estimate a) the mean and standard
 deviation of the serial interval distribution using a maximum likelihood
 framework developed by [Vink et
 al. 2014](https://doi.org/10.1093/aje/kwu209) and b) the time-varying
-reproduction number using the method developed by [Walling and Lipsitch
+reproduction number using the method developed by [Wallinga and Lipsitch
 2007](https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/).
 
 ### Estimating the serial interval
