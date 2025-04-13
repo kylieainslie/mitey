@@ -64,7 +64,7 @@ Ainslie<sup>1,2</sup>, Mariette Hooiveld<sup>3</sup>, Jacco
 Wallinga<sup>1,4</sup>
 </h4>
             
-            <h4 data-toc-skip class="date">2025-04-02</h4>
+            <h4 data-toc-skip class="date">2025-04-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kylieainslie/mitey/blob/main/vignettes/epidemiology_of_scabies.Rmd" class="external-link"><code>vignettes/epidemiology_of_scabies.Rmd</code></a></small>
       <div class="d-none name"><code>epidemiology_of_scabies.Rmd</code></div>
@@ -1182,6 +1182,13 @@ can be found at <a href="https://github.com/kylieainslie/mitey" class="external-
 </h2>
 <p>The study was financed by the Netherlands Ministry of Health, Welfare
 and Sport. <!-- include ESCAPE? --></p>
+<div class="section level3">
+<h3 id="role-of-the-funding-source">Role of the funding source<a class="anchor" aria-label="anchor" href="#role-of-the-funding-source"></a>
+</h3>
+<p>The funders of the study had no role in study design, data
+collection, data analysis, data interpretation, or writing of the
+report.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -1584,21 +1591,6 @@ Normal distribution. We see from Figure S1
 the data well. It is possible that the Gamma distribution fits scabies
 data poorly due to the long incubation period of scabies and the
 possibility of negative serial intervals.</p>
-<div class="figure" style="text-align: center">
-<img src="epidemiology_of_scabies_files/figure-html/gam_si_plots-1.png" alt="Figure S1. Epidemic curves and estimated serial interval distributions from four scabies outbreaks. Red line indicates estimated serial interval density assuming an underlying gamma distribution." width="672" id="fig-gam-si-plots-1"><p class="caption">
-Figure S1. Epidemic curves and estimated serial interval distributions
-from four scabies outbreaks. Red line indicates estimated serial
-interval density assuming an underlying gamma distribution.
-</p>
-</div>
-<!-- We also performed a meta-analysis results using Gamma distribution -->
-<p>We performed a sensitivity analysis in which we altered our choice of
-prior distribution for mean serial interval. In the main analysis we
-assumed a prior distribution of N(100,50). In the sensitivity analysis
-we assumed a prior distribution of N(50, 75) and N(150, 50). We obtained
-similar estimates of the pooled mean serial interval under the
-alternative prior distributions (Table
-S2<!--\@ref(tab:prior_sa_tab)-->).</p>
 <div id="cekdgcllhb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#cekdgcllhb table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -2049,10 +2041,527 @@ S2<!--\@ref(tab:prior_sa_tab)-->).</p>
 }
 </style>
 <table class="table gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings gt_spanner_row">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="study">Study</th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" scope="colgroup" id="Normal">
+        <div class="gt_column_spanner">Normal</div>
+      </th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="2" scope="colgroup" id="Gamma">
+        <div class="gt_column_spanner">Gamma</div>
+      </th>
+    </tr>
+<tr class="gt_col_headings">
+<th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="mean.x">Mean</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="sd.x">SD</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="mean.y">Mean</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="sd.y">SD</th>
+    </tr>
+</thead>
+<tbody class="gt_table_body">
+<tr>
+<td headers="study" class="gt_row gt_left">Akunzirwe et al.</td>
+<td headers="mean.x" class="gt_row gt_right">122.9239</td>
+<td headers="sd.x" class="gt_row gt_right">26.920354</td>
+<td headers="mean.y" class="gt_row gt_right">105.29254</td>
+<td headers="sd.y" class="gt_row gt_right">92.61143</td>
+</tr>
+<tr>
+<td headers="study" class="gt_row gt_left">Ariza et al.</td>
+<td headers="mean.x" class="gt_row gt_right">98.4000</td>
+<td headers="sd.x" class="gt_row gt_right">8.542332</td>
+<td headers="mean.y" class="gt_row gt_right">91.49460</td>
+<td headers="sd.y" class="gt_row gt_right">113.66905</td>
+</tr>
+<tr>
+<td headers="study" class="gt_row gt_left">Kaburi et al.</td>
+<td headers="mean.x" class="gt_row gt_right">167.3444</td>
+<td headers="sd.x" class="gt_row gt_right">9.717630</td>
+<td headers="mean.y" class="gt_row gt_right">164.68478</td>
+<td headers="sd.y" class="gt_row gt_right">21.41681</td>
+</tr>
+<tr>
+<td headers="study" class="gt_row gt_left" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">Tjon-Kon-Fat et al</td>
+<td headers="mean.x" class="gt_row gt_right" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">110.7157</td>
+<td headers="sd.x" class="gt_row gt_right" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">16.138793</td>
+<td headers="mean.y" class="gt_row gt_right" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">94.30272</td>
+<td headers="sd.y" class="gt_row gt_right" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">107.28626</td>
+</tr>
+</tbody>
+<tfoot class="gt_footnotes"><tr>
+<td class="gt_footnote" colspan="5"> SD = standard deviation</td>
+    </tr></tfoot>
+</table>
+</div>
+<div class="figure" style="text-align: center">
+<img src="epidemiology_of_scabies_files/figure-html/gam_si_plots-1.png" alt="Figure S1. Epidemic curves and estimated serial interval distributions from four scabies outbreaks. Red line indicates estimated serial interval density assuming an underlying gamma distribution." width="672" id="fig-gam-si-plots-1"><p class="caption">
+Figure S1. Epidemic curves and estimated serial interval distributions
+from four scabies outbreaks. Red line indicates estimated serial
+interval density assuming an underlying gamma distribution.
+</p>
+</div>
+<!-- We also performed a meta-analysis results using Gamma distribution -->
+<p>We performed a sensitivity analysis in which we altered our choice of
+prior distribution for mean serial interval. In the main analysis we
+assumed a prior distribution of N(100,50). In the sensitivity analysis
+we assumed a prior distribution of N(50, 75) and N(150, 50). We obtained
+similar estimates of the pooled mean serial interval under the
+alternative prior distributions (Table
+S2<!--\@ref(tab:prior_sa_tab)-->).</p>
+<div id="jenqkmjkyy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jenqkmjkyy table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#jenqkmjkyy thead, #jenqkmjkyy tbody, #jenqkmjkyy tfoot, #jenqkmjkyy tr, #jenqkmjkyy td, #jenqkmjkyy th {
+  border-style: none;
+}
+
+#jenqkmjkyy p {
+  margin: 0;
+  padding: 0;
+}
+
+#jenqkmjkyy .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: 100%;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#jenqkmjkyy .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#jenqkmjkyy .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#jenqkmjkyy .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#jenqkmjkyy .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jenqkmjkyy .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jenqkmjkyy .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jenqkmjkyy .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#jenqkmjkyy .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#jenqkmjkyy .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#jenqkmjkyy .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#jenqkmjkyy .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#jenqkmjkyy .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#jenqkmjkyy .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#jenqkmjkyy .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#jenqkmjkyy .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#jenqkmjkyy .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#jenqkmjkyy .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#jenqkmjkyy .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jenqkmjkyy .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#jenqkmjkyy .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#jenqkmjkyy .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#jenqkmjkyy .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jenqkmjkyy .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#jenqkmjkyy .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#jenqkmjkyy .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jenqkmjkyy .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jenqkmjkyy .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#jenqkmjkyy .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jenqkmjkyy .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#jenqkmjkyy .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jenqkmjkyy .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jenqkmjkyy .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jenqkmjkyy .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jenqkmjkyy .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jenqkmjkyy .gt_left {
+  text-align: left;
+}
+
+#jenqkmjkyy .gt_center {
+  text-align: center;
+}
+
+#jenqkmjkyy .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#jenqkmjkyy .gt_font_normal {
+  font-weight: normal;
+}
+
+#jenqkmjkyy .gt_font_bold {
+  font-weight: bold;
+}
+
+#jenqkmjkyy .gt_font_italic {
+  font-style: italic;
+}
+
+#jenqkmjkyy .gt_super {
+  font-size: 65%;
+}
+
+#jenqkmjkyy .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#jenqkmjkyy .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#jenqkmjkyy .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#jenqkmjkyy .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#jenqkmjkyy .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#jenqkmjkyy .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#jenqkmjkyy .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#jenqkmjkyy .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#jenqkmjkyy div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="table gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
 <thead><tr class="gt_col_headings">
 <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="Prior">Prior</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="Mean">Mean</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="SD">SD</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="border-top-width: 1px; border-top-style: solid; border-top-color: #000000; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;" scope="col" id="SD">Standard Deviation</th>
     </tr></thead>
 <tbody class="gt_table_body">
 <tr>
