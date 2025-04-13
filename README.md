@@ -15,7 +15,7 @@
 
 The `mitey` package is a lightweight package designed originally as a
 companion to the analyses presented by [Ainslie et
-al. 2025](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html)
+al. 2025](http://dx.doi.org/10.2139/ssrn.5184990)
 on scabies transmission. However, these methods are more widely
 applicable than in the context of scabies, thus the motivation behind
 creating the `mitey` package was twofold and also provides flexible,
@@ -26,7 +26,7 @@ Currently, `mitey` includes methods to estimate a) the mean and standard
 deviation of the serial interval distribution using a maximum likelihood
 framework developed by [Vink et
 al. 2014](https://doi.org/10.1093/aje/kwu209) and b) the time-varying
-reproduction number using the method developed by [Walling and Lipsitch
+reproduction number using the method developed by [Wallinga and Lipsitch
 2007](https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/).
 
 ### Estimating the serial interval
@@ -60,7 +60,7 @@ devtools::install_github("kylieainslie/mitey")
   [here](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html).
 
 - A script that reproduces the results from [Ainslie et
-  al. 2025](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html)
+  al. 2025](http://dx.doi.org/10.2139/ssrn.5184990)
   can be found
   [here](https://kylieainslie.github.io/mitey/articles/reproduce_results_ainslie_et_al.html).
 
@@ -78,7 +78,7 @@ devtools::install_github("kylieainslie/mitey")
 
 Several data files are stored in the repo so that the results presented
 in [Ainslie et
-al. 2025](https://kylieainslie.github.io/mitey/articles/epidemiology_of_scabies.html)
+al. 2025](http://dx.doi.org/10.2139/ssrn.5184990)
 are reproducible. Data files are stored in `inst/extdata/data/`. Below
 is a brief description of the different files.
 
