@@ -690,6 +690,10 @@ All code, data, and scripts which reproduce the results of this paper can be fou
 The study was financed by the Netherlands Ministry of Health, Welfare and Sport. 
 <!-- include ESCAPE? -->
 
+## Role of the funding source
+The funders of the study had no role in study design, data collection, data analysis, data interpretation, or writing of the report.
+
+
 # References
 
 ::: {#refs}
@@ -793,6 +797,8 @@ tab_si_gam <- si_tab_sa %>%
 
 attr(tab_si_gam, "caption") <- "Table S1. Estimated mean and standard deviation of serial interval from different studies assuming a Normal distribution or Gamma distribution."
 
+tab_si_gam
+
 ```
 
 ```{r, gam_si_plots, echo=FALSE, warning=FALSE, message=FALSE, fig.align='center', fig.cap="Figure S1. Epidemic curves and estimated serial interval distributions from four scabies outbreaks. Red line indicates estimated serial interval density assuming an underlying gamma distribution.", fig.id=TRUE}
@@ -809,7 +815,8 @@ plots_gam <- df_merged_gam %>%
     mean = .x$mean[1],
     sd = .x$sd[1],
     weights = c(.x$weight_1[1], .x$weight_2[1], .x$weight_4[1]),
-    dist = "gamma"
+    dist = "gamma",
+    scaling_factor = 0.1
   ))
 
 # Annotate plots with study names and labels
@@ -892,7 +899,7 @@ results_tab %>%
   cols_label(
     Prior = "Prior",
     Mean = "Mean",
-    SD = "SD"
+    SD = "Standard Deviation"
   ) %>%
   tab_style(
     style = cell_borders(sides = "top", weight = px(1)),
