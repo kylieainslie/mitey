@@ -21,6 +21,8 @@ library(readxl)
 library(EpiLPS)
 library(zoo)
 library(outbreaks)
+library(fdrtool)
+library(lubridate)
 library(devtools)
 load_all()
 ```
@@ -31,97 +33,160 @@ The `mitey` package is a lightweight package designed to provide easy implementa
 In this article, we will demonstrate how to use `mitey` to estimate $R^c_t$ using a synthetic data set and real data. We will also compare the estimates from `mitey` to estimates from other R packages that can be used for similar analyses, namely `EpiEstim` [@cori2013] and `EpiLPS` [@gressani2022].
 
 # Synthetic data
-First, we will generate a synthetic time series of incidence data using the `episim()` function from `EpiLPS` which uses a renewal equation model to generate the case incidence data based on a Poisson or negative binomial process [@gressani2022]. For full details see [here](https://doi.org/10.1371/journal.pcbi.1010618.s002). `episim()` requires the specification of the (discrete) serial interval distribution, which can be specified using the `Idist()` function.
+First, we will generate a synthetic time series of incidence data using the function `generate_synthetic_epidemic()` which uses a renewal equation to generate the case incidence data. The renewal equation used is: 
+$$\lambda_t = \sum_{i=1}^{t-1} R_i \times I_i \times w(t-i)$$
+
+Where:
+- $\lambda_t$ = expected new cases on day $t$
+- $R_i$ = reproduction number on day $i$
+- $I_i$ = observed cases on day $i$
+- $w(t-i)$ = probability mass of serial interval for delay $(t-i)$.
+
+Before we generate the synthetic data we need to specify the true time-varying reproduction numbers and the parameters of the serial interval distribution (mean and standard deviation).
 
 ```{r generate_si_dist}
-# specify serial interval distribution
-mean_si <- 8
-sd_si <- 5.66
 
-# generate discrete serial interval distribution using EpiLPS::Idist
-si_spec <- Idist(mean = mean_si, sd = sd_si, dist = "gamma")
-plot(si_spec, titlesize = 12)
+# Set seed for reproducibility
+set.seed(123)
+
+# True Rt values
+true_r_values <- c(
+  rep(1.5, 20),                            # Start with R=1.5
+  rep(2.0, 20),                            # Increase to R=2.0
+  rep(0.8, 20),                            # Decrease to R=0.8
+  rep(1.2, 20)                             # Increase to R=1.2
+)
+
+# Set serial interval parameters
+si_mean <- 5
+si_sd <- 2
+si_dist <- "gamma"
+
+# Generate synthetic data with high initial cases for stability
+synthetic_data <- generate_synthetic_epidemic(
+  true_r = true_r_values,
+  si_mean = si_mean,
+  si_sd = si_sd,
+  si_dist = si_dist,
+  initial_cases = 500
+)
 ```
 
-Now, using `episim()` we can generate incidence data by specifying the generated serial interval distribution, the functional form of the reproduction number (here `Rpattern = 5`), and the length of the epidemic (here 40 days).
+```{r, echo=FALSE}
+head(synthetic_data)
+```
 
-```{r simulate_inc_data}
-# set seed
-set.seed(1234)
+```{r plot_synth_epi, echo = FALSE}
+# 1. True R values over time
+p1 <- ggplot(synthetic_data, aes(x = date, y = true_r)) +
+  geom_line(color = "darkblue", size = 1.2) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
+  labs(title = "True Reproduction Number",
+       x = "Date", y = "Rt") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 
-# generate data
-t_end <- 40
-datasim <- episim(si = si_spec$pvec, Rpattern = 5, endepi = t_end,
-                  dist = "negbin", overdisp = 15)
+# 2. Incident cases over time
+p2 <- ggplot(synthetic_data, aes(x = date, y = incidence)) +
+  geom_col(fill = "darkgreen", alpha = 0.7) +
+  labs(title = "Daily Incidence",
+       x = "Date", y = "Cases") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 
-epicurve(datasim$y, title = "Simulated epidemic curve")
-
+# Combine plots in a 2x2 grid
+grid.arrange(p1, p2, ncol = 1)
 ```
 
 # Estimating the case reproduction number
-Next, using the simulated incidence data `datasim$y`, we can estimate the time-varying case reproduction number using the method developed by Wallinga and Lipsitch [@wallinga2007]. We will use the `rt_estim()` function within `mitey`. `rt_estim()` expects an input data set (`inc_dat`) with two columns `inc` (the number of new cases for each time point) and `onset_date` (the time or date in which the new cases occurred). `rt_estim()` also requires the specification of the mean and standard deviation of the serial interval distribution and the underlying serial interval distribution (it currently only accepts "normal" and "gamma").
+Next, using the simulated incidence data, we can estimate the time-varying case reproduction number using the method developed by Wallinga and Lipsitch [@wallinga2007]. 
+
+<!-- We will use the `rt_estim()` function within `mitey`. `rt_estim()` expects an input data set (`inc_dat`) with two columns `inc` (the number of new cases for each time point) and `onset_date` (the time or date in which the new cases occurred). `rt_estim()` also requires the specification of the mean and standard deviation of the serial interval distribution and the underlying serial interval distribution (it currently only accepts "normal" and "gamma"). -->
 
 ```{r estimate_rt, echo=TRUE}
 # Estimate Rt with mitey::rt_estim()
-
-t_vec <- seq(1, length(datasim$y), by = 1)
-inc_dat <- data.frame(onset_date = t_vec, inc = datasim$y)
-
-rt_estimated <- rt_estim(
-  inc_dat = inc_dat,
-  mean_si = mean_si,
-  sd_si = sd_si,
-  dist_si = "gamma"
+results <- wallinga_lipsitch(
+  incidence = synthetic_data$incidence,
+  dates = synthetic_data$date,
+  si_mean = si_mean,
+  si_sd = si_sd,
+  si_dist = "gamma",
+  smoothing = 0,
+  bootstrap = TRUE,
+  n_bootstrap = 1000,
+  conf_level = 0.95
 )
 ```
 
 ```{r look_at_results, echo=FALSE}
-head(rt_estimated)
+head(results)
 ```
 
-Now, we can compare the estimated $R^c_t$ values (solid blue line) to the true $R_t$ that is outputted by `episim()`, here `datasim$Rtrue`. However, an important thing to note is that the "true" $R_t$ is the instantaneous reproduction number. We are estimating the case reproduction number, and therefore, our estimates should be shifted to the left by one serial interval. When we shift the estimates by a serial interval (blue dashed line), we see that our estimates are in agreement with the true $R_t$.
+Now, we can compare the estimated $R^c_t$ values to the true $R_t$ that we specified. However, an important thing to note is that the "true" $R_t$ is the instantaneous reproduction number. We are estimating the case reproduction number, and therefore, our estimates should be shifted to the left by one serial interval. When we shift the estimates by a serial interval (blue dashed line), we see that our estimates are in agreement with the true $R_t$.
 
-```{r plot_results, echo=FALSE}
-# time and true Rt vectors
-tt <- seq(mean_si + 1, t_end, by = 1)
-Rtrue <- sapply(tt, datasim$Rtrue)
+```{r plot_data_wrangling, echo=FALSE}
+# Create shifted estimates (accounting for serial interval lag)
+offset <- round(si_mean)
+n_days <- length(results$date)
 
-# clean-up the estimates a little
-rt_WL <- ifelse(is.nan(rt_estimated$rt), NA, rt_estimated$rt)
-rt_WL <- ifelse(is.infinite(rt_estimated$rt) | rt_estimated$rt > 15, NA, rt_estimated$rt)
+# Create vectors for shifted values
+shifted_indices <- (1+offset):n_days
+original_indices <- 1:(n_days-offset)
 
-# smooth and shift estimated Rt
-rt_WL_smooth <- rollmean(rt_WL, k = 7, fill = NA, na.rm = TRUE)
-rt_WL_shift <- c(rep(NA, mean_si), rt_WL_smooth)
+# Initialize shifted vectors with NAs
+shifted_r <- rep(NA, n_days)
+shifted_r_lower <- rep(NA, n_days)
+shifted_r_upper <- rep(NA, n_days)
 
-# plot
-plot(tt, Rtrue, type = "l", xlab = "Time", ylab = "R", ylim = c(0,4),
-     lwd = 2)
-lines(tt, rt_WL_smooth[tt], col = "blue", lwd = 2)
-lines(tt, rt_WL_shift[tt], col = "blue", lty = 2, lwd = 2)
-legend("topright", col = c("black","blue","blue"),
-       c("True R","WL", "WL (shifted)"),
-       bty = "n", lty = c(1,1,2))
+# Perform shifting
+shifted_r[original_indices] <- results$R[shifted_indices]
+shifted_r_lower[original_indices] <- results$R_lower[shifted_indices]
+shifted_r_upper[original_indices] <- results$R_upper[shifted_indices]
 
-```
+# Add to results
+results$R_shifted <- shifted_r
+results$R_shifted_lower <- shifted_r_lower
+results$R_shifted_upper <- shifted_r_upper
 
-To obtain confidence bounds for our estimated $R_t$ values, we can use `rt_estim_w_boot()` and specify the number of bootstrap samples using `n_bootstrap = ` argument. 
-
-```{r rt_boot, eval = FALSE}
-rt_estimated_boot <- rt_estim_w_boot(
-  inc_dat = inc_dat,
-  mean_si = gi_mean,
-  sd_si = gi_sd,
-  dist_si = "gamma",
-  n_bootstrap = 100
+# Combine with true R
+plot_data <- data.frame(
+  date = synthetic_data$date,
+  true_r = synthetic_data$true_r,
+  incidence = synthetic_data$incidence,
+  results
 )
 ```
 
+```{r plot_sim_rt}
+ggplot(plot_data, aes(x = date)) +
+  # geom_ribbon(aes(ymin = R_lower, ymax = R_upper), 
+              # fill = "#21908C", alpha = 0.2) +
+  # geom_ribbon(aes(ymin = R_shifted_lower, ymax = R_shifted_upper), 
+  #             fill = "#21908C", alpha = 0.2) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "gray50") +
+  geom_line(aes(y = true_r, color = "True R"), size = 1.2) +
+  geom_line(aes(y = R, color = "Estimated R"), size = 1) +
+  geom_line(aes(y = R_shifted, color = "Shifted R"), size = 1, linetype = "dotted") +
+  scale_y_continuous(limits = c(0, 5)) +
+  # Customize colors
+  scale_color_manual(name = "R Values", 
+                    values = c("True R" = "black", 
+                              "Estimated R" = "#21908C", 
+                              "Shifted R" = "#21908C")) +
+  # Add labels
+  labs(x = "Date", y = "Reproduction Number (Rt)") +
+  # Customize theme
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
 # Comparing methods
-Using the `estimRmcmc` function within the `EpiLPS` package, we can compare our estimates to those produced my `EpiLPS` and `EpiEstim` (by specifying `Cori = TRUE`) for estimating the instantaneous reproduction number. We can also estimate the case reproduction number using the method of Wallinga and Teunis [@wallinga2004] as estimated by `EpiEstim` (by specifying `WTR = TRUE`).
+Using the `estimRmcmc` function within the `EpiLPS` package, we can compare our estimates to those produced my `EpiLPS` and `EpiEstim` (by specifying `Cori = TRUE`) for estimating the instantaneous reproduction number. We can also estimate the case reproduction number using the method of Wallinga and Teunis [@wallinga2004] as estimated by `EpiEstim` (by specifying `WTR = TRUE`). 
 
 ```{r compare_methods, results='hide'}
-fitmcmc <- estimRmcmc(incidence = datasim$y, si = si_spec$pvec,
+si_spec <- Idist(mean = si_mean, sd = si_sd, dist = si_dist)
+
+fitmcmc <- estimRmcmc(incidence = synthetic_data$incidence, si = si_spec$pvec,
                       CoriR = TRUE, WTR = TRUE,
                       niter = 5000, burnin = 2000)
 ```
@@ -130,17 +195,106 @@ fitmcmc <- estimRmcmc(incidence = datasim$y, si = si_spec$pvec,
 summary(fitmcmc)
 ```
 
-```{r plot_comparison_methods, out.width = "100%"}
-plot(tt, Rtrue, type = "l", xlab = "Time", ylab = "R", ylim = c(0,4),
-     lwd = 2)
-lines(tt, fitmcmc$RLPS$R[-(1:mean_si)], col = "red", lwd = 2)
-lines(tt, fitmcmc$RCori$`Mean(R)`[1:length(tt)], col = "green", lwd = 2)
-lines(tt, fitmcmc$RWT$`Mean(R)`[-1], col = "purple", lwd = 2)
-lines(tt, rt_WL_smooth[tt], col = "blue", lwd = 2)
-lines(tt, rt_WL_shift[tt], col = "blue", lty = 2, lwd = 2)
-legend("topright", col = c("black","red","green", "purple", "blue", "blue"),
-       c("True R","EpiLPS","EpiEstim", "WT", "WL", "WL (shifted)"),
-       bty = "n", lty = c(1,1,1,1,1,2))
+```{r comparison_pplot_wrangling, echo=FALSE}
+comparison_df <- data.frame(
+  time = 1:length(synthetic_data$true_r),
+  true_r = synthetic_data$true_r,
+  
+  # Your Wallinga-Lipsitch method
+  wl_r = results$R,
+  wl_r_lower = results$R_lower,
+  wl_r_upper = results$R_upper,
+  
+  # Shifted WL
+  wl_shifted = shifted_r,
+  wl_shifted_lower = shifted_r_lower,
+  wl_shifted_upper = shifted_r_upper
+)
+
+# Add the results from fitmcmc
+# Make sure lengths match by trimming or padding as needed
+comparison_df$epilps_r <- c(fitmcmc$RLPS$R, rep(NA, max(0, nrow(comparison_df) - length(fitmcmc$RLPS$R))))
+comparison_df$epilps_lower <- c(fitmcmc$RLPS$Rq0.025, rep(NA, max(0, nrow(comparison_df) - length(fitmcmc$RLPS$Rq0.025))))
+comparison_df$epilps_upper <- c(fitmcmc$RLPS$Rq0.975, rep(NA, max(0, nrow(comparison_df) - length(fitmcmc$RLPS$Rq0.975))))
+
+# Add EpiEstim (Cori) results
+if (length(fitmcmc$RCori$`Mean(R)`) < nrow(comparison_df)) {
+  # Pad with NAs if shorter
+  cori_r <- c(fitmcmc$RCori$`Mean(R)`, rep(NA, nrow(comparison_df) - length(fitmcmc$RCori$`Mean(R)`)))
+  cori_lower <- c(fitmcmc$RCori$`Quantile.0.025(R)`, rep(NA, nrow(comparison_df) - length(fitmcmc$RCori$`Quantile.0.025(R)`)))
+  cori_upper <- c(fitmcmc$RCori$`Quantile.0.975(R)`, rep(NA, nrow(comparison_df) - length(fitmcmc$RCori$`Quantile.0.975(R)`)))
+} else {
+  # Trim if longer
+  cori_r <- fitmcmc$RCori$`Mean(R)`[1:nrow(comparison_df)]
+  cori_lower <- fitmcmc$RCori$`Quantile.0.025(R)`[1:nrow(comparison_df)]
+  cori_upper <- fitmcmc$RCori$`Quantile.0.975(R)`[1:nrow(comparison_df)]
+}
+
+comparison_df$cori_r <- cori_r
+comparison_df$cori_lower <- cori_lower
+comparison_df$cori_upper <- cori_upper
+
+# Add Wallinga-Teunis results
+if (length(fitmcmc$RWT$`Mean(R)`) < nrow(comparison_df)) {
+  # Pad with NAs if shorter
+  wt_r <- c(fitmcmc$RWT$`Mean(R)`, rep(NA, nrow(comparison_df) - length(fitmcmc$RWT$`Mean(R)`)))
+  wt_lower <- c(fitmcmc$RWT$`Quantile.0.025(R)`, rep(NA, nrow(comparison_df) - length(fitmcmc$RWT$`Quantile.0.025(R)`)))
+  wt_upper <- c(fitmcmc$RWT$`Quantile.0.975(R)`, rep(NA, nrow(comparison_df) - length(fitmcmc$RWT$`Quantile.0.975(R)`)))
+} else {
+  # Trim if longer
+  wt_r <- fitmcmc$RWT$`Mean(R)`[1:nrow(comparison_df)]
+  wt_lower <- fitmcmc$RWT$`Quantile.0.025(R)`[1:nrow(comparison_df)]
+  wt_upper <- fitmcmc$RWT$`Quantile.0.975(R)`[1:nrow(comparison_df)]
+}
+
+comparison_df$wt_r <- wt_r
+comparison_df$wt_lower <- wt_lower
+comparison_df$wt_upper <- wt_upper
+
+# Cap values at 5 for better visualization
+comparison_df <- comparison_df %>%
+  mutate(across(contains(c("_r", "true", "lower", "upper")), ~pmin(., 5, na.rm = TRUE)))
+```
+
+```{r plot_comparison_methods, echo=FALSE, out.width = "100%"}
+my_colors <- c("black", "#FDE725", "#21908C", "#440154", "#9C179E")
+
+p <- ggplot(comparison_df, aes(x = time)) +
+  # Add reference line at R=1
+  geom_hline(yintercept = 1, linetype = "dashed", color = "gray50") +
+  
+  # Add confidence intervals (with appropriate transparency)
+  geom_ribbon(aes(ymin = wl_r_lower, ymax = wl_r_upper), fill = my_colors[3], alpha = 0.1) +
+  geom_ribbon(aes(ymin = cori_lower, ymax = cori_upper), fill = my_colors[5], alpha = 0.1) +
+  geom_ribbon(aes(ymin = wt_lower, ymax = wt_upper), fill = my_colors[4], alpha = 0.1) +
+  geom_ribbon(aes(ymin = epilps_lower, ymax = epilps_upper), fill = my_colors[2], alpha = 0.1) +
+  
+  # Add all R estimate lines
+  geom_line(aes(y = true_r, color = "True R"), size = 1.2) +
+  geom_line(aes(y = epilps_r, color = "EpiLPS"), size = 0.9) +
+  geom_line(aes(y = cori_r, color = "EpiEstim"), size = 0.9) +
+  geom_line(aes(y = wt_r, color = "Wallinga-Teunis"), size = 0.9) +
+  #geom_line(aes(y = wl_r, color = "Wallinga-Lipsitch"), size = 0.9) +
+  geom_line(aes(y = wl_shifted, color = "Wallinga-Lipsitch"), size = 0.9) +
+  # Set axis limits
+  scale_y_continuous(limits = c(0, 5)) +
+  
+  # Customize colors
+  scale_color_manual(name = "Method", 
+                    values = c("True R" = my_colors[1], 
+                              "EpiLPS" = my_colors[2],
+                              "EpiEstim" = my_colors[5],
+                              "Wallinga-Teunis" = my_colors[4],
+                              "Wallinga-Lipsitch" = my_colors[3])) +
+  
+  # Add labels
+  labs(x = "Time", y = "Reproduction Number") +
+  
+  # Customize theme
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+p
 ```
 
 # Real data
