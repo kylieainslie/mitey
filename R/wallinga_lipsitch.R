@@ -138,27 +138,26 @@ wallinga_lipsitch <- function(incidence, dates, si_mean, si_sd,
     bootstrap_r <- matrix(NA, nrow = n_bootstrap, ncol = n)
     bootstrap_r_corrected <- matrix(NA, nrow = n_bootstrap, ncol = n)
 
-    # Function to generate one bootstrap sample
-    generate_bootstrap <- function() {
-      # Resample from original incidence with replacement
-      # We sample days, not individual cases, to preserve temporal correlations
-      sample_indices <- sample(1:n, n, replace = TRUE)
-      bootstrap_incidence <- incidence[sample_indices]
+    generate_case_bootstrap <- function(incidence) {
+      # Create a case-level representation (each case is an individual unit)
+      case_days <- rep(1:length(incidence), times = incidence)
 
-      # Calculate R for this bootstrap sample
-      bootstrap_estimates <- calculate_r(bootstrap_incidence)
+      # Resample individual cases
+      n_cases <- sum(incidence)
+      bootstrap_cases <- sample(case_days, n_cases, replace = TRUE)
 
-      return(list(
-        r = bootstrap_estimates$r,
-        r_corrected = bootstrap_estimates$r_corrected
-      ))
+      # Convert back to daily incidence
+      bootstrap_incidence <- tabulate(bootstrap_cases, nbins = length(incidence))
+
+      return(bootstrap_incidence)
     }
 
     # Generate bootstrap samples
     for (i in 1:n_bootstrap) {
-      bootstrap_sample <- generate_bootstrap()
-      bootstrap_r[i, ] <- bootstrap_sample$r
-      bootstrap_r_corrected[i, ] <- bootstrap_sample$r_corrected
+      bootstrap_incidence <- generate_case_bootstrap(incidence)
+      bootstrap_estimates <- calculate_r(bootstrap_incidence)
+      bootstrap_r[i, ] <- bootstrap_estimates$r
+      bootstrap_r_corrected[i, ] <- bootstrap_estimates$r_corrected
     }
 
     # Calculate confidence intervals
