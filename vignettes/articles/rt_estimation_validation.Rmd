@@ -416,7 +416,7 @@ my_colors <- c("black", "#FDE725", "#21908C", "#440154", "#5DC863")
 p <- ggplot(comparison_df %>%
               filter(time > min(time) + 7), aes(x = time)) +
   geom_hline(yintercept = 1, linetype = "dashed", color = "gray50") +
-  geom_ribbon(aes(ymin = wl_lower, ymax = wl_upper), fill = my_colors[3], alpha = 0.1) +
+  geom_ribbon(aes(ymin = wl_r_lower, ymax = wl_r_upper), fill = my_colors[3], alpha = 0.1) +
   geom_ribbon(aes(ymin = cori_lower, ymax = cori_upper), fill = my_colors[5], alpha = 0.1) +
   geom_ribbon(aes(ymin = wt_lower, ymax = wt_upper), fill = my_colors[4], alpha = 0.1) +
   geom_ribbon(aes(ymin = epilps_lower, ymax = epilps_upper), fill = my_colors[2], alpha = 0.1) +
@@ -425,8 +425,8 @@ p <- ggplot(comparison_df %>%
   geom_line(aes(y = epilps_r, color = "EpiLPS"), linewidth = 0.9) +
   geom_line(aes(y = cori_r, color = "EpiEstim"), linewidth = 0.9) +
   geom_line(aes(y = wt_r, color = "Wallinga-Teunis"), linewidth = 0.9) +
-  #geom_line(aes(y = wl_r, color = "Wallinga-Lipsitch"), linewidth = 0.9) +
-  geom_line(aes(y = wl_shifted, color = "Wallinga-Lipsitch"), linewidth = 0.9) +
+  geom_line(aes(y = wl_r, color = "Wallinga-Lipsitch"), linewidth = 0.9) +
+  #geom_line(aes(y = wl_shifted, color = "Wallinga-Lipsitch"), linewidth = 0.9) +
 
   scale_y_continuous(limits = c(0, 5)) +
   scale_color_manual(name = "Method", 
