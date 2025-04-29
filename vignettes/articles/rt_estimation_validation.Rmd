@@ -487,7 +487,6 @@ r_plot <- ggplot(res_zika %>%
   scale_color_manual(values = c("WL" = "#21908C")) +  
   scale_fill_manual(values = c("WL" = "#21908C")) + 
   labs(x = "Time", y = "R", title = "Estimated R") +
-  guides(color = "none", fill = "none") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 
 # show Rt plot with epicurve
@@ -504,17 +503,27 @@ epifit <- estimR(zika2015$incidence, dates = zika2015$dates, si = si$pvec, WTR =
 ```
 
 ```{r zika_comparison_plot, echo=FALSE}
-r_plot +
-  geom_line(data = epifit$RLPS[-c(1:7),], aes(x = Time, y = R, color = "EpiLPS"), linewidth = 1, linetype = "solid") +
-  geom_line(data = epifit$RWT, aes(x = t_end + zika2015$dates[1], y = `Mean(R)`, color = "WT (EpiEstim)"), linewidth = 1, linetype = "solid") +
+r_plot_comparison <- ggplot(res_zika %>%
+         filter(date > min(date) + 7), 
+       aes(x = date)) +
+  geom_ribbon(aes(ymin = R_lower, ymax = R_upper), fill = "#21908C", alpha = 0.2) +
+  geom_line(aes(color = "WL"), y = res_zika$R[res_zika$date > min(res_zika$date) + 7], linewidth = 1) +  # Add color in aes()
+  geom_hline(yintercept = 1, linetype = "dashed", color = "gray50") +
+  geom_line(data = epifit$RLPS[-c(1:7),], aes(x = Time, y = R, color = "EpiLPS"), linewidth = 1) +
+  geom_line(data = epifit$RWT, aes(x = t_end + zika2015$dates[1], y = `Mean(R)`, color = "WT (EpiEstim)"), linewidth = 1) +
+  coord_cartesian(ylim = c(0,8)) +
+  scale_x_date(date_breaks = "7 days", date_labels = "%d-%m-%Y") +
   scale_color_manual(values = c("WL" = "#21908C", "EpiLPS" = "#FDE725", "WT (EpiEstim)" = "#440154")) + 
-  scale_fill_manual(values = c("WL" = "#21908C")) +
   labs(x = "Time", y = "R", title = "Estimated R", color = "Method") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "right")
+        legend.position = c(0.95, 0.95),  # Position in the top right
+        legend.justification = c(1, 1),   # Align the top-right corner of the legend
+        legend.background = element_rect(fill = "white", color = NA),
+        legend.margin = margin(5, 5, 5, 5))
+r_plot_comparison
 ```
 
-## Influenza A (H7N9) Outbreak in China (2013)
+## 2. Influenza A (H7N9) Outbreak in China (2013)
 Again, we'll use a dataset from the `outbreaks` package. For this analysis, we'll use data from the 2013 influenza A (H7N9) outbreak in China.
 
 ```{r load_h7n9_data, message=FALSE, warning=FALSE}
@@ -530,7 +539,7 @@ h7n9_data <- fluH7N9_china_2013 %>%
   mutate(date_onset = as.Date(date_of_onset)) %>%
   filter(!is.na(date_onset)) %>%  # Remove cases with missing onset date
   group_by(date_onset) %>%
-  summarize(cases = n()) %>%
+  dplyr::summarize(cases = n()) %>%
   arrange(date_onset)
 
 # Create a complete time series with zeros for days with no cases
