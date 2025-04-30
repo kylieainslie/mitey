@@ -15,7 +15,8 @@ calculate_si_probability_matrix <- function(day_diffs, si_mean, si_sd, si_dist) 
 
   for (i in 1:n) {
     for (j in 1:n) {
-      # Only consider forward transmission (positive day differences)
+      ## Only consider cases where j could infect i (i.e., j comes before i)
+      # This means day_diffs[i, j] > 0 (date i - date j > 0)
       if (day_diffs[i, j] > 0) {
         if (si_dist == "gamma") {
           # Convert mean and SD to shape and rate parameters
@@ -67,11 +68,11 @@ create_day_diff_matrix <- function(dates) {
 smooth_estimates <- function(r_estimate, window) {
   n <- length(r_estimate)
   r_smooth <- rep(NA, n)
-  half_window <- floor(window / 2)
+  #half_window <- floor(window / 2)
 
   for (i in 1:n) {
-    start_idx <- max(1, i - half_window)
-    end_idx <- min(n, i + half_window)
+    start_idx <- max(1, i - (window - 1))
+    end_idx <- i
     valid_values <- r_estimate[start_idx:end_idx]
     valid_values <- valid_values[!is.na(valid_values) & is.finite(valid_values)]
 
