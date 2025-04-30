@@ -107,6 +107,31 @@ If shift=TRUE:
 
 - shifted_date: Dates shifted forward by one mean serial interval
 
+## Smoothing
+The `smoothing` argument allows users to smooth Rt estimates. The argument takes an integer value that indicates the window of time over which to smooth the estimates. If `smoothing=0`, no smoothing will be performed. Below is description of how the smoothing is performed.
+
+ 1. Initialization:
+
+    - The function takes the original Rt estimates (r_estimate) and window size (window)
+    - It creates an output vector of the same length, initially filled with NA values
+    - It calculates the half-window size for centering purposes
+
+
+ 2. Moving Window Calculation:
+  For each position in the time series, the function:
+
+    - Determines window boundaries, adjusting for the start and end of the series
+    - Extracts values within the window
+    - Filters out any missing (NA) or infinite values
+    - Calculates the mean of remaining values
+
+ 3. Example:
+  For a time series with window size 3:
+
+    - At position 2, it averages positions 1, 2, and 3
+    - At the first position, it averages positions 1 and 2 only
+    - At positions with missing values, it uses only available data points
+    
 ## Right-Truncation Correction
 
 The Wallinga-Lipsitch method includes a correction for right-truncation, which addresses the bias in reproduction number estimates near the end of the time series. This bias occurs because some secondary cases infected by recent primary cases have not yet been observed due to the delay represented by the serial interval.
