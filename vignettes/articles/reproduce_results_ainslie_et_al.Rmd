@@ -9,7 +9,7 @@ output: html_document
 
 ```{r, include = FALSE}
 # Create figures directory if it doesn't exist
-fig_dir <- "figures"
+fig_dir <- "/Users/kylieainslie/Library/CloudStorage/Dropbox/Kylie/Projects/RIVM/Manuscripts/scabies/figures"
 if (!dir.exists(fig_dir)) dir.create(fig_dir, recursive = TRUE)
 
 knitr::opts_chunk$set(
