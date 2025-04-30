@@ -66,18 +66,21 @@ create_day_diff_matrix <- function(dates) {
 #' @return Smoothed R estimates
 #'
 smooth_estimates <- function(r_estimate, window) {
+
+  # Replace NA and infinite values with NA
+  r_estimate[!is.finite(r_estimate)] <- NA
+
   n <- length(r_estimate)
   r_smooth <- rep(NA, n)
-  #half_window <- floor(window / 2)
+  half_window <- floor(window / 2)
 
   for (i in 1:n) {
-    start_idx <- max(1, i - (window - 1))
-    end_idx <- i
-    valid_values <- r_estimate[start_idx:end_idx]
-    valid_values <- valid_values[!is.na(valid_values) & is.finite(valid_values)]
+    start_idx <- max(1, i - half_window)
+    end_idx <- min(n, i + half_window)
 
-    if (length(valid_values) > 0) {
-      r_smooth[i] <- mean(valid_values)
+    window_values <- r_estimate[start_idx:end_idx]
+    if (sum(!is.na(window_values)) > 0) {
+      r_smooth[i] <- mean(window_values, na.rm = TRUE)
     }
   }
 
@@ -169,7 +172,11 @@ calculate_r_estimates <- function(incidence, si_prob, dates, si_mean, si_sd, si_
   r_estimate <- rep(NA, n)
   for (j in 1:n) {
     if (incidence[j] > 0) {
+      if (sum(incidence) == incidence[j]) {
+        r_estimate[j] <- NA
+      } else {
       r_estimate[j] <- sum(incidence * rel_likelihood[, j]) / incidence[j]
+      }
     }
   }
 
