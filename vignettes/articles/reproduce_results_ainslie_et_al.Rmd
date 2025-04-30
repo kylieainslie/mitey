@@ -8,11 +8,21 @@ output: html_document
 ---
 
 ```{r, include = FALSE}
+# Create figures directory if it doesn't exist
+fig_dir <- "figures"
+if (!dir.exists(fig_dir)) dir.create(fig_dir, recursive = TRUE)
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.width=7, 
-  fig.height=4
+  fig.height=4,
+  dev = "tiff",
+  fig.path = paste0(fig_dir, "/"),
+  fig.width = 8,
+  fig.height = 6,
+  dpi = 600,
+  compression = "lzw"
 )
 ```
 
@@ -25,9 +35,11 @@ This article provides the code necessary to reproduce the results from [Ainslie 
 ```{r setup, echo=TRUE, include = FALSE, results='hide'}
 
 # required to run mitey
-devtools::install_github("kylieainslie/mitey")
-library(mitey)
+#devtools::install_github("kylieainslie/mitey")
+#library(mitey)
 library(fdrtool)
+library(devtools)
+load_all()
 
 # required for this article
 library(dplyr)
@@ -38,19 +50,17 @@ library(ggplot2)
 library(brms)
 library(openxlsx)
 library(lubridate)
-library(broom)
 library(viridis)
 library(cowplot)
 library(tidybayes)
 library(ggridges)
-library(glue)
 library(zoo)
 library(stringr)
-library(forcats)
-library(Hmisc)
 library(ISOweek)
 library(here)
 library(outbreaks)
+library(gridExtra)
+library(EpiLPS)
 ```
 
 # Analyses
@@ -494,14 +504,15 @@ df <- nivel_daily_data %>%
   rename(inc = count) %>%
   select(onset_date, inc)
 
-ggplot(df, aes(x = onset_date, y = inc)) +
+scabies_epicurve <- ggplot(df, aes(x = onset_date, y = inc)) +
   geom_col(fill = "steelblue") +
   #geom_smooth(method = "loess", color = "red", se = FALSE) +
   scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
   labs(
     x = "Date of Consultation",
-    y = "Number of scabies consultations per 100,000 people"
+    y = "Consultations per 100,000 people"
   ) +
+  theme(axis.text.y = element_text(size = 6)) +
   theme_minimal()
 ```
 
@@ -518,31 +529,25 @@ rt_scabies <- wallinga_lipsitch(
   dates = df$onset_date,
   si_mean = scabies_si_mean,
   si_sd = scabies_si_sd,
-  si_dist = "normal",  # Normal distribution for serial interval
-  smoothing = 42,      # 6-week smoothing window (appropriate for weekly data)
+  si_dist = "normal", 
+  smoothing = 0,
   bootstrap = TRUE,
-  n_bootstrap = 100    # Use more in practice
+  n_bootstrap = 500 
 )
+
+#saveRDS(rt_scabies, "vignettes/data/rt_estimates_WL.rds")
 ```
 
 ```{r plot_rt_simple, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 5. Time-varying case reproduction number of scabies transmission. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August 31; Autumn = September 1 – November 31. Shaded region represents the 95% confidence envelope. Black horizontal dashed line indicates R = 1.", out.width="100%"}
 
-# Convert to data frame and add month information for seasonal analysis
-rt_scabies_df <- as.data.frame(rt_scabies) %>%
-  mutate(
-    month = as.numeric(format(date, "%m")),
-    year = as.numeric(format(date, "%Y")),
-    season = case_when(
-      month %in% c(12, 1, 2) ~ "Winter",
-      month %in% c(3, 4, 5) ~ "Spring",
-      month %in% c(6, 7, 8) ~ "Summer",
-      month %in% c(9, 10, 11) ~ "Autumn"
-    ),
-    season = factor(season, levels = c("Winter", "Spring", "Summer", "Autumn"))
-  )
+# # read in stored Rt estimates
+file_path3 <-  here("vignettes", "data", "rt_estimates_WL.rds")
+rt_scabies <- readRDS(file_path3)
 
 # Basic Rt plot
-rt_basic <- ggplot(rt_scabies_df %>% filter(!is.na(R_corrected)), aes(x = date)) +
+rt_basic <- ggplot(rt_scabies %>% 
+                     filter(!is.na(R_corrected),
+                            date > min(date) + 123), aes(x = date)) +
   geom_line(aes(y = R_corrected), color = "darkblue", linewidth = 1) +
   geom_ribbon(
     aes(ymin = R_corrected_lower, ymax = R_corrected_upper),
@@ -559,50 +564,27 @@ rt_basic <- ggplot(rt_scabies_df %>% filter(!is.na(R_corrected)), aes(x = date))
   ) +
   theme_minimal()
 
-rt_basic
-
-
-# # read in data
-# file_path3 <-  here("vignettes", "data", "rt_df_for_plot.rds")
-# 
-# rt_df_for_plot <- readRDS(file_path3)
-# 
-# # plot rt_adjusted with confidence bounds (and season bars)
-# # Breaks for background rectangles
-# start_breaks <- c(as.Date("2011-01-01"),
-#                   seq(as.Date("2011-03-01"), 
-#                       tail(rt_df_for_plot$onset_date, 1), by = "quarter"))
-# end_breaks <- c(start_breaks[-1] - 1, tail(rt_df_for_plot$onset_date,1))
-# rects <- data.frame(xstart = start_breaks,
-#                     xend = end_breaks,
-#                     season = factor(c(rep(c("winter", "spring", "summer", "autumn"),
-#                                           length.out = length(start_breaks))),
-#                                     levels = c("winter", "spring", "summer", "autumn")))
-# roll_days <- 42 # number of days to calculate rolling average over
-# 
-# p <- ggplot() +
-#   geom_rect(data = rects, aes(xmin = xstart, xmax = xend, ymin = -Inf, ymax = Inf,
-#                               fill = season), alpha = 0.4) +
-#   scale_fill_viridis_d() +
-#   geom_line(data = rt_df_for_plot, aes(x = onset_date,
-#                                        y = rollmean(rt_adjusted, roll_days, fill = NA))) +
-#   geom_ribbon(data = rt_df_for_plot, aes(x = onset_date,
-#                                          ymin = rollmean(lower_rt_adjusted, roll_days, fill = NA),
-#                                          ymax = rollmean(upper_rt_adjusted, roll_days, fill = NA)),
-#               alpha = 0.3) +
-#   geom_hline(yintercept = 1, linetype = "dashed", color = "black", linewidth = 0.6) +
-#   #geom_hline(yintercept = 1.1, linetype = "dashed", color = "grey", linewidth = 0.6) +
-#   coord_cartesian(ylim = c(0, 5)) + 
-#   scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
-#   labs(x = "Date", y = "Reproduction Number") +
-#   theme(
-#     panel.background = element_blank()
-#   )
-# 
-# p
+combined <- gridExtra::grid.arrange(scabies_epicurve, rt_basic, nrow = 2, heights = c(1.5, 1))
 ```
 
+## Examining peak timing
+We can see from above that scabies transmission varies over time with peaks at parts of the year and troughs at others. Let's look a bit more closely at the timing of peaks (and troughs) by plotting Rt against the season of the year.
+
 ```{r rt_plot_w_seasons, echo=FALSE}
+# Convert to data frame and add month information for seasonal analysis
+rt_scabies_df <- as.data.frame(rt_scabies) %>%
+  mutate(
+    month = as.numeric(format(date, "%m")),
+    year = as.numeric(format(date, "%Y")),
+    season = case_when(
+      month %in% c(12, 1, 2) ~ "Winter",
+      month %in% c(3, 4, 5) ~ "Spring",
+      month %in% c(6, 7, 8) ~ "Summer",
+      month %in% c(9, 10, 11) ~ "Autumn"
+    ),
+    season = factor(season, levels = c("Winter", "Spring", "Summer", "Autumn"))
+  )
+
 # Create seasonal background
 seasons_data <- expand.grid(
   year = 2011:2023,
@@ -647,19 +629,19 @@ rt_seasonal <- ggplot() +
     data = seasons_data,
     aes(xmin = start_date, xmax = end_date, 
         ymin = 0, ymax = Inf, fill = season),
-    alpha = 0.2
+    alpha = 0.3
   ) +
   
   # Plot Rt line and confidence interval
   geom_line(
-    data = rt_plot_data,
-    aes(x = date, y = rt_smooth),
+    data = rt_scabies_df %>% filter(date > min(date) + 123),
+    aes(x = date, y = R_corrected),
     linewidth = 1,
     color = "darkblue"
   ) +
   geom_ribbon(
-    data = rt_plot_data,
-    aes(x = date, ymin = lower_smooth, ymax = upper_smooth),
+    data = rt_scabies_df %>% filter(date > min(date) + 123),
+    aes(x = date, ymin = R_corrected_lower, ymax = R_corrected_upper),
     alpha = 0.2,
     fill = "darkblue"
   ) +
@@ -673,9 +655,9 @@ rt_seasonal <- ggplot() +
   coord_cartesian(ylim = c(0, 3)) +
   labs(
     x = "Date",
-    y = "Reproduction number (Rt)",
-    title = "Seasonal patterns in scabies transmission in the Netherlands",
-    subtitle = "Time-varying reproduction number with seasonal background",
+    y = "R",
+    #title = "Seasonal patterns in scabies transmission in the Netherlands",
+    #subtitle = "Time-varying reproduction number with seasonal background",
     fill = "Season"
   ) +
   theme_minimal() +
@@ -692,7 +674,7 @@ rt_seasonal
 ## Figure 6: Validation of Serial Interval Estimation
 # A. Simulated data validation
 set.seed(1234)
-N <- 10000; hmu<-15; hsigma<-3; hw1 <- 0.2; hw2 <- 0.5; hw3 <- 0.2; hw4 <- 0.1
+N <- 5000; hmu<-15; hsigma<-3; hw1 <- 0.2; hw2 <- 0.5; hw3 <- 0.2; hw4 <- 0.1
 
 CP <- rhalfnorm((hw1*N),theta=sqrt(pi/2)/(sqrt(2)*hsigma))
 PS <- rnorm(hw2*N,mean=hmu,sd=hsigma)
@@ -800,6 +782,7 @@ fig6 <- plot_grid(
   nrow = 2 )
 fig6
 ```
+
 ### Time-varying Reproduction Number
 ```{r fig7A, echo=FALSE}
 ## Figure 7: Validation of Reproduction Number Estimation
@@ -1204,47 +1187,47 @@ results_tab
 
 In the main analysis, when we estimate the time-varying reproduction number, we assume an underlying Normal distriubtion. However, because we are using the serial interval distribution as an approximation of the generation interval, which is strictly positive, we performed a sensitivity analysis in which we assumed the serial interval distribution is Gamma distributed with the same mean and variance (Figure S3).
 
+Below, we provide the code to generate the estimates assuming a gamma distributed serial interval. However, this code takes a long time to run due to the bootstrapping, so the estimates are stored in `vignettes/data/rt_estimates_WL_gamma.rds`.
+
+```{r rt_w_gamma, echo=TRUE, eval=FALSE}
+rt_scabies_gam <- wallinga_lipsitch(
+  incidence = df$inc,
+  dates = df$onset_date,
+  si_mean = scabies_si_mean,
+  si_sd = scabies_si_sd,
+  si_dist = "gamma", 
+  smoothing = 0,
+  bootstrap = TRUE,
+  n_bootstrap = 100 
+)
+
+#saveRDS(rt_scabies_gam, "vignettes/data/rt_estimates_WL_gamma.rds")
+```
+
 ```{r rt_gamma_sa, echo=TRUE, message=FALSE, warning=FALSE, fig.cap="Figure S3. Time-varying reproduction number of scabies transmission assuming a Gamma distributed serial interval distribution (black line). The time-varying reproduction number estimates assuming an underlying normal serial interval distribution are shown as the blue line. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August 31; Autumn = September 1 – November 31.", out.width="100%"}
-# read in data
-file_path4 <-  here("vignettes", "data", "rt_df_for_plot.rds")
-rt_df_for_plot_sa <- readRDS(file_path4) %>%
-  filter(!is.na(rt),
-         !is.nan(rt)
-         )
+# # read in stored Rt estimates
+file_path3 <-  here("vignettes", "data", "rt_estimates_WL_gamma.rds")
+rt_scabies_gam <- readRDS(file_path3)
 
-# SA plot -------
-start_breaks <- c(as.Date("2011-01-01"),
-                  seq(as.Date("2011-03-01"), tail(rt_df_for_plot_sa$onset_date, 1), by = "quarter"))
-end_breaks <- c(start_breaks[-1] - 1, tail(rt_df_for_plot_sa$onset_date,1))
-rects <- data.frame(xstart = start_breaks,
-                    xend = end_breaks,
-                    season = factor(c(rep(c("winter", "spring", "summer", "autumn"),
-                                          length.out = length(start_breaks))),
-                                    levels = c("winter", "spring", "summer", "autumn")))
-
-roll_days <- 42
-
-p_sa <- ggplot() +
-  geom_rect(data = rects, aes(xmin = xstart, xmax = xend, ymin = -Inf, ymax = Inf,
-                              fill = season), alpha = 0.4) +
-  scale_fill_viridis_d() +
-  geom_line(data = rt_df_for_plot, aes(x = onset_date, y = rollmean(rt_adjusted, roll_days, fill = NA)), 
-            color = "blue", linetype = "solid", linewidth = 0.8) +
-  geom_line(data = rt_df_for_plot_sa, aes(x = onset_date,
-                                       y = rollmean(rt_adjusted, roll_days, fill = NA))) +
-  geom_ribbon(data = rt_df_for_plot_sa, aes(x = onset_date,
-                                         ymin = rollmean(lower_rt_adjusted, roll_days, fill = NA),
-                                         ymax = rollmean(upper_rt_adjusted, roll_days, fill = NA)),
-              alpha = 0.3) +
-  geom_hline(yintercept = 1, linetype = "dashed", color = "black", linewidth = 0.8) +
+# Basic Rt plot
+rt_basic_gam <- ggplot(rt_scabies_gam %>% 
+                     filter(!is.na(R_corrected),
+                            date > min(date) + 123), aes(x = date)) +
+  geom_line(aes(y = R_corrected), color = "darkblue", linewidth = 1) +
+  geom_ribbon(
+    aes(ymin = R_corrected_lower, ymax = R_corrected_upper),
+    fill = "darkblue", alpha = 0.2
+  ) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
   scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
-  labs(x = "Date of Symptom Onset", y = "Reproduction Number") +
-  coord_cartesian(ylim = c(0, 6)) +
-  theme(
-    panel.background = element_blank()
-  )
+  coord_cartesian(ylim = c(0, 3)) +
+  labs(
+    x = "Date",
+    y = "R"
+  ) +
+  theme_minimal()
 
-p_sa
+rt_basic_gam
 ```
 
 ### Annual Incidence by Age Group

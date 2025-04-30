@@ -552,9 +552,8 @@ h7n9_complete <- data.frame(date_onset = date_range) %>%
 ggplot(h7n9_complete, aes(x = date_onset, y = cases)) +
   geom_col(fill = "steelblue") +
   labs(
-    title = "Daily incidence of influenza A (H7N9) in China, 2013",
-    x = "Date of symptom onset",
-    y = "Number of cases"
+    x = "Date",
+    y = "Cases"
   ) +
   theme_minimal() +
   theme(
