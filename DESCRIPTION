@@ -11,18 +11,12 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: 
-    dplyr,
     fdrtool,
     ggplot2,
-    lubridate,
-    purrr,
-    stats,
-    tidyr
+    stats
 URL: https://github.com/kylieainslie/mitey, https://kylieainslie.github.io/mitey/
 BugReports: https://github.com/kylieainslie/mitey/issues
 Suggests: 
-    BH,
-    bookdown,
     brms,
     broom,
     cowplot,
@@ -32,23 +26,23 @@ Suggests:
     forcats,
     ftExtra,
     ggridges,
-    glue,
-    Hmisc,
     ISOweek,
     knitr,
-    nls2,
     officer,
     openxlsx,
     rmarkdown,
     stringr,
     testthat (>= 3.0.0),
     tidybayes,
-    tidyverse,
     viridis,
     zoo,
     outbreaks,
     gt,
-    here
+    here,
+    dplyr,
+    lubridate,
+    purrr,
+    tidyr
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Depends: 
