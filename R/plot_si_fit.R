@@ -45,10 +45,10 @@ plot_si_fit <- function(dat, mean, sd, weights, dist="normal", scaling_factor = 
       labs(x = "Index-case to case interval (days)", y = "Density") +
       theme_minimal() +
       # Add dashed vertical line at mean
-      geom_vline(xintercept = mean, linetype = "dashed", color = "black") +
+      geom_vline(xintercept = mean, linetype = "dashed", color = "black")
       # Annotate the mean value on the x-axis
-      annotate("text", x = mean + (max(dat) * x_scale), y = min(density(dat)$y) - 0.001,
-               label = paste0(round(mean, 1)), size = 3, color = "black", vjust = 1)
+      # annotate("text", x = mean + (max(dat) * x_scale), y = min(density(dat)$y) - 0.001,
+      #          label = paste0(round(mean, 1)), size = 3, color = "black", vjust = 1)
   }
 
   return(p)
