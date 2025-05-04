@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
 
 ```{r setup, echo = FALSE, message=FALSE, results='hide'}
 library(dplyr)
+library(tidyr)
 library(purrr)
 library(fdrtool)
 library(flextable)
