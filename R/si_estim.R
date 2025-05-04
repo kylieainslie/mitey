@@ -18,6 +18,57 @@
 
 si_estim <- function(dat, n = 50, dist = "normal", init = NULL) {
 
+  ## Check inputs
+  # Check inputs for NA values
+  if (any(is.na(dat))) {
+    stop("Data contains NA values. Please remove or impute NA values before analysis.")
+  }
+
+  # Check for non-numeric input
+  if (!is.numeric(dat)) {
+    stop("Input data must be numeric.")
+  }
+
+  # Check for negative values and issue warning
+  if (any(dat < 0)) {
+    warning("Data contains negative values. While the Vink method can handle negative serial intervals ",
+            "(e.g., co-primary infections), please ensure this is intended for your analysis.")
+  }
+
+  # Check for single value
+  if (length(dat) < 2) {
+    stop("Need at least 2 data points to estimate serial interval parameters.")
+  }
+
+  # Check distribution parameter
+  if (!dist %in% c("normal", "gamma")) {
+    stop("Distribution must be either 'normal' or 'gamma'.")
+  }
+
+  # Check for gamma distribution with negative values
+  if (dist == "gamma" && any(dat < 0)) {
+    stop("Gamma distribution cannot be used with negative values. Please use 'normal' distribution instead.")
+  }
+
+  # Set initial values if not provided
+  if (is.null(init)) {
+    init <- c(mean(dat), sd(dat))
+  }
+
+  # Check initial values
+  if (length(init) != 2) {
+    stop("Initial values must be a vector of length 2 (mean and sd).")
+  }
+
+  if (any(is.na(init))) {
+    stop("Initial values cannot contain NA.")
+  }
+
+  if (init[2] <= 0) {
+    stop("Initial standard deviation must be positive.")
+  }
+
+  ## Vink et al. implementation code
   j <- length(dat)
   dat <- ifelse(dat == 0, 0.00001, dat)
 
