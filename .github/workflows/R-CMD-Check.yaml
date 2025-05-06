@@ -26,22 +26,32 @@ jobs:
       - name: Setup R
         uses: r-lib/actions/setup-r@v2
 
-      # Step 3: Install system dependencies
+      # Step 3: Set up Pandoc with a specific version
+      - name: Setup Pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+        with:
+          pandoc-version: '2.19'
+
+      # Step 4: Install system dependencies
       - name: Install system dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           use-public-rspm: true
           install-suggests: true
-          extra-packages: covr, RcppEigen
+          extra-packages: |
+            any::covr
+            any::RcppEigen
+            any::rcmdcheck
+          needs: check
 
-      # Step 4: Install dependencies and run R CMD Check
+      # Step 5: Install dependencies and run R CMD Check
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2
         with:
           build-vignettes: true
           upload-logs: true
 
-      # Step 5: Upload check results (optional)
+      # Step 6: Upload check results (optional)
       - name: Upload R CMD check results
         if: always()
         uses: actions/upload-artifact@v4
