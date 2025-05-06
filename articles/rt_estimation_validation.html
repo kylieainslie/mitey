@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Validation of time-varying reproduction number estimation • mitey</title>
+<title>Estimation of time-varying reproduction number • mitey</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Validation of time-varying reproduction number estimation">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Estimation of time-varying reproduction number">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -34,9 +34,9 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/code_validation_for_Vink_method.html">Code validation for Vink method</a></li>
-    <li><a class="dropdown-item" href="../articles/epidemiology_of_scabies.html">Estimation of the epidemiological characteristics of scabies</a></li>
+    <li><a class="dropdown-item" href="../articles/quick_start_guide.html">Quick Start Guide: Estimating Epidemiological Parameters with `mitey`</a></li>
     <li><a class="dropdown-item" href="../articles/reproduce_results_ainslie_et_al.html">Reproduce Results from Ainslie et al.</a></li>
-    <li><a class="dropdown-item" href="../articles/rt_estimation_validation.html">Validation of time-varying reproduction number estimation</a></li>
+    <li><a class="dropdown-item" href="../articles/rt_estimation_validation.html">Estimation of time-varying reproduction number</a></li>
   </ul>
 </li>
       </ul>
@@ -58,11 +58,11 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Validation of time-varying reproduction number estimation</h1>
+      <h1>Estimation of time-varying reproduction number</h1>
                         <h4 data-toc-skip class="author">Kylie
 Ainslie</h4>
             
-            <h4 data-toc-skip class="date">2025-04-13</h4>
+            <h4 data-toc-skip class="date">2025-05-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kylieainslie/mitey/blob/main/vignettes/articles/rt_estimation_validation.Rmd" class="external-link"><code>vignettes/articles/rt_estimation_validation.Rmd</code></a></small>
       <div class="d-none name"><code>rt_estimation_validation.Rmd</code></div>
@@ -96,82 +96,280 @@ estimate
 using a synthetic data set and real data. We will also compare the
 estimates from <code>mitey</code> to estimates from other R packages
 that can be used for similar analyses, namely <code>EpiEstim</code><span class="citation"><sup>3</sup></span> and <code>EpiLPS</code><span class="citation"><sup>4</sup></span>.</p>
+<div class="section level3">
+<h3 id="mathematical-background">Mathematical Background<a class="anchor" aria-label="anchor" href="#mathematical-background"></a>
+</h3>
+<p>The Wallinga-Lipsitch method estimates the case reproduction number
+based on the idea that the relative likelihood that case j infected case
+i depends on their time difference, weighted by the serial interval
+distribution.</p>
+<p>For a given case i that showed symptoms at time t_i, the probability
+that it was infected by case j (with symptom onset at time t_j) is:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>=</mo><mfrac><mrow><mi>w</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mi>i</mi></msub><mo>−</mo><msub><mi>t</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><munder><mo>∑</mo><mi>k</mi></munder><mi>w</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mi>i</mi></msub><mo>−</mo><msub><mi>t</mi><mi>k</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">p_{i,j} = \frac{w(t_i - t_j)}{\sum_{k} w(t_i - t_k)}</annotation></semantics></math></p>
+<p>Where: -
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>τ</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">w(\tau)</annotation></semantics></math>
+is the probability mass function of the serial interval for a delay of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>τ</mi><annotation encoding="application/x-tex">\tau</annotation></semantics></math>
+- The denominator sums over all potential infectors
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math></p>
+<p>The reproduction number for cases with symptom onset at time
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>t</mi><mi>j</mi></msub><annotation encoding="application/x-tex">t_j</annotation></semantics></math>
+is then:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>I</mi><mi>i</mi></msub><mo>⋅</mo><msub><mi>p</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub></mrow><msub><mi>I</mi><mi>j</mi></msub></mfrac></mrow><annotation encoding="application/x-tex">R(t_j) = \frac{\sum_i I_i \cdot p_{i,j}}{I_j}</annotation></semantics></math></p>
+<p>Where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>i</mi></msub><annotation encoding="application/x-tex">I_i</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>j</mi></msub><annotation encoding="application/x-tex">I_j</annotation></semantics></math>
+are the number of cases at times
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>t</mi><mi>i</mi></msub><annotation encoding="application/x-tex">t_i</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>t</mi><mi>j</mi></msub><annotation encoding="application/x-tex">t_j</annotation></semantics></math>,
+respectively.</p>
+</div>
+<div class="section level3">
+<h3 id="function-documentation">Function Documentation<a class="anchor" aria-label="anchor" href="#function-documentation"></a>
+</h3>
+<div class="section level4">
+<h4 id="wallinga_lipsitch">
+<code>wallinga_lipsitch()</code><a class="anchor" aria-label="anchor" href="#wallinga_lipsitch"></a>
+</h4>
+<div class="section level5">
+<h5 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
+</h5>
+<p>Estimates the time-varying reproduction number using the
+Wallinga-Lipsitch method, which calculates the case reproduction number
+based on symptom onset data and serial interval distribution.</p>
+</div>
+<div class="section level5">
+<h5 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
+</h5>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/wallinga_lipsitch.html">wallinga_lipsitch</a></span><span class="op">(</span></span>
+<span>  <span class="va">incidence</span>,</span>
+<span>  <span class="va">dates</span>,</span>
+<span>  <span class="va">si_mean</span>,</span>
+<span>  <span class="va">si_sd</span>,</span>
+<span>  si_dist <span class="op">=</span> <span class="st">"gamma"</span>,</span>
+<span>  smoothing <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  bootstrap <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  n_bootstrap <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  shift <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level5">
+<h5 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a>
+</h5>
+<ul>
+<li>incidence: Numeric vector of daily case counts.</li>
+<li>dates: Vector of dates corresponding to the incidence data.</li>
+<li>si_mean: Mean of the serial interval distribution.</li>
+<li>si_sd: Standard deviation of the serial interval distribution.</li>
+<li>si_dist: Distribution to use for serial interval (“gamma” or
+“normal”).</li>
+<li>smoothing: Window size for smoothing estimates (0 for no
+smoothing).</li>
+<li>bootstrap: Logical; whether to compute bootstrap confidence
+intervals.</li>
+<li>n_bootstrap: Number of bootstrap samples to generate.</li>
+<li>conf_level: Confidence level for intervals (0.95 = 95% CI).</li>
+<li>shift: Logical; whether to shift estimates by one mean serial
+interval.</li>
+</ul>
+</div>
+<div class="section level5">
+<h5 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a>
+</h5>
+<p>A data frame with columns:</p>
+<ul>
+<li>date: Original dates from input</li>
+<li>incidence: Daily case counts</li>
+<li>R: Estimated case reproduction number</li>
+<li>R_corrected: Case reproduction number with right-truncation
+correction</li>
+</ul>
+<p>If bootstrap=TRUE:</p>
+<ul>
+<li>R_lower, R_upper: Confidence intervals for R</li>
+<li>R_corrected_lower, R_corrected_upper: Confidence intervals for
+R_corrected</li>
+</ul>
+<p>If shift=TRUE:</p>
+<ul>
+<li>shifted_date: Dates shifted forward by one mean serial interval</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section level3">
+<h3 id="smoothing">Smoothing<a class="anchor" aria-label="anchor" href="#smoothing"></a>
+</h3>
+<p>The <code>smoothing</code> argument allows users to smooth Rt
+estimates. The argument takes an integer value that indicates the window
+of time over which to smooth the estimates. If <code>smoothing=0</code>,
+no smoothing will be performed. Below is description of how the
+smoothing is performed.</p>
+<ol style="list-style-type: decimal">
+<li>
+<p>Initialization:</p>
+<ul>
+<li>The function takes the original Rt estimates (r_estimate) and window
+size (window)</li>
+<li>It creates an output vector of the same length, initially filled
+with NA values</li>
+<li>It calculates the half-window size for centering purposes</li>
+</ul>
+</li>
+<li>
+<p>Moving Window Calculation: For each position in the time series,
+the function:</p>
+<ul>
+<li>Determines window boundaries, adjusting for the start and end of the
+series</li>
+<li>Extracts values within the window</li>
+<li>Filters out any missing (NA) or infinite values</li>
+<li>Calculates the mean of remaining values</li>
+</ul>
+</li>
+<li>
+<p>Example: For a time series with window size 3:</p>
+<ul>
+<li>At position 2, it averages positions 1, 2, and 3</li>
+<li>At the first position, it averages positions 1 and 2 only</li>
+<li>At positions with missing values, it uses only available data
+points</li>
+</ul>
+</li>
+</ol>
+</div>
+<div class="section level3">
+<h3 id="right-truncation-correction">Right-Truncation Correction<a class="anchor" aria-label="anchor" href="#right-truncation-correction"></a>
+</h3>
+<p>The Wallinga-Lipsitch method includes a correction for
+right-truncation, which addresses the bias in reproduction number
+estimates near the end of the time series. This bias occurs because some
+secondary cases infected by recent primary cases have not yet been
+observed due to the delay represented by the serial interval.</p>
+<div class="section level4">
+<h4 id="implementation">Implementation<a class="anchor" aria-label="anchor" href="#implementation"></a>
+</h4>
+<ol style="list-style-type: decimal">
+<li>For each case with symptom onset at time t, we calculate how many
+days have passed between t and the end of the observation period.</li>
+<li>Using the serial interval distribution, we calculate the probability
+that a secondary infection from this case would have been observed by
+the end of our observation period.</li>
+<li>We then adjust the reproduction number estimate by dividing by this
+probability, giving more weight to recent cases that have had less time
+to generate observable secondary cases.</li>
+</ol>
+<p>This correction becomes increasingly important for cases near the end
+of the time series, but can introduce additional variance. Therefore,
+estimates from the most recent days should still be interpreted with
+caution.</p>
+</div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="synthetic-data">Synthetic data<a class="anchor" aria-label="anchor" href="#synthetic-data"></a>
 </h2>
 <p>First, we will generate a synthetic time series of incidence data
-using the <code>episim()</code> function from <code>EpiLPS</code> which
-uses a renewal equation model to generate the case incidence data based
-on a Poisson or negative binomial process<span class="citation"><sup>4</sup></span>. For full details see <a href="https://doi.org/10.1371/journal.pcbi.1010618.s002" class="external-link">here</a>.
-<code>episim()</code> requires the specification of the (discrete)
-serial interval distribution, which can be specified using the
-<code>Idist()</code> function.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># specify serial interval distribution</span></span>
-<span><span class="va">mean_si</span> <span class="op">&lt;-</span> <span class="fl">8</span></span>
-<span><span class="va">sd_si</span> <span class="op">&lt;-</span> <span class="fl">5.66</span></span>
-<span></span>
-<span><span class="co"># generate discrete serial interval distribution using EpiLPS::Idist</span></span>
-<span><span class="va">si_spec</span> <span class="op">&lt;-</span> <span class="fu">Idist</span><span class="op">(</span>mean <span class="op">=</span> <span class="va">mean_si</span>, sd <span class="op">=</span> <span class="va">sd_si</span>, dist <span class="op">=</span> <span class="st">"gamma"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">si_spec</span>, titlesize <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
-<p><img src="rt_estimation_validation_files/figure-html/generate_si_dist-1.png" width="700"></p>
-<p>Now, using <code>episim()</code> we can generate incidence data by
-specifying the generated serial interval distribution, the functional
-form of the reproduction number (here <code>Rpattern = 5</code>), and
-the length of the epidemic (here 40 days).</p>
+using the function <code><a href="../reference/generate_synthetic_epidemic.html">generate_synthetic_epidemic()</a></code> which uses
+a renewal equation to generate the case incidence data. The renewal
+equation used is:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mi>t</mi></msub><mo>=</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></munderover><msub><mi>R</mi><mi>i</mi></msub><mo>×</mo><msub><mi>I</mi><mi>i</mi></msub><mo>×</mo><mi>w</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>−</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\lambda_t = \sum_{i=1}^{t-1} R_i \times I_i \times w(t-i)</annotation></semantics></math></p>
+<p>Where: -
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>λ</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\lambda_t</annotation></semantics></math>
+= expected new cases on day
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
+-
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>i</mi></msub><annotation encoding="application/x-tex">R_i</annotation></semantics></math>
+= reproduction number on day
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+-
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>i</mi></msub><annotation encoding="application/x-tex">I_i</annotation></semantics></math>
+= observed cases on day
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+-
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>−</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">w(t-i)</annotation></semantics></math>
+= probability mass of serial interval for delay
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>−</mo><mi>i</mi><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(t-i)</annotation></semantics></math>.</p>
+<p>Before we generate the synthetic data we need to specify the true
+time-varying reproduction numbers and the parameters of the serial
+interval distribution (mean and standard deviation).</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># set seed</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Set seed for reproducibility</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># generate data</span></span>
-<span><span class="va">t_end</span> <span class="op">&lt;-</span> <span class="fl">40</span></span>
-<span><span class="va">datasim</span> <span class="op">&lt;-</span> <span class="fu">episim</span><span class="op">(</span>si <span class="op">=</span> <span class="va">si_spec</span><span class="op">$</span><span class="va">pvec</span>, Rpattern <span class="op">=</span> <span class="fl">5</span>, endepi <span class="op">=</span> <span class="va">t_end</span>,</span>
-<span>                  dist <span class="op">=</span> <span class="st">"negbin"</span>, overdisp <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
+<span><span class="co"># True Rt values</span></span>
+<span><span class="va">true_r_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">20</span><span class="op">)</span>,                            <span class="co"># Start with R=1.5</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2.0</span>, <span class="fl">20</span><span class="op">)</span>,                            <span class="co"># Increase to R=2.0</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.8</span>, <span class="fl">20</span><span class="op">)</span>,                            <span class="co"># Decrease to R=0.8</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1.2</span>, <span class="fl">20</span><span class="op">)</span>                             <span class="co"># Increase to R=1.2</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">epicurve</span><span class="op">(</span><span class="va">datasim</span><span class="op">$</span><span class="va">y</span>, title <span class="op">=</span> <span class="st">"Simulated epidemic curve"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="rt_estimation_validation_files/figure-html/simulate_inc_data-1.png" width="700"></p>
-</div>
-<div class="section level2">
-<h2 id="estimating-the-case-reproduction-number">Estimating the case reproduction number<a class="anchor" aria-label="anchor" href="#estimating-the-case-reproduction-number"></a>
-</h2>
-<p>Next, using the simulated incidence data <code>datasim$y</code>, we
-can estimate the time-varying case reproduction number using the method
-developed by Wallinga and Lipsitch<span class="citation"><sup>2</sup></span>. We will use the
-<code><a href="../reference/rt_estim.html">rt_estim()</a></code> function within <code>mitey</code>.
-<code><a href="../reference/rt_estim.html">rt_estim()</a></code> expects an input data set (<code>inc_dat</code>)
-with two columns <code>inc</code> (the number of new cases for each time
-point) and <code>onset_date</code> (the time or date in which the new
-cases occurred). <code><a href="../reference/rt_estim.html">rt_estim()</a></code> also requires the specification
-of the mean and standard deviation of the serial interval distribution
-and the underlying serial interval distribution (it currently only
-accepts “normal” and “gamma”).</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Estimate Rt with mitey::rt_estim()</span></span>
+<span><span class="co"># Set serial interval parameters</span></span>
+<span><span class="va">si_mean</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
+<span><span class="va">si_sd</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
+<span><span class="va">si_dist</span> <span class="op">&lt;-</span> <span class="st">"gamma"</span></span>
 <span></span>
-<span><span class="va">t_vec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">datasim</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">inc_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>onset_date <span class="op">=</span> <span class="va">t_vec</span>, inc <span class="op">=</span> <span class="va">datasim</span><span class="op">$</span><span class="va">y</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">rt_estimated</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rt_estim.html">rt_estim</a></span><span class="op">(</span></span>
-<span>  inc_dat <span class="op">=</span> <span class="va">inc_dat</span>,</span>
-<span>  mean_si <span class="op">=</span> <span class="va">mean_si</span>,</span>
-<span>  sd_si <span class="op">=</span> <span class="va">sd_si</span>,</span>
-<span>  dist_si <span class="op">=</span> <span class="st">"gamma"</span></span>
+<span><span class="co"># Generate synthetic data with high initial cases for stability</span></span>
+<span><span class="va">synthetic_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_synthetic_epidemic.html">generate_synthetic_epidemic</a></span><span class="op">(</span></span>
+<span>  true_r <span class="op">=</span> <span class="va">true_r_values</span>,</span>
+<span>  si_mean <span class="op">=</span> <span class="va">si_mean</span>,</span>
+<span>  si_sd <span class="op">=</span> <span class="va">si_sd</span>,</span>
+<span>  si_dist <span class="op">=</span> <span class="va">si_dist</span>,</span>
+<span>  initial_cases <span class="op">=</span> <span class="fl">500</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;   onset_date         rt rt_adjusted</span></span>
-<span><span class="co">#&gt; 1          1        Inf         Inf</span></span>
-<span><span class="co">#&gt; 2          2 35.4390029  35.4390049</span></span>
-<span><span class="co">#&gt; 3          3        NaN         NaN</span></span>
-<span><span class="co">#&gt; 4          4  2.4083146   2.4083155</span></span>
-<span><span class="co">#&gt; 5          5  0.9028469   0.9028477</span></span>
-<span><span class="co">#&gt; 6          6  3.5467368   3.5467445</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;         date true_r incidence</span></span>
+<span><span class="co">#&gt; 1 2023-01-01    1.5       500</span></span>
+<span><span class="co">#&gt; 2 2023-01-02    1.5         3</span></span>
+<span><span class="co">#&gt; 3 2023-01-03    1.5        56</span></span>
+<span><span class="co">#&gt; 4 2023-01-04    1.5       137</span></span>
+<span><span class="co">#&gt; 5 2023-01-05    1.5       145</span></span>
+<span><span class="co">#&gt; 6 2023-01-06    1.5       179</span></span></code></pre>
+<p><img src="rt_estimation_validation_files/figure-html/plot_synth_epi-1.png" width="700"></p>
+<div class="section level3">
+<h3 id="estimating-the-case-reproduction-number">Estimating the case reproduction number<a class="anchor" aria-label="anchor" href="#estimating-the-case-reproduction-number"></a>
+</h3>
+<p>Next, using the simulated incidence data, we can estimate the
+time-varying case reproduction number using the method developed by
+Wallinga and Lipsitch<span class="citation"><sup>2</sup></span>.</p>
+<!-- We will use the `rt_estim()` function within `mitey`. `rt_estim()` expects an input data set (`inc_dat`) with two columns `inc` (the number of new cases for each time point) and `onset_date` (the time or date in which the new cases occurred). `rt_estim()` also requires the specification of the mean and standard deviation of the serial interval distribution and the underlying serial interval distribution (it currently only accepts "normal" and "gamma"). -->
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wallinga_lipsitch.html">wallinga_lipsitch</a></span><span class="op">(</span></span>
+<span>  incidence <span class="op">=</span> <span class="va">synthetic_data</span><span class="op">$</span><span class="va">incidence</span>,</span>
+<span>  dates <span class="op">=</span> <span class="va">synthetic_data</span><span class="op">$</span><span class="va">date</span>,</span>
+<span>  si_mean <span class="op">=</span> <span class="va">si_mean</span>,</span>
+<span>  si_sd <span class="op">=</span> <span class="va">si_sd</span>,</span>
+<span>  si_dist <span class="op">=</span> <span class="st">"gamma"</span>,</span>
+<span>  smoothing <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  n_bootstrap <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.95</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt;         date incidence        R R_corrected  R_lower  R_upper R_corrected_lower</span></span>
+<span><span class="co">#&gt; 1 2023-01-01       500 1.513819    1.513819 1.400246 1.640943          1.400246</span></span>
+<span><span class="co">#&gt; 2 2023-01-02         3 1.507403    1.507403 1.402781 1.620427          1.402781</span></span>
+<span><span class="co">#&gt; 3 2023-01-03        56 1.510453    1.510453 1.409458 1.624172          1.409458</span></span>
+<span><span class="co">#&gt; 4 2023-01-04       137 1.502045    1.502045 1.410784 1.606036          1.410784</span></span>
+<span><span class="co">#&gt; 5 2023-01-05       145 1.478686    1.478686 1.394027 1.575553          1.394027</span></span>
+<span><span class="co">#&gt; 6 2023-01-06       179 1.474034    1.474034 1.391377 1.566991          1.391377</span></span>
+<span><span class="co">#&gt;   R_corrected_upper</span></span>
+<span><span class="co">#&gt; 1          1.640943</span></span>
+<span><span class="co">#&gt; 2          1.620427</span></span>
+<span><span class="co">#&gt; 3          1.624172</span></span>
+<span><span class="co">#&gt; 4          1.606036</span></span>
+<span><span class="co">#&gt; 5          1.575553</span></span>
+<span><span class="co">#&gt; 6          1.566991</span></span></code></pre>
 <p>Now, we can compare the estimated
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>R</mi><mi>t</mi><mi>c</mi></msubsup><annotation encoding="application/x-tex">R^c_t</annotation></semantics></math>
-values (solid blue line) to the true
+values to the true
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>t</mi></msub><annotation encoding="application/x-tex">R_t</annotation></semantics></math>
-that is outputted by <code>episim()</code>, here
-<code>datasim$Rtrue</code>. However, an important thing to note is that
-the “true”
+that we specified. However, an important thing to note is that the
+“true”
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>t</mi></msub><annotation encoding="application/x-tex">R_t</annotation></semantics></math>
 is the instantaneous reproduction number. We are estimating the case
 reproduction number, and therefore, our estimates should be shifted to
@@ -179,23 +377,20 @@ the left by one serial interval. When we shift the estimates by a serial
 interval (blue dashed line), we see that our estimates are in agreement
 with the true
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>t</mi></msub><annotation encoding="application/x-tex">R_t</annotation></semantics></math>.</p>
-<p><img src="rt_estimation_validation_files/figure-html/plot_results-1.png" width="700"></p>
-<p>To obtain confidence bounds for our estimated
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>t</mi></msub><annotation encoding="application/x-tex">R_t</annotation></semantics></math>
-values, we can use <code><a href="../reference/rt_estim_w_boot.html">rt_estim_w_boot()</a></code> and specify the number
-of bootstrap samples using <code>n_bootstrap =</code> argument.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rt_estimated_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rt_estim_w_boot.html">rt_estim_w_boot</a></span><span class="op">(</span></span>
-<span>  inc_dat <span class="op">=</span> <span class="va">inc_dat</span>,</span>
-<span>  mean_si <span class="op">=</span> <span class="va">gi_mean</span>,</span>
-<span>  sd_si <span class="op">=</span> <span class="va">gi_sd</span>,</span>
-<span>  dist_si <span class="op">=</span> <span class="st">"gamma"</span>,</span>
-<span>  n_bootstrap <span class="op">=</span> <span class="fl">100</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<p><img src="rt_estimation_validation_files/figure-html/plot_sim_rt-1.png" width="700"></p>
 </div>
-<div class="section level2">
-<h2 id="comparing-methods">Comparing methods<a class="anchor" aria-label="anchor" href="#comparing-methods"></a>
-</h2>
+<div class="section level3">
+<h3 id="sensitivity-to-serial-interval-parameters">Sensitivity to Serial Interval Parameters<a class="anchor" aria-label="anchor" href="#sensitivity-to-serial-interval-parameters"></a>
+</h3>
+<p>The estimates produced by the Wallinga-Lipsitch method are sensitive
+to the specified serial interval distribution. Let’s explore how changes
+in the mean and standard deviation affect our estimates for the
+synthetic epidemic:</p>
+<p><img src="rt_estimation_validation_files/figure-html/sensitivity_analysis-1.png" width="864"></p>
+</div>
+<div class="section level3">
+<h3 id="comparing-methods">Comparing methods<a class="anchor" aria-label="anchor" href="#comparing-methods"></a>
+</h3>
 <p>Using the <code>estimRmcmc</code> function within the
 <code>EpiLPS</code> package, we can compare our estimates to those
 produced my <code>EpiLPS</code> and <code>EpiEstim</code> (by specifying
@@ -205,47 +400,39 @@ method of Wallinga and Teunis<span class="citation"><sup><strong>wallinga2004?</
 estimated by <code>EpiEstim</code> (by specifying
 <code>WTR = TRUE</code>).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fitmcmc</span> <span class="op">&lt;-</span> <span class="fu">estimRmcmc</span><span class="op">(</span>incidence <span class="op">=</span> <span class="va">datasim</span><span class="op">$</span><span class="va">y</span>, si <span class="op">=</span> <span class="va">si_spec</span><span class="op">$</span><span class="va">pvec</span>,</span>
+<code class="sourceCode R"><span><span class="va">si_spec</span> <span class="op">&lt;-</span> <span class="fu">Idist</span><span class="op">(</span>mean <span class="op">=</span> <span class="va">si_mean</span>, sd <span class="op">=</span> <span class="va">si_sd</span>, dist <span class="op">=</span> <span class="va">si_dist</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fitmcmc</span> <span class="op">&lt;-</span> <span class="fu">estimRmcmc</span><span class="op">(</span>incidence <span class="op">=</span> <span class="va">synthetic_data</span><span class="op">$</span><span class="va">incidence</span>, si <span class="op">=</span> <span class="va">si_spec</span><span class="op">$</span><span class="va">pvec</span>,</span>
 <span>                      CoriR <span class="op">=</span> <span class="cn">TRUE</span>, WTR <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                      niter <span class="op">=</span> <span class="fl">5000</span>, burnin <span class="op">=</span> <span class="fl">2000</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fitmcmc</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Estimation of the reproduction number with Laplacian-P-splines </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------- </span></span>
-<span><span class="co">#&gt; Total number of days:          40 </span></span>
-<span><span class="co">#&gt; Routine time (seconds):        3.191 </span></span>
+<span><span class="co">#&gt; Total number of days:          80 </span></span>
+<span><span class="co">#&gt; Routine time (seconds):        21.285 </span></span>
 <span><span class="co">#&gt; Method:                        MCMC (with Langevin diffusion) </span></span>
 <span><span class="co">#&gt; Hyperparam. optim method:      Nelder-Mead </span></span>
 <span><span class="co">#&gt; Hyperparam. optim convergence: TRUE </span></span>
-<span><span class="co">#&gt; Mean reproduction number:      1.400 </span></span>
-<span><span class="co">#&gt; Min  reproduction number:      0.350 </span></span>
-<span><span class="co">#&gt; Max  reproduction number:      3.555 </span></span>
+<span><span class="co">#&gt; Mean reproduction number:      1.370 </span></span>
+<span><span class="co">#&gt; Min  reproduction number:      0.791 </span></span>
+<span><span class="co">#&gt; Max  reproduction number:      2.028 </span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tt</span>, <span class="va">Rtrue</span>, type <span class="op">=</span> <span class="st">"l"</span>, xlab <span class="op">=</span> <span class="st">"Time"</span>, ylab <span class="op">=</span> <span class="st">"R"</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">4</span><span class="op">)</span>,</span>
-<span>     lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">tt</span>, <span class="va">fitmcmc</span><span class="op">$</span><span class="va">RLPS</span><span class="op">$</span><span class="va">R</span><span class="op">[</span><span class="op">-</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">mean_si</span><span class="op">)</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"red"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">tt</span>, <span class="va">fitmcmc</span><span class="op">$</span><span class="va">RCori</span><span class="op">$</span><span class="va">`Mean(R)`</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">tt</span><span class="op">)</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"green"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">tt</span>, <span class="va">fitmcmc</span><span class="op">$</span><span class="va">RWT</span><span class="op">$</span><span class="va">`Mean(R)`</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"purple"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">tt</span>, <span class="va">rt_WL_smooth</span><span class="op">[</span><span class="va">tt</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"blue"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">tt</span>, <span class="va">rt_WL_shift</span><span class="op">[</span><span class="va">tt</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"blue"</span>, lty <span class="op">=</span> <span class="fl">2</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>,<span class="st">"red"</span>,<span class="st">"green"</span>, <span class="st">"purple"</span>, <span class="st">"blue"</span>, <span class="st">"blue"</span><span class="op">)</span>,</span>
-<span>       <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"True R"</span>,<span class="st">"EpiLPS"</span>,<span class="st">"EpiEstim"</span>, <span class="st">"WT"</span>, <span class="st">"WL"</span>, <span class="st">"WL (shifted)"</span><span class="op">)</span>,</span>
-<span>       bty <span class="op">=</span> <span class="st">"n"</span>, lty <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="rt_estimation_validation_files/figure-html/plot_comparison_methods-1.png" width="100%"></p>
 </div>
+</div>
 <div class="section level2">
-<h2 id="real-data">Real data<a class="anchor" aria-label="anchor" href="#real-data"></a>
+<h2 id="real-world-case-studies">Real-world case studies<a class="anchor" aria-label="anchor" href="#real-world-case-studies"></a>
 </h2>
 <div class="section level3">
-<h3 id="zika-outbreak-in-giradot-colombia-2015">Zika outbreak in Giradot, Colombia (2015)<a class="anchor" aria-label="anchor" href="#zika-outbreak-in-giradot-colombia-2015"></a>
+<h3 id="zika-outbreak-in-giradot-colombia-2015">1. Zika outbreak in Giradot, Colombia (2015)<a class="anchor" aria-label="anchor" href="#zika-outbreak-in-giradot-colombia-2015"></a>
 </h3>
-<p>To illustrate how to apply <code><a href="../reference/rt_estim.html">rt_estim()</a></code> to real data and
-compare it to other methods, we’ll use data on daily incidence of the
-Zika virus disease in Giradot, Colombia from October 2015 to January
-2016. The data is available from the <code>outbreaks</code> package and
-is called <code>zika2015</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p>To illustrate how to apply <code><a href="../reference/wallinga_lipsitch.html">wallinga_lipsitch()</a></code> to real
+data and compare it to other methods, we’ll use data on daily incidence
+of the Zika virus disease in Giradot, Colombia from October 2015 to
+January 2016. The data is available from the <code>outbreaks</code>
+package and is called <code>zika2015</code>.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">zika2015</span>, <span class="va">head</span>, <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $incidence</span></span>
 <span><span class="co">#&gt;  [1] 1 2 1 4 2 5 2 4 5 4</span></span>
@@ -257,48 +444,26 @@ is called <code>zika2015</code>.</p>
 <span><span class="co">#&gt; $si</span></span>
 <span><span class="co">#&gt;  [1] 7.771909e-09 2.813233e-05 2.333550e-03 3.004073e-02 1.241007e-01</span></span>
 <span><span class="co">#&gt;  [6] 2.372892e-01 2.605994e-01 1.887516e-01 9.898834e-02 4.014149e-02</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">zika_epicurve</span> <span class="op">&lt;-</span> <span class="fu">epicurve</span><span class="op">(</span><span class="va">zika2015</span><span class="op">$</span><span class="va">incidence</span>, dates <span class="op">=</span> <span class="va">zika2015</span><span class="op">$</span><span class="va">date</span>, datelab <span class="op">=</span> <span class="st">"14d"</span><span class="op">)</span></span>
 <span><span class="va">zika_epicurve</span></span></code></pre></div>
 <p><img src="rt_estimation_validation_files/figure-html/zika_epicurve-1.png" width="700"></p>
 <p>Now we’ll estimate the case reproduction number using
-<code><a href="../reference/rt_estim.html">rt_estim()</a></code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Estimate Rt with mitey::rt_estim()</span></span>
-<span><span class="va">inc_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>onset_date <span class="op">=</span> <span class="va">zika2015</span><span class="op">$</span><span class="va">dates</span>, inc <span class="op">=</span> <span class="va">zika2015</span><span class="op">$</span><span class="va">incidence</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">rt_estimated</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rt_estim_w_boot.html">rt_estim_w_boot</a></span><span class="op">(</span></span>
-<span>  inc_dat <span class="op">=</span> <span class="va">inc_dat</span>,</span>
-<span>  mean_si <span class="op">=</span> <span class="fl">7</span>,</span>
-<span>  sd_si <span class="op">=</span> <span class="fl">1.5</span>,</span>
-<span>  dist_si <span class="op">=</span> <span class="st">"gamma"</span>,</span>
-<span>  n_bootstrap <span class="op">=</span> <span class="fl">100</span></span>
+<code><a href="../reference/wallinga_lipsitch.html">wallinga_lipsitch()</a></code>.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">res_zika</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wallinga_lipsitch.html">wallinga_lipsitch</a></span><span class="op">(</span></span>
+<span>  incidence <span class="op">=</span> <span class="va">zika2015</span><span class="op">$</span><span class="va">incidence</span>,</span>
+<span>  dates <span class="op">=</span> <span class="va">zika2015</span><span class="op">$</span><span class="va">date</span>,</span>
+<span>  si_mean <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>  si_sd <span class="op">=</span> <span class="fl">1.5</span>,</span>
+<span>  si_dist <span class="op">=</span> <span class="st">"gamma"</span>,</span>
+<span>  smoothing <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  n_bootstrap <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  shift <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Create the plot</span></span>
-<span><span class="va">r_plot</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">rt_estimated</span><span class="op">$</span><span class="va">results</span> <span class="op">%&gt;%</span></span>
-<span>         <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">onset_date</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">onset_date</span><span class="op">)</span> <span class="op">+</span> <span class="fl">7</span>,</span>
-<span>                <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">median_rt_adjusted</span><span class="op">)</span><span class="op">)</span>, </span>
-<span>       <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">onset_date</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_ribbon</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>ymin <span class="op">=</span> <span class="va">lower_rt_adjusted</span>, ymax <span class="op">=</span> <span class="va">upper_rt_adjusted</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"#21908C"</span>, alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="va">median_rt_adjusted</span>, color <span class="op">=</span> <span class="st">"WL"</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">1</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">coord_cartesian</span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">12</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_x_date</span><span class="op">(</span>date_breaks <span class="op">=</span> <span class="st">"7 days"</span>, date_labels <span class="op">=</span> <span class="st">"%d-%m-%Y"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WL"</span> <span class="op">=</span> <span class="st">"#21908C"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>  </span>
-<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WL"</span> <span class="op">=</span> <span class="st">"#21908C"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Time"</span>, y <span class="op">=</span> <span class="st">"R"</span>, title <span class="op">=</span> <span class="st">"Estimated R"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">guides</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"none"</span>, fill <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">theme</span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> </span>
-<span><span class="co">#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `linewidth` instead.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
-<span></span>
-<span><span class="co"># show Rt plot with epicurve</span></span>
-<span><span class="fu">gridExtra</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gridExtra/man/arrangeGrob.html" class="external-link">grid.arrange</a></span><span class="op">(</span><span class="va">zika_epicurve</span>, <span class="va">r_plot</span>, nrow <span class="op">=</span> <span class="fl">2</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="rt_estimation_validation_files/figure-html/plot-1.png" width="700"></p>
+<p><img src="rt_estimation_validation_files/figure-html/zika_plot-1.png" width="700"></p>
 <div class="section level4">
 <h4 id="compare-with-epilps-and-epiestim">Compare with EpiLPS and EpiEstim<a class="anchor" aria-label="anchor" href="#compare-with-epilps-and-epiestim"></a>
 </h4>
@@ -309,19 +474,79 @@ and see the expected shif in the estimates of EpiLPS because it is
 estimating the instantaneous reproduction number. Additionally, it is
 important to note that the below WL estimates have not been
 smoothed.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">si</span> <span class="op">&lt;-</span> <span class="fu">Idist</span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">7</span>, sd <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span>
-<span><span class="va">epifit</span> <span class="op">&lt;-</span> <span class="fu">estimR</span><span class="op">(</span><span class="va">zika2015</span><span class="op">$</span><span class="va">incidence</span>, dates <span class="op">=</span> <span class="va">zika2015</span><span class="op">$</span><span class="va">dates</span>, si <span class="op">=</span> <span class="va">si</span><span class="op">$</span><span class="va">pvec</span>, WTR <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">r_plot</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_line</span><span class="op">(</span>data <span class="op">=</span> <span class="va">epifit</span><span class="op">$</span><span class="va">RLPS</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span>,<span class="op">]</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Time</span>, y <span class="op">=</span> <span class="va">R</span>, color <span class="op">=</span> <span class="st">"EpiLPS"</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1</span>, linetype <span class="op">=</span> <span class="st">"solid"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">geom_line</span><span class="op">(</span>data <span class="op">=</span> <span class="va">epifit</span><span class="op">$</span><span class="va">RWT</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">t_end</span> <span class="op">+</span> <span class="va">zika2015</span><span class="op">$</span><span class="va">dates</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, y <span class="op">=</span> <span class="va">`Mean(R)`</span>, color <span class="op">=</span> <span class="st">"WT (EpiEstim)"</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1</span>, linetype <span class="op">=</span> <span class="st">"solid"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">scale_color_manual</span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WL"</span> <span class="op">=</span> <span class="st">"#21908C"</span>, <span class="st">"EpiLPS"</span> <span class="op">=</span> <span class="st">"#FDE725"</span>, <span class="st">"WT (EpiEstim)"</span> <span class="op">=</span> <span class="st">"#440154"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
-<span>  <span class="fu">labs</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"Method"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Scale for <span style="color: #00BB00;">colour</span> is already present.</span></span>
-<span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">colour</span>, which will replace the existing scale.</span></span></code></pre></div>
-<p><img src="rt_estimation_validation_files/figure-html/use_epilps-1.png" width="700"></p>
+<span><span class="va">epifit</span> <span class="op">&lt;-</span> <span class="fu">estimR</span><span class="op">(</span><span class="va">zika2015</span><span class="op">$</span><span class="va">incidence</span>, dates <span class="op">=</span> <span class="va">zika2015</span><span class="op">$</span><span class="va">dates</span>, si <span class="op">=</span> <span class="va">si</span><span class="op">$</span><span class="va">pvec</span>, WTR <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="rt_estimation_validation_files/figure-html/zika_comparison_plot-1.png" width="700"></p>
 </div>
+</div>
+<div class="section level3">
+<h3 id="influenza-a-h7n9-outbreak-in-china-2013">2. Influenza A (H7N9) Outbreak in China (2013)<a class="anchor" aria-label="anchor" href="#influenza-a-h7n9-outbreak-in-china-2013"></a>
+</h3>
+<p>Again, we’ll use a dataset from the <code>outbreaks</code> package.
+For this analysis, we’ll use data from the 2013 influenza A (H7N9)
+outbreak in China.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">fluH7N9_china_2013</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fluH7N9_china_2013</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 'data.frame':    136 obs. of  8 variables:</span></span>
+<span><span class="co">#&gt;  $ case_id                : Factor w/ 136 levels "1","2","3","4",..: 1 2 3 4 5 6 7 8 9 10 ...</span></span>
+<span><span class="co">#&gt;  $ date_of_onset          : Date, format: "2013-02-19" "2013-02-27" ...</span></span>
+<span><span class="co">#&gt;  $ date_of_hospitalisation: Date, format: NA "2013-03-03" ...</span></span>
+<span><span class="co">#&gt;  $ date_of_outcome        : Date, format: "2013-03-04" "2013-03-10" ...</span></span>
+<span><span class="co">#&gt;  $ outcome                : Factor w/ 2 levels "Death","Recover": 1 1 1 NA 2 1 1 1 NA 1 ...</span></span>
+<span><span class="co">#&gt;  $ gender                 : Factor w/ 2 levels "f","m": 2 2 1 1 1 1 2 2 2 2 ...</span></span>
+<span><span class="co">#&gt;  $ age                    : Factor w/ 61 levels "?","15","2","21",..: 58 7 11 18 20 9 54 14 39 20 ...</span></span>
+<span><span class="co">#&gt;  $ province               : Factor w/ 13 levels "Anhui","Beijing",..: 11 11 1 8 8 8 8 13 13 11 ...</span></span></code></pre></div>
+<p>The dataset contains details about 136 confirmed cases of H7N9
+influenza in China between February and May 2013.</p>
+<p><img src="rt_estimation_validation_files/figure-html/prepare_h7n9_data-1.png" width="700"></p>
+<p>The H7N9 influenza outbreak shows a clear epidemic pattern, with most
+cases occurring between March and April 2013. Based on the literature,
+the serial interval for influenza A (H7N9) has been estimated to be
+around 7-9 days.</p>
+<p>Let’s now estimate the time-varying reproduction number using the
+Wallinga-Lipsitch method:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Estimate Rt using the Wallinga-Lipsitch method</span></span>
+<span><span class="co"># For H7N9, we'll use serial interval estimates from the literature</span></span>
+<span><span class="co"># Mean: 8.1 days, SD: 3.4 days (based on Cowling et al., 2013)</span></span>
+<span></span>
+<span><span class="va">h7n9_rt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wallinga_lipsitch.html">wallinga_lipsitch</a></span><span class="op">(</span></span>
+<span>  incidence <span class="op">=</span> <span class="va">h7n9_complete</span><span class="op">$</span><span class="va">cases</span>,</span>
+<span>  dates <span class="op">=</span> <span class="va">h7n9_complete</span><span class="op">$</span><span class="va">date_onset</span>,</span>
+<span>  si_mean <span class="op">=</span> <span class="fl">8.1</span>,</span>
+<span>  si_sd <span class="op">=</span> <span class="fl">3.4</span>,</span>
+<span>  si_dist <span class="op">=</span> <span class="st">"gamma"</span>,</span>
+<span>  smoothing <span class="op">=</span> <span class="fl">7</span>,  <span class="co"># Apply 7-day smoothing for weekly patterns</span></span>
+<span>  bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  n_bootstrap <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  shift <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="rt_estimation_validation_files/figure-html/h7n9_plot-1.png" width="700"></p>
+<p>To provide a comprehensive methodological comparison, let’s compare
+our Wallinga-Lipsitch implementation with the <code>EpiLPS</code> and
+<code>EpiEstim</code> packages, similar to our Zika analysis:</p>
+<p><img src="rt_estimation_validation_files/figure-html/h7n9_compare_methods-1.png" width="700"></p>
+<p>The comparison reveals several interesting methodological insights
+when applied to the H7N9 outbreak:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Timing differences</strong>: The Wallinga-Lipsitch (WL)
+method and Wallinga-Teunis (WT) method from EpiEstim produce roughly
+similar temporal patterns, but with some timing differences. This is
+expected as they both estimate the case reproduction number but use
+slightly different mathematical approaches.</p></li>
+<li><p><strong>EpiLPS vs. WL/WT</strong>: The EpiLPS method, which
+estimates the instantaneous reproduction number, shows a different
+pattern, particularly in terms of when changes in transmission are
+detected. This is consistent with the theoretical differences between
+instantaneous and case reproduction numbers.</p></li>
+<li><p><strong>Uncertainty handling</strong>: Note that our WL method
+includes confidence intervals (shown as the blue shaded region),
+providing important context about estimation uncertainty that should be
+considered when interpreting results.</p></li>
+</ol>
 </div>
 </div>
 <div class="section level2">
@@ -347,7 +572,7 @@ smoothed.</p>
 <!-- rt_check2 <- exp(mean(log(rt_estimates1$rt), na.rm = TRUE)) -->
 <!-- rt_check2 -->
 <!-- ```   -->
-<div id="refs" class="references csl-bib-body" entry-spacing="0" line-spacing="2">
+<div id="refs" class="references csl-bib-body" line-spacing="2">
 <div id="ref-gostic2020" class="csl-entry">
 <div class="csl-left-margin">1. </div>
 <div class="csl-right-inline">Gostic, K. M. <em>et al.</em> Practical
@@ -388,7 +613,7 @@ bayesian tool for estimation of the time-varying reproduction number.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>

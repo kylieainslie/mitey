@@ -19,9 +19,9 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/code_validation_for_Vink_method.html">Code validation for Vink method</a></li>
-    <li><a class="dropdown-item" href="../articles/epidemiology_of_scabies.html">Estimation of the epidemiological characteristics of scabies</a></li>
+    <li><a class="dropdown-item" href="../articles/quick_start_guide.html">Quick Start Guide: Estimating Epidemiological Parameters with `mitey`</a></li>
     <li><a class="dropdown-item" href="../articles/reproduce_results_ainslie_et_al.html">Reproduce Results from Ainslie et al.</a></li>
-    <li><a class="dropdown-item" href="../articles/rt_estimation_validation.html">Validation of time-varying reproduction number estimation</a></li>
+    <li><a class="dropdown-item" href="../articles/rt_estimation_validation.html">Estimation of time-varying reproduction number</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -50,10 +50,40 @@
 
       <dl><dt>
 
+          <code><a href="calculate_bootstrap_ci.html">calculate_bootstrap_ci()</a></code>
+
+        </dt>
+        <dd>Calculate Bootstrap Confidence Intervals</dd>
+      </dl><dl><dt>
+
+          <code><a href="calculate_r_estimates.html">calculate_r_estimates()</a></code>
+
+        </dt>
+        <dd>Calculate R From Incidence and Serial Interval</dd>
+      </dl><dl><dt>
+
+          <code><a href="calculate_si_probability_matrix.html">calculate_si_probability_matrix()</a></code>
+
+        </dt>
+        <dd>Calculate Serial Interval Probability Matrix</dd>
+      </dl><dl><dt>
+
+          <code><a href="calculate_truncation_correction.html">calculate_truncation_correction()</a></code>
+
+        </dt>
+        <dd>Calculate Right Truncation Correction</dd>
+      </dl><dl><dt>
+
           <code><a href="conv_tri_dist.html">conv_tri_dist()</a></code>
 
         </dt>
         <dd>Convolution of the triangular distribution with the mixture component density (continuous case)</dd>
+      </dl><dl><dt>
+
+          <code><a href="create_day_diff_matrix.html">create_day_diff_matrix()</a></code>
+
+        </dt>
+        <dd>Create Day Difference Matrix</dd>
       </dl><dl><dt>
 
           <code><a href="f0.html">f0()</a></code>
@@ -86,10 +116,16 @@
         <dd>Calculate fupper for Different Components</dd>
       </dl><dl><dt>
 
-          <code><a href="get_likelihood.html">get_likelihood()</a></code>
+          <code><a href="generate_case_bootstrap.html">generate_case_bootstrap()</a></code>
 
         </dt>
-        <dd>Compute the likelihood of a transmission pair given the serial interval distribution</dd>
+        <dd>Generate Case Bootstrap Sample</dd>
+      </dl><dl><dt>
+
+          <code><a href="generate_synthetic_epidemic.html">generate_synthetic_epidemic()</a></code>
+
+        </dt>
+        <dd>Generate synthetic incidence data from a known reproduction number</dd>
       </dl><dl><dt>
 
           <code><a href="integrate_component.html">integrate_component()</a></code>
@@ -110,28 +146,22 @@
         <dd>Plot the epidemic curve and fitted serial interval distribution</dd>
       </dl><dl><dt>
 
-          <code><a href="right_truncation_correction.html">right_truncation_correction()</a></code>
-
-        </dt>
-        <dd>Correct for right truncation in estimates of time-varying reproduction number</dd>
-      </dl><dl><dt>
-
-          <code><a href="rt_estim.html">rt_estim()</a></code>
-
-        </dt>
-        <dd>Estimate Time-varying Reproduction Number</dd>
-      </dl><dl><dt>
-
-          <code><a href="rt_estim_w_boot.html">rt_estim_w_boot()</a></code>
-
-        </dt>
-        <dd>Estimate Time-varying Reproduction Number</dd>
-      </dl><dl><dt>
-
           <code><a href="si_estim.html">si_estim()</a></code>
 
         </dt>
         <dd>Estimate serial interval using the EM Algorithm as developed by Vink et al. (2014)</dd>
+      </dl><dl><dt>
+
+          <code><a href="smooth_estimates.html">smooth_estimates()</a></code>
+
+        </dt>
+        <dd>Apply Smoothing to Estimates</dd>
+      </dl><dl><dt>
+
+          <code><a href="wallinga_lipsitch.html">wallinga_lipsitch()</a></code>
+
+        </dt>
+        <dd>Estimate time-varying reproduction number using Wallinga-Lipsitch method with bootstrap confidence intervals</dd>
       </dl><dl><dt>
 
           <code><a href="weighted_var.html">weighted_var()</a></code>
@@ -153,7 +183,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer></div>
