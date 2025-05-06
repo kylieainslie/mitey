@@ -1,0 +1,4 @@
+modify:
+  sysreqs:
+    - from: pandoc-citeproc
+      to: ""
