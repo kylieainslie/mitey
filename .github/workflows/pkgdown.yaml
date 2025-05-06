@@ -46,11 +46,11 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
-      - name: Install R package dependencies
-        run: |
-          Rscript -e 'install.packages("remotes")'
-          Rscript -e 'remotes::install_deps(dependencies = TRUE)'
-          Rscript -e 'remotes::install_cran("pkgdown")'
+      # - name: Install R package dependencies
+      #   run: |
+      #     Rscript -e 'install.packages("remotes")'
+      #     Rscript -e 'remotes::install_deps(dependencies = TRUE)'
+      #     Rscript -e 'remotes::install_cran("pkgdown")'
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
