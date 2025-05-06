@@ -30,7 +30,14 @@ jobs:
       - name: Setup Pandoc
         uses: r-lib/actions/setup-pandoc@v2
         with:
-          pandoc-version: '2.19'
+          pandoc-version: '3.1.1'
+
+      # Step 4: Manual system dependencies installation for Ubuntu
+      - name: Install system dependencies on Ubuntu
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git libcurl4-openssl-dev libssl-dev make libcairo2-dev libfontconfig1-dev libfreetype6-dev zlib1g-dev libjpeg-dev libpng-dev libtiff-dev libicu-dev libfribidi-dev libharfbuzz-dev libxml2-dev
 
       # Step 4: Install system dependencies
       - name: Install system dependencies
