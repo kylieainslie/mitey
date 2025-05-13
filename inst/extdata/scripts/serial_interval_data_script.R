@@ -94,44 +94,46 @@ tkf_df <- tkf_df %>%
   ) %>%
   select(id, date_onset, index_case, icc_interval, study)
 
-# Division of Public and Behavioral Health (DPBH) ------------------------------
-# Scabies outbreak among residents of a long term care facility in Clark County,
-# Nevada, USA in 2015
-dpbh_df <- data.frame(
-  date_onset = as.Date(c("07/04/2015", "08/04/2015", "16/04/2015", "17/04/2015",
-                         "22/04/2015", "01/05/2015", "14/05/2015", "16/05/2015",
-                         "18/05/2015"), format = "%d/%m/%Y"),
-  num_cases = c(1, 1, 2, 1, 1, 1, 1, 1, 2)) %>%
-  uncount(num_cases) %>% # Repeat rows based on the number of cases
-  mutate(id = row_number(), # Add an id variable
-         index_case = if_else(date_onset == min(date_onset), 1, 0),
-         icc_interval = as.integer(date_onset - min(date_onset)), # calculate ICC interval
-         study = "Division of Public and Behavioural Health"
-         ) %>%
-  select(id, date_onset, index_case, icc_interval, study)
+# Wochebo et al. 2019
+# outbreak in Southern Ethiopia
+# https://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-019-4317-x
 
-# Larrosa et al. ---------------------------------------------------------------
-# Outbreak in a hospital in Spain in 2002
-# https://doi.org/10.2807/esm.08.10.00429-en
-
-# Define start date
-start_date <- as.Date("2002-11-05")
-
-larrosa_df <- data.frame(
-  day_onset = c(1, 2, 5, 9, 15, 16, 19, 21, 29, 44, 51, 61, 62),
-  num_cases = c(1, 1, 2, 1, 1, 3, 1, 1, 1, 2, 1, 1, 1)
-) %>%
-  mutate(date_onset = start_date + (day_onset - 1)) %>%
-  uncount(num_cases) %>% # Repeat rows based on the number of cases
-  mutate(id = row_number(), # Add an id variable
-         index_case = if_else(date_onset == min(date_onset), 1, 0),
-         icc_interval = as.integer(date_onset - min(date_onset)), # calculate ICC interval
-         study = "Larrosa et al."
-  ) %>%
-  select(id, date_onset, index_case, icc_interval, study)
+# wochebo_df <- data.frame(
+#   date_onset = as.Date(c("2017-05-19", "2017-06-06", "2017-06-08", "2017-11-10",
+#                    "2017-06-11", "2017-06-12", "2017-06-13", "2017-06-14",
+#                    "2017-06-15", "2017-06-16", "2017-06-17", "2017-06-18",
+#                    "2017-06-19", "2017-06-20", "2017-06-21", "2017-06-22",
+#                    "2017-06-23")),
+#   cases = c(1, 6, 4, 28, 33, 29, 33, 33, 23, 19, 10, 13, 11, 12, 9, 7, 8)
+# ) %>%
+#   uncount(cases) %>% # Repeat rows based on the number of cases
+#   mutate(id = row_number(), # Add an id variable
+#          index_case = if_else(date_onset == min(date_onset), 1, 0),
+#          icc_interval = as.integer(date_onset - min(date_onset)), # calculate ICC interval
+#          study = "Wochebo et al."
+#   )
+#
+# # Tsutsumi et al. 2005
+# # outbreak in patients with dementia in a long-term care facility
+# # https://doi.org/10.1186/1471-2334-5-85
+#
+# tsutsumi_df <- data.frame(
+#   date_onset = as.Date(c("1989-05-06", "1989-06-03", "1989-06-17", "1989-07-15", "1989-08-26",
+#            "1989-09-21", "1989-09-28", "1989-10-05", "1989-10-19", "1989-10-26",
+#            "1989-11-02", "1989-11-09", "1989-11-30", "1989-12-07")),
+#   cases = c(1, 1, 1, 1, 2, 2, 1, 1, 2, 2, 1, 2, 1, 2)
+# ) %>%
+#   uncount(cases) %>% # Repeat rows based on the number of cases
+#   mutate(id = row_number(), # Add an id variable
+#          index_case = if_else(date_onset == min(date_onset), 1, 0),
+#          icc_interval = as.integer(date_onset - min(date_onset)), # calculate ICC interval
+#          study = "Tsutsumi et al."
+#   )
 
 
 # Combine all studies together and output as RDS file
-si_data <- bind_rows(kaburi_df, ariza_df, akunzirwe_df, tkf_df, dpbh_df, larrosa_df)
+si_data <- bind_rows(kaburi_df, ariza_df, akunzirwe_df, tkf_df
+                     #, wochebo_df,tsutsumi_df
+                     )
 saveRDS(si_data, "inst/extdata/data/si_data.rds")
 
