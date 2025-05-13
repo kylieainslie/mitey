@@ -14,6 +14,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, echo = FALSE, message=FALSE, results='hide'}
+library(mitey)
 library(dplyr)
 library(tidyr)
 library(purrr)
@@ -22,8 +23,6 @@ library(flextable)
 library(ftExtra)
 library(officer)
 library(cowplot)
-library(devtools)
-load_all()
 ```
 
 # Introduction

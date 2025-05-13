@@ -33,7 +33,7 @@ knitr::opts_chunk$set(
 First, let's load the required packages:
 
 ```{r setup}
-#library(mitey)
+library(mitey)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -42,8 +42,6 @@ library(fdrtool)
 library(cowplot) 
 library(here)
 library(outbreaks)
-library(devtools)
-load_all()
 ```
 
 # Introduction

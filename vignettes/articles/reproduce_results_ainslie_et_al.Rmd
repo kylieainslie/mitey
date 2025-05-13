@@ -37,14 +37,9 @@ This article is divided into Methods and Results. In the Methods section, the co
 
 ```{r setup, echo=TRUE, include = FALSE, results='hide'}
 
-# required to run mitey
-#devtools::install_github("kylieainslie/mitey")
-#library(mitey)
+# load required packages
+library(mitey)
 library(fdrtool)
-library(devtools)
-load_all()
-
-# required for this article
 library(dplyr)
 library(tidyr)
 library(purrr)

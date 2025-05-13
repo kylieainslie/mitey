@@ -33,39 +33,28 @@ jobs:
           use-public-rspm: true
 
       # Create a fix for the pandoc-citeproc issue
-      # - name: Fix pandoc-citeproc dependency
+      - name: Fix pandoc-citeproc dependency
+        run: |
+          mkdir -p .github
+          echo 'modify:
+            sysreqs:
+              - from: pandoc-citeproc
+                to: ""' > .github/pkg.lock.modify
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::pkgdown, local::.
+          needs: website
+
+      # - name: Install R package dependencies
       #   run: |
-      #     mkdir -p .github
-      #     echo 'modify:
-      #       sysreqs:
-      #         - from: pandoc-citeproc
-      #           to: ""' > .github/pkg.lock.modify
-      #
-      # - uses: r-lib/actions/setup-r-dependencies@v2
-      #   with:
-      #     extra-packages: any::pkgdown, local::.
-      #     needs: website
-
-      # Install system dependencies directly and skip pandoc-citeproc
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git libcurl4-openssl-dev libssl-dev make libcairo2-dev \
-            libfontconfig1-dev libfreetype6-dev zlib1g-dev libjpeg-dev libpng-dev libtiff-dev \
-            libicu-dev libfribidi-dev libharfbuzz-dev libxml2-dev
-
-      - name: Install R package dependencies
-        run: |
-          Rscript -e 'install.packages("remotes")'
-          Rscript -e 'remotes::install_deps(dependencies = TRUE)'
-          Rscript -e 'remotes::install_cran("pkgdown")'
+      #     Rscript -e 'install.packages("remotes")'
+      #     Rscript -e 'remotes::install_deps(dependencies = TRUE)'
+      #     Rscript -e 'remotes::install_cran("pkgdown")'
 
       - name: Build site
-        run: |
-          Rscript -e 'pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)'
-
-        # run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
-        # shell: Rscript {0}
+        run: pkgdown::build_site_github_pages(new_process = FALSE, install = TRUE)
+        shell: Rscript {0}
 
       - name: Deploy to GitHub pages 🚀
         if: github.event_name != 'pull_request'
