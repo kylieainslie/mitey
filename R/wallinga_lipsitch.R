@@ -39,7 +39,7 @@
 #'     - R_corrected_lower, R_corrected_upper: Confidence intervals for R_corrected
 #'   - If shift=TRUE:
 #'     - shifted_date: Dates shifted forward by one mean serial interval
-#'
+#' @export
 #' @references
 #' Wallinga J & Lipsitch M (2007). How generation intervals shape the relationship between
 #' growth rates and reproductive numbers. Proceedings of the Royal Society B: Biological Sciences,
