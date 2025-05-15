@@ -7,6 +7,7 @@
 #' @param initial_cases Number of initial cases
 #' @return Data frame with dates, true R, and incidence
 #' @importFrom stats pgamma pnorm qgamma qnorm quantile rpois
+#' @export
 generate_synthetic_epidemic <- function(true_r, si_mean, si_sd,
                                         si_dist = "gamma", initial_cases = 10) {
   n_days <- length(true_r)
