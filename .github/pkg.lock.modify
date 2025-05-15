@@ -2,3 +2,7 @@ modify:
   sysreqs:
     - from: pandoc-citeproc
       to: ""
+    - from: bayesplot
+      to: ""
+    - from: loo
+      to: "

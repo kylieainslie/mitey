@@ -15,7 +15,14 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        r: ['release']
+        include:
+          - os: ubuntu-latest
+            r: 'devel'
     runs-on: ${{ matrix.os }}
+    env:
+      R_KEEP_PKG_SOURCE: yes
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       # Step 1: Check out the repository
@@ -25,6 +32,9 @@ jobs:
       # Step 2: Set up R
       - name: Setup R
         uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.r }}
+          http-user-agent: ${{ matrix.r == 'devel' && 'release' || '' }}
 
       # Step 3: Set up Pandoc with a specific version
       - name: Setup Pandoc
@@ -36,10 +46,13 @@ jobs:
       - name: Install system dependencies on Ubuntu
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y git libcurl4-openssl-dev libssl-dev make libcairo2-dev libfontconfig1-dev libfreetype6-dev zlib1g-dev libjpeg-dev libpng-dev libtiff-dev libicu-dev libfribidi-dev libharfbuzz-dev libxml2-dev
+          mkdir -p .github
+          echo 'modify:
+            sysreqs:
+              - from: pandoc-citeproc
+                to: ""' > .github/pkg.lock.modify
 
-      # Step 4: Install system dependencies
+      # Step 5: Install system dependencies
       - name: Install system dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -49,19 +62,24 @@ jobs:
             any::covr
             any::RcppEigen
             any::rcmdcheck
+            local::.
           needs: check
 
-      # Step 5: Install dependencies and run R CMD Check
+      # Step 6: Install package explicitly
+      - name: Install package
+        run: R CMD INSTALL .
+
+      # Step 7: Install dependencies and run R CMD Check
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2
         with:
           build-vignettes: true
           upload-logs: true
 
-      # Step 6: Upload check results (optional)
+      # Step 8: Upload check results (optional)
       - name: Upload R CMD check results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: R-CMD-check-results
+          name: ${{ matrix.os }}-${{ matrix.r }}-results
           path: check-results/*.txt
