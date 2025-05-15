@@ -22,6 +22,7 @@ library(fdrtool)
 library(flextable)
 library(ftExtra)
 library(officer)
+library(ggplot2)
 library(cowplot)
 ```
 
