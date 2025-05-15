@@ -13,6 +13,7 @@ on:
 jobs:
   R-CMD-check:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         r: ['release']
@@ -42,22 +43,31 @@ jobs:
         with:
           pandoc-version: '3.1.1'
 
-      # Step 4: Manual system dependencies installation for Ubuntu
-      - name: Install system dependencies on Ubuntu
+      # Step 4: Fix pandoc-citeproc issue on Ubuntu
+      - name: Fix pandoc-citeproc dependency
         if: runner.os == 'Linux'
         run: |
           mkdir -p .github
           echo 'modify:
             sysreqs:
               - from: pandoc-citeproc
+                to: ""
+              - from: bayesplot
+                to: ""
+              - from: loo
                 to: ""' > .github/pkg.lock.modify
 
-      # Step 5: Install system dependencies
-      - name: Install system dependencies
+      # Step 5: Install system dependencies for Ubuntu
+      - name: Install system dependencies on Ubuntu
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git libcurl4-openssl-dev libssl-dev make libcairo2-dev libfontconfig1-dev libfreetype6-dev zlib1g-dev libjpeg-dev libpng-dev libtiff-dev libicu-dev libfribidi-dev libharfbuzz-dev libxml2-dev
+
+      # Step 6: Install R dependencies
+      - name: Install R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          use-public-rspm: true
-          install-suggests: true
           extra-packages: |
             any::covr
             any::RcppEigen
@@ -65,18 +75,14 @@ jobs:
             local::.
           needs: check
 
-      # Step 6: Install package explicitly
-      - name: Install package
-        run: R CMD INSTALL .
-
-      # Step 7: Install dependencies and run R CMD Check
+      # Step 7: Run R CMD check
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2
         with:
           build-vignettes: true
           upload-logs: true
 
-      # Step 8: Upload check results (optional)
+      # Step 8: Upload check results
       - name: Upload R CMD check results
         if: always()
         uses: actions/upload-artifact@v4
