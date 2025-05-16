@@ -43,6 +43,22 @@ jobs:
         with:
           pandoc-version: '3.1.1'
 
+      # Step 4: Create package dependency modification file
+      - name: Create sysreqs modification file
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p .github
+          cat > .github/pkg.lock.modify << 'EOF'
+          modify:
+            sysreqs:
+              - from: pandoc-citeproc
+                to: ""
+              - from: bayesplot
+                to: ""
+              - from: loo
+                to: ""
+          EOF
+
       # Step 4: Install packages directly for Ubuntu with R-release
       - name: Install packages directly for Ubuntu with R-release
         if: matrix.config.pandoc_fix
