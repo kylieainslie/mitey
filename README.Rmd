@@ -16,12 +16,13 @@ knitr::opts_chunk$set(
 # The `mitey` package
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-Check.yaml/badge.svg)](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-Check.yaml)
+[![License: EUPL v1.2](https://img.shields.io/badge/License-EUPL%20v1.2-blue.svg)](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12)
+![GitHub Stars](https://img.shields.io/github/stars/kylieainslie/mitey)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15446456.svg)](https://doi.org/10.5281/zenodo.15446456) 
+
 <!--[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/your-package)](https://CRAN.R-project.org/package=your-package) -->
 <!-- [![codecov](https://codecov.io/gh/kylieainslie/mitey/branch/main/graph/badge.svg)](https://codecov.io/gh/kylieainslie/mitey) -->
-<!-- [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE) -->
-![GitHub Stars](https://img.shields.io/github/stars/kylieainslie/mitey)
-<!-- [![DOI](https://zenodo.org/badge/DOI/<DOI>.svg)](https://doi.org/<DOI>)  -->
 <!--[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/mitey)](https://CRAN.R-project.org/package=mitey) -->
 <!-- badges: end -->
 
