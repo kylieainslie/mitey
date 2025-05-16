@@ -15,12 +15,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        r: ['release']
-        include:
-          - os: ubuntu-latest
-            r: 'devel'
-    runs-on: ${{ matrix.os }}
+        config:
+          - {os: macos-latest, r: 'release'}
+          - {os: windows-latest, r: 'release'}
+          - {os: ubuntu-latest, r: 'release', pandoc_fix: true}
+          - {os: ubuntu-latest, r: 'devel', http-user-agent: 'release'}
+    runs-on: ${{ matrix.config.os }}
     env:
       R_KEEP_PKG_SOURCE: yes
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -34,8 +34,8 @@ jobs:
       - name: Setup R
         uses: r-lib/actions/setup-r@v2
         with:
-          r-version: ${{ matrix.r }}
-          http-user-agent: ${{ matrix.r == 'devel' && 'release' || '' }}
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
 
       # Step 3: Set up Pandoc with a specific version
       - name: Setup Pandoc
@@ -43,29 +43,23 @@ jobs:
         with:
           pandoc-version: '3.1.1'
 
-      # Step 4: Fix pandoc-citeproc issue on Ubuntu
-      - name: Fix pandoc-citeproc dependency
-        if: runner.os == 'Linux'
-        run: |
-          mkdir -p .github
-          echo 'modify:
-            sysreqs:
-              - from: pandoc-citeproc
-                to: ""
-              - from: bayesplot
-                to: ""
-              - from: loo
-                to: ""' > .github/pkg.lock.modify
-
-      # Step 5: Install system dependencies for Ubuntu
-      - name: Install system dependencies on Ubuntu
-        if: runner.os == 'Linux'
+      # Step 4: Install packages directly for Ubuntu with R-release
+      - name: Install packages directly for Ubuntu with R-release
+        if: matrix.config.pandoc_fix
         run: |
           sudo apt-get update
           sudo apt-get install -y git libcurl4-openssl-dev libssl-dev make libcairo2-dev libfontconfig1-dev libfreetype6-dev zlib1g-dev libjpeg-dev libpng-dev libtiff-dev libicu-dev libfribidi-dev libharfbuzz-dev libxml2-dev
 
-      # Step 6: Install R dependencies
+          # Install R package dependencies manually
+          Rscript -e 'install.packages(c("remotes", "rcmdcheck", "covr", "RcppEigen"))'
+          Rscript -e 'remotes::install_deps(dependencies = TRUE)'
+
+          # Install the package
+          R CMD INSTALL .
+
+      # Step 5: Install R dependencies for other platforms
       - name: Install R dependencies
+        if: !matrix.config.pandoc_fix
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
@@ -75,17 +69,17 @@ jobs:
             local::.
           needs: check
 
-      # Step 7: Run R CMD check
+      # Step 6: Run R CMD check
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2
         with:
           build-vignettes: true
           upload-logs: true
 
-      # Step 8: Upload check results
+      # Step 7: Upload check results
       - name: Upload R CMD check results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-${{ matrix.r }}-results
+          name: ${{ matrix.config.os }}-${{ matrix.config.r }}-results
           path: check-results/*.txt
