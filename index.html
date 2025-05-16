@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Toolkit to Estimate Infectious Disease Dynamics Parameters">
-<meta name="description" content="This package provides methods to estimate key epidemiological parameters for infectious diseases with particular application to scabies.">
-<meta property="og:description" content="This package provides methods to estimate key epidemiological parameters for infectious diseases with particular application to scabies.">
+<meta name="description" content="Lightweight toolkit providing methods to estimate key epidemiological parameters for infectious diseases with particular application to scabies. Implements methods for serial interval and time-varying case reproduction number estimation as described in Vink et al. (2014) &lt;doi:10.1093/aje/kwu209&gt; and Wallinga &amp; Lipsitch (2007) &lt;doi:10.1098/rspb.2006.3754&gt;, respectively.">
+<meta property="og:description" content="Lightweight toolkit providing methods to estimate key epidemiological parameters for infectious diseases with particular application to scabies. Implements methods for serial interval and time-varying case reproduction number estimation as described in Vink et al. (2014) &lt;doi:10.1093/aje/kwu209&gt; and Wallinga &amp; Lipsitch (2007) &lt;doi:10.1098/rspb.2006.3754&gt;, respectively.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">mitey</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,14 +58,7 @@
 <div class="page-header"><h1 id="the-mitey-package">The <code>mitey</code> package<a class="anchor" aria-label="anchor" href="#the-mitey-package"></a>
 </h1></div>
 <!-- badges: start -->
-<!-- [![R-CMD-check](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-check.yaml) -->
-<!--[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/your-package)](https://CRAN.R-project.org/package=your-package) -->
-<!-- [![codecov](https://codecov.io/gh/kylieainslie/mitey/branch/main/graph/badge.svg)](https://codecov.io/gh/kylieainslie/mitey) -->
-<!-- [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE) -->
-<!-- ![GitHub Stars](https://img.shields.io/github/stars/kylieainslie/mitey) -->
-<!-- [![DOI](https://zenodo.org/badge/DOI/<DOI>.svg)](https://doi.org/<DOI>)  -->
-<!--[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/mitey)](https://CRAN.R-project.org/package=mitey) -->
-<!-- badges: end -->
+
 <p>The <code>mitey</code> package is a lightweight package designed originally as a companion to the analyses presented by <a href="http://dx.doi.org/10.2139/ssrn.5184990" class="external-link">Ainslie et al. 2025</a> on scabies transmission. However, these methods are more widely applicable than in the context of scabies, thus the motivation behind creating the <code>mitey</code> package was twofold and also provides flexible, documented code for methods to estimate epidemiological quantities of interest.</p>
 <p>Currently, <code>mitey</code> includes methods to estimate a) the mean and standard deviation of the serial interval distribution using a maximum likelihood framework developed by <a href="https://doi.org/10.1093/aje/kwu209" class="external-link">Vink et al. 2014</a> and b) the time-varying reproduction number using the method developed by <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/" class="external-link">Walling and Lipsitch 2007</a>.</p>
 <div class="section level3">
@@ -83,6 +76,125 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"kylieainslie/mitey"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="example-usage">Example Usage<a class="anchor" aria-label="anchor" href="#example-usage"></a>
+</h2>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kylieainslie/mitey" class="external-link">mitey</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#-----------------</span></span>
+<span><span class="co"># Serial Interval Estimation</span></span>
+<span><span class="co">#-----------------</span></span>
+<span><span class="va">icc_intervals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">6</span>,<span class="fl">4</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">7</span>,<span class="fl">8</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">8</span>,<span class="fl">14</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">9</span>,<span class="fl">31</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>,<span class="fl">29</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">11</span>,<span class="fl">42</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">12</span>,<span class="fl">25</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">13</span>,<span class="fl">16</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">14</span>,<span class="fl">16</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">15</span>,<span class="fl">10</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">16</span>,<span class="fl">4</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">17</span>,<span class="fl">2</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">18</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Estimate serial interval</span></span>
+<span><span class="va">si_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/si_estim.html">si_estim</a></span><span class="op">(</span><span class="va">icc_intervals</span><span class="op">)</span></span>
+<span><span class="va">si_results</span></span>
+<span><span class="co">#&gt; $mean</span></span>
+<span><span class="co">#&gt; [1] 10.91892</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sd</span></span>
+<span><span class="co">#&gt; [1] 2.036239</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $wts</span></span>
+<span><span class="co">#&gt; [1] 3.625090e-02 9.146057e-01 3.012069e-16 4.913656e-02 7.797502e-22</span></span>
+<span><span class="co">#&gt; [6] 6.801913e-06 6.863119e-28</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plot fitted serial interval distribution</span></span>
+<span><span class="fu"><a href="reference/plot_si_fit.html">plot_si_fit</a></span><span class="op">(</span></span>
+<span>  dat <span class="op">=</span> <span class="va">icc_intervals</span>,</span>
+<span>  mean <span class="op">=</span> <span class="va">si_results</span><span class="op">$</span><span class="va">mean</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
+<span>  sd <span class="op">=</span> <span class="va">si_results</span><span class="op">$</span><span class="va">sd</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
+<span>  weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">si_results</span><span class="op">$</span><span class="va">wts</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, </span>
+<span>              <span class="va">si_results</span><span class="op">$</span><span class="va">wts</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">+</span> <span class="va">si_results</span><span class="op">$</span><span class="va">wts</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>,</span>
+<span>              <span class="va">si_results</span><span class="op">$</span><span class="va">wts</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span> <span class="op">+</span> <span class="va">si_results</span><span class="op">$</span><span class="va">wts</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span>, </span>
+<span>              <span class="va">si_results</span><span class="op">$</span><span class="va">wts</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span> <span class="op">+</span> <span class="va">si_results</span><span class="op">$</span><span class="va">wts</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>  dist <span class="op">=</span> <span class="st">"normal"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-example_si_plot-1.png" width="100%"></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#-----------------</span></span>
+<span><span class="co"># Time-varying Reproduction Number Estimation</span></span>
+<span><span class="co">#-----------------</span></span>
+<span><span class="co"># Generate a synthetic epidemic using the generate_synthetic_epidemic function</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">true_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2.5</span>, <span class="fl">50</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2.5</span>, <span class="fl">0.8</span>, length.out <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.8</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Generate synthetic epidemic data</span></span>
+<span><span class="va">synthetic_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/generate_synthetic_epidemic.html">generate_synthetic_epidemic</a></span><span class="op">(</span></span>
+<span>  true_r <span class="op">=</span> <span class="va">true_r</span>,      <span class="co"># Time-varying reproduction number</span></span>
+<span>  si_mean <span class="op">=</span> <span class="fl">5.2</span>,        <span class="co"># Mean serial interval (days)</span></span>
+<span>  si_sd <span class="op">=</span> <span class="fl">1.72</span>,         <span class="co"># SD of serial interval</span></span>
+<span>  si_dist <span class="op">=</span> <span class="st">"gamma"</span>,    <span class="co"># Distribution type</span></span>
+<span>  initial_cases <span class="op">=</span> <span class="fl">10</span>    <span class="co"># Initial number of cases</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">incidence</span> <span class="op">&lt;-</span> <span class="va">synthetic_data</span><span class="op">$</span><span class="va">incidence</span></span>
+<span><span class="va">dates</span> <span class="op">&lt;-</span> <span class="va">synthetic_data</span><span class="op">$</span><span class="va">date</span></span></code></pre></div>
+<p><img src="reference/figures/README-example_rt_epicurve-1.png" width="100%"></p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Estimate time-varying reproduction number </span></span>
+<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/wallinga_lipsitch.html">wallinga_lipsitch</a></span><span class="op">(</span></span>
+<span>  incidence <span class="op">=</span> <span class="va">incidence</span>, </span>
+<span>  dates <span class="op">=</span> <span class="va">dates</span>,</span>
+<span>  si_mean <span class="op">=</span> <span class="fl">5.2</span>,          <span class="co"># mean serial interval in days</span></span>
+<span>  si_sd <span class="op">=</span> <span class="fl">1.72</span>,           <span class="co"># serial interval SD</span></span>
+<span>  si_dist <span class="op">=</span> <span class="st">"gamma"</span>,      <span class="co"># serial interval distribution</span></span>
+<span>  smoothing <span class="op">=</span> <span class="fl">7</span>,          <span class="co"># 7-day smoothing window</span></span>
+<span>  bootstrap <span class="op">=</span> <span class="cn">TRUE</span>,       <span class="co"># calculate bootstrap confidence intervals</span></span>
+<span>  n_bootstrap <span class="op">=</span> <span class="fl">100</span>,      <span class="co"># number of bootstrap samples</span></span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.95</span>       <span class="co"># 95% confidence intervals</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span>
+<span><span class="co">#&gt;         date incidence        R R_corrected  R_lower  R_upper R_corrected_lower</span></span>
+<span><span class="co">#&gt; 1 2023-01-01        10 2.731039    2.731039 2.011146 4.120939          2.011146</span></span>
+<span><span class="co">#&gt; 2 2023-01-02         0 2.694590    2.694590 2.008012 3.692239          2.008012</span></span>
+<span><span class="co">#&gt; 3 2023-01-03         1 2.664286    2.664286 2.064334 3.486878          2.064334</span></span>
+<span><span class="co">#&gt; 4 2023-01-04         3 2.638675    2.638675 2.151772 3.354107          2.151772</span></span>
+<span><span class="co">#&gt; 5 2023-01-05         9 2.550425    2.550425 2.108557 3.108038          2.108557</span></span>
+<span><span class="co">#&gt; 6 2023-01-06        11 2.550200    2.550200 2.165532 3.064228          2.165532</span></span>
+<span><span class="co">#&gt;   R_corrected_upper</span></span>
+<span><span class="co">#&gt; 1          4.120939</span></span>
+<span><span class="co">#&gt; 2          3.692239</span></span>
+<span><span class="co">#&gt; 3          3.486878</span></span>
+<span><span class="co">#&gt; 4          3.354107</span></span>
+<span><span class="co">#&gt; 5          3.108038</span></span>
+<span><span class="co">#&gt; 6          3.064228</span></span></code></pre></div>
+<p><img src="reference/figures/README-example_rt_plot-1.png" width="100%"></p>
+</div>
+<div class="section level2">
+<h2 id="main-functions">Main Functions<a class="anchor" aria-label="anchor" href="#main-functions"></a>
+</h2>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Function</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code><a href="reference/si_estim.html">si_estim()</a></code></td>
+<td>Estimates the mean and standard deviation of the serial interval distribution</td>
+</tr>
+<tr class="even">
+<td><code><a href="reference/plot_si_fit.html">plot_si_fit()</a></code></td>
+<td>Plots the fitted serial interval distribution</td>
+</tr>
+<tr class="odd">
+<td><code><a href="reference/wallinga_lipsitch.html">wallinga_lipsitch()</a></code></td>
+<td>Estimates the time-varying reproduction number using the Wallinga &amp; Lipsitch method</td>
+</tr>
+<tr class="even">
+<td><code><a href="reference/generate_synthetic_epidemic.html">generate_synthetic_epidemic()</a></code></td>
+<td>Generates a synthetic epidemic curve with specified parameters for testing and simulation</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section level2">
 <h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
@@ -137,6 +249,27 @@
 </ul>
 </li>
 </ul>
+</div>
+<div class="section level2">
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h2>
+<p>This package is distributed under the European Union Public License (EUPL) v1.2. See LICENSE file for details.</p>
+</div>
+<div class="section level2">
+<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h2>
+<p>If you use mitey in your research, please cite:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>Ainslie, <span class="fu">K.</span> (<span class="dv">2025</span>). mitey<span class="sc">:</span> Toolkit to Estimate Infectious Disease Dynamics Parameters. R package version <span class="dv">0</span>.<span class="dv">1</span>.<span class="fl">0.</span> https<span class="sc">:</span><span class="er">//</span>github.com<span class="sc">/</span>kylieainslie<span class="sc">/</span>mitey</span></code></pre></div>
+<p>And the original methodological papers:</p>
+<ul>
+<li>Vink et al. (2014). Serial intervals of respiratory infectious diseases: A systematic review and analysis. American Journal of Epidemiology, 180(9), 865-875.</li>
+<li>Wallinga, J., &amp; Lipsitch, M. (2007). How generation intervals shape the relationship between growth rates and reproductive numbers. Proceedings of the Royal Society B: Biological Sciences, 274(1609), 599-604.</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
+</h2>
+<p>Contributions to <code>mitey</code> are welcome! Please feel free to submit a pull request or open an issue to discuss potential improvements or report bugs.</p>
 <!--You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. -->
 </div>
 </div>
@@ -152,7 +285,7 @@
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small>file <a href="LICENSE-text.html">LICENSE</a></small></li>
+<li><small>file <a href="LICENSE-text.html">LICENSE</a> | <a href="https://joinup.ec.europa.eu/software/page/eupl" class="external-link">EUPL-1.2</a></small></li>
 </ul>
 </div>
 
@@ -171,7 +304,12 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>
