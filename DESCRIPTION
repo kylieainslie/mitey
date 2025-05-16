@@ -1,12 +1,11 @@
 Package: mitey
 Title: Toolkit to Estimate Infectious Disease Dynamics Parameters 
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: 
     person("Kylie", "Ainslie", , "kylie.ainslie@rivm.nl", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-5419-7206"))
-Description: This package provides methods to estimate key epidemiological parameters for infectious diseases with particular application to scabies.
-License: file LICENSE
-Note: This package is distributed under the European Union Public License (EUPL) v1.2.
+Description: Lightweight toolkit providing methods to estimate key epidemiological parameters for infectious diseases with particular application to scabies. Implements methods for serial interval  and time-varying case reproduction number estimation as described in Vink et al. (2014) <doi:10.1093/aje/kwu209> and Wallinga & Lipsitch (2007) <doi:10.1098/rspb.2006.3754>, respectively.
+License: file LICENSE | EUPL-1.2
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
@@ -20,29 +19,28 @@ Suggests:
     brms,
     broom,
     cowplot,
-    devtools,
+    dplyr,
     EpiLPS,
     flextable,
     forcats,
     ftExtra,
     ggridges,
+    gt,
+    here,
     ISOweek,
     knitr,
+    lubridate,
     officer,
     openxlsx,
+    outbreaks,
+    purrr,
     rmarkdown,
     stringr,
     testthat (>= 3.0.0),
     tidybayes,
+    tidyr,
     viridis,
-    zoo,
-    outbreaks,
-    gt,
-    here,
-    dplyr,
-    lubridate,
-    purrr,
-    tidyr
+    zoo
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Depends: 

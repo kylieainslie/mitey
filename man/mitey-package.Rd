@@ -6,7 +6,7 @@
 \alias{mitey-package}
 \title{mitey: Toolkit to Estimate Infectious Disease Dynamics Parameters}
 \description{
-This package provides methods to estimate key epidemiological parameters for infectious diseases with particular application to scabies.
+This package provides methods to estimate key epidemiological parameters for infectious diseases with particular application to scabies. Implements algorithms for serial interval estimation and reproduction number calculation following methods described in Vink et al. (2014) \doi{10.1093/aje/kwu209} and Wallinga & Lipsitch (2007) \doi{10.1098/rspb.2006.3754}.
 }
 \seealso{
 Useful links:

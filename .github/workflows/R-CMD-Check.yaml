@@ -48,7 +48,11 @@ jobs:
         if: matrix.config.pandoc_fix
         run: |
           sudo apt-get update
-          sudo apt-get install -y git libcurl4-openssl-dev libssl-dev make libcairo2-dev libfontconfig1-dev libfreetype6-dev zlib1g-dev libjpeg-dev libpng-dev libtiff-dev libicu-dev libfribidi-dev libharfbuzz-dev libxml2-dev
+          sudo apt-get install -y git libcurl4-openssl-dev libssl-dev make libcairo2-dev \
+            libfontconfig1-dev libfreetype6-dev zlib1g-dev libjpeg-dev libpng-dev \
+            libtiff-dev libicu-dev libfribidi-dev libharfbuzz-dev libxml2-dev \
+            texlive-latex-base texlive-fonts-recommended texlive-fonts-extra \
+            texlive-latex-extra qpdf tidy
 
           # Install R package dependencies manually
           Rscript -e 'install.packages(c("remotes", "rcmdcheck", "covr", "RcppEigen"))'
@@ -59,7 +63,7 @@ jobs:
 
       # Step 5: Install R dependencies for other platforms
       - name: Install R dependencies
-        if: !matrix.config.pandoc_fix
+        if: ${{ !matrix.config.pandoc_fix }}
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
