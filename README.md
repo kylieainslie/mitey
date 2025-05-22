@@ -34,18 +34,6 @@ al. 2014](https://doi.org/10.1093/aje/kwu209) and b) the time-varying
 reproduction number using the method developed by [Walling and Lipsitch
 2007](https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/).
 
-### Estimating the serial interval
-
-The method developed by Vink et al. uses data about the time of symptom
-onset with no precise information about transmission pairs and an
-assumed underlying serial interval distribution (either Gaussian or
-Gamma) to estimate the mean and standard deviation of the serial
-interval distribution. Briefly, the method involves calculating the
-index case-to-case (ICC) interval for each person, where the person with
-the earliest date of symptom onset will be considered the index case.
-The rest of the individuals will have an ICC interval calculated as the
-number of days between their symptom onset and the index case.
-
 ## Installation
 
 1.  Install [R](http://cran.r-project.org)
@@ -57,6 +45,37 @@ number of days between their symptom onset and the index case.
 # install.packages("devtools")
 devtools::install_github("kylieainslie/mitey")
 ```
+
+#### Installation time
+
+``` r
+system.time({
+  devtools::install_github("kylieainslie/mitey", force = TRUE)
+})
+#> Using GitHub PAT from the git credential store.
+#> Downloading GitHub repo kylieainslie/mitey@HEAD
+#> 
+#> ── R CMD build ─────────────────────────────────────────────────────────────────
+#> * checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpBvnxT9/remotesbb5775f6e2d6/kylieainslie-mitey-316a611/DESCRIPTION’ ... OK
+#> * preparing ‘mitey’:
+#> * checking DESCRIPTION meta-information ... OK
+#> * checking for LF line-endings in source and make files and shell scripts
+#> * checking for empty or unneeded directories
+#> * building ‘mitey_0.1.0.tar.gz’
+#> Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpSwtO0w/temp_libpathb53b5d4b7e36'
+#> (as 'lib' is unspecified)
+#>    user  system elapsed 
+#>   2.898   0.529   6.828
+```
+
+## Main Functions
+
+| Function | Description |
+|----|----|
+| `si_estim()` | Estimates the mean and standard deviation of the serial interval distribution |
+| `plot_si_fit()` | Plots the fitted serial interval distribution |
+| `wallinga_lipsitch()` | Estimates the time-varying reproduction number using the Wallinga & Lipsitch method |
+| `generate_synthetic_epidemic()` | Generates a synthetic epidemic curve with specified parameters for testing and simulation |
 
 ## Example Usage
 
@@ -154,14 +173,35 @@ head(results)
 
 <img src="man/figures/README-example_rt_plot-1.png" width="100%" />
 
-## Main Functions
+## Expected Run Times
 
-| Function | Description |
-|----|----|
-| `si_estim()` | Estimates the mean and standard deviation of the serial interval distribution |
-| `plot_si_fit()` | Plots the fitted serial interval distribution |
-| `wallinga_lipsitch()` | Estimates the time-varying reproduction number using the Wallinga & Lipsitch method |
-| `generate_synthetic_epidemic()` | Generates a synthetic epidemic curve with specified parameters for testing and simulation |
+Expected run times for the examples provided above are shown in the
+table below.
+
+<details>
+
+<summary>
+
+Click to expand run time information
+</summary>
+
+| Example | Data Size | Run Time | Details |
+|----|----|----|----|
+| **Serial Interval Estimation** |  |  |  |
+| `si_estim()` | 203 ICC intervals | **\< 1 second** | EM algorithm on example outbreak data |
+| `plot_si_fit()` | Same data + plotting | **\< 1 second** | Visualization of fitted distribution |
+| **Synthetic Data Generation** |  |  |  |
+| `generate_synthetic_epidemic()` | 180 days | **\< 1 second** | Creates epidemic curve with known Rt |
+| **Reproduction Number Estimation** |  |  |  |
+| `wallinga_lipsitch()` (point estimates) | 180 days, no bootstrap | **1-2 seconds** | Fast point estimates only |
+| `wallinga_lipsitch()` (with bootstrap) | 180 days, 100 bootstrap samples | **2-5 minutes** | Including 95% confidence intervals |
+| **Complete Example Workflow** |  |  |  |
+| All example code blocks | Full workflow | **3-6 minutes** | Serial interval + Rt estimation + plots |
+
+**Performance tip**: Set `bootstrap = FALSE` for quick demonstrations,
+or reduce `n_bootstrap` to 10-20 for faster approximate confidence
+intervals.
+</details>
 
 ## Vignettes
 
@@ -224,11 +264,40 @@ This package is distributed under the European Union Public License
 
 ## Citation
 
-If you use mitey in your research, please cite:
+If you use this package, please cite both the manuscript and the
+software:
 
-    Ainslie, K. (2025). mitey: Toolkit to Estimate Infectious Disease Dynamics Parameters. R package version 0.1.0. https://github.com/kylieainslie/mitey
+#### Manuscript
 
-And the original methodological papers:
+Ainslie, K.E.C., M. Hooiveld, J. Wallinga. (2025). Estimation of the
+epidemiological characteristics of scabies. *Available at SSRN*.
+<https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5184990>
+
+#### Software
+
+``` r
+citation("mitey")
+#> To cite package 'mitey' in publications use:
+#> 
+#>   Ainslie K (2025). _mitey: Toolkit to Estimate Infectious Disease
+#>   Dynamics Parameters_. R package version 0.1.0, commit
+#>   316a6114e6689f969c75b6f32844762559233ed2,
+#>   <https://github.com/kylieainslie/mitey>.
+#> 
+#> A BibTeX entry for LaTeX users is
+#> 
+#>   @Manual{,
+#>     title = {mitey: Toolkit to Estimate Infectious Disease Dynamics Parameters},
+#>     author = {Kylie Ainslie},
+#>     year = {2025},
+#>     note = {R package version 0.1.0, commit 316a6114e6689f969c75b6f32844762559233ed2},
+#>     url = {https://github.com/kylieainslie/mitey},
+#>   }
+```
+
+#### Other
+
+For reference, here are the original methodological papers:
 
 - Vink et al. (2014). Serial intervals of respiratory infectious
   diseases: A systematic review and analysis. American Journal of
@@ -238,10 +307,60 @@ And the original methodological papers:
   Proceedings of the Royal Society B: Biological Sciences, 274(1609),
   599-604.
 
+## System Requirements
+
+- *R Version:* R \>= 4.0.0 (developed and tested with R 4.5.0)
+- *Operating Systems:* Tested on
+  - macOS (latest via GitHub Actions)
+  - Windows Server (latest via GitHub Actions)
+  - Ubuntu Linux 22.04+ (with R release and R-devel)
+
+#### Dependencies
+
+<details>
+
+<summary>
+
+Click to expand dependency information
+</summary>
+
+| Category | Package | Purpose | Required |
+|----|----|----|----|
+| **Core Dependencies** |  |  |  |
+|  | `fdrtool` | Half-normal distribution functions (Vink method) | ✅ Yes |
+|  | `stats` | Statistical distribution functions | ✅ Yes |
+|  | `brms` | Bayesian meta-analysis | ✅ Yes |
+| **Data Manipulation** |  |  |  |
+|  | `dplyr` | Data manipulation and grouping | 📦 Suggested |
+|  | `tidyr` | Data reshaping | 📦 Suggested |
+|  | `purrr` | Functional programming tools | 📦 Suggested |
+| **Visualization** |  |  |  |
+|  | `ggplot2` | Statistical graphics | 📦 Suggested |
+|  | `cowplot` | Combining plots | 📦 Suggested |
+|  | `ggridges` | Ridge plots for meta-analysis | 📦 Suggested |
+|  | `viridis` | Color palettes | 📦 Suggested |
+| **Time Series & Data Handling** |  |  |  |
+|  | `zoo` | Moving averages and smoothing | 📦 Suggested |
+|  | `lubridate` | Date manipulation | 📦 Suggested |
+|  | `ISOweek` | ISO week handling | 📦 Suggested |
+|  | `openxlsx` | Excel file reading | 📦 Suggested |
+| **Method Validation** |  |  |  |
+|  | `EpiEstim` | Reproduction number estimation comparison | 🔬 Development |
+|  | `EpiLPS` | Alternative reproduction number methods | 🔬 Development |
+|  | `outbreaks` | Epidemiological datasets for validation | 🔬 Development |
+| **Bayesian Analysis** |  |  |  |
+|  | `tidybayes` | Bayesian posterior visualization | 📊 Vignettes |
+| **Documentation & Tables** |  |  |  |
+|  | `gt` | Publication-quality tables | 📊 Vignettes |
+|  | `flextable` | Flexible table formatting | 📊 Vignettes |
+|  | `broom` | Model output tidying | 📊 Vignettes |
+
+</details>
+
 ## Contributing
 
 Contributions to `mitey` are welcome! Please feel free to submit a pull
-request or open an issue to discuss potential improvements or report
-bugs.
+request or open an [issue](https://github.com/kylieainslie/mitey/issues)
+to discuss potential improvements or report bugs.
 
 <!--You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. -->
