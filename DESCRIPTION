@@ -2,7 +2,10 @@ Package: mitey
 Title: Toolkit to Estimate Infectious Disease Dynamics Parameters 
 Version: 0.1.0
 Authors@R: 
-    person("Kylie", "Ainslie", , "kylie.ainslie@rivm.nl", role = c("aut", "cre"),
+    person(given = "Kylie", 
+           family = "Ainslie", 
+           role = c("aut", "cre", "cph"), 
+           email = "kylie.ainslie@rivm.nl", ,
            comment = c(ORCID = "0000-0001-5419-7206"))
 Description: Lightweight toolkit providing methods to estimate key epidemiological parameters for infectious diseases with particular application to scabies. Implements methods for serial interval  and time-varying case reproduction number estimation as described in Vink et al. (2014) <doi:10.1093/aje/kwu209> and Wallinga & Lipsitch (2007) <doi:10.1098/rspb.2006.3754>, respectively.
 Date: 2025
