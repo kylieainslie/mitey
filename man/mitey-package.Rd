@@ -18,7 +18,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Kylie Ainslie \email{kylie.ainslie@rivm.nl} (\href{https://orcid.org/0000-0001-5419-7206}{ORCID})
+\strong{Maintainer}: Kylie Ainslie \email{kylie.ainslie@rivm.nl} (\href{https://orcid.org/0000-0001-5419-7206}{ORCID}) [copyright holder]
 
 }
 \keyword{internal}
