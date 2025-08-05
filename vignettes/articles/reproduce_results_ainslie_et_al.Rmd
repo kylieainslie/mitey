@@ -9,19 +9,19 @@ output: html_document
 
 ```{r, include = FALSE}
 # Create figures directory if it doesn't exist
-# fig_dir <- "/Users/kylieainslie/Library/CloudStorage/Dropbox/Kylie/Projects/RIVM/Manuscripts/scabies/figures"
-# if (!dir.exists(fig_dir)) dir.create(fig_dir, recursive = TRUE)
+fig_dir <- "/Users/kylieainslie/Library/CloudStorage/Dropbox/Kylie/Projects/RIVM/Manuscripts/scabies/figures"
+if (!dir.exists(fig_dir)) dir.create(fig_dir, recursive = TRUE)
 
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"#, 
-  # dev = "tiff",
-  # fig.path = paste0(fig_dir, "/"),
-  # out.width = "100%",
-  #fig.width = 8,
-  #fig.height = 6,
-  # dpi = 600,
-  # compression = "lzw"
+  comment = "#>", 
+  dev = "tiff",
+  fig.path = paste0(fig_dir, "/"),
+  out.width = "100%",
+  fig.width = 8,
+  fig.height = 6,
+  dpi = 600,
+  compression = "lzw"
 )
 ```
 
@@ -61,6 +61,7 @@ library(EpiLPS)
 library(flextable)
 library(officer)
 library(BH)
+library(patchwork)
 ```
 
 # Methods
@@ -209,9 +210,9 @@ scabies_inc_total$upper_fitted <- exp(upper_log)
 
 The code first extracts fitted values on the log scale, then calculates standard errors adjusted by the dispersion parameter to account for overdispersion. We then compute confidence intervals on the log scale and transform back to the original scale using the exponential function. This approach ensures appropriate uncertainty representation in our incidence projections.
 
-To project future scabies incidence, we extend our fitted model to predict incidence for the next 10 years. The code below creates a sequence of future time points, applies our model to generate predictions, and calculates prediction intervals that incorporate both parameter uncertainty and the overdispersion observed in the data.
+<!-- To project future scabies incidence, we extend our fitted model to predict incidence for the next 10 years. The code below creates a sequence of future time points, applies our model to generate predictions, and calculates prediction intervals that incorporate both parameter uncertainty and the overdispersion observed in the data. -->
 
-```{r extrapolate, echo=TRUE}
+```{r extrapolate, eval = FALSE, echo=FALSE}
 ## Extrapolate to future time ##
 future_time <- seq(max(scabies_inc_total$time) + 1, 
                    max(scabies_inc_total$time) + 10, by = 1)
@@ -250,7 +251,7 @@ row.names(scabies_plot_df) <- NULL
 head(scabies_plot_df)
 ```
 
-The resulting data frame combines observed data (labeled as 'Original Data') with extrapolated predictions (labeled as 'Extrapolated Data'), including upper and lower confidence bounds for both. This structure allows for seamless visualization of historical trends and future projections in a single plot.
+<!-- The resulting data frame combines observed data (labeled as 'Original Data') with extrapolated predictions (labeled as 'Extrapolated Data'), including upper and lower confidence bounds for both. This structure allows for seamless visualization of historical trends and future projections in a single plot. -->
 
 ### Basic Reproduction Number ($R_0$)
 
@@ -374,6 +375,7 @@ res_si_sim
 val_data <- readRDS("validation_data.rds")
 initial_values <- readRDS("initial_values.rds")
 val_data_w_init <- left_join(val_data, initial_values, by = "Pathogen")
+
 results_historical <- val_data_w_init %>%
   group_by(Author, Pathogen, Country) %>%
   summarise(result = list(si_estim(.data$ICC_interval, 
@@ -460,7 +462,7 @@ results_rt <- wallinga_lipsitch(
 
 results_rt$true_r <- true_r_values
 
-head(results)
+head(results_rt)
 
 ```
 
@@ -504,11 +506,10 @@ res_h7n9 <- wallinga_lipsitch(
   si_mean = 8.1,
   si_sd = 3.4,
   si_dist = "gamma",
-  smoothing = 7,  # Apply 7-day smoothing for weekly patterns
+  smoothing = 0,
   bootstrap = TRUE,
   n_bootstrap = 500,
-  conf_level = 0.95,
-  shift = TRUE
+  conf_level = 0.95
 )
 
 si_h7n9 <- Idist(mean = 8.1, sd = 3.4)
@@ -666,19 +667,22 @@ forest_plot <- ggplot(aes(b_Intercept,
   labs(x = "Mean Serial Interval (days)", y = "") +
   # Hide the y-axis text
   scale_y_discrete(labels = rep("", length(levels(forest.data$study)))) +
-  scale_fill_viridis_d(option = "D", begin = 0.2, end = 0.8,
-                      name = "Study",
-                      guide = guide_legend(
-                        title.position = "top", 
-                        direction = "vertical",
-                        # Make the legend keys slightly larger
-                        keyheight = 0.8,
-                        # Adjust key width
-                        keywidth = 0.8,
-                        # Reduce spacing between legend entries
-                        title.hjust = 0.5,
-                        label.hjust = 0
-                      )) +
+  scale_fill_manual(values = c(
+                   "#E69F00", # Orange
+                   "#9932CC", # Dark Orchid (purple)
+                   "#009E73", # Bluish Green  
+                   "#DC143C", # Crimson (red)
+                   "#0072B2"  # Blue
+                 ),
+                 name = "Study",
+                 guide = guide_legend(
+                   title.position = "top", 
+                   direction = "vertical",
+                   keyheight = 0.8,
+                   keywidth = 0.8,
+                   title.hjust = 0.5,
+                   label.hjust = 0
+                 )) +
   theme_scabies() +
   theme(
     panel.grid.major.y = element_blank(),
@@ -688,9 +692,8 @@ forest_plot <- ggplot(aes(b_Intercept,
     legend.margin = margin(6, 6, 6, 6),
     legend.title = element_text(size = 8),
     legend.text = element_text(size = 7),
-    #legend.background = element_rect(fill = "white", color = NA, alpha = 0.7),
     legend.key.size = unit(0.8, "lines")
-  )
+  ) 
 
 ```
 
@@ -705,11 +708,11 @@ fig1
 ```
 
 
-## Growth Rate
+<!-- ## Growth Rate -->
 
-Our growth rate visualization shows both observed data points and model projections on a logarithmic scale. Different colors distinguish historical data from extrapolated predictions, and shaded regions represent confidence intervals.
+<!-- Our growth rate visualization shows both observed data points and model projections on a logarithmic scale. Different colors distinguish historical data from extrapolated predictions, and shaded regions represent confidence intervals. -->
 
-```{r fig2, echo=TRUE, message = FALSE, warning = FALSE, fig.align='center', fig.cap="Figure 2. Annual scabies incidence per 1000 people from 2011 to 2023 (points) and then projected scabies indcidence per 1000 people for 2024 to 2033 (line) using an exponential growth model with annual growth rate of 0.25 (95% CI: 0.20, 0.30) cases per 1000 people. Shaded regions represent 95% prediction intervals for projected scabies incidence. The y-axis is displayed on the log-scale and represents the natural log of scabies incidence per 1000 people.", out.width="100%"}
+```{r fig2, eval = FALSE, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center', fig.cap="Figure 2. Annual scabies incidence per 1000 people from 2011 to 2023 (points) and then projected scabies indcidence per 1000 people for 2024 to 2033 (line) using an exponential growth model with annual growth rate of 0.25 (95% CI: 0.20, 0.30) cases per 1000 people. Shaded regions represent 95% prediction intervals for projected scabies incidence. The y-axis is displayed on the log-scale and represents the natural log of scabies incidence per 1000 people.", out.width="100%"}
 
 # Define the custom palette
 custom_palette <- c("Original Data" = "#440154",
@@ -779,7 +782,7 @@ rt_basic <- ggplot(rt_scabies %>%
   coord_cartesian(ylim = c(0, 3)) +
   labs(
     x = "Date",
-    y = "R",
+    y = "Rt",
     # title = "Time-varying reproduction number for scabies in the Netherlands",
     # subtitle = paste0("Serial interval: ", scabies_si_mean, " days (SD: ", scabies_si_sd, " days)")
   ) +
@@ -1299,6 +1302,8 @@ results_tab
 
 ### Time-varying Reproduction Number
 
+#### Serial interval distribution
+
 In the main analysis, when we estimate the time-varying reproduction number, we assume an underlying Normal distriubtion. However, because we are using the serial interval distribution as an approximation of the generation interval, which is strictly positive, we performed a sensitivity analysis in which we assumed the serial interval distribution is Gamma distributed with the same mean and variance (Figure S3).
 
 Below, we provide the code to generate the estimates assuming a gamma distributed serial interval. However, this code takes a long time to run due to the bootstrapping, so the estimates are stored in `vignettes/data/rt_estimates_WL_gamma.rds`.
@@ -1348,6 +1353,166 @@ rt_basic_gam <- ggplot(rt_scabies_gam %>%
   theme_scabies()
 
 rt_basic_gam
+```
+
+#### Serial interval parameters
+Here, we perform a sensitivity analysis to investigate the impact of the mean serial interval on our estimates of the time-varying reproduction number. We'll estimate Rt using the mean and standard deviation of the serial interval estimated from Ariza et al. and Kaburi et al. and then plot them with the results using the pooled mean.
+
+```{r estimate_rt_sa, eval=FALSE}
+# Rt estimates using SI from Ariza et al.
+rt_scabies_ariza <- wallinga_lipsitch(
+  incidence = df$inc,
+  dates = df$onset_date,
+  si_mean = 98,
+  si_sd = 9.7,
+  si_dist = "normal", 
+  smoothing = 0,
+  bootstrap = TRUE,
+  n_bootstrap = 500 
+)
+
+# saveRDS(rt_scabies_ariza, "vignettes/data/rt_estimates_ariza.rds")
+
+# Rt estimates using SI from Ariza et al.
+rt_scabies_kaburi <- wallinga_lipsitch(
+  incidence = df$inc,
+  dates = df$onset_date,
+  si_mean = 167,
+  si_sd = 8.4,
+  si_dist = "normal", 
+  smoothing = 0,
+  bootstrap = TRUE,
+  n_bootstrap = 500 
+)
+
+#saveRDS(rt_scabies_kaburi, "vignettes/data/rt_estimates_kaburi.rds")
+```
+
+```{r rt_si_sa_plot}
+# # read in stored Rt estimates
+file_pathA <-  here("vignettes", "data", "rt_estimates_ariza.rds")
+file_pathK <-  here("vignettes", "data", "rt_estimates_kaburi.rds")
+rt_scabies_ariza <- readRDS(file_pathA)
+rt_scabies_kaburi <- readRDS(file_pathK)
+
+# Rt plot
+ggplot() +
+  geom_rect(
+    data = seasons_data,
+    aes(xmin = start_date, xmax = end_date, 
+        ymin = 0, ymax = Inf, fill = season),
+    alpha = 0.2
+  ) +
+  
+  # Add your Rt lines
+  geom_line(data = rt_scabies_ariza %>% 
+                     filter(!is.na(R_corrected), date > min(date) + 167), 
+            aes(x = date, y = R_corrected, color = "98 days"), linewidth = 1) +
+  geom_line(data = rt_scabies_kaburi %>% 
+                     filter(!is.na(R_corrected), date > min(date) + 167), 
+            aes(x = date, y = R_corrected, color = "167 days"), linewidth = 1) +
+  geom_line(data = rt_scabies %>% 
+                     filter(!is.na(R_corrected), date > min(date) + 167), 
+            aes(x = date, y = R_corrected, color = "123 days"), linewidth = 1) +
+  
+  # R=1 threshold
+  geom_hline(yintercept = 1, linetype = "dashed", color = "gray70") +
+  
+  # Scales
+  scale_color_manual(values = c(
+  "123 days" = "#21908C",   
+  "98 days" = "#E85D75",     
+  "167 days" = "#440154"     
+)) + 
+  scale_fill_manual(values = season_colors) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  coord_cartesian(ylim = c(0, 4)) +
+  
+  # Labels  
+  labs(
+    x = "Date",
+    y = "Rt",
+    color = "Serial Interval",
+    fill = "Season"
+  ) +
+  theme_scabies() +
+  # guides(
+  #   color = guide_legend(nrow = 2, byrow = TRUE),
+  #   fill = guide_legend(nrow = 2, byrow = TRUE)
+  # ) +
+  theme(legend.position = "bottom")
+
+```
+
+```{r avg_rt_per_month}
+# Panel B: Calculate peak transmission month
+# Colors matching your scheme
+si_colors <- c("123 days" = "#21908C", "98 days" = "#E85D75", "167 days" = "#440154")
+
+# Function to find peak month per year
+find_peak_month <- function(data, si_label, si_value) {
+  data %>%
+    filter(!is.na(R_corrected), date > min(data$date) + si_value) %>%
+    mutate(
+      year = year(date),
+      month = month(date),
+      rt_smooth = rollmean(R_corrected, k = 21, fill = NA, align = "center"),
+      serial_interval = si_label
+    ) %>%
+    filter(!is.na(rt_smooth)) %>%
+    group_by(year, month, serial_interval) %>%
+    summarise(avg_rt = mean(rt_smooth, na.rm = TRUE), .groups = "drop") %>%
+    group_by(year) %>%
+    slice_max(avg_rt, n = 1, with_ties = FALSE) %>%
+    ungroup() %>%
+    select(year, month, avg_rt, serial_interval)
+}
+
+# Get peak months for each serial interval
+peaks_98 <- find_peak_month(rt_scabies_ariza, "98 days", 98)
+peaks_123 <- find_peak_month(rt_scabies, "123 days", 123) 
+peaks_167 <- find_peak_month(rt_scabies_kaburi, "167 days", 167)
+
+# Combine all peaks
+all_peak_months <- bind_rows(peaks_98, peaks_123, peaks_167) %>%
+  mutate(serial_interval = factor(serial_interval, levels = c("98 days", "123 days", "167 days")))
+
+# Calculate summary statistics
+peak_summary <- all_peak_months %>%
+  group_by(serial_interval) %>%
+  summarise(
+    mean_month = mean(month),
+    median_month = median(month),
+    .groups = "drop"
+  )
+
+# Density curves with mean lines showing the shift
+ggplot(all_peak_months, 
+       aes(x = month, fill = serial_interval, color = serial_interval)) +
+  geom_density(alpha = 0.1, size = 1) +
+  geom_vline(data = peak_summary, 
+             aes(xintercept = mean_month, color = serial_interval),
+             size = 1, linetype = "dashed", alpha = 0.8) +
+  scale_x_continuous(
+    breaks = 1:12,
+    labels = month.abb,
+    limits = c(1, 12)
+  ) +
+  scale_fill_manual(values = si_colors) +
+  scale_color_manual(values = si_colors) +
+  labs(
+    x = "Month of Peak Transmission",
+    y = "Density",
+    fill = "Serial Interval",
+    color = "Serial Interval"
+  ) +
+  theme_scabies() +
+  theme(
+    legend.position = "bottom",
+    panel.grid.major.x = element_line(color = "gray90", size = 0.5),
+    panel.grid.minor.x = element_blank()
+  )
+
 ```
 
 ### Annual Incidence by Age Group
