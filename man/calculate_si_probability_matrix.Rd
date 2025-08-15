@@ -7,18 +7,30 @@
 calculate_si_probability_matrix(day_diffs, si_mean, si_sd, si_dist)
 }
 \arguments{
-\item{day_diffs}{Matrix of day differences between each pair of cases}
+\item{day_diffs}{numeric matrix; matrix of day differences between each pair of cases, where element \code{[i,j]} represents days between case i and case j}
 
-\item{si_mean}{Mean of the serial interval distribution}
+\item{si_mean}{numeric; mean of the serial interval distribution in days}
 
-\item{si_sd}{Standard deviation of the serial interval distribution}
+\item{si_sd}{numeric; standard deviation of the serial interval distribution in days}
 
-\item{si_dist}{Distribution type ("gamma" or "normal")}
+\item{si_dist}{character; distribution type, either "gamma" or "normal"}
 }
 \value{
-Matrix of serial interval probabilities
+numeric matrix; matrix of transmission probabilities where element \code{[i,j]}
+represents the probability that case j infected case i based on their
+time difference and the serial interval distribution
 }
 \description{
-Creates a matrix of probabilities based on the serial interval distribution
-for all pairwise day differences.
+Computes a matrix of transmission probabilities between all pairs of cases based
+on their time differences and the specified serial interval distribution. Only
+considers epidemiologically plausible transmission pairs (earlier to later cases).
+}
+\examples{
+# Create sample day differences matrix
+dates <- as.Date(c("2023-01-01", "2023-01-03", "2023-01-05"))
+day_diffs <- create_day_diff_matrix(dates)
+
+# Calculate probability matrix
+prob_matrix <- calculate_si_probability_matrix(day_diffs, si_mean = 7, si_sd = 3, si_dist = "gamma")
+
 }

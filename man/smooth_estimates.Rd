@@ -2,18 +2,33 @@
 % Please edit documentation in R/wl_helper_functions.R
 \name{smooth_estimates}
 \alias{smooth_estimates}
-\title{Apply Smoothing to Estimates}
+\title{Apply Moving Average Smoothing to R Estimates}
 \usage{
 smooth_estimates(r_estimate, window)
 }
 \arguments{
-\item{r_estimate}{Vector of R estimates}
+\item{r_estimate}{numeric vector; reproduction number estimates to smooth.
+Can contain NA or infinite values}
 
-\item{window}{Smoothing window size}
+\item{window}{integer; size of the smoothing window in time units. Window is
+centered around each point}
 }
 \value{
-Smoothed R estimates
+numeric vector; smoothed reproduction number estimates of the same
+length as input. Returns NA for points with insufficient valid
+neighboring values
 }
 \description{
-Applies moving average smoothing to R estimates.
+Applies temporal smoothing to reproduction number estimates using a centered
+moving average window. Handles missing and infinite values appropriately.
+}
+\examples{
+# This function is used internally for bootstrap confidence intervals
+# For bootstrap reproduction number estimates, see ?wallinga_lipsitch
+\dontrun{
+# Smooth noisy R estimates
+noisy_r <- c(1.2, 3.5, 1.8, 2.1, 1.6, 4.2, 1.9, 1.4)
+smoothed_r <- smooth_estimates(noisy_r, window = 3)
+}
+
 }

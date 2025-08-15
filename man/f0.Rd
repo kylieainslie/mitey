@@ -37,3 +37,25 @@ shape (k) and scale (theta) parameters for the gamma distribution, such that the
 \deqn{\mu = k \times \theta}
 \deqn{\sigma^2 = k \times \theta^2}.
 }
+\examples{
+# Basic example with normal distribution
+# Component 2 represents primary-secondary transmission
+f0(x = 0.5, mu = 12, sigma = 3, comp = 2, dist = "normal")
+
+# Same parameters with gamma distribution
+f0(x = 0.5, mu = 12, sigma = 3, comp = 2, dist = "gamma")
+
+# Component 1 represents co-primary transmission
+f0(x = 0.3, mu = 8, sigma = 2, comp = 1, dist = "normal")
+
+# Calculate for all transmission route components
+x_val <- 0.4
+mu_val <- 10
+sigma_val <- 3
+
+# Components 1-7 represent different transmission routes:
+# 1: Co-Primary, 2+3: Primary-Secondary, 4+5: Primary-Tertiary, 6+7: Primary-Quaternary
+sapply(1:7, function(comp) {
+  f0(x_val, mu_val, sigma_val, comp, "normal")
+})
+}

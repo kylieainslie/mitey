@@ -4,14 +4,14 @@
 #' on their time differences and the specified serial interval distribution. Only
 #' considers epidemiologically plausible transmission pairs (earlier to later cases).
 #'
-#' @param day_diffs numeric matrix; matrix of day differences between each pair of cases, where element [i,j] represents days between case i and case j
+#' @param day_diffs numeric matrix; matrix of day differences between each pair of cases, where element \code{[i,j]} represents days between case i and case j
 #' @param si_mean numeric; mean of the serial interval distribution in days
 #' @param si_sd numeric; standard deviation of the serial interval distribution in days
 #' @param si_dist character; distribution type, either "gamma" or "normal"
-#' @return numeric matrix; matrix of transmission probabilities where element [i,j]
+#' @return numeric matrix; matrix of transmission probabilities where element \code{[i,j]}
 #'         represents the probability that case j infected case i based on their
 #'         time difference and the serial interval distribution
-#'
+#' @export
 #' @examples
 #' # Create sample day differences matrix
 #' dates <- as.Date(c("2023-01-01", "2023-01-03", "2023-01-05"))
@@ -60,9 +60,9 @@ calculate_si_probability_matrix <- function(
 #'
 #' @param dates vector; dates of symptom onset for each case. Can be Date objects
 #'              or any format coercible to dates
-#' @return numeric matrix; symmetric matrix where element [i,j] represents the
+#' @return numeric matrix; symmetric matrix where element \code{[i,j]} represents the
 #'         number of days between case i and case j (positive if i occurs after j)
-#'
+#' @export
 #' @examples
 #' # Create day difference matrix from onset dates
 #' onset_dates <- as.Date(c("2023-01-01", "2023-01-04", "2023-01-07", "2023-01-10"))
@@ -100,9 +100,13 @@ create_day_diff_matrix <- function(dates) {
 #'         neighboring values
 #'
 #' @examples
+#' # This function is used internally for bootstrap confidence intervals
+#' # For bootstrap reproduction number estimates, see ?wallinga_lipsitch
+#' \dontrun{
 #' # Smooth noisy R estimates
 #' noisy_r <- c(1.2, 3.5, 1.8, 2.1, 1.6, 4.2, 1.9, 1.4)
 #' smoothed_r <- smooth_estimates(noisy_r, window = 3)
+#' }
 #'
 smooth_estimates <- function(r_estimate, window) {
   # Replace NA and infinite values with NA
@@ -138,11 +142,13 @@ smooth_estimates <- function(r_estimate, window) {
 #' @return numeric vector; correction factors for each case. Values > 1 indicate
 #'         upward adjustment needed. Returns NA when correction would be unreliable
 #'         (probability of observation ≤ 0.5)
-#'
+#' @export
 #' @examples
 #' # Calculate truncation correction for recent cases
 #' case_dates <- seq(as.Date("2023-01-01"), as.Date("2023-01-20"), by = "day")
-#' corrections <- calculate_truncation_correction(case_dates, si_mean = 7, si_sd = 3, si_dist = "gamma")
+#' corrections <- calculate_truncation_correction(
+#'   case_dates, si_mean = 7, si_sd = 3, si_dist = "gamma"
+#'   )
 #'
 #' # Show how correction increases for more recent cases
 #' tail(corrections, 5)
@@ -183,13 +189,28 @@ calculate_truncation_correction <- function(dates, si_mean, si_sd, si_dist) {
 #'         Total number of cases remains the same but their temporal distribution varies
 #'
 #' @examples
-#' # Bootstrap sample from epidemic curve
-#' original_incidence <- c(1, 3, 5, 8, 12, 15, 10, 6, 3, 1)
-#' bootstrap_sample <- generate_case_bootstrap(original_incidence)
+#' # This function is used internally for bootstrap confidence intervals
+#' # For bootstrap reproduction number estimates, see ?wallinga_lipsitch
 #'
-#' # Compare totals (should be equal)
-#' sum(original_incidence)
-#' sum(bootstrap_sample)
+#' \dontrun{
+#' # Example usage through main interface:
+#' dates <- seq(as.Date("2023-01-01"), by = "day", length.out = 10)
+#' incidence <- c(1, 3, 5, 8, 12, 15, 10, 6, 3, 1)
+#'
+#' # Get bootstrap confidence intervals
+#' results <- wallinga_lipsitch(
+#'   incidence = incidence,
+#'   dates = dates,
+#'   si_mean = 7,
+#'   si_sd = 3,
+#'   si_dist = "gamma",
+#'   bootstrap = TRUE,
+#'   n_bootstrap = 100
+#' )
+#'
+#' # The bootstrap sampling happens automatically inside wallinga_lipsitch()
+#' head(results)
+#' }
 #'
 generate_case_bootstrap <- function(incidence) {
   # Create a case-level representation (each case is an individual unit)
@@ -220,7 +241,7 @@ generate_case_bootstrap <- function(incidence) {
 #' @param incidence numeric vector; daily case counts. Must be non-negative integers.
 #'                   Days with zero cases will have R estimates of NA
 #' @param si_prob numeric matrix; serial interval probability matrix from
-#'                \code{\link{calculate_si_probability_matrix}}. Element [i,j]
+#'                \code{\link{calculate_si_probability_matrix}}. Element \code{[i,j]}
 #'                represents the probability that case j infected case i
 #' @param dates vector; dates corresponding to incidence data. Used for
 #'              right-truncation correction calculations
@@ -257,35 +278,25 @@ generate_case_bootstrap <- function(incidence) {
 #'          \code{\link{calculate_truncation_correction}} for correction details
 #'
 #' @examples
-#' # Direct usage
-#' incidence <- c(2, 5, 8, 6, 3, 1)
-#' dates <- as.Date("2023-01-01") + 0:5
+#' # This function is used internally by wallinga_lipsitch()
+#' # For complete reproduction number estimation, see ?wallinga_lipsitch
 #'
-#' # Create a simple 6x6 probability matrix (normally from calculate_si_probability_matrix)
-#' si_prob <- matrix(0, nrow = 6, ncol = 6)
-#' si_prob[2, 1] <- 0.3  # Case 2 infected by case 1
-#' si_prob[3, 1] <- 0.1; si_prob[3, 2] <- 0.4  # Case 3 infected by cases 1 or 2
-#' si_prob[4, 2] <- 0.3; si_prob[4, 3] <- 0.3  # etc.
-#' si_prob[5, 3] <- 0.2; si_prob[5, 4] <- 0.4
-#' si_prob[6, 4] <- 0.2; si_prob[6, 5] <- 0.3
-#'
-#' # Calculate R estimates
-#' result <- calculate_r_estimates(incidence, si_prob, dates, 7, 3, "gamma", smoothing = 0)
-#'
-#' # View estimates
-#' result$r
-#' result$r_corrected
-#'
-#' # Usage within typical workflow
+#' \dontrun{
+#' # Example usage through main interface:
 #' dates <- seq(as.Date("2023-01-01"), by = "day", length.out = 10)
 #' incidence <- c(1, 2, 4, 6, 8, 6, 4, 2, 1, 0)
 #'
-#' # Create required inputs
-#' day_diffs <- create_day_diff_matrix(dates)
-#' si_prob <- calculate_si_probability_matrix(day_diffs, 7, 3, "gamma")
+#' results <- wallinga_lipsitch(
+#'   incidence = incidence,
+#'   dates = dates,
+#'   si_mean = 7,
+#'   si_sd = 3,
+#'   si_dist = "gamma"
+#' )
 #'
-#' # Calculate R estimates
-#' r_results <- calculate_r_estimates(incidence, si_prob, dates, 7, 3, "gamma", smoothing = 0)
+#' # Access the reproduction number estimates:
+#' results$R_corrected
+#' }
 #'
 calculate_r_estimates <- function(
   incidence,
@@ -359,19 +370,28 @@ calculate_r_estimates <- function(
 #' }
 #'
 #' @examples
-#' # Calculate confidence intervals (using small n_bootstrap for speed)
+#' # This function is used internally by wallinga_lipsitch() when bootstrap=TRUE
+#' # For complete examples with confidence intervals, see ?wallinga_lipsitch
+#'
+#' \dontrun{
+#' # Example usage through main interface:
 #' dates <- seq(as.Date("2023-01-01"), by = "day", length.out = 10)
 #' incidence <- c(1, 2, 4, 6, 8, 6, 4, 2, 1, 0)
 #'
-#' # Create required inputs
-#' day_diffs <- create_day_diff_matrix(dates)
-#' si_prob <- calculate_si_probability_matrix(day_diffs, 7, 3, "gamma")
-#'
-#' # Calculate confidence intervals
-#' ci_results <- calculate_bootstrap_ci(
-#'   incidence, si_prob, dates, 7, 3, "gamma",
-#'   smoothing = 0, n_bootstrap = 50, conf_level = 0.95
+#' results <- wallinga_lipsitch(
+#'   incidence = incidence,
+#'   dates = dates,
+#'   si_mean = 7,
+#'   si_sd = 3,
+#'   si_dist = "gamma",
+#'   bootstrap = TRUE,
+#'   n_bootstrap = 100
 #' )
+#'
+#' # Access confidence intervals:
+#' results$R_corrected_lower
+#' results$R_corrected_upper
+#' }
 #'
 calculate_bootstrap_ci <- function(
   incidence,

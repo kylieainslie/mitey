@@ -2,7 +2,7 @@
 % Please edit documentation in R/wl_helper_functions.R
 \name{calculate_bootstrap_ci}
 \alias{calculate_bootstrap_ci}
-\title{Calculate Bootstrap Confidence Intervals}
+\title{Calculate Bootstrap Confidence Intervals for R Estimates}
 \usage{
 calculate_bootstrap_ci(
   incidence,
@@ -17,27 +17,58 @@ calculate_bootstrap_ci(
 )
 }
 \arguments{
-\item{incidence}{Vector of case counts}
+\item{incidence}{numeric vector; daily case counts}
 
-\item{si_prob}{Matrix of serial interval probabilities}
+\item{si_prob}{numeric matrix; serial interval probability matrix}
 
-\item{dates}{Vector of dates}
+\item{dates}{vector; dates corresponding to incidence data}
 
-\item{si_mean}{Mean of the serial interval}
+\item{si_mean}{numeric; mean of the serial interval distribution}
 
-\item{si_sd}{Standard deviation of the serial interval}
+\item{si_sd}{numeric; standard deviation of the serial interval distribution}
 
-\item{si_dist}{Distribution type}
+\item{si_dist}{character; distribution type, either "gamma" or "normal"}
 
-\item{smoothing}{Smoothing window size}
+\item{smoothing}{integer; window size for temporal smoothing}
 
-\item{n_bootstrap}{Number of bootstrap samples}
+\item{n_bootstrap}{integer; number of bootstrap samples to generate}
 
-\item{conf_level}{Confidence level}
+\item{conf_level}{numeric; confidence level (between 0 and 1)}
 }
 \value{
-List with lower and upper bounds for R and R_corrected
+named list with confidence interval bounds:
+\itemize{
+\item \code{r_lower, r_upper}: Confidence intervals for raw R estimates
+\item \code{r_corrected_lower, r_corrected_upper}: Confidence intervals for corrected R estimates
+}
 }
 \description{
-Calculates confidence intervals using bootstrap resampling.
+Generates bootstrap confidence intervals for reproduction number estimates by
+resampling the incidence data multiple times and calculating quantiles of the
+resulting R distributions.
+}
+\examples{
+# This function is used internally by wallinga_lipsitch() when bootstrap=TRUE
+# For complete examples with confidence intervals, see ?wallinga_lipsitch
+
+\dontrun{
+# Example usage through main interface:
+dates <- seq(as.Date("2023-01-01"), by = "day", length.out = 10)
+incidence <- c(1, 2, 4, 6, 8, 6, 4, 2, 1, 0)
+
+results <- wallinga_lipsitch(
+  incidence = incidence,
+  dates = dates,
+  si_mean = 7,
+  si_sd = 3,
+  si_dist = "gamma",
+  bootstrap = TRUE,
+  n_bootstrap = 100
+)
+
+# Access confidence intervals:
+results$R_corrected_lower
+results$R_corrected_upper
+}
+
 }

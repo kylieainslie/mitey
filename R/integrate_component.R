@@ -8,9 +8,9 @@
 #' The function supports two integration modes:
 #' \itemize{
 #'   \item \code{lower = TRUE}: Integrates using \code{flower} and \code{fupper} functions
-#'         over intervals [d-1, d] and [d, d+1] respectively, representing the likelihood
+#'         over intervals \code{[d-1, d]} and \code{[d, d+1]} respectively, representing the likelihood
 #'         contribution when case occurs at day d
-#'   \item \code{lower = FALSE}: Integrates using \code{f0} function over interval [d, d+1],
+#'   \item \code{lower = FALSE}: Integrates using \code{f0} function over interval \code{[d, d+1]},
 #'         representing an alternative likelihood formulation
 #' }
 #'

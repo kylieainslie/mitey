@@ -48,7 +48,7 @@
 #'   \item Creating training data for machine learning approaches
 #' }
 #'
-#' @seealso \code{\link{rt_estim}}, \code{\link{wallinga_lipsitch}} for reproduction
+#' @seealso \code{\link{wallinga_lipsitch}} for reproduction
 #'          number estimation methods that can be applied to the generated data
 #'
 #' @references

@@ -2,26 +2,89 @@
 % Please edit documentation in R/integrate_components_wrapper.R
 \name{integrate_components_wrapper}
 \alias{integrate_components_wrapper}
-\title{Wrapper function to for integrate_components()}
+\title{Compute Serial Interval Component Integrals for All Transmission Routes}
 \usage{
 integrate_components_wrapper(d, mu, sigma, dist = "normal")
 }
 \arguments{
-\item{d}{numeric; the data point.}
+\item{d}{numeric; the index case-to-case (ICC) interval in days. Represents the
+time difference between the symptom onset of the index case (latest case)
+and the current case being evaluated. Must be non-negative}
 
-\item{mu}{numeric; the mean value.}
+\item{mu}{numeric; the mean of the serial interval distribution in days. Must be
+positive for meaningful epidemiological interpretation}
 
-\item{sigma}{numeric; the standard deviation.}
+\item{sigma}{numeric; the standard deviation of the serial interval distribution
+in days. Must be positive}
 
-\item{dist}{string; assumed distribution of the serial interval; takes "normal" or "gamma"; defaults to "normal"}
+\item{dist}{character; the assumed underlying distribution family for the serial
+interval. Must be either "normal" or "gamma". Defaults to "normal".
+Gamma distribution is often preferred for serial intervals as it
+naturally restricts to positive values}
 }
 \value{
-A vector containing the integrated values for each component.
+numeric vector; integrated likelihood values for each relevant transmission
+route component. The length depends on the distribution:
+\itemize{
+\item Normal distribution: 7 values (components 1-7)
+\item Gamma distribution: 4 values (components 1, 2, 4, 6)
+}
 }
 \description{
-This function computes the integral for all components for a given data point.
+This wrapper function efficiently computes the likelihood contributions for all
+relevant transmission route components for a given index case-to-case (ICC) interval.
+It is a key component of the Vink method's Expectation-Maximization algorithm for
+estimating serial interval parameters from outbreak data.
+}
+\details{
+The function handles different integration scenarios based on the distribution type
+and ICC interval value:
+\itemize{
+\item For \strong{normal distribution}: Uses all 7 components representing the full
+mixture of transmission routes (co-primary, primary-secondary with positive
+and negative components, primary-tertiary, and primary-quaternary routes)
+\item For \strong{gamma distribution}: Uses components 1, 2, 4, and 6 only, as
+the gamma distribution naturally handles only positive serial intervals,
+eliminating the need for negative component pairs
+\item For \strong{ICC interval = 0}: Uses upper integration (\code{lower = FALSE})
+representing the special case of simultaneous symptom onset
+\item For \strong{ICC interval > 0}: Uses lower integration (\code{lower = TRUE})
+representing the standard transmission likelihood calculation
+}
+
+This function is primarily used internally by \code{si_estim()} as part of the
+E-step in the EM algorithm. Each component represents a different hypothesis
+about the transmission route:
+\itemize{
+\item Component 1: Co-primary transmission (simultaneous exposure)
+\item Components 2-3: Primary-secondary transmission (direct transmission)
+\item Components 4-5: Primary-tertiary transmission (second generation)
+\item Components 6-7: Primary-quaternary transmission (third generation)
+}
+
+For gamma distributions, components 3, 5, and 7 are omitted because the gamma
+distribution naturally handles the asymmetry that these components would otherwise
+model in the normal distribution case.
 }
 \examples{
-# Example 1: Compute integrations for a specific data point
-integrate_components_wrapper(1, 10, 2)
+# Basic example with normal distribution
+# Returns 7 component values for ICC interval of 10 days
+integrate_components_wrapper(d = 10, mu = 15, sigma = 3, dist = "normal")
+
+# Same parameters with gamma distribution
+# Returns 4 component values (components 1, 2, 4, 6)
+integrate_components_wrapper(d = 10, mu = 15, sigma = 3, dist = "gamma")
+
+# Special case: ICC interval of 0 (simultaneous onset)
+integrate_components_wrapper(d = 0, mu = 12, sigma = 2, dist = "normal")
+
+}
+\references{
+Vink MA, Bootsma MCJ, Wallinga J (2014). Serial intervals of respiratory infectious
+diseases: A systematic review and analysis. American Journal of Epidemiology,
+180(9), 865-875.
+}
+\seealso{
+\code{\link{integrate_component}}, \code{\link{si_estim}}, \code{\link{flower}},
+\code{\link{fupper}}, \code{\link{f0}}
 }

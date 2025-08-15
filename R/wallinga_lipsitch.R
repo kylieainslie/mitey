@@ -84,8 +84,7 @@
 #'       at the time of infection. Use \code{shift = TRUE} for comparisons with
 #'       instantaneous R estimates.
 #'
-#' @seealso \code{\link{rt_estim}} for an alternative interface,
-#'          \code{\link{si_estim}} for serial interval estimation,
+#' @seealso \code{\link{si_estim}} for serial interval estimation,
 #'          \code{\link{generate_synthetic_epidemic}} for testing data,
 #'          \code{\link{calculate_truncation_correction}} for right-truncation correction
 #'
