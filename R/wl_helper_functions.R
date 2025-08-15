@@ -1,15 +1,31 @@
 #' Calculate Serial Interval Probability Matrix
 #'
-#' Creates a matrix of probabilities based on the serial interval distribution
-#' for all pairwise day differences.
+#' Computes a matrix of transmission probabilities between all pairs of cases based
+#' on their time differences and the specified serial interval distribution. Only
+#' considers epidemiologically plausible transmission pairs (earlier to later cases).
 #'
-#' @param day_diffs Matrix of day differences between each pair of cases
-#' @param si_mean Mean of the serial interval distribution
-#' @param si_sd Standard deviation of the serial interval distribution
-#' @param si_dist Distribution type ("gamma" or "normal")
-#' @return Matrix of serial interval probabilities
+#' @param day_diffs numeric matrix; matrix of day differences between each pair of cases, where element [i,j] represents days between case i and case j
+#' @param si_mean numeric; mean of the serial interval distribution in days
+#' @param si_sd numeric; standard deviation of the serial interval distribution in days
+#' @param si_dist character; distribution type, either "gamma" or "normal"
+#' @return numeric matrix; matrix of transmission probabilities where element [i,j]
+#'         represents the probability that case j infected case i based on their
+#'         time difference and the serial interval distribution
 #'
-calculate_si_probability_matrix <- function(day_diffs, si_mean, si_sd, si_dist) {
+#' @examples
+#' # Create sample day differences matrix
+#' dates <- as.Date(c("2023-01-01", "2023-01-03", "2023-01-05"))
+#' day_diffs <- create_day_diff_matrix(dates)
+#'
+#' # Calculate probability matrix
+#' prob_matrix <- calculate_si_probability_matrix(day_diffs, si_mean = 7, si_sd = 3, si_dist = "gamma")
+#'
+calculate_si_probability_matrix <- function(
+  day_diffs,
+  si_mean,
+  si_sd,
+  si_dist
+) {
   n <- nrow(day_diffs)
   si_prob <- matrix(0, nrow = n, ncol = n)
 
@@ -39,10 +55,19 @@ calculate_si_probability_matrix <- function(day_diffs, si_mean, si_sd, si_dist) 
 
 #' Create Day Difference Matrix
 #'
-#' Creates a matrix of day differences between all pairs of cases.
+#' Creates a symmetric matrix containing the time differences (in days) between
+#' all pairs of cases based on their symptom onset dates.
 #'
-#' @param dates Vector of dates for each case
-#' @return Matrix of day differences
+#' @param dates vector; dates of symptom onset for each case. Can be Date objects
+#'              or any format coercible to dates
+#' @return numeric matrix; symmetric matrix where element [i,j] represents the
+#'         number of days between case i and case j (positive if i occurs after j)
+#'
+#' @examples
+#' # Create day difference matrix from onset dates
+#' onset_dates <- as.Date(c("2023-01-01", "2023-01-04", "2023-01-07", "2023-01-10"))
+#' day_differences <- create_day_diff_matrix(onset_dates)
+#' print(day_differences)
 #'
 create_day_diff_matrix <- function(dates) {
   n <- length(dates)
@@ -50,23 +75,36 @@ create_day_diff_matrix <- function(dates) {
 
   for (i in 1:n) {
     for (j in 1:n) {
-      day_diffs[i, j] <- as.numeric(difftime(dates[i], dates[j], units = "days"))
+      day_diffs[i, j] <- as.numeric(difftime(
+        dates[i],
+        dates[j],
+        units = "days"
+      ))
     }
   }
 
   return(day_diffs)
 }
 
-#' Apply Smoothing to Estimates
+#' Apply Moving Average Smoothing to R Estimates
 #'
-#' Applies moving average smoothing to R estimates.
+#' Applies temporal smoothing to reproduction number estimates using a centered
+#' moving average window. Handles missing and infinite values appropriately.
 #'
-#' @param r_estimate Vector of R estimates
-#' @param window Smoothing window size
-#' @return Smoothed R estimates
+#' @param r_estimate numeric vector; reproduction number estimates to smooth.
+#'                   Can contain NA or infinite values
+#' @param window integer; size of the smoothing window in time units. Window is
+#'               centered around each point
+#' @return numeric vector; smoothed reproduction number estimates of the same
+#'         length as input. Returns NA for points with insufficient valid
+#'         neighboring values
+#'
+#' @examples
+#' # Smooth noisy R estimates
+#' noisy_r <- c(1.2, 3.5, 1.8, 2.1, 1.6, 4.2, 1.9, 1.4)
+#' smoothed_r <- smooth_estimates(noisy_r, window = 3)
 #'
 smooth_estimates <- function(r_estimate, window) {
-
   # Replace NA and infinite values with NA
   r_estimate[!is.finite(r_estimate)] <- NA
 
@@ -87,15 +125,27 @@ smooth_estimates <- function(r_estimate, window) {
   return(r_smooth)
 }
 
-#' Calculate Right Truncation Correction
+#' Calculate Right-Truncation Correction Factors
 #'
-#' Calculates correction factors for right truncation of the time series.
+#' Computes correction factors to adjust reproduction number estimates for
+#' right-truncation bias. This bias occurs because cases near the end of the
+#' observation period may have generated secondary cases that are not yet observed.
 #'
-#' @param dates Vector of dates
-#' @param si_mean Mean of the serial interval
-#' @param si_sd Standard deviation of the serial interval
-#' @param si_dist Distribution type ("gamma" or "normal")
-#' @return Vector of correction factors
+#' @param dates vector; dates corresponding to each case
+#' @param si_mean numeric; mean of the serial interval distribution in days
+#' @param si_sd numeric; standard deviation of the serial interval distribution in days
+#' @param si_dist character; distribution type, either "gamma" or "normal"
+#' @return numeric vector; correction factors for each case. Values > 1 indicate
+#'         upward adjustment needed. Returns NA when correction would be unreliable
+#'         (probability of observation ≤ 0.5)
+#'
+#' @examples
+#' # Calculate truncation correction for recent cases
+#' case_dates <- seq(as.Date("2023-01-01"), as.Date("2023-01-20"), by = "day")
+#' corrections <- calculate_truncation_correction(case_dates, si_mean = 7, si_sd = 3, si_dist = "gamma")
+#'
+#' # Show how correction increases for more recent cases
+#' tail(corrections, 5)
 #'
 calculate_truncation_correction <- function(dates, si_mean, si_sd, si_dist) {
   n <- length(dates)
@@ -122,12 +172,24 @@ calculate_truncation_correction <- function(dates, si_mean, si_sd, si_dist) {
   return(correction)
 }
 
-#' Generate Case Bootstrap Sample
+#' Generate Bootstrap Sample of Case Incidence
 #'
-#' Generates a bootstrap sample of the incidence data by resampling individual cases.
+#' Creates a bootstrap sample by resampling individual cases with replacement,
+#' then reconstructing daily incidence counts. This maintains the temporal
+#' distribution while introducing sampling variation for uncertainty estimation.
 #'
-#' @param incidence Vector of case counts
-#' @return Bootstrapped incidence vector
+#' @param incidence numeric vector; daily case counts (non-negative integers)
+#' @return numeric vector; bootstrapped daily incidence of the same length as input.
+#'         Total number of cases remains the same but their temporal distribution varies
+#'
+#' @examples
+#' # Bootstrap sample from epidemic curve
+#' original_incidence <- c(1, 3, 5, 8, 12, 15, 10, 6, 3, 1)
+#' bootstrap_sample <- generate_case_bootstrap(original_incidence)
+#'
+#' # Compare totals (should be equal)
+#' sum(original_incidence)
+#' sum(bootstrap_sample)
 #'
 generate_case_bootstrap <- function(incidence) {
   # Create a case-level representation (each case is an individual unit)
@@ -143,20 +205,97 @@ generate_case_bootstrap <- function(incidence) {
   return(bootstrap_incidence)
 }
 
-#' Calculate R From Incidence and Serial Interval
+#' Calculate Reproduction Number Estimates
 #'
-#' Core function to calculate R estimates from incidence data and serial interval probabilities.
+#' Implements the Wallinga-Lipsitch algorithm to estimate case reproduction
+#' numbers from incidence data and serial interval probabilities. This function
+#' performs the likelihood calculations for retrospective reproduction
+#' number estimation.
 #'
-#' @param incidence Vector of case counts
-#' @param si_prob Matrix of serial interval probabilities
-#' @param dates Vector of dates
-#' @param si_mean Mean of the serial interval
-#' @param si_sd Standard deviation of the serial interval
-#' @param si_dist Distribution type
-#' @param smoothing Smoothing window size
-#' @return List with R and R_corrected vectors
+#' The algorithm calculates the probability that each earlier case infected each
+#' later case based on their time difference and the serial interval distribution.
+#' These probabilities are then aggregated to estimate the expected number of
+#' secondary cases generated by cases on each day.
 #'
-calculate_r_estimates <- function(incidence, si_prob, dates, si_mean, si_sd, si_dist, smoothing) {
+#' @param incidence numeric vector; daily case counts. Must be non-negative integers.
+#'                   Days with zero cases will have R estimates of NA
+#' @param si_prob numeric matrix; serial interval probability matrix from
+#'                \code{\link{calculate_si_probability_matrix}}. Element [i,j]
+#'                represents the probability that case j infected case i
+#' @param dates vector; dates corresponding to incidence data. Used for
+#'              right-truncation correction calculations
+#' @param si_mean numeric; mean of the serial interval distribution in days
+#' @param si_sd numeric; standard deviation of the serial interval distribution in days
+#' @param si_dist character; distribution type for serial interval, either "gamma"
+#'                or "normal"
+#' @param smoothing integer; window size for temporal smoothing (0 = no smoothing).
+#'                  When > 1, applies centered moving average to reduce noise
+#'
+#' @return named list with two numeric vectors of the same length as \code{incidence}:
+#' \itemize{
+#'   \item \code{r}: Raw case reproduction number estimates. Returns NA for days
+#'         with zero cases or single-case epidemics
+#'   \item \code{r_corrected}: Estimates with right-truncation correction applied.
+#'         Values > 10 are capped at NA to avoid unrealistic estimates
+#' }
+#'
+#' @details
+#' The Wallinga-Lipsitch method works by:
+#' \enumerate{
+#'   \item Computing transmission likelihoods from earlier to later cases
+#'   \item Normalizing these likelihoods to create proper probabilities
+#'   \item Aggregating probabilities to estimate expected secondary cases per primary case
+#'   \item Applying right-truncation correction for cases near the observation end
+#' }
+#'
+#' The right-truncation correction accounts for the fact that cases near the end
+#' of the observation period may have generated secondary cases that occur after
+#' data collection ended.
+#'
+#' @seealso \code{\link{wallinga_lipsitch}} for the main user interface,
+#'          \code{\link{calculate_si_probability_matrix}} for probability matrix creation,
+#'          \code{\link{calculate_truncation_correction}} for correction details
+#'
+#' @examples
+#' # Direct usage
+#' incidence <- c(2, 5, 8, 6, 3, 1)
+#' dates <- as.Date("2023-01-01") + 0:5
+#'
+#' # Create a simple 6x6 probability matrix (normally from calculate_si_probability_matrix)
+#' si_prob <- matrix(0, nrow = 6, ncol = 6)
+#' si_prob[2, 1] <- 0.3  # Case 2 infected by case 1
+#' si_prob[3, 1] <- 0.1; si_prob[3, 2] <- 0.4  # Case 3 infected by cases 1 or 2
+#' si_prob[4, 2] <- 0.3; si_prob[4, 3] <- 0.3  # etc.
+#' si_prob[5, 3] <- 0.2; si_prob[5, 4] <- 0.4
+#' si_prob[6, 4] <- 0.2; si_prob[6, 5] <- 0.3
+#'
+#' # Calculate R estimates
+#' result <- calculate_r_estimates(incidence, si_prob, dates, 7, 3, "gamma", smoothing = 0)
+#'
+#' # View estimates
+#' result$r
+#' result$r_corrected
+#'
+#' # Usage within typical workflow
+#' dates <- seq(as.Date("2023-01-01"), by = "day", length.out = 10)
+#' incidence <- c(1, 2, 4, 6, 8, 6, 4, 2, 1, 0)
+#'
+#' # Create required inputs
+#' day_diffs <- create_day_diff_matrix(dates)
+#' si_prob <- calculate_si_probability_matrix(day_diffs, 7, 3, "gamma")
+#'
+#' # Calculate R estimates
+#' r_results <- calculate_r_estimates(incidence, si_prob, dates, 7, 3, "gamma", smoothing = 0)
+#'
+calculate_r_estimates <- function(
+  incidence,
+  si_prob,
+  dates,
+  si_mean,
+  si_sd,
+  si_dist,
+  smoothing
+) {
   n <- length(incidence)
 
   # Calculate the relative likelihood that case i was infected by case j
@@ -175,7 +314,7 @@ calculate_r_estimates <- function(incidence, si_prob, dates, si_mean, si_sd, si_
       if (sum(incidence) == incidence[j]) {
         r_estimate[j] <- NA
       } else {
-      r_estimate[j] <- sum(incidence * rel_likelihood[, j]) / incidence[j]
+        r_estimate[j] <- sum(incidence * rel_likelihood[, j]) / incidence[j]
       }
     }
   }
@@ -192,26 +331,59 @@ calculate_r_estimates <- function(incidence, si_prob, dates, si_mean, si_sd, si_
   # Cap extremely high values
   r_corrected[r_corrected > 10] <- NA
 
-  return(list(r = r_estimate, r_corrected = r_corrected))
+  return(list(
+    r = r_estimate,
+    r_corrected = r_corrected
+  ))
 }
 
-#' Calculate Bootstrap Confidence Intervals
+#' Calculate Bootstrap Confidence Intervals for R Estimates
 #'
-#' Calculates confidence intervals using bootstrap resampling.
+#' Generates bootstrap confidence intervals for reproduction number estimates by
+#' resampling the incidence data multiple times and calculating quantiles of the
+#' resulting R distributions.
 #'
-#' @param incidence Vector of case counts
-#' @param si_prob Matrix of serial interval probabilities
-#' @param dates Vector of dates
-#' @param si_mean Mean of the serial interval
-#' @param si_sd Standard deviation of the serial interval
-#' @param si_dist Distribution type
-#' @param smoothing Smoothing window size
-#' @param n_bootstrap Number of bootstrap samples
-#' @param conf_level Confidence level
-#' @return List with lower and upper bounds for R and R_corrected
+#' @param incidence numeric vector; daily case counts
+#' @param si_prob numeric matrix; serial interval probability matrix
+#' @param dates vector; dates corresponding to incidence data
+#' @param si_mean numeric; mean of the serial interval distribution
+#' @param si_sd numeric; standard deviation of the serial interval distribution
+#' @param si_dist character; distribution type, either "gamma" or "normal"
+#' @param smoothing integer; window size for temporal smoothing
+#' @param n_bootstrap integer; number of bootstrap samples to generate
+#' @param conf_level numeric; confidence level (between 0 and 1)
+#' @return named list with confidence interval bounds:
+#' \itemize{
+#'   \item \code{r_lower, r_upper}: Confidence intervals for raw R estimates
+#'   \item \code{r_corrected_lower, r_corrected_upper}: Confidence intervals for corrected R estimates
+#' }
 #'
-calculate_bootstrap_ci <- function(incidence, si_prob, dates, si_mean, si_sd, si_dist,
-                                   smoothing, n_bootstrap, conf_level) {
+#' @examples
+#' # Calculate confidence intervals (using small n_bootstrap for speed)
+#' dates <- seq(as.Date("2023-01-01"), by = "day", length.out = 10)
+#' incidence <- c(1, 2, 4, 6, 8, 6, 4, 2, 1, 0)
+#'
+#' # Create required inputs
+#' day_diffs <- create_day_diff_matrix(dates)
+#' si_prob <- calculate_si_probability_matrix(day_diffs, 7, 3, "gamma")
+#'
+#' # Calculate confidence intervals
+#' ci_results <- calculate_bootstrap_ci(
+#'   incidence, si_prob, dates, 7, 3, "gamma",
+#'   smoothing = 0, n_bootstrap = 50, conf_level = 0.95
+#' )
+#'
+calculate_bootstrap_ci <- function(
+  incidence,
+  si_prob,
+  dates,
+  si_mean,
+  si_sd,
+  si_dist,
+  smoothing,
+  n_bootstrap,
+  conf_level
+) {
   n <- length(incidence)
 
   # Initialize matrices to store bootstrap results
@@ -222,7 +394,13 @@ calculate_bootstrap_ci <- function(incidence, si_prob, dates, si_mean, si_sd, si
   for (i in 1:n_bootstrap) {
     bootstrap_incidence <- generate_case_bootstrap(incidence)
     bootstrap_estimates <- calculate_r_estimates(
-      bootstrap_incidence, si_prob, dates, si_mean, si_sd, si_dist, smoothing
+      bootstrap_incidence,
+      si_prob,
+      dates,
+      si_mean,
+      si_sd,
+      si_dist,
+      smoothing
     )
     bootstrap_r[i, ] <- bootstrap_estimates$r
     bootstrap_r_corrected[i, ] <- bootstrap_estimates$r_corrected
@@ -233,11 +411,19 @@ calculate_bootstrap_ci <- function(incidence, si_prob, dates, si_mean, si_sd, si
   quantiles <- c(alpha, 1 - alpha)
 
   # For each day, calculate quantiles of bootstrap distributions
-  r_lower <- apply(bootstrap_r, 2, function(x) quantile(x, probs = quantiles[1], na.rm = TRUE))
-  r_upper <- apply(bootstrap_r, 2, function(x) quantile(x, probs = quantiles[2], na.rm = TRUE))
+  r_lower <- apply(bootstrap_r, 2, function(x) {
+    quantile(x, probs = quantiles[1], na.rm = TRUE)
+  })
+  r_upper <- apply(bootstrap_r, 2, function(x) {
+    quantile(x, probs = quantiles[2], na.rm = TRUE)
+  })
 
-  r_corrected_lower <- apply(bootstrap_r_corrected, 2, function(x) quantile(x, probs = quantiles[1], na.rm = TRUE))
-  r_corrected_upper <- apply(bootstrap_r_corrected, 2, function(x) quantile(x, probs = quantiles[2], na.rm = TRUE))
+  r_corrected_lower <- apply(bootstrap_r_corrected, 2, function(x) {
+    quantile(x, probs = quantiles[1], na.rm = TRUE)
+  })
+  r_corrected_upper <- apply(bootstrap_r_corrected, 2, function(x) {
+    quantile(x, probs = quantiles[2], na.rm = TRUE)
+  })
 
   return(list(
     r_lower = r_lower,

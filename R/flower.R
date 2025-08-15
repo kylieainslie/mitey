@@ -11,6 +11,27 @@
 #'
 #' @return The calculated value of flower.
 #' @export
+#' @examples
+#' # Basic example with normal distribution
+#' # Component 2 represents primary-secondary transmission
+#' flower(x = 15, r = 10, mu = 12, sigma = 3, comp = 2, dist = "normal")
+#'
+#' # Same parameters with gamma distribution
+#' flower(x = 15, r = 10, mu = 12, sigma = 3, comp = 2, dist = "gamma")
+#'
+#' # Component 1 represents co-primary transmission
+#' flower(x = 5, r = 20, mu = 8, sigma = 2, comp = 1, dist = "normal")
+#'
+#' # Calculate for all transmission route components
+#' x_val <- 20
+#' r_val <- 25
+#' mu_val <- 10
+#' sigma_val <- 3
+#'
+#' # Components 1-7 represent different transmission routes
+#' sapply(1:7, function(comp) {
+#'   flower(x_val, r_val, mu_val, sigma_val, comp, "normal")
+#' })
 flower <- function(
   x,
   r,
