@@ -16,12 +16,18 @@
 #'
 #' si_estim(my_data)
 
-si_estim <- function(dat, n = 50, dist = "normal", init = NULL) {
-
+si_estim <- function(
+  dat,
+  n = 50,
+  dist = "normal",
+  init = NULL
+) {
   ## Check inputs
   # Check inputs for NA values
   if (any(is.na(dat))) {
-    stop("Data contains NA values. Please remove or impute NA values before analysis.")
+    stop(
+      "Data contains NA values. Please remove or impute NA values before analysis."
+    )
   }
 
   # Check for non-numeric input
@@ -31,8 +37,10 @@ si_estim <- function(dat, n = 50, dist = "normal", init = NULL) {
 
   # Check for negative values and issue warning
   if (any(dat < 0)) {
-    warning("Data contains negative values. While the Vink method can handle negative serial intervals ",
-            "(e.g., co-primary infections), please ensure this is intended for your analysis.")
+    warning(
+      "Data contains negative values. While the Vink method can handle negative serial intervals ",
+      "(e.g., co-primary infections), please ensure this is intended for your analysis."
+    )
   }
 
   # Check for single value
@@ -47,7 +55,9 @@ si_estim <- function(dat, n = 50, dist = "normal", init = NULL) {
 
   # Check for gamma distribution with negative values
   if (dist == "gamma" && any(dat < 0)) {
-    stop("Gamma distribution cannot be used with negative values. Please use 'normal' distribution instead.")
+    stop(
+      "Gamma distribution cannot be used with negative values. Please use 'normal' distribution instead."
+    )
   }
 
   # Set initial values if not provided
@@ -73,7 +83,7 @@ si_estim <- function(dat, n = 50, dist = "normal", init = NULL) {
   dat <- ifelse(dat == 0, 0.00001, dat)
 
   # Initial guesses
-  if(is.null(init)){
+  if (is.null(init)) {
     mu <- mean(dat)
     sigma <- sd(dat)
   } else {
@@ -81,8 +91,10 @@ si_estim <- function(dat, n = 50, dist = "normal", init = NULL) {
     sigma <- init[2]
   }
   # components depend on specified distribution
-  if(dist == "normal"){ comp_vec <- 1:7
-  } else if (dist == "gamma") { comp_vec <- c(1,2,4,6)
+  if (dist == "normal") {
+    comp_vec <- 1:7
+  } else if (dist == "gamma") {
+    comp_vec <- c(1, 2, 4, 6)
   }
 
   # E-step
@@ -90,20 +102,30 @@ si_estim <- function(dat, n = 50, dist = "normal", init = NULL) {
 
   # Iterations
   for (k in 1:n) {
-
     tau <- matrix(0, nrow = length(comp_vec), ncol = j)
 
     for (l in 1:j) {
-
       if (dat[l] == 0.00001) {
         for (comp in 1:length(comp_vec)) {
-          tau[comp, l] <- integrate_component(dat[l], mu, sigma, comp = comp_vec[comp],
-                                              dist = dist, lower = FALSE)
+          tau[comp, l] <- integrate_component(
+            dat[l],
+            mu,
+            sigma,
+            comp = comp_vec[comp],
+            dist = dist,
+            lower = FALSE
+          )
         }
       } else {
         for (comp in 1:length(comp_vec)) {
-          tau[comp, l] <- integrate_component(dat[l], mu, sigma, comp = comp_vec[comp],
-                                              dist = dist, lower = TRUE)
+          tau[comp, l] <- integrate_component(
+            dat[l],
+            mu,
+            sigma,
+            comp = comp_vec[comp],
+            dist = dist,
+            lower = TRUE
+          )
         }
       }
     }
@@ -116,21 +138,26 @@ si_estim <- function(dat, n = 50, dist = "normal", init = NULL) {
     w <- rowSums(tau) / j
 
     # update parameters
-    if (dist == "normal"){
+    if (dist == "normal") {
       mu <- weighted.mean(dat, tau[2, ])
       sigma <- sqrt(weighted_var(dat, tau[2, ]))
-    } else if (dist == "gamma"){
+    } else if (dist == "gamma") {
       # estimates for the mean and standard deviation of the primary-secondary
       # infection component
-      opt <- optim(par = c(mu, sigma), wt_loglik, tau2 = tau[2,], dat = dat,
-                   gr=NULL, method = c("BFGS"), hessian=FALSE)
+      opt <- optim(
+        par = c(mu, sigma),
+        wt_loglik,
+        tau2 = tau[2, ],
+        dat = dat,
+        gr = NULL,
+        method = c("BFGS"),
+        hessian = FALSE
+      )
       mu <- opt$par[1]
       sigma <- opt$par[2]
     }
 
-    rtn <- list(mean = mu,
-                sd = sigma,
-                wts = w)
+    rtn <- list(mean = mu, sd = sigma, wts = w)
   }
 
   return(rtn)

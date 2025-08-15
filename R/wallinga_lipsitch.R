@@ -45,11 +45,18 @@
 #' growth rates and reproductive numbers. Proceedings of the Royal Society B: Biological Sciences,
 #' 274(1609), 599-604.
 #'
-wallinga_lipsitch <- function(incidence, dates, si_mean, si_sd,
-                              si_dist = "gamma", smoothing = 0,
-                              bootstrap = FALSE, n_bootstrap = 1000,
-                              conf_level = 0.95, shift = FALSE) {
-
+wallinga_lipsitch <- function(
+  incidence,
+  dates,
+  si_mean,
+  si_sd,
+  si_dist = "gamma",
+  smoothing = 0,
+  bootstrap = FALSE,
+  n_bootstrap = 1000,
+  conf_level = 0.95,
+  shift = FALSE
+) {
   # Input validation
   stopifnot(length(incidence) == length(dates))
   stopifnot(is.numeric(incidence))
@@ -60,11 +67,22 @@ wallinga_lipsitch <- function(incidence, dates, si_mean, si_sd,
 
   # Create matrix of day differences and calculate serial interval probabilities
   day_diffs <- create_day_diff_matrix(dates)
-  si_prob <- calculate_si_probability_matrix(day_diffs, si_mean, si_sd, si_dist)
+  si_prob <- calculate_si_probability_matrix(
+    day_diffs,
+    si_mean,
+    si_sd,
+    si_dist
+  )
 
   # Calculate point estimates
   point_estimates <- calculate_r_estimates(
-    incidence, si_prob, dates, si_mean, si_sd, si_dist, smoothing
+    incidence,
+    si_prob,
+    dates,
+    si_mean,
+    si_sd,
+    si_dist,
+    smoothing
   )
 
   # Initialize result data frame
@@ -78,7 +96,15 @@ wallinga_lipsitch <- function(incidence, dates, si_mean, si_sd,
   # Add bootstrap confidence intervals if requested
   if (bootstrap) {
     ci_estimates <- calculate_bootstrap_ci(
-      incidence, si_prob, dates, si_mean, si_sd, si_dist, smoothing, n_bootstrap, conf_level
+      incidence,
+      si_prob,
+      dates,
+      si_mean,
+      si_sd,
+      si_dist,
+      smoothing,
+      n_bootstrap,
+      conf_level
     )
 
     # Add to result data frame
@@ -101,7 +127,9 @@ wallinga_lipsitch <- function(incidence, dates, si_mean, si_sd,
 
     # Warn if shift extends beyond available data
     if (max(shifted_dates) > max(dates) + shift_days) {
-      warning("Shifted dates extend beyond the available data range. Interpret with caution.")
+      warning(
+        "Shifted dates extend beyond the available data range. Interpret with caution."
+      )
     }
   }
 

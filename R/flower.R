@@ -11,49 +11,72 @@
 #'
 #' @return The calculated value of flower.
 #' @export
-flower <- function(x, r, mu, sigma, comp, dist = "normal") {
-
+flower <- function(
+  x,
+  r,
+  mu,
+  sigma,
+  comp,
+  dist = "normal"
+) {
   # error messages
-  if(dist != "normal" && dist != "gamma"){
-    stop("Incorrect distribution specified. Acceptable arguments are c('normal', 'gamma')")
+  if (dist != "normal" && dist != "gamma") {
+    stop(
+      "Incorrect distribution specified. Acceptable arguments are c('normal', 'gamma')"
+    )
   }
 
-  if (dist == "normal"){
-    return(switch(comp,
-                  `1` = (x - r + 1) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)),
-                  `2` = (x - r + 1) * dnorm(x, mean = mu, sd = sigma),
-                  `3` = (x - r + 1) * dnorm(x, mean = -mu, sd = sigma),
-                  `4` = (x - r + 1) * dnorm(x, mean = 2 * mu, sd = sqrt(2) * sigma),
-                  `5` = (x - r + 1) * dnorm(x, mean = -2 * mu, sd = sqrt(2) * sigma),
-                  `6` = (x - r + 1) * dnorm(x, mean = 3 * mu, sd = sqrt(3) * sigma),
-                  `7` = (x - r + 1) * dnorm(x, mean = -3 * mu, sd = sqrt(3) * sigma)
-                  ))
-
-  } else if (dist == "gamma"){
-
+  if (dist == "normal") {
+    return(
+      switch(
+        comp,
+        `1` = (x - r + 1) *
+          dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)),
+        `2` = (x - r + 1) * dnorm(x, mean = mu, sd = sigma),
+        `3` = (x - r + 1) * dnorm(x, mean = -mu, sd = sigma),
+        `4` = (x - r + 1) * dnorm(x, mean = 2 * mu, sd = sqrt(2) * sigma),
+        `5` = (x - r + 1) * dnorm(x, mean = -2 * mu, sd = sqrt(2) * sigma),
+        `6` = (x - r + 1) * dnorm(x, mean = 3 * mu, sd = sqrt(3) * sigma),
+        `7` = (x - r + 1) * dnorm(x, mean = -3 * mu, sd = sqrt(3) * sigma)
+      )
+    )
+  } else if (dist == "gamma") {
     # convert mean and sd for normal distn into shape and scale parameters for gamma distn.
     k <- (mu^2) / (sigma^2)
     theta <- (sigma^2) / mu
 
-    if (k <= 0 || theta <= 0) return(0)
+    if (k <= 0 || theta <= 0) {
+      return(0)
+    }
 
-    return(switch(comp,
-                  `1` = { # Handle potential numerical issues
-                    bessel_val <- besselK(x/(theta), 0.5 - k)
-                    # Replace Inf with 0 while keeping finite values
-                    bessel_val[!is.finite(bessel_val)] <- 0
-                    return_val <- (x - r + 1) * 1/sqrt(pi) * 2^(3/2 - k) * theta^(-0.5 - k) * x^(-0.5 + k) * bessel_val * 1/gamma(k)
-                    # Replace NaN with 0 while keeping finite values
-                    return_val[is.nan(return_val)] <- 0
-                    return_val
-                  },
-                  `2` = (x - r + 1) * dgamma(x, shape = k, scale = theta),
-                  `3` = (x - r + 1) * dgamma(x, shape = k, scale = theta),
-                  `4` = (x - r + 1) * dgamma(x, shape = 2 * k, scale = theta),
-                  `5` = (x - r + 1) * dgamma(x, shape = 2 * k, scale = theta),
-                  `6` = (x - r + 1) * dgamma(x, shape = 3 * k, scale = theta),
-                  `7` = (x - r + 1) * dgamma(x, shape = 3 * k, scale = theta)
-                  ))
-
+    return(
+      switch(
+        comp,
+        `1` = {
+          # Handle potential numerical issues
+          bessel_val <- besselK(x / (theta), 0.5 - k)
+          # Replace Inf with 0 while keeping finite values
+          bessel_val[!is.finite(bessel_val)] <- 0
+          return_val <- (x - r + 1) *
+            1 /
+            sqrt(pi) *
+            2^(3 / 2 - k) *
+            theta^(-0.5 - k) *
+            x^(-0.5 + k) *
+            bessel_val *
+            1 /
+            gamma(k)
+          # Replace NaN with 0 while keeping finite values
+          return_val[is.nan(return_val)] <- 0
+          return_val
+        },
+        `2` = (x - r + 1) * dgamma(x, shape = k, scale = theta),
+        `3` = (x - r + 1) * dgamma(x, shape = k, scale = theta),
+        `4` = (x - r + 1) * dgamma(x, shape = 2 * k, scale = theta),
+        `5` = (x - r + 1) * dgamma(x, shape = 2 * k, scale = theta),
+        `6` = (x - r + 1) * dgamma(x, shape = 3 * k, scale = theta),
+        `7` = (x - r + 1) * dgamma(x, shape = 3 * k, scale = theta)
+      )
+    )
   }
 }

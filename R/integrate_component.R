@@ -11,41 +11,49 @@
 #'
 #' @return The integrated value.
 #' @export
-integrate_component <- function(d, mu, sigma, comp, dist = c("normal", "gamma"),
-                                lower = TRUE) {
-
+integrate_component <- function(
+  d,
+  mu,
+  sigma,
+  comp,
+  dist = c("normal", "gamma"),
+  lower = TRUE
+) {
   if (lower) {
+    return(
+      integrate(
+        f = flower,
+        lower = (d - 1),
+        upper = d,
+        r = d,
+        mu = mu,
+        sigma = sigma,
+        comp = comp,
+        dist = dist
+      )[[1]] +
 
-    return(integrate(f = flower,
-                     lower = (d - 1),
-                     upper = d,
-                     r = d,
-                     mu = mu,
-                     sigma = sigma,
-                     comp = comp,
-                     dist = dist
-                     )[[1]] +
-
-          integrate(f = fupper,
-                    lower = d,
-                    upper = (d + 1),
-                    r = d,
-                    mu = mu,
-                    sigma = sigma,
-                    comp = comp,
-                    dist = dist
-                    )[[1]]
-          )
+        integrate(
+          f = fupper,
+          lower = d,
+          upper = (d + 1),
+          r = d,
+          mu = mu,
+          sigma = sigma,
+          comp = comp,
+          dist = dist
+        )[[1]]
+    )
   } else {
-
-    return(integrate(f = f0,
-                     lower = d,
-                     upper = (d + 1),
-                     mu = mu,
-                     sigma = sigma,
-                     comp = comp,
-                     dist = dist
-                     )[[1]]
-           )
+    return(
+      integrate(
+        f = f0,
+        lower = d,
+        upper = (d + 1),
+        mu = mu,
+        sigma = sigma,
+        comp = comp,
+        dist = dist
+      )[[1]]
+    )
   }
 }

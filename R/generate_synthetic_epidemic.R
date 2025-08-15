@@ -8,8 +8,13 @@
 #' @return Data frame with dates, true R, and incidence
 #' @importFrom stats pgamma pnorm qgamma qnorm quantile rpois
 #' @export
-generate_synthetic_epidemic <- function(true_r, si_mean, si_sd,
-                                        si_dist = "gamma", initial_cases = 10) {
+generate_synthetic_epidemic <- function(
+  true_r,
+  si_mean,
+  si_sd,
+  si_dist = "gamma",
+  initial_cases = 10
+) {
   n_days <- length(true_r)
   dates <- seq(as.Date("2023-01-01"), by = "day", length.out = n_days)
 
@@ -22,7 +27,7 @@ generate_synthetic_epidemic <- function(true_r, si_mean, si_sd,
   } else {
     max_si <- qnorm(0.99, si_mean, si_sd)
     si_prob <- dnorm(1:ceiling(max_si), si_mean, si_sd)
-    si_prob <- si_prob / sum(si_prob)  # Normalize to ensure sum equals 1
+    si_prob <- si_prob / sum(si_prob) # Normalize to ensure sum equals 1
   }
 
   # Initialize incidence
@@ -33,7 +38,7 @@ generate_synthetic_epidemic <- function(true_r, si_mean, si_sd,
   for (t in 2:n_days) {
     # Sum over all previous days, weighted by serial interval
     lambda_t <- 0
-    for (s in 1:(t-1)) {
+    for (s in 1:(t - 1)) {
       interval <- t - s
       if (interval <= length(si_prob)) {
         lambda_t <- lambda_t + incidence[s] * true_r[s] * si_prob[interval]
@@ -44,5 +49,11 @@ generate_synthetic_epidemic <- function(true_r, si_mean, si_sd,
   }
 
   # Return data frame
-  return(data.frame(date = dates, true_r = true_r, incidence = incidence))
+  return(
+    data.frame(
+      date = dates,
+      true_r = true_r,
+      incidence = incidence
+    )
+  )
 }

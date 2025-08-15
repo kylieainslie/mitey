@@ -73,16 +73,28 @@
 #'      main = "Serial Interval Mixture Density (Gamma Distribution)")
 #' grid()
 #'
-f_gam <- function(x, w1, w2, w3, mu, sigma) {
-
+f_gam <- function(
+  x,
+  w1,
+  w2,
+  w3,
+  mu,
+  sigma
+) {
   k <- (mu^2) / (sigma^2)
   theta <- (sigma^2) / mu
 
-  term1 <- w1 / sqrt(pi) * 2^(3/2 - k) * theta^(-0.5 - k) * x^(-0.5 + k) * besselK(x / theta, 0.5 - k) * 1 / gamma(k)
+  term1 <- w1 /
+    sqrt(pi) *
+    2^(3 / 2 - k) *
+    theta^(-0.5 - k) *
+    x^(-0.5 + k) *
+    besselK(x / theta, 0.5 - k) *
+    1 /
+    gamma(k)
   term2 <- w2 * dgamma(x, k, scale = theta)
   term3 <- w3 * dgamma(x, 2 * k, scale = theta)
   term4 <- (1 - w1 - w2 - w3) * dgamma(x, 3 * k, scale = theta)
 
   return(term1 + term2 + term3 + term4)
-
 }

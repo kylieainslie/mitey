@@ -13,10 +13,16 @@
 #' # Example 1: Compute integrations for a specific data point
 #' integrate_components_wrapper(1, 10, 2)
 #' @export
-integrate_components_wrapper <- function(d, mu, sigma, dist= "normal") {
-
-  if(dist == "normal"){ comp_vec <- 1:7
-  } else if (dist == "gamma") { comp_vec <- c(1,2,4,6)
+integrate_components_wrapper <- function(
+  d,
+  mu,
+  sigma,
+  dist = "normal"
+) {
+  if (dist == "normal") {
+    comp_vec <- 1:7
+  } else if (dist == "gamma") {
+    comp_vec <- c(1, 2, 4, 6)
   }
 
   result <- sapply(comp_vec, function(comp) {
