@@ -31,7 +31,7 @@ deviation of the serial interval distribution using a maximum likelihood
 framework developed by [Vink et
 al. 2014](https://pubmed.ncbi.nlm.nih.gov/25294601/) and b) the
 time-varying reproduction number using the method developed by [Walling
-and Lipsitch 2007](https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/).
+and Lipsitch 2007](https://doi.org/10.1098/rspb.2006.3754).
 
 ## Installation
 
@@ -58,22 +58,22 @@ system.time({
 #> Downloading GitHub repo kylieainslie/mitey@HEAD
 #> pillar (1.10.2 -> 1.11.0) [CRAN]
 #> Installing 1 packages: pillar
-#> Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpbR043J/temp_libpath14f51d514288'
+#> Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpYIdFpK/temp_libpath1664f36a04f07'
 #> (as 'lib' is unspecified)
 #> 
 #> The downloaded binary packages are in
-#>  /var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T//RtmpiNrzuf/downloaded_packages
+#>  /var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T//RtmpqYvwWP/downloaded_packages
 #> ── R CMD build ─────────────────────────────────────────────────────────────────
-#> * checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpiNrzuf/remotes158af39c1472/kylieainslie-mitey-6458b10/DESCRIPTION’ ... OK
+#> * checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpqYvwWP/remotes1739348d85bf0/kylieainslie-mitey-6458b10/DESCRIPTION’ ... OK
 #> * preparing ‘mitey’:
 #> * checking DESCRIPTION meta-information ... OK
 #> * checking for LF line-endings in source and make files and shell scripts
 #> * checking for empty or unneeded directories
 #> * building ‘mitey_0.1.0.tar.gz’
-#> Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpbR043J/temp_libpath14f51d514288'
+#> Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpYIdFpK/temp_libpath1664f36a04f07'
 #> (as 'lib' is unspecified)
 #>    user  system elapsed 
-#>   3.266   0.541   5.614
+#>   3.221   0.527   5.628
 ```
 
 ## Main Functions
@@ -228,7 +228,7 @@ intervals.
 
 - Validation of the method used to estimate the time-varying
   reproduction number proposed by [Wallinga and Lipsitch
-  2007](https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/) can be found
+  2007](https://doi.org/10.1098/rspb.2006.3754) can be found
   [here](https://kylieainslie.github.io/mitey/articles/rt_estimation_validation.html).
 
 ## Data
@@ -277,7 +277,7 @@ software:
 
 Ainslie, K.E.C., M. Hooiveld, J. Wallinga. (2025). Estimation of the
 epidemiological characteristics of scabies. *Available at SSRN*.
-<https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5184990>
+<https://dx.doi.org/10.2139/ssrn.5184990>
 
 #### Software
 
@@ -311,7 +311,7 @@ For reference, here are the original methodological papers:
 - Wallinga, J., & Lipsitch, M. (2007). How generation intervals shape
   the relationship between growth rates and reproductive numbers.
   Proceedings of the Royal Society B: Biological Sciences, 274(1609),
-  599-604.
+  599-604. doi: 10.1098/rspb.2006.3754
 
 ## System Requirements
 

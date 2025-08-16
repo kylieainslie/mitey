@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 The `mitey` package is a lightweight package designed originally as a companion to the analyses presented by [Ainslie et al. 2025](http://dx.doi.org/10.2139/ssrn.5184990) on scabies transmission. However, the methods featured in `mitey` are more widely applicable than in the context of scabies. Thus, the motivation behind creating the `mitey` package was twofold: 1) provide reproducible code to reproduce  and also provides flexible, documented code for methods to estimate epidemiological quantities of interest. 
 
-Currently, `mitey` includes methods to estimate a) the mean and standard deviation of the serial interval distribution using a maximum likelihood framework developed by [Vink et al. 2014](https://pubmed.ncbi.nlm.nih.gov/25294601/) and b) the time-varying reproduction number using the method developed by [Walling and Lipsitch 2007](https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/).
+Currently, `mitey` includes methods to estimate a) the mean and standard deviation of the serial interval distribution using a maximum likelihood framework developed by [Vink et al. 2014](https://pubmed.ncbi.nlm.nih.gov/25294601/) and b) the time-varying reproduction number using the method developed by [Walling and Lipsitch 2007](https://doi.org/10.1098/rspb.2006.3754).
 
 ## Installation
 
@@ -188,7 +188,7 @@ Expected run times for the examples provided above are shown in the table below.
 
 - Validation of the method used to estimate the mean and standard deviation of the serial interval proposed by [Vink et al. 2014](https://pubmed.ncbi.nlm.nih.gov/25294601/) can be found [here](https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.html).
 
-- Validation of the method used to estimate the time-varying reproduction number proposed by [Wallinga and Lipsitch 2007](https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/) can be found [here](https://kylieainslie.github.io/mitey/articles/rt_estimation_validation.html). 
+- Validation of the method used to estimate the time-varying reproduction number proposed by [Wallinga and Lipsitch 2007](https://doi.org/10.1098/rspb.2006.3754) can be found [here](https://kylieainslie.github.io/mitey/articles/rt_estimation_validation.html). 
 
 ## Data
 
@@ -213,7 +213,7 @@ This package is distributed under the European Union Public License (EUPL) v1.2.
 If you use this package, please cite both the manuscript and the software:
 
 #### Manuscript
-Ainslie, K.E.C., M. Hooiveld, J. Wallinga. (2025). Estimation of the epidemiological characteristics of scabies. *Available at SSRN*. https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5184990
+Ainslie, K.E.C., M. Hooiveld, J. Wallinga. (2025). Estimation of the epidemiological characteristics of scabies. *Available at SSRN*. https://dx.doi.org/10.2139/ssrn.5184990
 
 #### Software
 ```{r}
@@ -224,7 +224,7 @@ citation("mitey")
 For reference, here are the original methodological papers:
 
 - Vink et al. (2014). Serial intervals of respiratory infectious diseases: A systematic review and analysis. American Journal of Epidemiology, 180(9), 865-875.
-- Wallinga, J., & Lipsitch, M. (2007). How generation intervals shape the relationship between growth rates and reproductive numbers. Proceedings of the Royal Society B: Biological Sciences, 274(1609), 599-604.
+- Wallinga, J., & Lipsitch, M. (2007). How generation intervals shape the relationship between growth rates and reproductive numbers. Proceedings of the Royal Society B: Biological Sciences, 274(1609), 599-604. doi: 10.1098/rspb.2006.3754
 
 ## System Requirements
 
