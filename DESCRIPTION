@@ -5,7 +5,7 @@ Authors@R:
     person(given = "Kylie", 
            family = "Ainslie", 
            role = c("aut", "cre", "cph"), 
-           email = "kylie.ainslie@rivm.nl", ,
+           email = "ainslie.kylie@gmail.com",
            comment = c(ORCID = "0000-0001-5419-7206"))
 Description: Provides methods to estimate serial intervals and time-varying case reproduction numbers from infectious disease outbreak data. Serial intervals measure the time between symptom onset in linked transmission pairs, while case reproduction 
 numbers quantify how many secondary cases each infected individual generates 
