@@ -35,12 +35,11 @@
 #' The weights w1, w2, and w3 must sum to <= 1, with the remaining probability
 #' (1 - w1 - w2 - w3) assigned to primary-quaternary cases. The transmission
 #' route distributions are parameterized as:
-#' \itemize{
-#'   \item Co-primary: Half-normal with scale parameter derived from sigma
-#'   \item Primary-secondary: Normal(mu, sigma)
-#'   \item Primary-tertiary: Normal(2*mu, sqrt(2)*sigma)
-#'   \item Primary-quaternary: Normal(3*mu, sqrt(3)*sigma)
-#' }
+#' Co-primary: Half-normal with scale parameter derived from sigma
+#' Primary-secondary: Normal(mu, sigma)
+#' Primary-tertiary: Normal(2*mu, sqrt(2)*sigma)
+#' Primary-quaternary: Normal(3*mu, sqrt(3)*sigma)
+#'
 #'
 #' @returns Vector of weighted density values corresponding to input quantiles x.
 #'   Returns the sum of densities from all four transmission routes.

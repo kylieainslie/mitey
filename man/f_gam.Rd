@@ -47,9 +47,9 @@ This function is primarily used internally by \code{\link{si_estim}} when
 \code{dist = "gamma"} is specified, and by \code{\link{plot_si_fit}} for
 visualizing fitted distributions.
 
-The weights w1, w2, and w3 must sum to ≤ 1, with the remaining probability
+The weights w1, w2, and w3 must sum to <= 1, with the remaining probability
 (1 - w1 - w2 - w3) assigned to primary-quaternary cases. The function converts
-the mean and standard deviation to gamma distribution shape (k) and scale (θ)
+the mean and standard deviation to gamma distribution shape (k) and scale (\\theta)
 parameters using the method of moments:
 \deqn{k = \mu^2 / \sigma^2}
 \deqn{\theta = \sigma^2 / \mu}

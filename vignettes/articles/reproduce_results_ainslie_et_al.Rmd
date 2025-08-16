@@ -14,14 +14,14 @@ if (!dir.exists(fig_dir)) dir.create(fig_dir, recursive = TRUE)
 
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>", 
-  dev = "tiff",
-  fig.path = paste0(fig_dir, "/"),
-  out.width = "100%",
-  fig.width = 8,
-  fig.height = 6,
-  dpi = 600,
-  compression = "lzw"
+  comment = "#>"#, 
+  # dev = "tiff",
+  # fig.path = paste0(fig_dir, "/"),
+  # out.width = "100%",
+  # fig.width = 8,
+  # fig.height = 6,
+  # dpi = 600,
+  # compression = "lzw"
 )
 ```
 
