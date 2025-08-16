@@ -18,7 +18,7 @@ calculate_truncation_correction(dates, si_mean, si_sd, si_dist)
 \value{
 numeric vector; correction factors for each case. Values > 1 indicate
 upward adjustment needed. Returns NA when correction would be unreliable
-(probability of observation ≤ 0.5)
+(probability of observation <= 0.5)
 }
 \description{
 Computes correction factors to adjust reproduction number estimates for
