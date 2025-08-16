@@ -4,9 +4,9 @@
 \name{mitey-package}
 \alias{mitey}
 \alias{mitey-package}
-\title{mitey: Toolkit to Estimate Infectious Disease Dynamics Parameters}
+\title{mitey: Serial Interval and Case Reproduction Number Estimation}
 \description{
-Lightweight toolkit providing methods to estimate key epidemiological parameters for infectious diseases with particular application to scabies. Implements methods for serial interval and time-varying case reproduction number estimation as described in Vink et al. (2014) \doi{10.1093/aje/kwu209} and Wallinga & Lipsitch (2007) \doi{10.1098/rspb.2006.3754}, respectively.
+Provides methods to estimate serial intervals and time-varying case reproduction numbers from infectious disease outbreak data. Serial intervals measure the time between symptom onset in linked transmission pairs, while case reproduction numbers quantify how many secondary cases each infected individual generates over time. These parameters are essential for understanding transmission dynamics, evaluating control measures, and informing public health responses. The package implements the maximum likelihood framework from Vink et al. (2014) \doi{10.1093/aje/kwu209} for serial interval estimation and the retrospective method from Wallinga & Lipsitch (2007) \doi{10.1098/rspb.2006.3754} for reproduction number estimation. Originally developed for scabies transmission analysis but applicable to other infectious diseases including influenza, COVID-19, and emerging pathogens. Designed for epidemiologists, public health researchers, and infectious disease modelers working with outbreak surveillance data.
 }
 \seealso{
 Useful links:
@@ -18,7 +18,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Kylie Ainslie \email{kylie.ainslie@rivm.nl} (\href{https://orcid.org/0000-0001-5419-7206}{ORCID}) [copyright holder]
+\strong{Maintainer}: Kylie Ainslie \email{ainslie.kylie@gmail.com} (\href{https://orcid.org/0000-0001-5419-7206}{ORCID}) [copyright holder]
 
 }
 \keyword{internal}

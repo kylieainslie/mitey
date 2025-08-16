@@ -7,42 +7,44 @@
 
 [![R-CMD-check](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-Check.yaml/badge.svg)](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-Check.yaml)
 [![License: EUPL
-v1.2](https://img.shields.io/badge/License-EUPL%20v1.2-blue.svg)](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12)
+v1.2](https://img.shields.io/badge/License-EUPL%20v1.2-blue.svg)](https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12)
 ![GitHub Stars](https://img.shields.io/github/stars/kylieainslie/mitey)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15446456.svg)](https://doi.org/10.5281/zenodo.15446456)
 
-<!--[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/your-package)](https://CRAN.R-project.org/package=your-package) -->
+<!-- [![CRAN status](https://www.r-pkg.org/badges/version/mitey)](https://CRAN.R-project.org/package=mitey) -->
 
-<!-- [![codecov](https://codecov.io/gh/kylieainslie/mitey/branch/main/graph/badge.svg)](https://codecov.io/gh/kylieainslie/mitey) -->
-
-<!--[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/mitey)](https://CRAN.R-project.org/package=mitey) -->
+<!-- [![CRAN downloads](https://cranlogs.r-pkg.org/badges/mitey)](https://cran.r-project.org/package=mitey) -->
 
 <!-- badges: end -->
 
 The `mitey` package is a lightweight package designed originally as a
 companion to the analyses presented by [Ainslie et
 al. 2025](http://dx.doi.org/10.2139/ssrn.5184990) on scabies
-transmission. However, these methods are more widely applicable than in
-the context of scabies, thus the motivation behind creating the `mitey`
-package was twofold and also provides flexible, documented code for
-methods to estimate epidemiological quantities of interest.
+transmission. However, the methods featured in `mitey` are more widely
+applicable than in the context of scabies. Thus, the motivation behind
+creating the `mitey` package was twofold: 1) provide reproducible code
+to reproduce and also provides flexible, documented code for methods to
+estimate epidemiological quantities of interest.
 
 Currently, `mitey` includes methods to estimate a) the mean and standard
 deviation of the serial interval distribution using a maximum likelihood
 framework developed by [Vink et
-al. 2014](https://doi.org/10.1093/aje/kwu209) and b) the time-varying
-reproduction number using the method developed by [Walling and Lipsitch
-2007](https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/).
+al. 2014](https://pubmed.ncbi.nlm.nih.gov/25294601/) and b) the
+time-varying reproduction number using the method developed by [Walling
+and Lipsitch 2007](https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/).
 
 ## Installation
 
-1.  Install [R](http://cran.r-project.org)
-
-2.  Install the development version of mitey from
-    [GitHub](https://github.com/kylieainslie/mitey):
+Install `mitey` from [CRAN](https://cran.r-project.org):
 
 ``` r
-# install.packages("devtools")
+install.packages("mitey")
+```
+
+Or, install the development version of `mitey` from
+[GitHub](https://github.com/kylieainslie/mitey):
+
+``` r
 devtools::install_github("kylieainslie/mitey")
 ```
 
@@ -54,18 +56,24 @@ system.time({
 })
 #> Using GitHub PAT from the git credential store.
 #> Downloading GitHub repo kylieainslie/mitey@HEAD
+#> pillar (1.10.2 -> 1.11.0) [CRAN]
+#> Installing 1 packages: pillar
+#> Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpbR043J/temp_libpath14f51d514288'
+#> (as 'lib' is unspecified)
 #> 
+#> The downloaded binary packages are in
+#>  /var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T//RtmpiNrzuf/downloaded_packages
 #> ── R CMD build ─────────────────────────────────────────────────────────────────
-#> * checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpBvnxT9/remotesbb5775f6e2d6/kylieainslie-mitey-316a611/DESCRIPTION’ ... OK
+#> * checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpiNrzuf/remotes158af39c1472/kylieainslie-mitey-6458b10/DESCRIPTION’ ... OK
 #> * preparing ‘mitey’:
 #> * checking DESCRIPTION meta-information ... OK
 #> * checking for LF line-endings in source and make files and shell scripts
 #> * checking for empty or unneeded directories
 #> * building ‘mitey_0.1.0.tar.gz’
-#> Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpSwtO0w/temp_libpathb53b5d4b7e36'
+#> Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpbR043J/temp_libpath14f51d514288'
 #> (as 'lib' is unspecified)
 #>    user  system elapsed 
-#>   2.898   0.529   6.828
+#>   3.266   0.541   5.614
 ```
 
 ## Main Functions
@@ -215,7 +223,7 @@ intervals.
 
 - Validation of the method used to estimate the mean and standard
   deviation of the serial interval proposed by [Vink et
-  al. 2014](https://doi.org/10.1093/aje/kwu209) can be found
+  al. 2014](https://pubmed.ncbi.nlm.nih.gov/25294601/) can be found
   [here](https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.html).
 
 - Validation of the method used to estimate the time-varying
@@ -231,31 +239,29 @@ reproducible. Data files are stored in `inst/extdata/data/`. Below is a
 brief description of the different files.
 
 - `si_data.rds`
-  - Description: Data on date of symptom onset for scabies outbreaks
-    described by Kaburi et al., Akunzirwe et al., Tjon-Kon-Fat et al.,
-    and Ariza et al. For all outbreaks except Kaburi et al. the raw data
-    was not available, thus the date of symptom onset data had to be
-    reconstructed using the epidemic curve provided in the manuscript.
-    The original data from Kaburi et al. is also available in the `data`
-    directory (`Kaburi_et_al_data_scabies.xlsx`).
-  - *Source*:
-    - [Kaburi et al.](https://doi.org/10.1186/s12889-019-7085-6),
-    - [Akunzirwe et al.](https://doi.org/10.21203/rs.3.rs-3205380/v1),
-    - [Tjon-Kon-Fat et
-      al.](https://doi.org/10.1371/journal.pntd.0009485)
-    - [Ariza et al.](https://doi.org/10.1007/s10096-012-1752-1).
+  - *Description:* Data on date of symptom onset for scabies outbreaks
+    described by [Kaburi et
+    al.](https://doi.org/10.1186/s12889-019-7085-6), [Akunzirwe et
+    al.](https://doi.org/10.21203/rs.3.rs-3205380/v1), [Tjon-Kon-Fat et
+    al.](https://doi.org/10.1371/journal.pntd.0009485), and [Ariza et
+    al.](https://doi.org/10.1007/s10096-012-1752-1). For all outbreaks
+    except Kaburi et al. the raw data was not available, thus the date
+    of symptom onset data had to be reconstructed using the epidemic
+    curve provided in the manuscript. The original data from Kaburi et
+    al. is also available in the `data` directory
+    (`Kaburi_et_al_data_scabies.xlsx`).
 - `scabies_data_yearly.xlsx`
   - *Description:* Annual scabies incidence per 1000 people in the
     Netherlands from 2011-2023.
   - *Source:* [Nivel](https://www.nivel.nl/nl/zorg-en-ziekte-in-cijfers)
 - `scabies_data_consultation_weekly.xslx`
   - *Description:* Weekly numbers of persons consulting for scabies (per
-    100,000 people) from 2011 to 2023 in the Neltherlands as diagnosed
-    by general practitioners (GPs). *Note:* Individuals in institutions
+    100,000 people) from 2011 to 2023 in the Netherlands as diagnosed by
+    general practitioners (GPs). *Note:* Individuals in institutions
     (e.g., care homes, prisons) usually have their own health care
     provider and are generally not taken into account in GP
     registrations.
-  - *Source:* Nivel
+  - *Source:* [Nivel](https://www.nivel.nl/nl)
 
 ## License
 
@@ -281,7 +287,7 @@ citation("mitey")
 #> 
 #>   Ainslie K (2025). _mitey: Toolkit to Estimate Infectious Disease
 #>   Dynamics Parameters_. R package version 0.1.0, commit
-#>   316a6114e6689f969c75b6f32844762559233ed2,
+#>   6458b1024fdf3e45ef5c6b5c800f5088ccd62b89,
 #>   <https://github.com/kylieainslie/mitey>.
 #> 
 #> A BibTeX entry for LaTeX users is
@@ -290,7 +296,7 @@ citation("mitey")
 #>     title = {mitey: Toolkit to Estimate Infectious Disease Dynamics Parameters},
 #>     author = {Kylie Ainslie},
 #>     year = {2025},
-#>     note = {R package version 0.1.0, commit 316a6114e6689f969c75b6f32844762559233ed2},
+#>     note = {R package version 0.1.0, commit 6458b1024fdf3e45ef5c6b5c800f5088ccd62b89},
 #>     url = {https://github.com/kylieainslie/mitey},
 #>   }
 ```
