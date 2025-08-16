@@ -141,7 +141,7 @@ smooth_estimates <- function(r_estimate, window) {
 #' @param si_dist character; distribution type, either "gamma" or "normal"
 #' @return numeric vector; correction factors for each case. Values > 1 indicate
 #'         upward adjustment needed. Returns NA when correction would be unreliable
-#'         (probability of observation ≤ 0.5)
+#'         (probability of observation <= 0.5)
 #' @export
 #' @examples
 #' # Calculate truncation correction for recent cases

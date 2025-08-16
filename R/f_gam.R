@@ -23,16 +23,16 @@
 #' visualizing fitted distributions.
 #'
 #' @param x quantile or vector of quantiles (time in days since index case symptom onset)
-#' @param w1 probability weight of being a co-primary case (0 ≤ w1 ≤ 1)
-#' @param w2 probability weight of being a primary-secondary case (0 ≤ w2 ≤ 1)
-#' @param w3 probability weight of being a primary-tertiary case (0 ≤ w3 ≤ 1)
+#' @param w1 probability weight of being a co-primary case
+#' @param w2 probability weight of being a primary-secondary case
+#' @param w3 probability weight of being a primary-tertiary case
 #' @param mu mean serial interval in days (must be positive)
 #' @param sigma standard deviation of serial interval in days (must be positive)
 #'
 #' @details
-#' The weights w1, w2, and w3 must sum to ≤ 1, with the remaining probability
+#' The weights w1, w2, and w3 must sum to <= 1, with the remaining probability
 #' (1 - w1 - w2 - w3) assigned to primary-quaternary cases. The function converts
-#' the mean and standard deviation to gamma distribution shape (k) and scale (θ)
+#' the mean and standard deviation to gamma distribution shape (k) and scale (\\theta)
 #' parameters using the method of moments:
 #' \deqn{k = \mu^2 / \sigma^2}
 #' \deqn{\theta = \sigma^2 / \mu}

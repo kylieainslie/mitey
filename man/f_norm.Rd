@@ -9,11 +9,11 @@ f_norm(x, w1, w2, w3, mu, sigma)
 \arguments{
 \item{x}{quantile or vector of quantiles (time in days since index case symptom onset)}
 
-\item{w1}{probability weight of being a co-primary case (0 <= w1 <= 1)}
+\item{w1}{probability weight of being a co-primary case (0 ≤ w1 ≤ 1)}
 
-\item{w2}{probability weight of being a primary-secondary case (0 <= w2 <= 1)}
+\item{w2}{probability weight of being a primary-secondary case (0 ≤ w2 ≤ 1)}
 
-\item{w3}{probability weight of being a primary-tertiary case (0 <= w3 <= 1)}
+\item{w3}{probability weight of being a primary-tertiary case (0 ≤ w3 ≤ 1)}
 
 \item{mu}{mean serial interval in days (can be any real number)}
 
@@ -49,14 +49,14 @@ This function is primarily used internally by \code{\link{si_estim}} when
 for visualizing fitted distributions. The normal distribution assumption allows
 for negative serial intervals, which may be more realistic for some pathogens.
 
-The weights w1, w2, and w3 must sum to <= 1, with the remaining probability
+The weights w1, w2, and w3 must sum to ≤ 1, with the remaining probability
 (1 - w1 - w2 - w3) assigned to primary-quaternary cases. The transmission
 route distributions are parameterized as:
 \itemize{
 \item Co-primary: Half-normal with scale parameter derived from sigma
-\item Primary-secondary: Normal(mu, sigma)
-\item Primary-tertiary: Normal(2mu, sqrt2sigma)
-\item Primary-quaternary: Normal(3mu, sqrt3sigma)
+\item Primary-secondary: Normal(\mu, \sigma)
+\item Primary-tertiary: Normal(2\mu, $\sqrt(2\sigma)$)
+\item Primary-quaternary: Normal(3\mu, $\sqrt(3\sigma)$)
 }
 }
 \examples{
