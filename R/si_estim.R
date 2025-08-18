@@ -124,19 +124,11 @@
 #'
 #' # Estimate serial interval parameters
 #' result <- si_estim(simulated_icc, dist = "normal")
-#' print(result)
+#'
 #'
 #' # Example 2: Using gamma distribution
 #' result_gamma <- si_estim(simulated_icc, dist = "gamma")
-#' print(result_gamma)
 #'
-#' # Example 3: Providing custom initial values
-#' result_custom <- si_estim(
-#'   simulated_icc,
-#'   dist = "normal",
-#'   init = c(10, 3),  # Start with mean=10, sd=3
-#'   n = 100           # More iterations
-#' )
 #'
 si_estim <- function(
   dat,
