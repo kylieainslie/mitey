@@ -111,24 +111,39 @@
 #' @importFrom stats optim
 #'
 #' @examples
-#' # Example 1: Basic usage with simulated data
-#' # Simulate ICC intervals from a mixed outbreak
+#' # Example 1:Basic usage with simulated data
 #' set.seed(123)
 #' simulated_icc <- c(
+#'   rep(1, 20),   # Short intervals (co-primary cases)
+#'   rep(2, 25),   # Medium intervals (primary-secondary)
+#'   rep(3, 15),   # Longer intervals (higher generation)
+#'   rep(4, 8)
+#' )
+#'
+#' result <- si_estim(simulated_icc)
+#'
+#' \donttest{
+#' # Example 2: Larger simulated outbreak, specifying distribution
+#' large_icc <- c(
 #'   rep(1, 38),   # Short intervals (co-primary cases)
 #'   rep(2, 39),   #
 #'   rep(3, 30),   # Medium intervals (primary-secondary)
 #'   rep(4, 17),   #
-#'   rep(5, 7)     # Longer intervals (higher generation)
+#'   rep(5, 7),    # Longer intervals (higher generation)
+#'   rep(6, 4),
+#'   rep(7, 2)
 #' )
 #'
-#' # Estimate serial interval parameters
-#' result <- si_estim(simulated_icc, dist = "normal")
+#' result_normal <- si_estim(large_icc, dist = "normal")
+#' result_gamma <- si_estim(large_icc, dist = "gamma")
 #'
+#' # Example 3: Using custom initial values
+#' result_custom <- si_estim(large_icc, dist = "normal", init = c(3.0, 1.5))
 #'
-#' # Example 2: Using gamma distribution
-#' result_gamma <- si_estim(simulated_icc, dist = "gamma")
+#' # Example 4: Specify iterations
+#' result_iter <- si_estim(large_icc, n=100)
 #'
+#' }
 #'
 si_estim <- function(
   dat,
