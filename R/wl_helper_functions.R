@@ -99,15 +99,6 @@ create_day_diff_matrix <- function(dates) {
 #'         length as input. Returns NA for points with insufficient valid
 #'         neighboring values
 #'
-#' @examples
-#' # This function is used internally for bootstrap confidence intervals
-#' # For bootstrap reproduction number estimates, see ?wallinga_lipsitch
-#' \dontrun{
-#' # Smooth noisy R estimates
-#' noisy_r <- c(1.2, 3.5, 1.8, 2.1, 1.6, 4.2, 1.9, 1.4)
-#' smoothed_r <- smooth_estimates(noisy_r, window = 3)
-#' }
-#'
 smooth_estimates <- function(r_estimate, window) {
   # Replace NA and infinite values with NA
   r_estimate[!is.finite(r_estimate)] <- NA
@@ -188,29 +179,6 @@ calculate_truncation_correction <- function(dates, si_mean, si_sd, si_dist) {
 #' @return numeric vector; bootstrapped daily incidence of the same length as input.
 #'         Total number of cases remains the same but their temporal distribution varies
 #'
-#' @examples
-#' # This function is used internally for bootstrap confidence intervals
-#' # For bootstrap reproduction number estimates, see ?wallinga_lipsitch
-#'
-#' \dontrun{
-#' # Example usage through main interface:
-#' dates <- seq(as.Date("2023-01-01"), by = "day", length.out = 10)
-#' incidence <- c(1, 3, 5, 8, 12, 15, 10, 6, 3, 1)
-#'
-#' # Get bootstrap confidence intervals
-#' results <- wallinga_lipsitch(
-#'   incidence = incidence,
-#'   dates = dates,
-#'   si_mean = 7,
-#'   si_sd = 3,
-#'   si_dist = "gamma",
-#'   bootstrap = TRUE,
-#'   n_bootstrap = 100
-#' )
-#'
-#' # The bootstrap sampling happens automatically inside wallinga_lipsitch()
-#' head(results)
-#' }
 #'
 generate_case_bootstrap <- function(incidence) {
   # Create a case-level representation (each case is an individual unit)
@@ -277,26 +245,6 @@ generate_case_bootstrap <- function(incidence) {
 #'          \code{\link{calculate_si_probability_matrix}} for probability matrix creation,
 #'          \code{\link{calculate_truncation_correction}} for correction details
 #'
-#' @examples
-#' # This function is used internally by wallinga_lipsitch()
-#' # For complete reproduction number estimation, see ?wallinga_lipsitch
-#'
-#' \dontrun{
-#' # Example usage through main interface:
-#' dates <- seq(as.Date("2023-01-01"), by = "day", length.out = 10)
-#' incidence <- c(1, 2, 4, 6, 8, 6, 4, 2, 1, 0)
-#'
-#' results <- wallinga_lipsitch(
-#'   incidence = incidence,
-#'   dates = dates,
-#'   si_mean = 7,
-#'   si_sd = 3,
-#'   si_dist = "gamma"
-#' )
-#'
-#' # Access the reproduction number estimates:
-#' results$R_corrected
-#' }
 #'
 calculate_r_estimates <- function(
   incidence,
@@ -369,29 +317,6 @@ calculate_r_estimates <- function(
 #'   \item \code{r_corrected_lower, r_corrected_upper}: Confidence intervals for corrected R estimates
 #' }
 #'
-#' @examples
-#' # This function is used internally by wallinga_lipsitch() when bootstrap=TRUE
-#' # For complete examples with confidence intervals, see ?wallinga_lipsitch
-#'
-#' \dontrun{
-#' # Example usage through main interface:
-#' dates <- seq(as.Date("2023-01-01"), by = "day", length.out = 10)
-#' incidence <- c(1, 2, 4, 6, 8, 6, 4, 2, 1, 0)
-#'
-#' results <- wallinga_lipsitch(
-#'   incidence = incidence,
-#'   dates = dates,
-#'   si_mean = 7,
-#'   si_sd = 3,
-#'   si_dist = "gamma",
-#'   bootstrap = TRUE,
-#'   n_bootstrap = 100
-#' )
-#'
-#' # Access confidence intervals:
-#' results$R_corrected_lower
-#' results$R_corrected_upper
-#' }
 #'
 calculate_bootstrap_ci <- function(
   incidence,
