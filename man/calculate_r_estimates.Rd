@@ -68,28 +68,6 @@ The right-truncation correction accounts for the fact that cases near the end
 of the observation period may have generated secondary cases that occur after
 data collection ended.
 }
-\examples{
-# This function is used internally by wallinga_lipsitch()
-# For complete reproduction number estimation, see ?wallinga_lipsitch
-
-\dontrun{
-# Example usage through main interface:
-dates <- seq(as.Date("2023-01-01"), by = "day", length.out = 10)
-incidence <- c(1, 2, 4, 6, 8, 6, 4, 2, 1, 0)
-
-results <- wallinga_lipsitch(
-  incidence = incidence,
-  dates = dates,
-  si_mean = 7,
-  si_sd = 3,
-  si_dist = "gamma"
-)
-
-# Access the reproduction number estimates:
-results$R_corrected
-}
-
-}
 \seealso{
 \code{\link{wallinga_lipsitch}} for the main user interface,
 \code{\link{calculate_si_probability_matrix}} for probability matrix creation,

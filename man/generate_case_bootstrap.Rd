@@ -18,28 +18,3 @@ Creates a bootstrap sample by resampling individual cases with replacement,
 then reconstructing daily incidence counts. This maintains the temporal
 distribution while introducing sampling variation for uncertainty estimation.
 }
-\examples{
-# This function is used internally for bootstrap confidence intervals
-# For bootstrap reproduction number estimates, see ?wallinga_lipsitch
-
-\dontrun{
-# Example usage through main interface:
-dates <- seq(as.Date("2023-01-01"), by = "day", length.out = 10)
-incidence <- c(1, 3, 5, 8, 12, 15, 10, 6, 3, 1)
-
-# Get bootstrap confidence intervals
-results <- wallinga_lipsitch(
-  incidence = incidence,
-  dates = dates,
-  si_mean = 7,
-  si_sd = 3,
-  si_dist = "gamma",
-  bootstrap = TRUE,
-  n_bootstrap = 100
-)
-
-# The bootstrap sampling happens automatically inside wallinga_lipsitch()
-head(results)
-}
-
-}

@@ -47,28 +47,3 @@ Generates bootstrap confidence intervals for reproduction number estimates by
 resampling the incidence data multiple times and calculating quantiles of the
 resulting R distributions.
 }
-\examples{
-# This function is used internally by wallinga_lipsitch() when bootstrap=TRUE
-# For complete examples with confidence intervals, see ?wallinga_lipsitch
-
-\dontrun{
-# Example usage through main interface:
-dates <- seq(as.Date("2023-01-01"), by = "day", length.out = 10)
-incidence <- c(1, 2, 4, 6, 8, 6, 4, 2, 1, 0)
-
-results <- wallinga_lipsitch(
-  incidence = incidence,
-  dates = dates,
-  si_mean = 7,
-  si_sd = 3,
-  si_dist = "gamma",
-  bootstrap = TRUE,
-  n_bootstrap = 100
-)
-
-# Access confidence intervals:
-results$R_corrected_lower
-results$R_corrected_upper
-}
-
-}

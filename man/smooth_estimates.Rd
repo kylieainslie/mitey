@@ -22,13 +22,3 @@ neighboring values
 Applies temporal smoothing to reproduction number estimates using a centered
 moving average window. Handles missing and infinite values appropriately.
 }
-\examples{
-# This function is used internally for bootstrap confidence intervals
-# For bootstrap reproduction number estimates, see ?wallinga_lipsitch
-\dontrun{
-# Smooth noisy R estimates
-noisy_r <- c(1.2, 3.5, 1.8, 2.1, 1.6, 4.2, 1.9, 1.4)
-smoothed_r <- smooth_estimates(noisy_r, window = 3)
-}
-
-}
