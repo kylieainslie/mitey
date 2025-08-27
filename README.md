@@ -3,6 +3,8 @@
 
 # The `mitey` package
 
+<img src="man/figures/mitey_hex_superman.png" align="right" height="139" alt="mitey hex logo" />
+
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-Check.yaml/badge.svg)](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-Check.yaml)
@@ -56,24 +58,18 @@ system.time({
 })
 #> Using GitHub PAT from the git credential store.
 #> Downloading GitHub repo kylieainslie/mitey@HEAD
-#> pillar (1.10.2 -> 1.11.0) [CRAN]
-#> Installing 1 packages: pillar
-#> Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpYIdFpK/temp_libpath1664f36a04f07'
-#> (as 'lib' is unspecified)
 #> 
-#> The downloaded binary packages are in
-#>  /var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T//RtmpqYvwWP/downloaded_packages
 #> ── R CMD build ─────────────────────────────────────────────────────────────────
-#> * checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpqYvwWP/remotes1739348d85bf0/kylieainslie-mitey-6458b10/DESCRIPTION’ ... OK
-#> * preparing ‘mitey’:
-#> * checking DESCRIPTION meta-information ... OK
-#> * checking for LF line-endings in source and make files and shell scripts
-#> * checking for empty or unneeded directories
-#> * building ‘mitey_0.1.0.tar.gz’
-#> Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpYIdFpK/temp_libpath1664f36a04f07'
-#> (as 'lib' is unspecified)
+#>      checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpQs9n1h/remotes25c63e066428/kylieainslie-mitey-3e3fde7/DESCRIPTION’ ...  ✔  checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpQs9n1h/remotes25c63e066428/kylieainslie-mitey-3e3fde7/DESCRIPTION’
+#>   ─  preparing ‘mitey’:
+#>    checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information
+#>   ─  checking for LF line-endings in source and make files and shell scripts
+#>   ─  checking for empty or unneeded directories
+#>   ─  building ‘mitey_0.2.0.tar.gz’
+#>      
+#> 
 #>    user  system elapsed 
-#>   3.221   0.527   5.628
+#>   2.748   0.457   5.211
 ```
 
 ## Main Functions
@@ -285,18 +281,18 @@ epidemiological characteristics of scabies. *Available at SSRN*.
 citation("mitey")
 #> To cite package 'mitey' in publications use:
 #> 
-#>   Ainslie K (2025). _mitey: Toolkit to Estimate Infectious Disease
-#>   Dynamics Parameters_. R package version 0.1.0, commit
-#>   6458b1024fdf3e45ef5c6b5c800f5088ccd62b89,
+#>   Ainslie K (2025). _mitey: Serial Interval and Case Reproduction
+#>   Number Estimation_. R package version 0.2.0, commit
+#>   3e3fde728428bfde8464689f4341baa1221c6207,
 #>   <https://github.com/kylieainslie/mitey>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
-#>     title = {mitey: Toolkit to Estimate Infectious Disease Dynamics Parameters},
+#>     title = {mitey: Serial Interval and Case Reproduction Number Estimation},
 #>     author = {Kylie Ainslie},
 #>     year = {2025},
-#>     note = {R package version 0.1.0, commit 6458b1024fdf3e45ef5c6b5c800f5088ccd62b89},
+#>     note = {R package version 0.2.0, commit 3e3fde728428bfde8464689f4341baa1221c6207},
 #>     url = {https://github.com/kylieainslie/mitey},
 #>   }
 ```
