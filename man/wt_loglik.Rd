@@ -58,17 +58,12 @@ Users typically won't call this function directly but rather use
 # Simulate some ICC interval data and weights
 set.seed(123)
 icc_intervals <- rgamma(50, shape = 2, scale = 3)  # True mean=6, sd=sqrt(18)
-weights <- runif(50, 0.1, 1)  # Random weights for illustration
-
-# Initial parameter guess (mean, sd)
+weights <- runif(50, 0.1, 1)
 initial_params <- c(5, 4)
-
-# Calculate likelihood at initial parameters
 likelihood_value <- wt_loglik(initial_params, icc_intervals, weights)
-cat("Negative log-likelihood:", likelihood_value, "\n")
 
-# Example of parameter optimization (as done in si_estim)
-\dontrun{
+# Example of parameter optimization
+\donttest{
 optimized <- optim(
   par = initial_params,
   fn = wt_loglik,
@@ -81,10 +76,6 @@ cat("Optimized mean:", optimized$par[1], "\n")
 cat("Optimized sd:", optimized$par[2], "\n")
 }
 
-# Example showing penalty for invalid parameters
-invalid_params <- c(-1, 2)  # Negative mean
-penalty_value <- wt_loglik(invalid_params, icc_intervals, weights)
-cat("Penalty for invalid parameters:", penalty_value, "\n")
 }
 \seealso{
 \code{\link{si_estim}} for the main serial interval estimation function,
