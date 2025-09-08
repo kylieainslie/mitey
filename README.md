@@ -1,9 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# The `mitey` package
-
-<img src="man/figures/mitey_hex_superman.png" align="right" height="139" alt="mitey hex logo" />
+# The `mitey` package <img src="man/figures/logo.png" align="right" height="139" alt="mitey hex logo" />
 
 <!-- badges: start -->
 
@@ -12,11 +10,10 @@
 v1.2](https://img.shields.io/badge/License-EUPL%20v1.2-blue.svg)](https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12)
 ![GitHub Stars](https://img.shields.io/github/stars/kylieainslie/mitey)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15446456.svg)](https://doi.org/10.5281/zenodo.15446456)
-
-<!-- [![CRAN status](https://www.r-pkg.org/badges/version/mitey)](https://CRAN.R-project.org/package=mitey) -->
-
-<!-- [![CRAN downloads](https://cranlogs.r-pkg.org/badges/mitey)](https://cran.r-project.org/package=mitey) -->
-
+[![CRAN
+status](https://www.r-pkg.org/badges/version/mitey)](https://CRAN.R-project.org/package=mitey)
+[![CRAN
+downloads](https://cranlogs.r-pkg.org/badges/mitey)](https://cran.r-project.org/package=mitey)
 <!-- badges: end -->
 
 The `mitey` package is a lightweight package designed originally as a
@@ -60,7 +57,7 @@ system.time({
 #> Downloading GitHub repo kylieainslie/mitey@HEAD
 #> 
 #> ── R CMD build ─────────────────────────────────────────────────────────────────
-#>      checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpQs9n1h/remotes25c63e066428/kylieainslie-mitey-3e3fde7/DESCRIPTION’ ...  ✔  checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpQs9n1h/remotes25c63e066428/kylieainslie-mitey-3e3fde7/DESCRIPTION’
+#>      checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpkJdeHU/remotes125daed29fb3/kylieainslie-mitey-3e3fde7/DESCRIPTION’ ...  ✔  checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpkJdeHU/remotes125daed29fb3/kylieainslie-mitey-3e3fde7/DESCRIPTION’
 #>   ─  preparing ‘mitey’:
 #>    checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information
 #>   ─  checking for LF line-endings in source and make files and shell scripts
@@ -68,8 +65,10 @@ system.time({
 #>   ─  building ‘mitey_0.2.0.tar.gz’
 #>      
 #> 
+#> Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpEzLPBZ/temp_libpath12352657de0c4'
+#> (as 'lib' is unspecified)
 #>    user  system elapsed 
-#>   2.748   0.457   5.211
+#>   2.906   0.504   5.140
 ```
 
 ## Main Functions
