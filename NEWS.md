@@ -2,6 +2,12 @@
 
 # mitey 0.2.0
 
+* **CRAN release** - mitey is now available on CRAN!
+* Updated function names for consistency (`rt_estim()` → `wallinga_lipsitch()`)
+* Enhanced documentation and examples  
+* Improved package metadata and CRAN compliance
+* All features from 0.1.0 maintained with refinements
+
 # mitey 0.1.0
 
 * Initial release
