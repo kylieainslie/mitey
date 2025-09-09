@@ -39,7 +39,6 @@ This article is divided into Methods and Results. In the Methods section, the co
 
 # load required packages
 library(mitey)
-library(fdrtool)
 library(dplyr)
 library(tidyr)
 library(purrr)
@@ -60,8 +59,6 @@ library(outbreaks)
 library(EpiLPS)
 library(flextable)
 library(officer)
-library(BH)
-library(patchwork)
 ```
 
 # Methods
@@ -360,7 +357,7 @@ To ensure the reproducibility and reliability of our epidemiological analyses, w
 set.seed(1234)
 N <- 5000; hmu<-15; hsigma<-3; hw1 <- 0.2; hw2 <- 0.5; hw3 <- 0.2; hw4 <- 0.1
 
-CP <- rhalfnorm((hw1*N),theta=sqrt(pi/2)/(sqrt(2)*hsigma))
+CP <- fdrtool::rhalfnorm((hw1*N),theta=sqrt(pi/2)/(sqrt(2)*hsigma))
 PS <- rnorm(hw2*N,mean=hmu,sd=hsigma)
 PT <- rnorm(hw3*N,mean=2*hmu,sd=sqrt(2)*hsigma)
 PQ <- rnorm(hw4*N,mean=3*hmu,sd=sqrt(3)*hsigma)
