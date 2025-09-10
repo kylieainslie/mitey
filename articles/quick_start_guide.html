@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mitey</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,7 @@
     <li><a class="dropdown-item" href="../articles/rt_estimation_validation.html">Estimation of time-varying reproduction number</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -57,12 +58,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Quick Start Guide: Estimating Epidemiological Parameters with `mitey`</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Quick Start Guide: Estimating Epidemiological Parameters with `mitey`</h1>
                         <h4 data-toc-skip class="author">Kylie
 Ainslie</h4>
             
-            <h4 data-toc-skip class="date">2025-05-22</h4>
+            <h4 data-toc-skip class="date">2025-09-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kylieainslie/mitey/blob/main/vignettes/quick_start_guide.Rmd" class="external-link"><code>vignettes/quick_start_guide.Rmd</code></a></small>
       <div class="d-none name"><code>quick_start_guide.Rmd</code></div>
@@ -80,7 +80,6 @@ Ainslie</h4>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://strimmerlab.github.io/software/fdrtool/" class="external-link">fdrtool</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/" class="external-link">cowplot</a></span><span class="op">)</span> </span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://here.r-lib.org/" class="external-link">here</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/reconhub/outbreaks" class="external-link">outbreaks</a></span><span class="op">)</span></span></code></pre></div>
@@ -135,7 +134,7 @@ subsequent cases:</p>
 <span><span class="va">route_weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span><span class="op">)</span>  <span class="co"># Weights for transmission routes</span></span>
 <span></span>
 <span><span class="co"># Generate data for different transmission routes</span></span>
-<span><span class="va">CP</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/fdrtool/man/halfnorm.html" class="external-link">rhalfnorm</a></span><span class="op">(</span><span class="op">(</span><span class="va">route_weights</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">*</span><span class="va">N</span><span class="op">)</span>, theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">pi</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">*</span><span class="va">true_sd</span><span class="op">)</span><span class="op">)</span>  <span class="co"># Co-Primary</span></span>
+<span><span class="va">CP</span> <span class="op">&lt;-</span> <span class="fu">fdrtool</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/fdrtool/man/halfnorm.html" class="external-link">rhalfnorm</a></span><span class="op">(</span><span class="op">(</span><span class="va">route_weights</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">*</span><span class="va">N</span><span class="op">)</span>, theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">pi</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">*</span><span class="va">true_sd</span><span class="op">)</span><span class="op">)</span>  <span class="co"># Co-Primary</span></span>
 <span><span class="va">PS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">route_weights</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">*</span><span class="va">N</span>, mean<span class="op">=</span><span class="va">true_mean</span>, sd<span class="op">=</span><span class="va">true_sd</span><span class="op">)</span>                <span class="co"># Primary-Secondary</span></span>
 <span><span class="va">PT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">route_weights</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">*</span><span class="va">N</span>, mean<span class="op">=</span><span class="fl">2</span><span class="op">*</span><span class="va">true_mean</span>, sd<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">*</span><span class="va">true_sd</span><span class="op">)</span>      <span class="co"># Primary-Tertiary</span></span>
 <span><span class="va">PQ</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">route_weights</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span><span class="op">*</span><span class="va">N</span>, mean<span class="op">=</span><span class="fl">3</span><span class="op">*</span><span class="va">true_mean</span>, sd<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">*</span><span class="va">true_sd</span><span class="op">)</span>      <span class="co"># Primary-Quaternary</span></span>
@@ -791,7 +790,7 @@ colombia, september 2015 to january 2016. <em>Eurosurveillance</em>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

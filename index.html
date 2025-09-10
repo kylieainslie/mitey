@@ -5,14 +5,15 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Toolkit to Estimate Infectious Disease Dynamics Parameters • mitey</title>
+<title>Serial Interval and Case Reproduction Number Estimation • mitey</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Toolkit to Estimate Infectious Disease Dynamics Parameters">
-<meta name="description" content="Lightweight toolkit providing methods to estimate key epidemiological parameters for infectious diseases with particular application to scabies. Implements methods for serial interval and time-varying case reproduction number estimation as described in Vink et al. (2014) &lt;doi:10.1093/aje/kwu209&gt; and Wallinga &amp; Lipsitch (2007) &lt;doi:10.1098/rspb.2006.3754&gt;, respectively.">
-<meta property="og:description" content="Lightweight toolkit providing methods to estimate key epidemiological parameters for infectious diseases with particular application to scabies. Implements methods for serial interval and time-varying case reproduction number estimation as described in Vink et al. (2014) &lt;doi:10.1093/aje/kwu209&gt; and Wallinga &amp; Lipsitch (2007) &lt;doi:10.1098/rspb.2006.3754&gt;, respectively.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Serial Interval and Case Reproduction Number Estimation">
+<meta name="description" content="Provides methods to estimate serial intervals and time-varying case reproduction numbers from infectious disease outbreak data. Serial intervals measure the time between symptom onset in linked transmission pairs, while case reproduction numbers quantify how many secondary cases each infected individual generates over time. These parameters are essential for understanding transmission dynamics, evaluating control measures, and informing public health responses. The package implements the maximum likelihood framework from Vink et al. (2014) &lt;doi:10.1093/aje/kwu209&gt; for serial interval estimation and the retrospective method from Wallinga &amp; Lipsitch (2007) &lt;doi:10.1098/rspb.2006.3754&gt; for reproduction number estimation. Originally developed for scabies transmission analysis but applicable to other infectious diseases including influenza, COVID-19, and emerging pathogens. Designed for epidemiologists, public health researchers, and infectious disease modelers working with outbreak surveillance data.">
+<meta property="og:description" content="Provides methods to estimate serial intervals and time-varying case reproduction numbers from infectious disease outbreak data. Serial intervals measure the time between symptom onset in linked transmission pairs, while case reproduction numbers quantify how many secondary cases each infected individual generates over time. These parameters are essential for understanding transmission dynamics, evaluating control measures, and informing public health responses. The package implements the maximum likelihood framework from Vink et al. (2014) &lt;doi:10.1093/aje/kwu209&gt; for serial interval estimation and the retrospective method from Wallinga &amp; Lipsitch (2007) &lt;doi:10.1098/rspb.2006.3754&gt; for reproduction number estimation. Originally developed for scabies transmission analysis but applicable to other infectious diseases including influenza, COVID-19, and emerging pathogens. Designed for epidemiologists, public health researchers, and infectious disease modelers working with outbreak surveillance data.">
+<meta property="og:image" content="https://kylieainslie.github.io/mitey/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="index.html">mitey</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,6 +42,7 @@
     <li><a class="dropdown-item" href="articles/rt_estimation_validation.html">Estimation of time-varying reproduction number</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -55,47 +57,46 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="the-mitey-package">The <code>mitey</code> package<a class="anchor" aria-label="anchor" href="#the-mitey-package"></a>
-</h1></div>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="the-mitey-package-">The <code>mitey</code> package <a class="anchor" aria-label="anchor" href="#the-mitey-package-"></a>
+</h1>
+</div>
 <!-- badges: start -->
 
-<!--[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/your-package)](https://CRAN.R-project.org/package=your-package) -->
-<!-- [![codecov](https://codecov.io/gh/kylieainslie/mitey/branch/main/graph/badge.svg)](https://codecov.io/gh/kylieainslie/mitey) -->
-<!--[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/mitey)](https://CRAN.R-project.org/package=mitey) -->
-<!-- badges: end -->
-<p>The <code>mitey</code> package is a lightweight package designed originally as a companion to the analyses presented by <a href="http://dx.doi.org/10.2139/ssrn.5184990" class="external-link">Ainslie et al. 2025</a> on scabies transmission. However, these methods are more widely applicable than in the context of scabies, thus the motivation behind creating the <code>mitey</code> package was twofold and also provides flexible, documented code for methods to estimate epidemiological quantities of interest.</p>
-<p>Currently, <code>mitey</code> includes methods to estimate a) the mean and standard deviation of the serial interval distribution using a maximum likelihood framework developed by <a href="https://doi.org/10.1093/aje/kwu209" class="external-link">Vink et al. 2014</a> and b) the time-varying reproduction number using the method developed by <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/" class="external-link">Walling and Lipsitch 2007</a>.</p>
+<p>The <code>mitey</code> package is a lightweight package designed originally as a companion to the analyses presented by <a href="http://dx.doi.org/10.2139/ssrn.5184990" class="external-link">Ainslie et al. 2025</a> on scabies transmission. However, the methods featured in <code>mitey</code> are more widely applicable than in the context of scabies. Thus, the motivation behind creating the <code>mitey</code> package was twofold: 1) provide reproducible code to reproduce and also provides flexible, documented code for methods to estimate epidemiological quantities of interest.</p>
+<p>Currently, <code>mitey</code> includes methods to estimate a) the mean and standard deviation of the serial interval distribution using a maximum likelihood framework developed by <a href="https://pubmed.ncbi.nlm.nih.gov/25294601/" class="external-link">Vink et al. 2014</a> and b) the time-varying reproduction number using the method developed by <a href="https://doi.org/10.1098/rspb.2006.3754" class="external-link">Walling and Lipsitch 2007</a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<ol style="list-style-type: decimal">
-<li><p>Install <a href="http://cran.r-project.org" class="external-link">R</a></p></li>
-<li><p>Install the development version of mitey from <a href="https://github.com/kylieainslie/mitey" class="external-link">GitHub</a>:</p></li>
-</ol>
+<p>Install <code>mitey</code> from <a href="https://cran.r-project.org" class="external-link">CRAN</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"kylieainslie/mitey"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"mitey"</span><span class="op">)</span></span></code></pre></div>
+<p>Or, install the development version of <code>mitey</code> from <a href="https://github.com/kylieainslie/mitey" class="external-link">GitHub</a>:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"kylieainslie/mitey"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="installation-time">Installation time<a class="anchor" aria-label="anchor" href="#installation-time"></a>
 </h4>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
-<span>  <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"kylieainslie/mitey"</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"kylieainslie/mitey"</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Using GitHub PAT from the git credential store.</span></span>
 <span><span class="co">#&gt; Downloading GitHub repo kylieainslie/mitey@HEAD</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── R CMD build ─────────────────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt; * checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpBvnxT9/remotesbb5775f6e2d6/kylieainslie-mitey-316a611/DESCRIPTION’ ... OK</span></span>
-<span><span class="co">#&gt; * preparing ‘mitey’:</span></span>
-<span><span class="co">#&gt; * checking DESCRIPTION meta-information ... OK</span></span>
-<span><span class="co">#&gt; * checking for LF line-endings in source and make files and shell scripts</span></span>
-<span><span class="co">#&gt; * checking for empty or unneeded directories</span></span>
-<span><span class="co">#&gt; * building ‘mitey_0.1.0.tar.gz’</span></span>
-<span><span class="co">#&gt; Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpSwtO0w/temp_libpathb53b5d4b7e36'</span></span>
+<span><span class="co">#&gt;      checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpkJdeHU/remotes125daed29fb3/kylieainslie-mitey-3e3fde7/DESCRIPTION’ ...  ✔  checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpkJdeHU/remotes125daed29fb3/kylieainslie-mitey-3e3fde7/DESCRIPTION’</span></span>
+<span><span class="co">#&gt;   ─  preparing ‘mitey’:</span></span>
+<span><span class="co">#&gt;    checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information</span></span>
+<span><span class="co">#&gt;   ─  checking for LF line-endings in source and make files and shell scripts</span></span>
+<span><span class="co">#&gt;   ─  checking for empty or unneeded directories</span></span>
+<span><span class="co">#&gt;   ─  building ‘mitey_0.2.0.tar.gz’</span></span>
+<span><span class="co">#&gt;      </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpEzLPBZ/temp_libpath12352657de0c4'</span></span>
 <span><span class="co">#&gt; (as 'lib' is unspecified)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   2.898   0.529   6.828</span></span></code></pre></div>
+<span><span class="co">#&gt;   2.906   0.504   5.140</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -133,7 +134,7 @@
 <div class="section level2">
 <h2 id="example-usage">Example Usage<a class="anchor" aria-label="anchor" href="#example-usage"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kylieainslie/mitey" class="external-link">mitey</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#-----------------</span></span>
@@ -153,7 +154,7 @@
 <span><span class="co">#&gt; $wts</span></span>
 <span><span class="co">#&gt; [1] 3.625090e-02 9.146057e-01 3.012069e-16 4.913656e-02 7.797502e-22</span></span>
 <span><span class="co">#&gt; [6] 6.801913e-06 6.863119e-28</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot fitted serial interval distribution</span></span>
 <span><span class="fu"><a href="reference/plot_si_fit.html">plot_si_fit</a></span><span class="op">(</span></span>
 <span>  dat <span class="op">=</span> <span class="va">icc_intervals</span>,</span>
@@ -166,7 +167,7 @@
 <span>  dist <span class="op">=</span> <span class="st">"normal"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-example_si_plot-1.png" width="100%"></p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#-----------------</span></span>
 <span><span class="co"># Time-varying Reproduction Number Estimation</span></span>
 <span><span class="co">#-----------------</span></span>
@@ -186,7 +187,7 @@
 <span><span class="va">incidence</span> <span class="op">&lt;-</span> <span class="va">synthetic_data</span><span class="op">$</span><span class="va">incidence</span></span>
 <span><span class="va">dates</span> <span class="op">&lt;-</span> <span class="va">synthetic_data</span><span class="op">$</span><span class="va">date</span></span></code></pre></div>
 <p><img src="reference/figures/README-example_rt_epicurve-1.png" width="100%"></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Estimate time-varying reproduction number </span></span>
 <span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/wallinga_lipsitch.html">wallinga_lipsitch</a></span><span class="op">(</span></span>
 <span>  incidence <span class="op">=</span> <span class="va">incidence</span>, </span>
@@ -310,8 +311,8 @@ Click to expand run time information
 <ul>
 <li><p>A quick start guide showing examples of how to estimate the serial interval and time-varying reproduction number can be found <a href="https://kylieainslie.github.io/mitey/articles/quick_start_guide.html">here</a>.</p></li>
 <li><p>A script that reproduces the results from <a href="http://dx.doi.org/10.2139/ssrn.5184990" class="external-link">Ainslie et al. 2025</a> can be found <a href="https://kylieainslie.github.io/mitey/articles/reproduce_results_ainslie_et_al.html">here</a>.</p></li>
-<li><p>Validation of the method used to estimate the mean and standard deviation of the serial interval proposed by <a href="https://doi.org/10.1093/aje/kwu209" class="external-link">Vink et al. 2014</a> can be found <a href="https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.html">here</a>.</p></li>
-<li><p>Validation of the method used to estimate the time-varying reproduction number proposed by <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1766383/" class="external-link">Wallinga and Lipsitch 2007</a> can be found <a href="https://kylieainslie.github.io/mitey/articles/rt_estimation_validation.html">here</a>.</p></li>
+<li><p>Validation of the method used to estimate the mean and standard deviation of the serial interval proposed by <a href="https://pubmed.ncbi.nlm.nih.gov/25294601/" class="external-link">Vink et al. 2014</a> can be found <a href="https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.html">here</a>.</p></li>
+<li><p>Validation of the method used to estimate the time-varying reproduction number proposed by <a href="https://doi.org/10.1098/rspb.2006.3754" class="external-link">Wallinga and Lipsitch 2007</a> can be found <a href="https://kylieainslie.github.io/mitey/articles/rt_estimation_validation.html">here</a>.</p></li>
 </ul>
 </div>
 <div class="section level2">
@@ -322,19 +323,8 @@ Click to expand run time information
 <li>
 <code>si_data.rds</code>
 <ul>
-<li>Description: Data on date of symptom onset for scabies outbreaks described by Kaburi et al., Akunzirwe et al., Tjon-Kon-Fat et al., and Ariza et al. For all outbreaks except Kaburi et al. the raw data was not available, thus the date of symptom onset data had to be reconstructed using the epidemic curve provided in the manuscript. The original data from Kaburi et al. is also available in the <code>data</code> directory (<code>Kaburi_et_al_data_scabies.xlsx</code>).</li>
 <li>
-<em>Source</em>:
-<ul>
-<li>
-<a href="https://doi.org/10.1186/s12889-019-7085-6" class="external-link">Kaburi et al.</a>,</li>
-<li>
-<a href="https://doi.org/10.21203/rs.3.rs-3205380/v1" class="external-link">Akunzirwe et al.</a>,</li>
-<li><a href="https://doi.org/10.1371/journal.pntd.0009485" class="external-link">Tjon-Kon-Fat et al.</a></li>
-<li>
-<a href="https://doi.org/10.1007/s10096-012-1752-1" class="external-link">Ariza et al.</a>.</li>
-</ul>
-</li>
+<em>Description:</em> Data on date of symptom onset for scabies outbreaks described by <a href="https://doi.org/10.1186/s12889-019-7085-6" class="external-link">Kaburi et al.</a>, <a href="https://doi.org/10.21203/rs.3.rs-3205380/v1" class="external-link">Akunzirwe et al.</a>, <a href="https://doi.org/10.1371/journal.pntd.0009485" class="external-link">Tjon-Kon-Fat et al.</a>, and <a href="https://doi.org/10.1007/s10096-012-1752-1" class="external-link">Ariza et al.</a>. For all outbreaks except Kaburi et al. the raw data was not available, thus the date of symptom onset data had to be reconstructed using the epidemic curve provided in the manuscript. The original data from Kaburi et al. is also available in the <code>data</code> directory (<code>Kaburi_et_al_data_scabies.xlsx</code>).</li>
 </ul>
 </li>
 <li>
@@ -351,9 +341,10 @@ Click to expand run time information
 <code>scabies_data_consultation_weekly.xslx</code>
 <ul>
 <li>
-<em>Description:</em> Weekly numbers of persons consulting for scabies (per 100,000 people) from 2011 to 2023 in the Neltherlands as diagnosed by general practitioners (GPs). <em>Note:</em> Individuals in institutions (e.g., care homes, prisons) usually have their own health care provider and are generally not taken into account in GP registrations.</li>
+<em>Description:</em> Weekly numbers of persons consulting for scabies (per 100,000 people) from 2011 to 2023 in the Netherlands as diagnosed by general practitioners (GPs). <em>Note:</em> Individuals in institutions (e.g., care homes, prisons) usually have their own health care provider and are generally not taken into account in GP registrations.</li>
 <li>
-<em>Source:</em> Nivel</li>
+<em>Source:</em> <a href="https://www.nivel.nl/nl" class="external-link">Nivel</a>
+</li>
 </ul>
 </li>
 </ul>
@@ -370,27 +361,27 @@ Click to expand run time information
 <div class="section level4">
 <h4 id="manuscript">Manuscript<a class="anchor" aria-label="anchor" href="#manuscript"></a>
 </h4>
-<p>Ainslie, K.E.C., M. Hooiveld, J. Wallinga. (2025). Estimation of the epidemiological characteristics of scabies. <em>Available at SSRN</em>. <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5184990" class="external-link uri">https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5184990</a></p>
+<p>Ainslie, K.E.C., M. Hooiveld, J. Wallinga. (2025). Estimation of the epidemiological characteristics of scabies. <em>Available at SSRN</em>. <a href="https://dx.doi.org/10.2139/ssrn.5184990" class="external-link uri">https://dx.doi.org/10.2139/ssrn.5184990</a></p>
 </div>
 <div class="section level4">
 <h4 id="software">Software<a class="anchor" aria-label="anchor" href="#software"></a>
 </h4>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"mitey"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite package 'mitey' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   Ainslie K (2025). _mitey: Toolkit to Estimate Infectious Disease</span></span>
-<span><span class="co">#&gt;   Dynamics Parameters_. R package version 0.1.0, commit</span></span>
-<span><span class="co">#&gt;   316a6114e6689f969c75b6f32844762559233ed2,</span></span>
+<span><span class="co">#&gt;   Ainslie K (2025). _mitey: Serial Interval and Case Reproduction</span></span>
+<span><span class="co">#&gt;   Number Estimation_. R package version 0.2.0, commit</span></span>
+<span><span class="co">#&gt;   3e3fde728428bfde8464689f4341baa1221c6207,</span></span>
 <span><span class="co">#&gt;   &lt;https://github.com/kylieainslie/mitey&gt;.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   @Manual{,</span></span>
-<span><span class="co">#&gt;     title = {mitey: Toolkit to Estimate Infectious Disease Dynamics Parameters},</span></span>
+<span><span class="co">#&gt;     title = {mitey: Serial Interval and Case Reproduction Number Estimation},</span></span>
 <span><span class="co">#&gt;     author = {Kylie Ainslie},</span></span>
 <span><span class="co">#&gt;     year = {2025},</span></span>
-<span><span class="co">#&gt;     note = {R package version 0.1.0, commit 316a6114e6689f969c75b6f32844762559233ed2},</span></span>
+<span><span class="co">#&gt;     note = {R package version 0.2.0, commit 3e3fde728428bfde8464689f4341baa1221c6207},</span></span>
 <span><span class="co">#&gt;     url = {https://github.com/kylieainslie/mitey},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
@@ -400,7 +391,7 @@ Click to expand run time information
 <p>For reference, here are the original methodological papers:</p>
 <ul>
 <li>Vink et al. (2014). Serial intervals of respiratory infectious diseases: A systematic review and analysis. American Journal of Epidemiology, 180(9), 865-875.</li>
-<li>Wallinga, J., &amp; Lipsitch, M. (2007). How generation intervals shape the relationship between growth rates and reproductive numbers. Proceedings of the Royal Society B: Biological Sciences, 274(1609), 599-604.</li>
+<li>Wallinga, J., &amp; Lipsitch, M. (2007). How generation intervals shape the relationship between growth rates and reproductive numbers. Proceedings of the Royal Society B: Biological Sciences, 274(1609), 599-604. doi: 10.1098/rspb.2006.3754</li>
 </ul>
 </div>
 </div>
@@ -620,6 +611,7 @@ Click to expand dependency information
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=mitey" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/kylieainslie/mitey/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/kylieainslie/mitey/issues" class="external-link">Report a bug</a></li>
 </ul>
@@ -628,8 +620,7 @@ Click to expand dependency information
 <div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="LICENSE.html">Full license</a></li>
-<li><small>file <a href="LICENSE-text.html">LICENSE</a> | <a href="https://joinup.ec.europa.eu/software/page/eupl" class="external-link">EUPL-1.2</a></small></li>
+<li><a href="https://joinup.ec.europa.eu/software/page/eupl" class="external-link">EUPL-1.2</a></li>
 </ul>
 </div>
 
@@ -644,7 +635,7 @@ Click to expand dependency information
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Kylie Ainslie <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-5419-7206" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Kylie Ainslie <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0000-0001-5419-7206" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 </ul>
 </div>
 
@@ -652,8 +643,10 @@ Click to expand dependency information
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-Check.yaml" class="external-link"><img src="https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-Check.yaml/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12" class="external-link"><img src="https://img.shields.io/badge/License-EUPL%20v1.2-blue.svg" alt="License: EUPL v1.2"></a></li>
+<li><a href="https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12" class="external-link"><img src="https://img.shields.io/badge/License-EUPL%20v1.2-blue.svg" alt="License: EUPL v1.2"></a></li>
 <li><a href="https://doi.org/10.5281/zenodo.15446456" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.15446456.svg" alt="DOI"></a></li>
+<li><a href="https://CRAN.R-project.org/package=mitey" class="external-link"><img src="https://www.r-pkg.org/badges/version/mitey" alt="CRAN status"></a></li>
+<li><a href="https://cran.r-project.org/package=mitey" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/mitey" alt="CRAN downloads"></a></li>
 </ul>
 </div>
 
@@ -666,7 +659,7 @@ Click to expand dependency information
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
