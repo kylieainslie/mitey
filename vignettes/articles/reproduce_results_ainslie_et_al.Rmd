@@ -15,7 +15,7 @@ if (!dir.exists(fig_dir)) dir.create(fig_dir, recursive = TRUE)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"#, 
-  # dev = "tiff",
+  # dev = "pdf",
   # fig.path = paste0(fig_dir, "/"),
   # out.width = "100%",
   # fig.width = 8,
@@ -875,7 +875,7 @@ rt_seasonal <- ggplot() +
   coord_cartesian(ylim = c(0, 3)) +
   labs(
     x = "Date",
-    y = "R",
+    y = "Rt",
     #title = "Seasonal patterns in scabies transmission in the Netherlands",
     #subtitle = "Time-varying reproduction number with seasonal background",
     fill = "Season"
@@ -1345,7 +1345,7 @@ rt_basic_gam <- ggplot(rt_scabies_gam %>%
   coord_cartesian(ylim = c(0, 3)) +
   labs(
     x = "Date",
-    y = "R",
+    y = "Rt",
     color = "Distribution Assumption"
   ) +
   theme_scabies()
