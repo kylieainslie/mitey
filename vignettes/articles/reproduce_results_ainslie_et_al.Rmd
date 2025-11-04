@@ -710,12 +710,46 @@ fig1
 
 <!-- Our growth rate visualization shows both observed data points and model projections on a logarithmic scale. Different colors distinguish historical data from extrapolated predictions, and shaded regions represent confidence intervals. -->
 
+```{r plot_growth_rate_model_fit, eval = FALSE, echo=FALSE}
+# Define colors
+data_color <- "#440154"      # Purple for observed data
+model_color <- "#21908C"     # Teal for model fit
+
+p <- ggplot(scabies_inc_total, aes(x = time)) +
+  # Ribbon for confidence intervals
+  geom_ribbon(aes(ymin = log(lower_fitted), ymax = log(upper_fitted)),
+              fill = model_color, alpha = 0.2) +
+  # Line for fitted values
+  geom_line(aes(y = log(fitted), color = "Model Fit"), 
+            linewidth = 1.2) +
+  # Points for observed data
+  geom_point(aes(y = log(cases), shape = "Observed Data"), 
+             size = 3, color = data_color) +
+  # Labels and theme
+  labs(x = "Year", 
+       y = "Annual Incidence per 1,000 (log scale)",
+       color = NULL,
+       shape = NULL) +
+  scale_color_manual(values = c("Model Fit" = model_color)) +
+  scale_shape_manual(values = c("Observed Data" = 16)) +
+  theme_scabies() +
+  theme(legend.position = "bottom",
+        legend.direction = "horizontal",
+        axis.text.y = element_text(size = 8))
+
+ggsave(paste0(path_name,"scabies_incidence_model_fit.png"), 
+       plot = p, 
+       width = 8, 
+       height = 5, 
+       dpi = 300, 
+       bg = "white")
+```
+
 ```{r fig2, eval = FALSE, echo=FALSE, message = FALSE, warning = FALSE, fig.align='center', fig.cap="Figure 2. Annual scabies incidence per 1000 people from 2011 to 2023 (points) and then projected scabies indcidence per 1000 people for 2024 to 2033 (line) using an exponential growth model with annual growth rate of 0.25 (95% CI: 0.20, 0.30) cases per 1000 people. Shaded regions represent 95% prediction intervals for projected scabies incidence. The y-axis is displayed on the log-scale and represents the natural log of scabies incidence per 1000 people.", out.width="100%"}
 
 # Define the custom palette
 custom_palette <- c("Original Data" = "#440154",
                     "Extrapolated Data" = "#21908C")
-#custom_palette <- c("#21908C", "#440154") # Custom colors
 
 ggplot(data = scabies_plot_df, aes(x = time, y = log(cases), color = type, fill = type)) +
   # Points for the original data
