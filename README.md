@@ -6,6 +6,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-Check.yaml/badge.svg)](https://github.com/kylieainslie/mitey/actions/workflows/R-CMD-Check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/kylieainslie/mitey/graph/badge.svg)](https://codecov.io/gh/kylieainslie/mitey)
 [![License: EUPL
 v1.2](https://img.shields.io/badge/License-EUPL%20v1.2-blue.svg)](https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12)
 ![GitHub Stars](https://img.shields.io/github/stars/kylieainslie/mitey)
@@ -329,14 +330,13 @@ Click to expand dependency information
 |----|----|----|----|
 | **Core Dependencies** |  |  |  |
 |  | `fdrtool` | Half-normal distribution functions (Vink method) | ✅ Yes |
+|  | `ggplot2` | Statistical graphics and visualization | ✅ Yes |
 |  | `stats` | Statistical distribution functions | ✅ Yes |
-|  | `brms` | Bayesian meta-analysis | ✅ Yes |
 | **Data Manipulation** |  |  |  |
 |  | `dplyr` | Data manipulation and grouping | 📦 Suggested |
 |  | `tidyr` | Data reshaping | 📦 Suggested |
 |  | `purrr` | Functional programming tools | 📦 Suggested |
 | **Visualization** |  |  |  |
-|  | `ggplot2` | Statistical graphics | 📦 Suggested |
 |  | `cowplot` | Combining plots | 📦 Suggested |
 |  | `ggridges` | Ridge plots for meta-analysis | 📦 Suggested |
 |  | `viridis` | Color palettes | 📦 Suggested |
@@ -350,7 +350,8 @@ Click to expand dependency information
 |  | `EpiLPS` | Alternative reproduction number methods | 🔬 Development |
 |  | `outbreaks` | Epidemiological datasets for validation | 🔬 Development |
 | **Bayesian Analysis** |  |  |  |
-|  | `tidybayes` | Bayesian posterior visualization | 📊 Vignettes |
+|  | `brms` | Bayesian regression modeling | 📦 Suggested |
+|  | `tidybayes` | Bayesian posterior visualization | 📦 Suggested |
 | **Documentation & Tables** |  |  |  |
 |  | `gt` | Publication-quality tables | 📊 Vignettes |
 |  | `flextable` | Flexible table formatting | 📊 Vignettes |
