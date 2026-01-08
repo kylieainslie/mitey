@@ -66,6 +66,10 @@
 #'             deviation to start the EM algorithm. If \code{NULL} (default), uses the
 #'             sample mean and sample standard deviation of the input data. Providing
 #'             good initial values can improve convergence, especially for challenging datasets
+#' @param tol numeric; convergence tolerance for the EM algorithm. The algorithm stops
+#'            early if the relative change in both mean and standard deviation between
+#'            iterations is less than this value. Set to 0 to disable early stopping
+#'            and always run all \code{n} iterations. Defaults to 1e-6
 #'
 #' @return A named list containing:
 #' \itemize{
@@ -74,6 +78,9 @@
 #'   \item \code{wts}: Numeric vector of estimated component weights representing the
 #'         probability that cases belong to each transmission route. Length depends
 #'         on distribution choice (7 for normal, 4 for gamma)
+#'   \item \code{converged}: Logical indicating whether the algorithm converged before
+#'         reaching the maximum number of iterations
+#'   \item \code{iterations}: Integer indicating the number of iterations performed
 #' }
 #'
 #' @details
@@ -143,13 +150,20 @@
 #' # Example 4: Specify iterations
 #' result_iter <- si_estim(large_icc, n=100)
 #'
+#' # Example 5: Check convergence status
+#' result_conv <- si_estim(large_icc)
+#' if (result_conv$converged) {
+#'   message("Converged in ", result_conv$iterations, " iterations")
+#' }
+#'
 #' }
 #'
 si_estim <- function(
   dat,
   n = 50,
   dist = "normal",
-  init = NULL
+  init = NULL,
+  tol = 1e-6
 ) {
   ## Check inputs
   # Check inputs for NA values
@@ -207,6 +221,11 @@ si_estim <- function(
     stop("Initial standard deviation must be positive.")
   }
 
+  # Check tolerance parameter
+  if (!is.numeric(tol) || length(tol) != 1 || is.na(tol) || !is.finite(tol) || tol < 0) {
+    stop("Tolerance must be a single non-negative finite numeric value.")
+  }
+
   ## Vink et al. implementation code
   j <- length(dat)
   dat <- ifelse(dat == 0, 0.00001, dat)
@@ -229,8 +248,16 @@ si_estim <- function(
   # E-step
   # calculate the absolute probability of interval belonging to a component
 
+  # Initialize convergence tracking
+  converged <- FALSE
+  iterations_used <- n
+
   # Iterations
   for (k in 1:n) {
+    # Store previous values for convergence check
+    mu_prev <- mu
+    sigma_prev <- sigma
+
     tau <- matrix(0, nrow = length(comp_vec), ncol = j)
 
     for (l in 1:j) {
@@ -286,8 +313,27 @@ si_estim <- function(
       sigma <- opt$par[2]
     }
 
-    rtn <- list(mean = mu, sd = sigma, wts = w)
+    # Check for convergence
+    if (tol > 0 && k > 1) {
+      # Calculate relative change in parameters
+      mu_change <- abs(mu - mu_prev) / (abs(mu_prev) + .Machine$double.eps)
+      sigma_change <- abs(sigma - sigma_prev) / (abs(sigma_prev) + .Machine$double.eps)
+
+      if (mu_change < tol && sigma_change < tol) {
+        converged <- TRUE
+        iterations_used <- k
+        break
+      }
+    }
   }
+
+  rtn <- list(
+    mean = mu,
+    sd = sigma,
+    wts = w,
+    converged = converged,
+    iterations = iterations_used
+  )
 
   return(rtn)
 }

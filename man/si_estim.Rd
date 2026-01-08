@@ -4,7 +4,7 @@
 \alias{si_estim}
 \title{Estimate Serial Interval Distribution Using the Vink Method}
 \usage{
-si_estim(dat, n = 50, dist = "normal", init = NULL)
+si_estim(dat, n = 50, dist = "normal", init = NULL, tol = 1e-06)
 }
 \arguments{
 \item{dat}{numeric vector; index case-to-case (ICC) intervals in days. These are
@@ -27,6 +27,11 @@ which is typically sufficient for convergence}
 deviation to start the EM algorithm. If \code{NULL} (default), uses the
 sample mean and sample standard deviation of the input data. Providing
 good initial values can improve convergence, especially for challenging datasets}
+
+\item{tol}{numeric; convergence tolerance for the EM algorithm. The algorithm stops
+early if the relative change in both mean and standard deviation between
+iterations is less than this value. Set to 0 to disable early stopping
+and always run all \code{n} iterations. Defaults to 1e-6}
 }
 \value{
 A named list containing:
@@ -36,6 +41,9 @@ A named list containing:
 \item \code{wts}: Numeric vector of estimated component weights representing the
 probability that cases belong to each transmission route. Length depends
 on distribution choice (7 for normal, 4 for gamma)
+\item \code{converged}: Logical indicating whether the algorithm converged before
+reaching the maximum number of iterations
+\item \code{iterations}: Integer indicating the number of iterations performed
 }
 }
 \description{
@@ -141,6 +149,12 @@ result_custom <- si_estim(large_icc, dist = "normal", init = c(3.0, 1.5))
 
 # Example 4: Specify iterations
 result_iter <- si_estim(large_icc, n=100)
+
+# Example 5: Check convergence status
+result_conv <- si_estim(large_icc)
+if (result_conv$converged) {
+  message("Converged in ", result_conv$iterations, " iterations")
+}
 
 }
 
