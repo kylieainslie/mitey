@@ -1,0 +1,32 @@
+citHeader("To cite mitey in publications, please use:")
+
+bibentry(
+  bibtype = "Manual",
+  title = "mitey: Serial Interval and Case Reproduction Number Estimation",
+  author = person("Kylie", "Ainslie", role = c("aut", "cre")),
+  year = "2025",
+  note = "R package version 0.2.0",
+  url = "https://github.com/kylieainslie/mitey",
+  doi = "10.5281/zenodo.15446456"
+)
+
+bibentry(
+  bibtype = "Article",
+  title = "Estimation of the epidemiological characteristics of scabies",
+  author = c(
+    person("Kylie E. C.", "Ainslie"),
+    person("M.", "Hooiveld"),
+    person("J.", "Wallinga")
+  ),
+  year = "2025",
+  journal = "Available at SSRN",
+  doi = "10.2139/ssrn.5184990",
+  url = "https://dx.doi.org/10.2139/ssrn.5184990",
+  textVersion = paste(
+    "Ainslie, K.E.C., Hooiveld, M., Wallinga, J. (2025).",
+    "Estimation of the epidemiological characteristics of scabies.",
+    "Available at SSRN. https://dx.doi.org/10.2139/ssrn.5184990"
+  )
+)
+
+citFooter("Please cite both the software and the methodology paper when using this package.")

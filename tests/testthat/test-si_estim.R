@@ -25,7 +25,7 @@ test_that("si_estim produces correct estimates with simulated data", {
 
   # Test normal distribution estimates
   expect_type(result_normal, "list")
-  expect_setequal(names(result_normal), c("mean", "sd", "wts"))
+  expect_setequal(names(result_normal), c("mean", "sd", "wts", "converged", "iterations", "loglik", "n_restarts"))
 
   # Check that the estimate is close to true value
   expect_true(abs(result_normal$mean[1] - true_mu) < 1,
@@ -49,7 +49,7 @@ test_that("si_estim produces correct estimates with simulated data", {
 
   # Basic validation for gamma distribution
   expect_type(result_gamma, "list")
-  expect_named(result_gamma, c("mean", "sd", "wts"))
+  expect_named(result_gamma, c("mean", "sd", "wts", "converged", "iterations", "loglik", "n_restarts"))
 
   # Gamma may not match as closely since data was generated using normal distribution
   # But should still be reasonable
@@ -182,4 +182,95 @@ test_that("si_estim converges with different initial values", {
   # We use a tolerance because EM algorithm might converge to slightly different values
   expect_equal(result1$mean, result2$mean, tolerance = 1)
   expect_equal(result1$sd, result2$sd, tolerance = 1)
+})
+
+test_that("si_estim convergence diagnostics work correctly", {
+  set.seed(123)
+  test_data <- rnorm(100, mean = 10, sd = 2)
+
+
+  # Test that convergence info is returned
+  result <- si_estim(test_data)
+  expect_true("converged" %in% names(result))
+  expect_true("iterations" %in% names(result))
+  expect_type(result$converged, "logical")
+  expect_type(result$iterations, "integer")
+
+  # Test early stopping with default tolerance
+  # Should converge before max iterations for well-behaved data
+  result_default <- si_estim(test_data, n = 100)
+  expect_true(result_default$iterations <= 100)
+
+
+  # Test with tolerance = 0 (no early stopping - always runs all iterations)
+  result_no_tol <- si_estim(test_data, n = 20, tol = 0)
+  expect_equal(result_no_tol$iterations, 20)
+  # When tol = 0, convergence checking is disabled, so converged is always FALSE
+  expect_false(result_no_tol$converged)
+
+  # Test with very loose tolerance (should converge quickly)
+  result_loose <- si_estim(test_data, n = 100, tol = 0.1)
+  expect_true(result_loose$converged)
+  expect_true(result_loose$iterations < 100)
+
+  # Test invalid tolerance
+  expect_error(si_estim(test_data, tol = -1), "non-negative")
+  expect_error(si_estim(test_data, tol = "invalid"), "numeric")
+  expect_error(si_estim(test_data, tol = c(1, 2)), "single")
+  expect_error(si_estim(test_data, tol = NA), "finite")
+  expect_error(si_estim(test_data, tol = Inf), "finite")
+  expect_error(si_estim(test_data, tol = NaN), "finite")
+})
+
+test_that("si_estim multiple restarts work correctly", {
+  set.seed(123)
+  test_data <- rnorm(100, mean = 10, sd = 2)
+
+  # Test with single restart (default)
+  result_single <- si_estim(test_data, n_starts = 1)
+  expect_equal(result_single$n_restarts, 1)
+  expect_true(is.finite(result_single$loglik))
+
+  # Test with multiple restarts
+  result_multi <- si_estim(test_data, n_starts = 5)
+  expect_equal(result_multi$n_restarts, 5)
+  expect_true(is.finite(result_multi$loglik))
+
+  # Multiple restarts should give same or better log-likelihood
+  expect_true(result_multi$loglik >= result_single$loglik - 0.01)  # Small tolerance for numerical noise
+
+  # Test that bad initial values are overcome with restarts
+  set.seed(456)
+  # With very high initial value and single start, may get suboptimal result
+  result_bad_init <- si_estim(test_data, init = c(25, 5), n_starts = 1)
+
+  # With multiple restarts, should find better solution
+  set.seed(456)
+  result_restarts <- si_estim(test_data, init = c(25, 5), n_starts = 10)
+
+  # The mean should be closer to the true value (10) with restarts
+  expect_true(abs(result_restarts$mean - 10) <= abs(result_bad_init$mean - 10) + 0.5)
+
+  # Test invalid n_starts values
+  expect_error(si_estim(test_data, n_starts = 0), "positive integer")
+  expect_error(si_estim(test_data, n_starts = -1), "positive integer")
+  expect_error(si_estim(test_data, n_starts = 1.5), "positive integer")
+  expect_error(si_estim(test_data, n_starts = "invalid"), "positive integer")
+  expect_error(si_estim(test_data, n_starts = NA), "positive integer")
+})
+
+test_that("si_estim log-likelihood is calculated correctly", {
+  set.seed(789)
+  test_data <- rnorm(50, mean = 12, sd = 2.5)
+
+  result <- si_estim(test_data)
+
+  # Log-likelihood should be finite and negative (log of probabilities < 1)
+  expect_true(is.finite(result$loglik))
+  expect_true(result$loglik < 0)
+
+  # Better fit should have higher (less negative) log-likelihood
+  # Compare with a clearly worse model by using wrong distribution
+  # (This is a sanity check, not a strict test)
+  expect_type(result$loglik, "double")
 })

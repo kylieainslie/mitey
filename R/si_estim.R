@@ -66,6 +66,17 @@
 #'             deviation to start the EM algorithm. If \code{NULL} (default), uses the
 #'             sample mean and sample standard deviation of the input data. Providing
 #'             good initial values can improve convergence, especially for challenging datasets
+#' @param tol numeric; convergence tolerance for the EM algorithm. The algorithm stops
+#'            early if the relative change in both mean and standard deviation between
+#'            iterations is less than this value. Set to 0 to disable early stopping
+#'            and always run all \code{n} iterations. Defaults to 1e-6
+#' @param n_starts integer; number of random restarts for the EM algorithm. The algorithm
+#'                 can converge to local optima, especially when initial values are far from
+#'                 the true parameters. Using multiple restarts with different starting points
+#'                 helps find the global optimum. The first restart uses the provided \code{init}
+#'                 values (or data-derived values if \code{init = NULL}), and subsequent restarts
+#'                 use random starting points sampled from the data range. The result with the
+#'                 highest log-likelihood is returned. Defaults to 1 (no additional restarts)
 #'
 #' @return A named list containing:
 #' \itemize{
@@ -74,6 +85,11 @@
 #'   \item \code{wts}: Numeric vector of estimated component weights representing the
 #'         probability that cases belong to each transmission route. Length depends
 #'         on distribution choice (7 for normal, 4 for gamma)
+#'   \item \code{converged}: Logical indicating whether the algorithm converged before
+#'         reaching the maximum number of iterations
+#'   \item \code{iterations}: Integer indicating the number of iterations performed
+#'   \item \code{loglik}: Log-likelihood of the fitted model (used for model comparison)
+#'   \item \code{n_restarts}: Number of restarts performed
 #' }
 #'
 #' @details
@@ -143,13 +159,26 @@
 #' # Example 4: Specify iterations
 #' result_iter <- si_estim(large_icc, n=100)
 #'
+#' # Example 5: Check convergence status
+#' result_conv <- si_estim(large_icc)
+#' if (result_conv$converged) {
+#'   message("Converged in ", result_conv$iterations, " iterations")
+#' }
+#'
+#' # Example 6: Use multiple restarts to avoid local optima
+#' # Useful when initial values might be far from true parameters
+#' result_restarts <- si_estim(large_icc, n_starts = 5)
+#' message("Best result from ", result_restarts$n_restarts, " restarts")
+#'
 #' }
 #'
 si_estim <- function(
   dat,
   n = 50,
   dist = "normal",
-  init = NULL
+  init = NULL,
+  tol = 1e-6,
+  n_starts = 1
 ) {
   ## Check inputs
   # Check inputs for NA values
@@ -207,87 +236,199 @@ si_estim <- function(
     stop("Initial standard deviation must be positive.")
   }
 
+  # Check tolerance parameter
+  if (!is.numeric(tol) || length(tol) != 1 || is.na(tol) || !is.finite(tol) || tol < 0) {
+    stop("Tolerance must be a single non-negative finite numeric value.")
+  }
+
+  # Check n_starts parameter
+  if (!is.numeric(n_starts) || length(n_starts) != 1 || is.na(n_starts) ||
+      !is.finite(n_starts) || n_starts < 1 || n_starts != floor(n_starts)) {
+    stop("n_starts must be a positive integer.")
+  }
+  n_starts <- as.integer(n_starts)
+
   ## Vink et al. implementation code
   j <- length(dat)
   dat <- ifelse(dat == 0, 0.00001, dat)
 
-  # Initial guesses
-  if (is.null(init)) {
-    mu <- mean(dat)
-    sigma <- sd(dat)
-  } else {
-    mu <- init[1]
-    sigma <- init[2]
-  }
-  # components depend on specified distribution
+  # Components depend on specified distribution
   if (dist == "normal") {
     comp_vec <- 1:7
   } else if (dist == "gamma") {
     comp_vec <- c(1, 2, 4, 6)
   }
 
-  # E-step
-  # calculate the absolute probability of interval belonging to a component
+  # Data-derived bounds for random starting points
+  data_sd <- sd(dat)
+  data_range <- range(dat)
 
-  # Iterations
-  for (k in 1:n) {
-    tau <- matrix(0, nrow = length(comp_vec), ncol = j)
+  # Generate starting points for multiple restarts
+  starting_points <- vector("list", n_starts)
 
-    for (l in 1:j) {
-      if (dat[l] == 0.00001) {
-        for (comp in 1:length(comp_vec)) {
-          tau[comp, l] <- integrate_component(
-            dat[l],
-            mu,
-            sigma,
-            comp = comp_vec[comp],
-            dist = dist,
-            lower = FALSE
-          )
+  # First starting point: user-provided or data-derived
+  starting_points[[1]] <- init  # Already set to c(mean(dat), sd(dat)) if NULL
+
+  # Additional random starting points
+  if (n_starts > 1) {
+    for (s in 2:n_starts) {
+      # Random mean within data range
+      mu_start <- stats::runif(1, min = data_range[1], max = data_range[2])
+      # Random SD between 0.5x and 2x the data SD
+      sigma_start <- stats::runif(1, min = data_sd * 0.5, max = data_sd * 2)
+      starting_points[[s]] <- c(mu_start, sigma_start)
+    }
+  }
+
+  # Helper function to run a single EM
+  run_single_em <- function(mu_init, sigma_init) {
+    mu <- mu_init
+    sigma <- sigma_init
+    converged <- FALSE
+    iterations_used <- n
+
+    for (k in 1:n) {
+      mu_prev <- mu
+      sigma_prev <- sigma
+
+      tau <- matrix(0, nrow = length(comp_vec), ncol = j)
+
+      for (l in 1:j) {
+        if (dat[l] == 0.00001) {
+          for (comp in seq_along(comp_vec)) {
+            tau[comp, l] <- integrate_component(
+              dat[l], mu, sigma,
+              comp = comp_vec[comp], dist = dist, lower = FALSE
+            )
+          }
+        } else {
+          for (comp in seq_along(comp_vec)) {
+            tau[comp, l] <- integrate_component(
+              dat[l], mu, sigma,
+              comp = comp_vec[comp], dist = dist, lower = TRUE
+            )
+          }
         }
-      } else {
-        for (comp in 1:length(comp_vec)) {
-          tau[comp, l] <- integrate_component(
-            dat[l],
-            mu,
-            sigma,
-            comp = comp_vec[comp],
-            dist = dist,
-            lower = TRUE
-          )
+      }
+
+      # Normalize tau
+      denom <- colSums(tau)
+      tau <- sweep(tau, 2, denom, "/")
+
+      # Calculate the weights
+      w <- rowSums(tau) / j
+
+      # Update parameters
+      if (dist == "normal") {
+        mu <- weighted.mean(dat, tau[2, ])
+        sigma <- sqrt(weighted_var(dat, tau[2, ]))
+      } else if (dist == "gamma") {
+        opt <- optim(
+          par = c(mu, sigma),
+          wt_loglik,
+          tau2 = tau[2, ],
+          dat = dat,
+          gr = NULL,
+          method = "BFGS",
+          hessian = FALSE
+        )
+        mu <- opt$par[1]
+        sigma <- opt$par[2]
+      }
+
+      # Check for convergence
+      if (tol > 0 && k > 1) {
+        mu_change <- abs(mu - mu_prev) / (abs(mu_prev) + .Machine$double.eps)
+        sigma_change <- abs(sigma - sigma_prev) / (abs(sigma_prev) + .Machine$double.eps)
+
+        if (mu_change < tol && sigma_change < tol) {
+          converged <- TRUE
+          iterations_used <- k
+          break
         }
       }
     }
 
-    # Normalize tau
-    denom <- colSums(tau)
-    tau <- sweep(tau, 2, denom, "/")
+    # Calculate log-likelihood for model comparison
+    loglik <- calculate_mixture_loglik(dat, mu, sigma, w, comp_vec, dist)
 
-    # Calculate the weights
-    w <- rowSums(tau) / j
-
-    # update parameters
-    if (dist == "normal") {
-      mu <- weighted.mean(dat, tau[2, ])
-      sigma <- sqrt(weighted_var(dat, tau[2, ]))
-    } else if (dist == "gamma") {
-      # estimates for the mean and standard deviation of the primary-secondary
-      # infection component
-      opt <- optim(
-        par = c(mu, sigma),
-        wt_loglik,
-        tau2 = tau[2, ],
-        dat = dat,
-        gr = NULL,
-        method = c("BFGS"),
-        hessian = FALSE
-      )
-      mu <- opt$par[1]
-      sigma <- opt$par[2]
-    }
-
-    rtn <- list(mean = mu, sd = sigma, wts = w)
+    list(
+      mean = mu,
+      sd = sigma,
+      wts = w,
+      converged = converged,
+      iterations = iterations_used,
+      loglik = loglik
+    )
   }
 
-  return(rtn)
+  # Run EM for each starting point and keep track of results
+  best_result <- NULL
+  best_loglik <- -Inf
+
+  for (s in seq_len(n_starts)) {
+    result <- run_single_em(starting_points[[s]][1], starting_points[[s]][2])
+
+    if (is.finite(result$loglik) && result$loglik > best_loglik) {
+      best_loglik <- result$loglik
+      best_result <- result
+    }
+  }
+
+  # If no valid result found (shouldn't happen), use the last result
+
+  if (is.null(best_result)) {
+    best_result <- result
+  }
+
+  # Add n_restarts to output
+  best_result$n_restarts <- n_starts
+
+  return(best_result)
+}
+
+#' Calculate Log-Likelihood for Mixture Model
+#'
+#' Internal function to calculate the log-likelihood of the fitted mixture model.
+#'
+#' @param dat numeric vector; the data
+#' @param mu numeric; estimated mean
+#' @param sigma numeric; estimated standard deviation
+#' @param wts numeric vector; component weights
+#' @param comp_vec integer vector; component indices
+#' @param dist character; distribution type ("normal" or "gamma")
+#'
+#' @return numeric; log-likelihood value
+#' @keywords internal
+calculate_mixture_loglik <- function(dat, mu, sigma, wts, comp_vec, dist) {
+  j <- length(dat)
+  loglik <- 0
+
+  for (l in 1:j) {
+    # Calculate probability for each component
+    prob <- 0
+    for (comp_idx in seq_along(comp_vec)) {
+      comp <- comp_vec[comp_idx]
+      if (dat[l] == 0.00001) {
+        comp_prob <- integrate_component(
+          dat[l], mu, sigma,
+          comp = comp, dist = dist, lower = FALSE
+        )
+      } else {
+        comp_prob <- integrate_component(
+          dat[l], mu, sigma,
+          comp = comp, dist = dist, lower = TRUE
+        )
+      }
+      prob <- prob + wts[comp_idx] * comp_prob
+    }
+
+    if (prob > 0) {
+      loglik <- loglik + log(prob)
+    } else {
+      loglik <- loglik + log(.Machine$double.xmin)  # Avoid -Inf
+    }
+  }
+
+  return(loglik)
 }
