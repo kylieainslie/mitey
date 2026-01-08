@@ -9,7 +9,7 @@ onset in a secondary case infected by that primary case.
 ## Usage
 
 ``` r
-si_estim(dat, n = 50, dist = "normal", init = NULL)
+si_estim(dat, n = 50, dist = "normal", init = NULL, tol = 1e-06, n_starts = 1)
 ```
 
 ## Arguments
@@ -48,6 +48,24 @@ si_estim(dat, n = 50, dist = "normal", init = NULL)
   good initial values can improve convergence, especially for
   challenging datasets
 
+- tol:
+
+  numeric; convergence tolerance for the EM algorithm. The algorithm
+  stops early if the relative change in both mean and standard deviation
+  between iterations is less than this value. Set to 0 to disable early
+  stopping and always run all `n` iterations. Defaults to 1e-6
+
+- n_starts:
+
+  integer; number of random restarts for the EM algorithm. The algorithm
+  can converge to local optima, especially when initial values are far
+  from the true parameters. Using multiple restarts with different
+  starting points helps find the global optimum. The first restart uses
+  the provided `init` values (or data-derived values if `init = NULL`),
+  and subsequent restarts use random starting points sampled from the
+  data range. The result with the highest log-likelihood is returned.
+  Defaults to 1 (no additional restarts)
+
 ## Value
 
 A named list containing:
@@ -60,6 +78,16 @@ A named list containing:
 - `wts`: Numeric vector of estimated component weights representing the
   probability that cases belong to each transmission route. Length
   depends on distribution choice (7 for normal, 4 for gamma)
+
+- `converged`: Logical indicating whether the algorithm converged before
+  reaching the maximum number of iterations
+
+- `iterations`: Integer indicating the number of iterations performed
+
+- `loglik`: Log-likelihood of the fitted model (used for model
+  comparison)
+
+- `n_restarts`: Number of restarts performed
 
 ## Details
 
@@ -186,6 +214,19 @@ result_custom <- si_estim(large_icc, dist = "normal", init = c(3.0, 1.5))
 
 # Example 4: Specify iterations
 result_iter <- si_estim(large_icc, n=100)
+
+# Example 5: Check convergence status
+result_conv <- si_estim(large_icc)
+if (result_conv$converged) {
+  message("Converged in ", result_conv$iterations, " iterations")
+}
+#> Converged in 32 iterations
+
+# Example 6: Use multiple restarts to avoid local optima
+# Useful when initial values might be far from true parameters
+result_restarts <- si_estim(large_icc, n_starts = 5)
+message("Best result from ", result_restarts$n_restarts, " restarts")
+#> Best result from 5 restarts
 
 # }
 ```

@@ -326,11 +326,23 @@ datasets from other infectious diseases.
     #> [1] 15.16373
     #> 
     #> $sd
-    #> [1] 2.823293
+    #> [1] 2.823294
     #> 
     #> $wts
-    #> [1] 2.113966e-01 4.841131e-01 7.836824e-09 2.021913e-01 3.062666e-15
-    #> [6] 1.022991e-01 1.368660e-21
+    #> [1] 2.113968e-01 4.841131e-01 7.836949e-09 2.021913e-01 3.062759e-15
+    #> [6] 1.022988e-01 1.368720e-21
+    #> 
+    #> $converged
+    #> [1] TRUE
+    #> 
+    #> $iterations
+    #> [1] 15
+    #> 
+    #> $loglik
+    #> [1] -18388.53
+    #> 
+    #> $n_restarts
+    #> [1] 1
 
     #> `summarise()` has grouped output by 'Author', 'Pathogen'. You can override
     #> using the `.groups` argument.
@@ -590,7 +602,7 @@ fig1 <- plot_grid(final_plot, forest_plot,
                   ncol = 2, 
                   rel_widths = c(1.2, 0.9),
                   labels = c("", "E"))
-#> Picking joint bandwidth of 0.591
+#> Picking joint bandwidth of 0.577
 fig1
 ```
 

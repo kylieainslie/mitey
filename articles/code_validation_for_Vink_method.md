@@ -79,21 +79,38 @@ results
 #> [1] 15.03357
 #> 
 #> $sd
-#> [1] 2.786672
+#> [1] 2.786673
 #> 
 #> $wts
-#> [1] 2.100299e-01 4.823883e-01 6.706310e-09 2.003141e-01 2.304775e-15
-#> [6] 1.072676e-01 9.057491e-22
+#> [1] 2.100300e-01 4.823883e-01 6.706403e-09 2.003142e-01 2.304835e-15
+#> [6] 1.072674e-01 9.057840e-22
+#> 
+#> $converged
+#> [1] TRUE
+#> 
+#> $iterations
+#> [1] 15
+#> 
+#> $loglik
+#> [1] -36757.5
+#> 
+#> $n_restarts
+#> [1] 1
 ```
 
-The output of `si_estim` is a named list with elements `mean`, `sd`, and
-`wts`, which contain the estimated mean, standard deviation, and weights
-of the serial interval distribution, respectively. We see that using the
-simulated data and assuming an underlying normal distribution, we obtain
-estimates very close to the input values: a mean serial interval
-estimate of 15.03 and a standard deviation of 2.79. We are also able to
-recapture the input weights: hw1 = 0.21, hw2 = 0.48, hw3 = 0.2, hw4 =
-0.11.
+The output of `si_estim` is a named list with elements `mean`, `sd`,
+`wts`, `converged`, `iterations`, `loglik`, and `n_restarts`. The first
+three contain the estimated mean, standard deviation, and weights of the
+serial interval distribution, respectively. The additional fields
+provide convergence diagnostics: `converged` indicates whether the EM
+algorithm converged before reaching maximum iterations, `iterations`
+shows how many iterations were performed, `loglik` provides the
+log-likelihood for model comparison, and `n_restarts` indicates how many
+random restarts were used. We see that using the simulated data and
+assuming an underlying normal distribution, we obtain estimates very
+close to the input values: a mean serial interval estimate of 15.03 and
+a standard deviation of 2.79. We are also able to recapture the input
+weights: hw1 = 0.21, hw2 = 0.48, hw3 = 0.2, hw4 = 0.11.
 
 Using the `plot_si_fit` function, we can use the outputs of `si_estim`
 to plot the fitted serial interval over the symptom onset data.

@@ -37,22 +37,27 @@ devtools::install_github("kylieainslie/mitey")
 system.time({
   devtools::install_github("kylieainslie/mitey", force = TRUE)
 })
-#> Using GitHub PAT from the git credential store.
 #> Downloading GitHub repo kylieainslie/mitey@HEAD
+#> S7      (0.2.0 -> 0.2.1) [CRAN]
+#> isoband (0.2.7 -> 0.3.0) [CRAN]
+#> ggplot2 (3.5.2 -> 4.0.1) [CRAN]
+#> Installing 3 packages: S7, isoband, ggplot2
+#> Installing packages into '/private/var/folders/mj/bgmp7wbj0lg4flz9332ysybc0000gp/T/Rtmp7pPsZ9/temp_libpathe51a46c68b69'
+#> (as 'lib' is unspecified)
 #> 
+#> The downloaded binary packages are in
+#>  /var/folders/mj/bgmp7wbj0lg4flz9332ysybc0000gp/T//RtmpCMIR6r/downloaded_packages
 #> ── R CMD build ─────────────────────────────────────────────────────────────────
-#>      checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpkJdeHU/remotes125daed29fb3/kylieainslie-mitey-3e3fde7/DESCRIPTION’ ...  ✔  checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpkJdeHU/remotes125daed29fb3/kylieainslie-mitey-3e3fde7/DESCRIPTION’
-#>   ─  preparing ‘mitey’:
-#>    checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information
-#>   ─  checking for LF line-endings in source and make files and shell scripts
-#>   ─  checking for empty or unneeded directories
-#>   ─  building ‘mitey_0.2.0.tar.gz’
-#>      
-#> 
-#> Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpEzLPBZ/temp_libpath12352657de0c4'
+#> * checking for file ‘/private/var/folders/mj/bgmp7wbj0lg4flz9332ysybc0000gp/T/RtmpCMIR6r/remotese5b12706aafc/kylieainslie-mitey-e8cb065/DESCRIPTION’ ... OK
+#> * preparing ‘mitey’:
+#> * checking DESCRIPTION meta-information ... OK
+#> * checking for LF line-endings in source and make files and shell scripts
+#> * checking for empty or unneeded directories
+#> * building ‘mitey_0.2.0.9000.tar.gz’
+#> Installing package into '/private/var/folders/mj/bgmp7wbj0lg4flz9332ysybc0000gp/T/Rtmp7pPsZ9/temp_libpathe51a46c68b69'
 #> (as 'lib' is unspecified)
 #>    user  system elapsed 
-#>   2.906   0.504   5.140
+#>   3.986   1.083  14.172
 ```
 
 ## Main Functions
@@ -259,9 +264,8 @@ citation("mitey")
 #> To cite package 'mitey' in publications use:
 #> 
 #>   Ainslie K (2025). _mitey: Serial Interval and Case Reproduction
-#>   Number Estimation_. R package version 0.2.0, commit
-#>   3e3fde728428bfde8464689f4341baa1221c6207,
-#>   <https://github.com/kylieainslie/mitey>.
+#>   Number Estimation_. https://github.com/kylieainslie/mitey,
+#>   https://kylieainslie.github.io/mitey/.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -269,8 +273,8 @@ citation("mitey")
 #>     title = {mitey: Serial Interval and Case Reproduction Number Estimation},
 #>     author = {Kylie Ainslie},
 #>     year = {2025},
-#>     note = {R package version 0.2.0, commit 3e3fde728428bfde8464689f4341baa1221c6207},
-#>     url = {https://github.com/kylieainslie/mitey},
+#>     note = {https://github.com/kylieainslie/mitey,
+#> https://kylieainslie.github.io/mitey/},
 #>   }
 ```
 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mitey</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,6 +40,23 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="mitey-development-version">mitey (development version)<a class="anchor" aria-label="anchor" href="#mitey-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.0" id="mitey-030">mitey 0.3.0<a class="anchor" aria-label="anchor" href="#mitey-030"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-3-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-3-0"></a></h3>
+<ul><li><p><strong>Multiple restarts for EM algorithm</strong> - Added <code>n_starts</code> parameter to <code><a href="../reference/si_estim.html">si_estim()</a></code> to run the EM algorithm from multiple starting points and select the best result based on log-likelihood. This helps avoid local optima when initial values are far from the true parameters (fixes <a href="https://github.com/kylieainslie/mitey/issues/7" class="external-link">#7</a>)</p></li>
+<li><p><strong>Convergence diagnostics</strong> - Added <code>tol</code> parameter to <code><a href="../reference/si_estim.html">si_estim()</a></code> for early stopping when parameters stabilize. Returns <code>converged</code> and <code>iterations</code> in output</p></li>
+<li><p><strong>Log-likelihood output</strong> - <code><a href="../reference/si_estim.html">si_estim()</a></code> now returns <code>loglik</code> for model comparison</p></li>
+<li><p><strong>CITATION file</strong> - Added proper citation information with Zenodo DOI and methodology paper reference</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="improvements-0-3-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-3-0"></a></h3>
+<ul><li>Expanded test coverage with new tests for <code><a href="../reference/generate_synthetic_epidemic.html">generate_synthetic_epidemic()</a></code>, <code><a href="../reference/plot_si_fit.html">plot_si_fit()</a></code>, convergence diagnostics, and multiple restarts</li>
+<li>Updated R version requirement to R &gt;= 4.0.0</li>
+<li>Fixed dependency table in README (ggplot2 is required, brms is suggested)</li>
+<li>Added codecov integration for test coverage reporting</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.0" id="mitey-020">mitey 0.2.0<a class="anchor" aria-label="anchor" href="#mitey-020"></a></h2><p class="text-muted">CRAN release: 2025-09-02</p>

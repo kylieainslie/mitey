@@ -13,7 +13,7 @@ in a primary case and symptom onset in a secondary case infected by that primary
 
     <a class="navbar-brand me-2" href="../index.html">mitey</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,7 @@ in a primary case and symptom onset in a secondary case infected by that primary
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">si_estim</span><span class="op">(</span><span class="va">dat</span>, n <span class="op">=</span> <span class="fl">50</span>, dist <span class="op">=</span> <span class="st">"normal"</span>, init <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">si_estim</span><span class="op">(</span><span class="va">dat</span>, n <span class="op">=</span> <span class="fl">50</span>, dist <span class="op">=</span> <span class="st">"normal"</span>, init <span class="op">=</span> <span class="cn">NULL</span>, tol <span class="op">=</span> <span class="fl">1e-06</span>, n_starts <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -87,6 +87,23 @@ deviation to start the EM algorithm. If <code>NULL</code> (default), uses the
 sample mean and sample standard deviation of the input data. Providing
 good initial values can improve convergence, especially for challenging datasets</p></dd>
 
+
+<dt id="arg-tol">tol<a class="anchor" aria-label="anchor" href="#arg-tol"></a></dt>
+<dd><p>numeric; convergence tolerance for the EM algorithm. The algorithm stops
+early if the relative change in both mean and standard deviation between
+iterations is less than this value. Set to 0 to disable early stopping
+and always run all <code>n</code> iterations. Defaults to 1e-6</p></dd>
+
+
+<dt id="arg-n-starts">n_starts<a class="anchor" aria-label="anchor" href="#arg-n-starts"></a></dt>
+<dd><p>integer; number of random restarts for the EM algorithm. The algorithm
+can converge to local optima, especially when initial values are far from
+the true parameters. Using multiple restarts with different starting points
+helps find the global optimum. The first restart uses the provided <code>init</code>
+values (or data-derived values if <code>init = NULL</code>), and subsequent restarts
+use random starting points sampled from the data range. The result with the
+highest log-likelihood is returned. Defaults to 1 (no additional restarts)</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -95,6 +112,11 @@ good initial values can improve convergence, especially for challenging datasets
 <li><p><code>wts</code>: Numeric vector of estimated component weights representing the
 probability that cases belong to each transmission route. Length depends
 on distribution choice (7 for normal, 4 for gamma)</p></li>
+<li><p><code>converged</code>: Logical indicating whether the algorithm converged before
+reaching the maximum number of iterations</p></li>
+<li><p><code>iterations</code>: Integer indicating the number of iterations performed</p></li>
+<li><p><code>loglik</code>: Log-likelihood of the fitted model (used for model comparison)</p></li>
+<li><p><code>n_restarts</code>: Number of restarts performed</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -180,6 +202,19 @@ diseases: A systematic review and analysis. American Journal of Epidemiology,
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Example 4: Specify iterations</span></span></span>
 <span class="r-in"><span><span class="va">result_iter</span> <span class="op">&lt;-</span> <span class="fu">si_estim</span><span class="op">(</span><span class="va">large_icc</span>, n<span class="op">=</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example 5: Check convergence status</span></span></span>
+<span class="r-in"><span><span class="va">result_conv</span> <span class="op">&lt;-</span> <span class="fu">si_estim</span><span class="op">(</span><span class="va">large_icc</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="va">result_conv</span><span class="op">$</span><span class="va">converged</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Converged in "</span>, <span class="va">result_conv</span><span class="op">$</span><span class="va">iterations</span>, <span class="st">" iterations"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Converged in 32 iterations</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example 6: Use multiple restarts to avoid local optima</span></span></span>
+<span class="r-in"><span><span class="co"># Useful when initial values might be far from true parameters</span></span></span>
+<span class="r-in"><span><span class="va">result_restarts</span> <span class="op">&lt;-</span> <span class="fu">si_estim</span><span class="op">(</span><span class="va">large_icc</span>, n_starts <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Best result from "</span>, <span class="va">result_restarts</span><span class="op">$</span><span class="va">n_restarts</span>, <span class="st">" restarts"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Best result from 5 restarts</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>

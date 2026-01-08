@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="index.html">mitey</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,22 +81,27 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"kylieainslie/mitey"</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Using GitHub PAT from the git credential store.</span></span>
 <span><span class="co">#&gt; Downloading GitHub repo kylieainslie/mitey@HEAD</span></span>
+<span><span class="co">#&gt; S7      (0.2.0 -&gt; 0.2.1) [CRAN]</span></span>
+<span><span class="co">#&gt; isoband (0.2.7 -&gt; 0.3.0) [CRAN]</span></span>
+<span><span class="co">#&gt; ggplot2 (3.5.2 -&gt; 4.0.1) [CRAN]</span></span>
+<span><span class="co">#&gt; Installing 3 packages: S7, isoband, ggplot2</span></span>
+<span><span class="co">#&gt; Installing packages into '/private/var/folders/mj/bgmp7wbj0lg4flz9332ysybc0000gp/T/Rtmp7pPsZ9/temp_libpathe51a46c68b69'</span></span>
+<span><span class="co">#&gt; (as 'lib' is unspecified)</span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; The downloaded binary packages are in</span></span>
+<span><span class="co">#&gt;  /var/folders/mj/bgmp7wbj0lg4flz9332ysybc0000gp/T//RtmpCMIR6r/downloaded_packages</span></span>
 <span><span class="co">#&gt; ── R CMD build ─────────────────────────────────────────────────────────────────</span></span>
-<span><span class="co">#&gt;      checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpkJdeHU/remotes125daed29fb3/kylieainslie-mitey-3e3fde7/DESCRIPTION’ ...  ✔  checking for file ‘/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpkJdeHU/remotes125daed29fb3/kylieainslie-mitey-3e3fde7/DESCRIPTION’</span></span>
-<span><span class="co">#&gt;   ─  preparing ‘mitey’:</span></span>
-<span><span class="co">#&gt;    checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information</span></span>
-<span><span class="co">#&gt;   ─  checking for LF line-endings in source and make files and shell scripts</span></span>
-<span><span class="co">#&gt;   ─  checking for empty or unneeded directories</span></span>
-<span><span class="co">#&gt;   ─  building ‘mitey_0.2.0.tar.gz’</span></span>
-<span><span class="co">#&gt;      </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Installing package into '/private/var/folders/jt/rd3vkwv92yq6x0kb9k4m91zm0000gn/T/RtmpEzLPBZ/temp_libpath12352657de0c4'</span></span>
+<span><span class="co">#&gt; * checking for file ‘/private/var/folders/mj/bgmp7wbj0lg4flz9332ysybc0000gp/T/RtmpCMIR6r/remotese5b12706aafc/kylieainslie-mitey-e8cb065/DESCRIPTION’ ... OK</span></span>
+<span><span class="co">#&gt; * preparing ‘mitey’:</span></span>
+<span><span class="co">#&gt; * checking DESCRIPTION meta-information ... OK</span></span>
+<span><span class="co">#&gt; * checking for LF line-endings in source and make files and shell scripts</span></span>
+<span><span class="co">#&gt; * checking for empty or unneeded directories</span></span>
+<span><span class="co">#&gt; * building ‘mitey_0.2.0.9000.tar.gz’</span></span>
+<span><span class="co">#&gt; Installing package into '/private/var/folders/mj/bgmp7wbj0lg4flz9332ysybc0000gp/T/Rtmp7pPsZ9/temp_libpathe51a46c68b69'</span></span>
 <span><span class="co">#&gt; (as 'lib' is unspecified)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   2.906   0.504   5.140</span></span></code></pre></div>
+<span><span class="co">#&gt;   3.986   1.083  14.172</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -371,9 +376,8 @@ Click to expand run time information
 <span><span class="co">#&gt; To cite package 'mitey' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   Ainslie K (2025). _mitey: Serial Interval and Case Reproduction</span></span>
-<span><span class="co">#&gt;   Number Estimation_. R package version 0.2.0, commit</span></span>
-<span><span class="co">#&gt;   3e3fde728428bfde8464689f4341baa1221c6207,</span></span>
-<span><span class="co">#&gt;   &lt;https://github.com/kylieainslie/mitey&gt;.</span></span>
+<span><span class="co">#&gt;   Number Estimation_. https://github.com/kylieainslie/mitey,</span></span>
+<span><span class="co">#&gt;   https://kylieainslie.github.io/mitey/.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -381,8 +385,8 @@ Click to expand run time information
 <span><span class="co">#&gt;     title = {mitey: Serial Interval and Case Reproduction Number Estimation},</span></span>
 <span><span class="co">#&gt;     author = {Kylie Ainslie},</span></span>
 <span><span class="co">#&gt;     year = {2025},</span></span>
-<span><span class="co">#&gt;     note = {R package version 0.2.0, commit 3e3fde728428bfde8464689f4341baa1221c6207},</span></span>
-<span><span class="co">#&gt;     url = {https://github.com/kylieainslie/mitey},</span></span>
+<span><span class="co">#&gt;     note = {https://github.com/kylieainslie/mitey,</span></span>
+<span><span class="co">#&gt; https://kylieainslie.github.io/mitey/},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
 <div class="section level4">

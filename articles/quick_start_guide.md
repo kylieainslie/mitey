@@ -102,11 +102,23 @@ si_results
 #> [1] 15.27227
 #> 
 #> $sd
-#> [1] 2.668236
+#> [1] 2.668237
 #> 
 #> $wts
-#> [1] 2.069240e-01 4.928008e-01 7.268046e-10 2.006243e-01 4.020051e-17
-#> [6] 9.965094e-02 2.539582e-24
+#> [1] 2.069240e-01 4.928008e-01 7.268157e-10 2.006244e-01 4.020168e-17
+#> [6] 9.965078e-02 2.539691e-24
+#> 
+#> $converged
+#> [1] TRUE
+#> 
+#> $iterations
+#> [1] 14
+#> 
+#> $loglik
+#> [1] -1844.759
+#> 
+#> $n_restarts
+#> [1] 1
 ```
 
     #> True parameters:
@@ -124,6 +136,12 @@ transmission routes. The output includes:
 - `mean`: Estimated mean serial interval (days)
 - `sd`: Estimated standard deviation (days)
 - `wts`: Weights for each transmission component in the mixture model
+- `converged`: Whether the EM algorithm converged before reaching
+  maximum iterations
+- `iterations`: Number of iterations performed
+- `loglik`: Log-likelihood of the fitted model (useful for model
+  comparison)
+- `n_restarts`: Number of random restarts performed
 
 The choice between normal and gamma distributions for the serial
 interval depends on the disease characteristics. Normal distributions
@@ -158,6 +176,90 @@ plot_si_fit(
 The red curve shows the fitted mixture density, with the dashed vertical
 line indicating the estimated mean serial interval. Our estimation
 accurately recovers the true parameters from the simulated data.
+
+### Advanced Features: Convergence Diagnostics and Multiple Restarts
+
+#### Convergence Diagnostics
+
+The
+[`si_estim()`](https://kylieainslie.github.io/mitey/reference/si_estim.md)
+function includes convergence diagnostics to help you understand how the
+EM algorithm performed. You can control convergence behavior with the
+`tol` parameter:
+
+``` r
+# Check convergence information from our previous result
+cat("Converged:", si_results$converged, "\n")
+#> Converged: TRUE
+cat("Iterations used:", si_results$iterations, "out of 50 (default max)\n")
+#> Iterations used: 14 out of 50 (default max)
+cat("Log-likelihood:", round(si_results$loglik, 2), "\n")
+#> Log-likelihood: -1844.76
+```
+
+The algorithm uses early stopping when the relative change in parameters
+falls below the tolerance threshold (default `tol = 1e-6`). This can
+significantly speed up estimation for well-behaved data:
+
+``` r
+# Compare with no early stopping (tol = 0)
+si_no_early_stop <- si_estim(sim_icc_intervals, dist = "normal", n = 50, tol = 0)
+
+cat("With early stopping: ", si_results$iterations, " iterations\n")
+#> With early stopping:  14  iterations
+cat("Without early stopping:", si_no_early_stop$iterations, " iterations\n")
+#> Without early stopping: 50  iterations
+cat("Results are identical:",
+    all.equal(si_results$mean, si_no_early_stop$mean, tolerance = 1e-5), "\n")
+#> Results are identical: TRUE
+```
+
+#### Multiple Restarts for Robust Estimation
+
+The EM algorithm can sometimes converge to local optima, especially when
+initial values are far from the true parameters. The `n_starts`
+parameter allows you to run the algorithm from multiple random starting
+points:
+
+``` r
+set.seed(456)
+
+# Single restart with poor initial values
+result_single <- si_estim(sim_icc_intervals, init = c(30, 8), n_starts = 1)
+
+# Multiple restarts - algorithm explores parameter space more thoroughly
+result_multi <- si_estim(sim_icc_intervals, init = c(30, 8), n_starts = 5)
+
+cat("Single restart:\n")
+#> Single restart:
+cat("  Mean:", round(result_single$mean, 2), ", SD:", round(result_single$sd, 2), "\n")
+#>   Mean: 15.27 , SD: 2.67
+cat("  Log-likelihood:", round(result_single$loglik, 2), "\n\n")
+#>   Log-likelihood: -1844.76
+
+cat("Multiple restarts (n_starts = 5):\n")
+#> Multiple restarts (n_starts = 5):
+cat("  Mean:", round(result_multi$mean, 2), ", SD:", round(result_multi$sd, 2), "\n")
+#>   Mean: 15.27 , SD: 2.67
+cat("  Log-likelihood:", round(result_multi$loglik, 2), "\n")
+#>   Log-likelihood: -1844.76
+cat("  (Best result selected from", result_multi$n_restarts, "restarts)\n")
+#>   (Best result selected from 5 restarts)
+```
+
+When using multiple restarts:
+
+- The first restart uses your provided initial values (or data-derived
+  values if `init = NULL`)
+- Additional restarts use random starting points sampled from the data
+  range
+- The result with the highest log-likelihood is returned
+
+This is particularly useful when:
+
+- You’re unsure about good starting values
+- The data might have multiple local optima
+- You want to verify that your estimates are robust
 
 ### Real Data Example: Scabies Outbreaks
 

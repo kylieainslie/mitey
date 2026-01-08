@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mitey</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -175,11 +175,23 @@ tertiary cases between two cases</li>
 <span><span class="co">#&gt; [1] 15.27227</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sd</span></span>
-<span><span class="co">#&gt; [1] 2.668236</span></span>
+<span><span class="co">#&gt; [1] 2.668237</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $wts</span></span>
-<span><span class="co">#&gt; [1] 2.069240e-01 4.928008e-01 7.268046e-10 2.006243e-01 4.020051e-17</span></span>
-<span><span class="co">#&gt; [6] 9.965094e-02 2.539582e-24</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 2.069240e-01 4.928008e-01 7.268157e-10 2.006244e-01 4.020168e-17</span></span>
+<span><span class="co">#&gt; [6] 9.965078e-02 2.539691e-24</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $converged</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $iterations</span></span>
+<span><span class="co">#&gt; [1] 14</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $loglik</span></span>
+<span><span class="co">#&gt; [1] -1844.759</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $n_restarts</span></span>
+<span><span class="co">#&gt; [1] 1</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; True parameters:</span></span>
 <span><span class="co">#&gt; Mean: 15 days</span></span>
 <span><span class="co">#&gt; SD: 3 days</span></span>
@@ -197,6 +209,16 @@ includes:</p>
 <li>
 <code>wts</code>: Weights for each transmission component in the
 mixture model</li>
+<li>
+<code>converged</code>: Whether the EM algorithm converged before
+reaching maximum iterations</li>
+<li>
+<code>iterations</code>: Number of iterations performed</li>
+<li>
+<code>loglik</code>: Log-likelihood of the fitted model (useful for
+model comparison)</li>
+<li>
+<code>n_restarts</code>: Number of random restarts performed</li>
 </ul>
 <p>The choice between normal and gamma distributions for the serial
 interval depends on the disease characteristics. Normal distributions
@@ -230,11 +252,92 @@ estimation accurately recovers the true parameters from the simulated
 data.</p>
 </div>
 <div class="section level3">
+<h3 id="advanced-features-convergence-diagnostics-and-multiple-restarts">Advanced Features: Convergence Diagnostics and Multiple
+Restarts<a class="anchor" aria-label="anchor" href="#advanced-features-convergence-diagnostics-and-multiple-restarts"></a>
+</h3>
+<div class="section level4">
+<h4 id="convergence-diagnostics">Convergence Diagnostics<a class="anchor" aria-label="anchor" href="#convergence-diagnostics"></a>
+</h4>
+<p>The <code><a href="../reference/si_estim.html">si_estim()</a></code> function includes convergence diagnostics
+to help you understand how the EM algorithm performed. You can control
+convergence behavior with the <code>tol</code> parameter:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Check convergence information from our previous result</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Converged:"</span>, <span class="va">si_results</span><span class="op">$</span><span class="va">converged</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Converged: TRUE</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Iterations used:"</span>, <span class="va">si_results</span><span class="op">$</span><span class="va">iterations</span>, <span class="st">"out of 50 (default max)\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Iterations used: 14 out of 50 (default max)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Log-likelihood:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">si_results</span><span class="op">$</span><span class="va">loglik</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Log-likelihood: -1844.76</span></span></code></pre></div>
+<p>The algorithm uses early stopping when the relative change in
+parameters falls below the tolerance threshold (default
+<code>tol = 1e-6</code>). This can significantly speed up estimation for
+well-behaved data:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Compare with no early stopping (tol = 0)</span></span>
+<span><span class="va">si_no_early_stop</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/si_estim.html">si_estim</a></span><span class="op">(</span><span class="va">sim_icc_intervals</span>, dist <span class="op">=</span> <span class="st">"normal"</span>, n <span class="op">=</span> <span class="fl">50</span>, tol <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"With early stopping: "</span>, <span class="va">si_results</span><span class="op">$</span><span class="va">iterations</span>, <span class="st">" iterations\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; With early stopping:  14  iterations</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Without early stopping:"</span>, <span class="va">si_no_early_stop</span><span class="op">$</span><span class="va">iterations</span>, <span class="st">" iterations\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Without early stopping: 50  iterations</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Results are identical:"</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="va">si_results</span><span class="op">$</span><span class="va">mean</span>, <span class="va">si_no_early_stop</span><span class="op">$</span><span class="va">mean</span>, tolerance <span class="op">=</span> <span class="fl">1e-5</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Results are identical: TRUE</span></span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="multiple-restarts-for-robust-estimation">Multiple Restarts for Robust Estimation<a class="anchor" aria-label="anchor" href="#multiple-restarts-for-robust-estimation"></a>
+</h4>
+<p>The EM algorithm can sometimes converge to local optima, especially
+when initial values are far from the true parameters. The
+<code>n_starts</code> parameter allows you to run the algorithm from
+multiple random starting points:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">456</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Single restart with poor initial values</span></span>
+<span><span class="va">result_single</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/si_estim.html">si_estim</a></span><span class="op">(</span><span class="va">sim_icc_intervals</span>, init <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">8</span><span class="op">)</span>, n_starts <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Multiple restarts - algorithm explores parameter space more thoroughly</span></span>
+<span><span class="va">result_multi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/si_estim.html">si_estim</a></span><span class="op">(</span><span class="va">sim_icc_intervals</span>, init <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">8</span><span class="op">)</span>, n_starts <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Single restart:\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Single restart:</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Mean:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">result_single</span><span class="op">$</span><span class="va">mean</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">", SD:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">result_single</span><span class="op">$</span><span class="va">sd</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   Mean: 15.27 , SD: 2.67</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Log-likelihood:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">result_single</span><span class="op">$</span><span class="va">loglik</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"\n\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   Log-likelihood: -1844.76</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Multiple restarts (n_starts = 5):\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Multiple restarts (n_starts = 5):</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Mean:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">result_multi</span><span class="op">$</span><span class="va">mean</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">", SD:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">result_multi</span><span class="op">$</span><span class="va">sd</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   Mean: 15.27 , SD: 2.67</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  Log-likelihood:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">result_multi</span><span class="op">$</span><span class="va">loglik</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   Log-likelihood: -1844.76</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"  (Best result selected from"</span>, <span class="va">result_multi</span><span class="op">$</span><span class="va">n_restarts</span>, <span class="st">"restarts)\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   (Best result selected from 5 restarts)</span></span></code></pre></div>
+<p>When using multiple restarts:</p>
+<ul>
+<li>The first restart uses your provided initial values (or data-derived
+values if <code>init = NULL</code>)</li>
+<li>Additional restarts use random starting points sampled from the data
+range</li>
+<li>The result with the highest log-likelihood is returned</li>
+</ul>
+<p>This is particularly useful when:</p>
+<ul>
+<li>You’re unsure about good starting values</li>
+<li>The data might have multiple local optima</li>
+<li>You want to verify that your estimates are robust</li>
+</ul>
+</div>
+</div>
+<div class="section level3">
 <h3 id="real-data-example-scabies-outbreaks">Real Data Example: Scabies Outbreaks<a class="anchor" aria-label="anchor" href="#real-data-example-scabies-outbreaks"></a>
 </h3>
 <p>Now, let’s analyze real data from scabies outbreaks. We’ll use data
 from multiple studies published in the literature:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load scabies ICC interval data</span></span>
 <span><span class="va">file_path</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"vignettes"</span>, <span class="st">"data"</span>, <span class="st">"si_data.rds"</span><span class="op">)</span></span>
 <span><span class="va">scabies_si_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="va">file_path</span><span class="op">)</span></span></code></pre></div>
@@ -246,7 +349,7 @@ contrasts sharply with respiratory viruses like influenza, which
 typically have serial intervals of only 2-4 days.</p>
 <p>We’ll use <code><a href="../reference/si_estim.html">si_estim()</a></code> to estimate the serial interval for
 each study:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Estimate serial interval for each study</span></span>
 <span><span class="va">result_by_study</span> <span class="op">&lt;-</span> <span class="va">scabies_si_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">study</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -301,7 +404,7 @@ populations, settings (schools vs. nursing homes), and data collection
 methods. This heterogeneity underscores the importance of
 context-specific estimates for epidemiological modeling.</p>
 <p>Let’s process the results for visualization:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Process weights for plotting</span></span>
 <span><span class="va">result_wide</span> <span class="op">&lt;-</span> <span class="va">result_by_study</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">wts</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -329,7 +432,7 @@ context-specific estimates for epidemiological modeling.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">result_wide</span>, by <span class="op">=</span> <span class="st">"study"</span>, relationship <span class="op">=</span> <span class="st">"many-to-many"</span><span class="op">)</span></span></code></pre></div>
 <p>Let’s visualize the fitted serial interval distribution for each
 study:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a function to generate plot for each study</span></span>
 <span><span class="va">plot_study</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">study_data</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">study_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">study_data</span><span class="op">$</span><span class="va">study</span><span class="op">)</span></span>
@@ -400,7 +503,7 @@ infect others)</li>
 </ul>
 <p>The <code><a href="../reference/wallinga_lipsitch.html">wallinga_lipsitch()</a></code> function in <code>mitey</code>
 takes the following parameters:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wallinga_lipsitch.html">wallinga_lipsitch</a></span><span class="op">(</span></span>
 <span>  <span class="va">incidence</span>,          <span class="co"># Vector of case counts</span></span>
 <span>  <span class="va">dates</span>,              <span class="co"># Vector of dates corresponding to incidence</span></span>
@@ -420,7 +523,7 @@ takes the following parameters:</p>
 </h3>
 <p>Let’s generate epidemic data with a known time-varying reproduction
 number to validate our implementation:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Simulation parameters</span></span>
@@ -505,7 +608,7 @@ grows</li>
 </ul>
 <p>Now, let’s estimate Rt using the <code><a href="../reference/wallinga_lipsitch.html">wallinga_lipsitch()</a></code>
 function:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Estimate Rt using wallinga_lipsitch</span></span>
 <span><span class="va">rt_estimates</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wallinga_lipsitch.html">wallinga_lipsitch</a></span><span class="op">(</span></span>
 <span>  incidence <span class="op">=</span> <span class="va">sim_epidemic</span><span class="op">$</span><span class="va">cases</span>,</span>
@@ -578,7 +681,7 @@ number estimates with instantaneous reproduction number estimates. When
 set to <code>TRUE</code>, this parameter shifts Rt estimates forward by
 one mean serial interval to better match the timing of changes in
 transmission:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Re-estimate with shift=TRUE</span></span>
 <span><span class="va">rt_shifted</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wallinga_lipsitch.html">wallinga_lipsitch</a></span><span class="op">(</span></span>
 <span>  incidence <span class="op">=</span> <span class="va">sim_epidemic</span><span class="op">$</span><span class="va">cases</span>,</span>
@@ -654,7 +757,7 @@ the Americas in 2015-2016. Zika virus is primarily transmitted by Aedes
 mosquitoes, and the outbreak in Colombia was notable for its rapid
 spread and the associated health impacts, including an increase in cases
 of microcephaly in newborns and Guillain-Barré syndrome<span class="citation"><sup>4</sup></span>.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">zika_girardot_2015</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Examine the data structure</span></span>
@@ -668,7 +771,7 @@ of microcephaly in newborns and Guillain-Barré syndrome<span class="citation"><
 <code><a href="../reference/wallinga_lipsitch.html">wallinga_lipsitch()</a></code> function we created. For Zika virus,
 we’ll use a mean serial interval of 7 days with a standard deviation of
 1.5 days, based on literature estimates for mosquito-borne diseases:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Parameters for Zika</span></span>
 <span><span class="va">zika_si_mean</span> <span class="op">&lt;-</span> <span class="fl">7</span>  <span class="co"># days</span></span>
 <span><span class="va">zika_si_sd</span> <span class="op">&lt;-</span> <span class="fl">1.5</span>     <span class="co"># days</span></span>
@@ -702,7 +805,7 @@ we’ll use a mean serial interval of 7 days with a standard deviation of
 <span><span class="co">#&gt; 5          1.846027          5.279635</span></span>
 <span><span class="co">#&gt; 6          2.365928          6.187512</span></span></code></pre></div>
 <p>Now let’s visualise the reproduction number estimates.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Prepare data for visualization</span></span>
 <span><span class="va">rt_plot_data</span> <span class="op">&lt;-</span> <span class="va">rt_zika</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">R_corrected</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
