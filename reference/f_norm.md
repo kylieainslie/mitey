@@ -1,0 +1,118 @@
+# Calculate serial interval mixture density assuming underlying normal distribution
+
+This function computes the weighted mixture density for serial intervals
+based on different transmission routes in an outbreak. It implements
+part of the Vink et al. (2014) method for serial interval estimation,
+assuming an underlying normal distribution for the serial interval.
+
+## Usage
+
+``` r
+f_norm(x, w1, w2, w3, mu, sigma)
+```
+
+## Arguments
+
+- x:
+
+  quantile or vector of quantiles (time in days since index case symptom
+  onset)
+
+- w1:
+
+  probability weight of being a co-primary case
+
+- w2:
+
+  probability weight of being a primary-secondary case
+
+- w3:
+
+  probability weight of being a primary-tertiary case
+
+- mu:
+
+  mean serial interval in days (can be any real number)
+
+- sigma:
+
+  standard deviation of serial interval in days (must be positive)
+
+## Value
+
+Vector of weighted density values corresponding to input quantiles x.
+Returns the sum of densities from all four transmission routes.
+
+## Details
+
+The function models four distinct transmission routes:
+
+- Co-primary (CP): Cases infected simultaneously from the same source
+
+- Primary-secondary (PS): Direct transmission from index case
+
+- Primary-tertiary (PT): Transmission through one intermediate case
+
+- Primary-quaternary (PQ): Transmission through two intermediate cases
+
+Each route contributes to the overall serial interval distribution with
+different means and variances. The co-primary component uses a
+half-normal distribution to model simultaneous infections (preventing
+negative serial intervals), while subsequent generations follow normal
+distributions with means that are multiples of the base serial interval.
+
+This function is primarily used internally by
+[`si_estim`](https://kylieainslie.github.io/mitey/reference/si_estim.md)
+when `dist = "normal"` is specified (the default), and by
+[`plot_si_fit`](https://kylieainslie.github.io/mitey/reference/plot_si_fit.md)
+for visualizing fitted distributions. The normal distribution assumption
+allows for negative serial intervals, which may be more realistic for
+some pathogens.
+
+The weights w1, w2, and w3 must sum to \<= 1, with the remaining
+probability (1 - w1 - w2 - w3) assigned to primary-quaternary cases. The
+transmission route distributions are parameterized as: Co-primary:
+Half-normal with scale parameter derived from sigma Primary-secondary:
+Normal(mu, sigma) Primary-tertiary: Normal(2\*mu, sqrt(2)*sigma)
+Primary-quaternary: Normal(3*mu, sqrt(3)\*sigma)
+
+## References
+
+Vink, M. A., Bootsma, M. C. J., & Wallinga, J. (2014). Serial intervals
+of respiratory infectious diseases: A systematic review and analysis.
+American Journal of Epidemiology, 180(9), 865-875.
+
+## See also
+
+[`si_estim`](https://kylieainslie.github.io/mitey/reference/si_estim.md),
+[`plot_si_fit`](https://kylieainslie.github.io/mitey/reference/plot_si_fit.md),
+[`f_gam`](https://kylieainslie.github.io/mitey/reference/f_gam.md)
+
+## Examples
+
+``` r
+# Example: Plot serial interval mixture density for scabies outbreak
+
+# Set parameters based on scabies epidemiology (longer serial interval)
+mu <- 123     # Mean serial interval of 123 days (from Ainslie et al.)
+sigma <- 32   # Standard deviation of 32 days
+
+# Set transmission route weights typical for scabies
+w1 <- 0.15    # 15% co-primary cases
+w2 <- 0.50    # 50% primary-secondary cases
+w3 <- 0.25    # 25% primary-tertiary cases
+# Remaining 10% are primary-quaternary cases (1 - w1 - w2 - w3 = 0.1)
+
+# Create sequence of time points
+x <- seq(0, 400, by = 1)
+
+# Calculate mixture density
+density_values <- f_norm(x, w1, w2, w3, mu, sigma)
+
+# Plot the result
+plot(x, density_values, type = "l", lwd = 2, col = "red",
+     xlab = "Days", ylab = "Density",
+     main = "Serial Interval Mixture Density (Normal Distribution)")
+grid()
+
+```

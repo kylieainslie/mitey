@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Kylie
 Ainslie</h4>
             
-            <h4 data-toc-skip class="date">2025-11-04</h4>
+            <h4 data-toc-skip class="date">2026-01-08</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kylieainslie/mitey/blob/main/vignettes/quick_start_guide.Rmd" class="external-link"><code>vignettes/quick_start_guide.Rmd</code></a></small>
       <div class="d-none name"><code>quick_start_guide.Rmd</code></div>
@@ -148,7 +148,7 @@ subsequent cases:</p>
 <span>     main <span class="op">=</span> <span class="st">"Simulated ICC Intervals"</span>, </span>
 <span>     xlab <span class="op">=</span> <span class="st">"Days since index case onset"</span>,</span>
 <span>     col <span class="op">=</span> <span class="st">"lightblue"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="quick_start_guide_files/figure-html/simulate-si-data-1.png" width="2100"></p>
+<p><img src="quick_start_guide_files/figure-html/simulate-si-data-1.png" class="r-plt" alt="" width="2100"></p>
 <p>In this simulation, we generate different types of transmission
 routes:</p>
 <ul>
@@ -223,7 +223,7 @@ data:</p>
 <span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Fitted Serial Interval Distribution (Simulated Data)"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="quick_start_guide_files/figure-html/plot-sim-fit-1.png" width="2100"></p>
+<p><img src="quick_start_guide_files/figure-html/plot-sim-fit-1.png" class="r-plt" alt="" width="2100"></p>
 <p>The red curve shows the fitted mixture density, with the dashed
 vertical line indicating the estimated mean serial interval. Our
 estimation accurately recovers the true parameters from the simulated
@@ -364,7 +364,7 @@ study:</p>
 <span></span>
 <span><span class="co"># Display combined plot</span></span>
 <span><span class="va">combined_plot</span></span></code></pre></div>
-<p><img src="quick_start_guide_files/figure-html/plot-si-multi-1.png" width="3000"></p>
+<p><img src="quick_start_guide_files/figure-html/plot-si-multi-1.png" class="r-plt" alt="" width="3000"></p>
 <p>These plots show considerable variation in estimated serial intervals
 between studies (ranging from ~98 days to ~167 days). The differences
 may be due to variations in study settings, population characteristics,
@@ -494,7 +494,7 @@ number to validate our implementation:</p>
 <span></span>
 <span><span class="co"># Combine plots</span></span>
 <span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html" class="external-link">plot_grid</a></span><span class="op">(</span><span class="va">p1</span>, <span class="va">p2</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="quick_start_guide_files/figure-html/sim-rt-1.png" width="2100"></p>
+<p><img src="quick_start_guide_files/figure-html/sim-rt-1.png" class="r-plt" alt="" width="2100"></p>
 <p>Note that the epidemic curve directly reflects changes in the
 reproduction number:</p>
 <ul>
@@ -561,7 +561,7 @@ function:</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="quick_start_guide_files/figure-html/estimate-rt-1.png" width="2100"></p>
+<p><img src="quick_start_guide_files/figure-html/estimate-rt-1.png" class="r-plt" alt="" width="2100"></p>
 <p>Note that the estimated Rt (blue line) seems to lag behind the true
 Rt (red line). This is expected because the case reproduction number
 we’re estimating is based on when cases are observed, while the
@@ -633,7 +633,7 @@ transmission:</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="quick_start_guide_files/figure-html/rt-shift-1.png" width="2100"></p>
+<p><img src="quick_start_guide_files/figure-html/rt-shift-1.png" class="r-plt" alt="" width="2100"></p>
 <p>The shifted estimates align better with the true Rt values. The shift
 parameter moves estimates forward by one mean serial interval, which
 helps address the inherent lag in case-based Rt estimation.</p>
@@ -663,7 +663,7 @@ of microcephaly in newborns and Guillain-Barré syndrome<span class="citation"><
 <span><span class="co">#&gt;  $ date : Date, format: "2015-10-19" "2015-10-22" ...</span></span>
 <span><span class="co">#&gt;  $ cases: int  1 2 1 4 2 5 2 4 5 4 ...</span></span></code></pre></div>
 <p>Let’s have a look at the epidemic curve.
-<img src="quick_start_guide_files/figure-html/zike_epicurve-1.png" width="2100"></p>
+<img src="quick_start_guide_files/figure-html/zike_epicurve-1.png" class="r-plt" alt="" width="2100"></p>
 <p>Now we’ll estimate the reproduction number using the
 <code><a href="../reference/wallinga_lipsitch.html">wallinga_lipsitch()</a></code> function we created. For Zika virus,
 we’ll use a mean serial interval of 7 days with a standard deviation of
@@ -728,7 +728,7 @@ we’ll use a mean serial interval of 7 days with a standard deviation of
 <span></span>
 <span><span class="co"># Show Rt plot with epicurve</span></span>
 <span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html" class="external-link">plot_grid</a></span><span class="op">(</span><span class="va">zika_epicurve</span>, <span class="va">rt_plot</span>, ncol <span class="op">=</span> <span class="fl">1</span>, rel_heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="quick_start_guide_files/figure-html/rt_viz-1.png" width="2100"></p>
+<p><img src="quick_start_guide_files/figure-html/rt_viz-1.png" class="r-plt" alt="" width="2100"></p>
 <p>The reproduction number plot tells an important epidemiological
 story:</p>
 <ul>
@@ -790,7 +790,7 @@ colombia, september 2015 to january 2016. <em>Eurosurveillance</em>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

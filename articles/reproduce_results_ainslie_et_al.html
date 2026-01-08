@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Kylie
 Ainslie</h4>
             
-            <h4 data-toc-skip class="date">2025-11-04</h4>
+            <h4 data-toc-skip class="date">2026-01-08</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kylieainslie/mitey/blob/main/vignettes/articles/reproduce_results_ainslie_et_al.Rmd" class="external-link"><code>vignettes/articles/reproduce_results_ainslie_et_al.Rmd</code></a></small>
       <div class="d-none name"><code>reproduce_results_ainslie_et_al.Rmd</code></div>
@@ -1135,7 +1135,7 @@ estimates and credible intervals.</p>
 <span><span class="co">#&gt; Picking joint bandwidth of 0.591</span></span>
 <span><span class="va">fig1</span></span></code></pre></div>
 <div class="figure">
-<img src="reproduce_results_ainslie_et_al_files/figure-html/fig1-1.png" alt="Figure 1. A-D) Model fits of the serial interval to index case–to–case (ICC) interval data. Each histogram shows the distribution of observed ICC intervals for scabies outbreaks described in A) Akunzirwe et al., B) Ariza et al., C) Kaburi et al., D) Tjon-Kon-Fat et al. The overlayed red line shows the estimated mixture density for each infection. The dashed vertical line indicates the mean serial interval. The value of the mean serial interval is shown to the right of the dashed line along the x-axis. E) Forest plot of the estimated mean serial interval (in days) for individual studies and the pooled effect. The posterior distributions for each study are shown as density ridges, with the pooled effect displayed at the bottom. Black points and horizontal lines represent the posterior mean and corresponding 95% credible intervals for each study and the pooled estimate. The solid vertical gray line indicates the pooled effect estimate, while the dashed gray lines represent its 95% credible interval." width="700" id="fig-fig1-1"><p class="caption">
+<img src="reproduce_results_ainslie_et_al_files/figure-html/fig1-1.png" class="r-plt" alt="Figure 1. A-D) Model fits of the serial interval to index case–to–case (ICC) interval data. Each histogram shows the distribution of observed ICC intervals for scabies outbreaks described in A) Akunzirwe et al., B) Ariza et al., C) Kaburi et al., D) Tjon-Kon-Fat et al. The overlayed red line shows the estimated mixture density for each infection. The dashed vertical line indicates the mean serial interval. The value of the mean serial interval is shown to the right of the dashed line along the x-axis. E) Forest plot of the estimated mean serial interval (in days) for individual studies and the pooled effect. The posterior distributions for each study are shown as density ridges, with the pooled effect displayed at the bottom. Black points and horizontal lines represent the posterior mean and corresponding 95% credible intervals for each study and the pooled estimate. The solid vertical gray line indicates the pooled effect estimate, while the dashed gray lines represent its 95% credible interval." width="700" id="fig-fig1-1"><p class="caption">
 Figure 1. A-D) Model fits of the serial interval to index case–to–case
 (ICC) interval data. Each histogram shows the distribution of observed
 ICC intervals for scabies outbreaks described in A) Akunzirwe et al., B)
@@ -1174,14 +1174,14 @@ scabies.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.y <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Next, we estimated the time-varying reproduction number using number
 of consultations over time.
-<img src="reproduce_results_ainslie_et_al_files/figure-html/plot_rt_simple-1.png" width="100%"></p>
+<img src="reproduce_results_ainslie_et_al_files/figure-html/plot_rt_simple-1.png" class="r-plt" alt="" width="100%"></p>
 <p>Finally, we examined the timing of the peaks in transmission relative
 to season of the year (in the Northern Hemisphere).</p>
 <pre><code><span><span class="co">#&gt; Warning: Removed 124 rows containing missing values or values outside the scale range</span></span>
 <span><span class="co">#&gt; (`geom_line()`).</span></span>
 <span><span class="co">#&gt; Warning: Removed 124 rows containing missing values or values outside the scale range</span></span>
 <span><span class="co">#&gt; (`geom_ribbon()`).</span></span></code></pre>
-<p><img src="reproduce_results_ainslie_et_al_files/figure-html/rt_plot_w_seasons-1.png" width="700"></p>
+<p><img src="reproduce_results_ainslie_et_al_files/figure-html/rt_plot_w_seasons-1.png" class="r-plt" alt="" width="700"></p>
 <p>Now we’ll combine the plots to recreate the manuscript figure.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fig3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://wilkelab.org/cowplot/reference/plot_grid.html" class="external-link">plot_grid</a></span><span class="op">(</span><span class="va">scabies_epicurve</span>, <span class="va">rt_seasonal</span>, </span>
@@ -1193,7 +1193,7 @@ to season of the year (in the Northern Hemisphere).</p>
 <span><span class="co">#&gt; (`geom_ribbon()`).</span></span>
 <span><span class="va">fig3</span></span></code></pre></div>
 <div class="figure">
-<img src="reproduce_results_ainslie_et_al_files/figure-html/fig3-1.png" alt="Figure 3. A) Number of general practitioner (GP) consultations for scabies per week per 100,000 people in the Netherlands by date of consultation. B) Time-varying case reproduction number of scabies transmission. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August 31; Autumn = September 1 – November 31. Shaded region represents the 95% confidence envelope. Red horizontal dashed line indicates R = 1." width="700"><p class="caption">
+<img src="reproduce_results_ainslie_et_al_files/figure-html/fig3-1.png" class="r-plt" alt="Figure 3. A) Number of general practitioner (GP) consultations for scabies per week per 100,000 people in the Netherlands by date of consultation. B) Time-varying case reproduction number of scabies transmission. Colored bands denote season. Winter = December 1 – February 28 (or 29 on leap year); Spring = March 1 – May 31; Summer = June 1 – August 31; Autumn = September 1 – November 31. Shaded region represents the 95% confidence envelope. Red horizontal dashed line indicates R = 1." width="700"><p class="caption">
 Figure 3. A) Number of general practitioner (GP) consultations for
 scabies per week per 100,000 people in the Netherlands by date of
 consultation. B) Time-varying case reproduction number of scabies
@@ -1260,7 +1260,7 @@ our <code>mitey</code> package functions.</p>
 <span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 Now we’ll plot the figures together to create manuscript figure 4.
 <div class="figure">
-<img src="reproduce_results_ainslie_et_al_files/figure-html/fig4-1.png" alt="Figure 4. Distribution of index-case to case (ICC) intervals with fitted mixture density models across different infectious diseases. (A) Synthetic data showing a multi-modal distribution of ICC intervals with the fitted mixture density (red line) and estimated mean serial interval (dashed vertical line, 15.2 days). (B) ICC intervals from measles cases in England (Fine dataset) with fitted mixture density and estimated mean serial interval (13.7 days). (C) ICC intervals from pertussis cases in the Netherlands (de Greeff dataset) showing a right-skewed distribution with estimated mean serial interval (22.8 days). (D) ICC intervals from pandemic influenza A(H1N1)pdm09 in Canada (Savage dataset) with shorter intervals and estimated mean serial interval (2.8 days). The histograms show the observed distribution of ICC intervals, red curves represent the fitted mixture densities, and vertical dashed lines indicate the estimated mean serial interval for each dataset." width="700"><p class="caption">
+<img src="reproduce_results_ainslie_et_al_files/figure-html/fig4-1.png" class="r-plt" alt="Figure 4. Distribution of index-case to case (ICC) intervals with fitted mixture density models across different infectious diseases. (A) Synthetic data showing a multi-modal distribution of ICC intervals with the fitted mixture density (red line) and estimated mean serial interval (dashed vertical line, 15.2 days). (B) ICC intervals from measles cases in England (Fine dataset) with fitted mixture density and estimated mean serial interval (13.7 days). (C) ICC intervals from pertussis cases in the Netherlands (de Greeff dataset) showing a right-skewed distribution with estimated mean serial interval (22.8 days). (D) ICC intervals from pandemic influenza A(H1N1)pdm09 in Canada (Savage dataset) with shorter intervals and estimated mean serial interval (2.8 days). The histograms show the observed distribution of ICC intervals, red curves represent the fitted mixture densities, and vertical dashed lines indicate the estimated mean serial interval for each dataset." width="700"><p class="caption">
 Figure 4. Distribution of index-case to case (ICC) intervals with fitted
 mixture density models across different infectious diseases. (A)
 Synthetic data showing a multi-modal distribution of ICC intervals with
@@ -1400,7 +1400,7 @@ estimated mean serial interval for each dataset.
 <span>                   rel_heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1.5</span><span class="op">)</span>,</span>
 <span>                   labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"E"</span>, <span class="st">"F"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="reproduce_results_ainslie_et_al_files/figure-html/fig5-1.png" alt="Figure 5. Comparison of different methods for estimating reproduction numbers (R) across simulated and real infectious disease outbreaks. (A) Simulated epidemic curve showing daily incidence. (B) Comparison between true R values (black) and those estimated using the Wallinga-Lipsitch method (teal) for the simulated outbreak, with confidence interval (shaded region). (C) Daily case incidence of the 2015 Zika outbreak in Colombia. (D) Time-varying reproduction number estimates for the Zika outbreak using three methods: Wallinga-Lipsitch (WL, teal), EpiLPS (yellow), and Wallinga-Teunis from EpiEstim package (WT, purple). (E) Daily case incidence of the H7N9 influenza outbreak in China in 2013. (F) Reproduction number estimates for the H7N9 outbreak using the same three methods as in panel D, with confidence interval shown for the WL method (shaded region). Horizontal dashed lines indicate R=1, the threshold for epidemic growth." width="700"><p class="caption">
+<img src="reproduce_results_ainslie_et_al_files/figure-html/fig5-1.png" class="r-plt" alt="Figure 5. Comparison of different methods for estimating reproduction numbers (R) across simulated and real infectious disease outbreaks. (A) Simulated epidemic curve showing daily incidence. (B) Comparison between true R values (black) and those estimated using the Wallinga-Lipsitch method (teal) for the simulated outbreak, with confidence interval (shaded region). (C) Daily case incidence of the 2015 Zika outbreak in Colombia. (D) Time-varying reproduction number estimates for the Zika outbreak using three methods: Wallinga-Lipsitch (WL, teal), EpiLPS (yellow), and Wallinga-Teunis from EpiEstim package (WT, purple). (E) Daily case incidence of the H7N9 influenza outbreak in China in 2013. (F) Reproduction number estimates for the H7N9 outbreak using the same three methods as in panel D, with confidence interval shown for the WL method (shaded region). Horizontal dashed lines indicate R=1, the threshold for epidemic growth." width="700"><p class="caption">
 Figure 5. Comparison of different methods for estimating reproduction
 numbers (R) across simulated and real infectious disease outbreaks. (A)
 Simulated epidemic curve showing daily incidence. (B) Comparison between
@@ -1733,7 +1733,7 @@ possibility of negative serial intervals.</p>
 <span><span class="co"># Display the final combined plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">final_plot_gam</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="reproduce_results_ainslie_et_al_files/figure-html/gam_si_plots-1.png" alt="Figure S1. Epidemic curves and estimated serial interval distributions from four scabies outbreaks. Red line indicates estimated serial interval density assuming an underlying gamma distribution." width="700" id="fig-gam-si-plots-1"><p class="caption">
+<img src="reproduce_results_ainslie_et_al_files/figure-html/gam_si_plots-1.png" class="r-plt" alt="Figure S1. Epidemic curves and estimated serial interval distributions from four scabies outbreaks. Red line indicates estimated serial interval density assuming an underlying gamma distribution." width="700" id="fig-gam-si-plots-1"><p class="caption">
 Figure S1. Epidemic curves and estimated serial interval distributions
 from four scabies outbreaks. Red line indicates estimated serial
 interval density assuming an underlying gamma distribution.
@@ -1875,7 +1875,7 @@ due to the bootstrapping, so the estimates are stored in
 <span></span>
 <span><span class="va">rt_basic_gam</span></span></code></pre></div>
 <div class="figure">
-<img src="reproduce_results_ainslie_et_al_files/figure-html/rt_gamma_sa-1.png" alt="Figure S3. Time-varying reproduction number of scabies transmission assuming a Gamma distributed serial interval distribution (dark blue line). The time-varying reproduction number estimates assuming an underlying Normal serial interval distribution are shown as the teal line." width="100%"><p class="caption">
+<img src="reproduce_results_ainslie_et_al_files/figure-html/rt_gamma_sa-1.png" class="r-plt" alt="Figure S3. Time-varying reproduction number of scabies transmission assuming a Gamma distributed serial interval distribution (dark blue line). The time-varying reproduction number estimates assuming an underlying Normal serial interval distribution are shown as the teal line." width="100%"><p class="caption">
 Figure S3. Time-varying reproduction number of scabies transmission
 assuming a Gamma distributed serial interval distribution (dark blue
 line). The time-varying reproduction number estimates assuming an
@@ -1973,7 +1973,7 @@ et al. and then plot them with the results using the pooled mean.</p>
 <span>  <span class="co">#   fill = guide_legend(nrow = 2, byrow = TRUE)</span></span>
 <span>  <span class="co"># ) +</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reproduce_results_ainslie_et_al_files/figure-html/rt_si_sa_plot-1.png" width="700"></p>
+<p><img src="reproduce_results_ainslie_et_al_files/figure-html/rt_si_sa_plot-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Panel B: Calculate peak transmission month</span></span>
 <span><span class="co"># Colors matching your scheme</span></span>
@@ -2047,7 +2047,7 @@ et al. and then plot them with the results using the pooled mean.</p>
 <span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
-<p><img src="reproduce_results_ainslie_et_al_files/figure-html/avg_rt_per_month-1.png" width="700"></p>
+<p><img src="reproduce_results_ainslie_et_al_files/figure-html/avg_rt_per_month-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 </div>
 <div class="section level4">
@@ -2078,7 +2078,7 @@ et al. and then plot them with the results using the pooled mean.</p>
 <span>  <span class="fu">theme_scabies</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span> </span></code></pre></div>
 <div class="figure">
-<img src="reproduce_results_ainslie_et_al_files/figure-html/annual_inc_by_age-1.png" alt="Figure S4. Annual scabies incidence per 1,000 people by age group in the Netherlands from 2011 to 2022." width="100%"><p class="caption">
+<img src="reproduce_results_ainslie_et_al_files/figure-html/annual_inc_by_age-1.png" class="r-plt" alt="Figure S4. Annual scabies incidence per 1,000 people by age group in the Netherlands from 2011 to 2022." width="100%"><p class="caption">
 Figure S4. Annual scabies incidence per 1,000 people by age group in the
 Netherlands from 2011 to 2022.
 </p>
@@ -2114,246 +2114,246 @@ successfully recaptures the estimates of the original study (Table
 <span><span class="co">#&gt;   method                  from     </span></span>
 <span><span class="co">#&gt;   as_flextable.data.frame flextable</span></span></code></pre>
 <div class="tabwid">
-<style>.cl-11bb3c08{}.cl-11b3999e{font-family:'DejaVu Sans';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-11b399b2{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-11b399bc{font-family:'DejaVu Sans';font-size:6.6pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;position: relative;bottom:3.3pt;}.cl-11b688ca{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-11b688de{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-11b688df{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-11b6a9d6{width:1.329in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6a9e0{width:0.774in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6a9e1{width:2.318in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6a9ea{width:1.42in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6a9eb{width:0.801in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6a9f4{width:0.628in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6a9f5{width:1.329in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6a9fe{width:0.774in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6a9ff{width:2.318in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa00{width:1.42in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa01{width:0.801in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa08{width:0.628in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa12{width:1.329in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa13{width:0.774in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa1c{width:2.318in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa26{width:1.42in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa27{width:0.801in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa28{width:0.628in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa30{width:1.329in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa31{width:0.774in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa3a{width:2.318in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa3b{width:1.42in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa44{width:0.801in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa45{width:0.628in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa4e{width:1.329in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa4f{width:0.774in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa50{width:2.318in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa58{width:1.42in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa59{width:0.801in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa5a{width:0.628in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa62{width:1.329in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa63{width:0.774in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa6c{width:2.318in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa6d{width:1.42in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa6e{width:0.801in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-11b6aa76{width:0.628in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
-<table data-quarto-disable-processing="true" class="table cl-11bb3c08">
+<style>.cl-734f265e{}.cl-73465178{font-family:'DejaVu Sans';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-73465182{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-7346518c{font-family:'DejaVu Sans';font-size:6.6pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;position: relative;bottom:3.3pt;}.cl-7349c72c{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-7349c736{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-7349c74a{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-7349f094{width:1.329in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f09e{width:0.774in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f09f{width:2.318in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0a8{width:1.42in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0a9{width:0.801in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0b2{width:0.628in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 1pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0b3{width:1.329in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0bc{width:0.774in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0bd{width:2.318in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0c6{width:1.42in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0c7{width:0.801in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0c8{width:0.628in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0d0{width:1.329in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0d1{width:0.774in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0da{width:2.318in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0e4{width:1.42in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0e5{width:0.801in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0ee{width:0.628in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f0f8{width:1.329in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f102{width:0.774in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f103{width:2.318in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f104{width:1.42in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f10c{width:0.801in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f10d{width:0.628in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f116{width:1.329in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f117{width:0.774in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f120{width:2.318in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f121{width:1.42in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f12a{width:0.801in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f12b{width:0.628in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f134{width:1.329in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f13e{width:0.774in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f148{width:2.318in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f149{width:1.42in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f15c{width:0.801in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-7349f166{width:0.628in;background-color:transparent;vertical-align: middle;border-bottom: 1pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
+<table data-quarto-disable-processing="true" class="table cl-734f265e">
 <caption style="display:table-caption;"><span>Table 1. Estimates of mean and standard deviation (SD) of the serial interval distribution from Vink et al. and from `si_estim` for different historical data sets.</span></caption>
 <thead>
 <tr style="overflow-wrap:break-word;">
-<th colspan="4" class="cl-11b6a9d6"><p class="cl-11b688ca"><span class="cl-11b3999e"></span></p></th>
-<th colspan="2" class="cl-11b6a9eb"><p class="cl-11b688ca"><span class="cl-11b3999e">Vink et al. Estimates</span></p></th>
-<th colspan="2" class="cl-11b6a9eb"><p class="cl-11b688ca"><span class="cl-11b3999e">{mitey} Estimates</span></p></th>
+<th colspan="4" class="cl-7349f094"><p class="cl-7349c72c"><span class="cl-73465178"></span></p></th>
+<th colspan="2" class="cl-7349f0a9"><p class="cl-7349c72c"><span class="cl-73465178">Vink et al. Estimates</span></p></th>
+<th colspan="2" class="cl-7349f0a9"><p class="cl-7349c72c"><span class="cl-73465178">{mitey} Estimates</span></p></th>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<th class="cl-11b6a9f5"><p class="cl-11b688ca"><span class="cl-11b3999e">Author</span></p></th>
-<th class="cl-11b6a9fe"><p class="cl-11b688ca"><span class="cl-11b3999e">Year</span></p></th>
-<th class="cl-11b6a9ff"><p class="cl-11b688ca"><span class="cl-11b3999e">Pathogen</span></p></th>
-<th class="cl-11b6aa00"><p class="cl-11b688ca"><span class="cl-11b3999e">Country</span></p></th>
-<th class="cl-11b6aa01"><p class="cl-11b688ca"><span class="cl-11b3999e">Mean</span></p></th>
-<th class="cl-11b6aa08"><p class="cl-11b688ca"><span class="cl-11b3999e">SD</span></p></th>
-<th class="cl-11b6aa01"><p class="cl-11b688ca"><span class="cl-11b3999e">Mean</span></p></th>
-<th class="cl-11b6aa08"><p class="cl-11b688ca"><span class="cl-11b3999e">SD</span></p></th>
+<th class="cl-7349f0b3"><p class="cl-7349c72c"><span class="cl-73465178">Author</span></p></th>
+<th class="cl-7349f0bc"><p class="cl-7349c72c"><span class="cl-73465178">Year</span></p></th>
+<th class="cl-7349f0bd"><p class="cl-7349c72c"><span class="cl-73465178">Pathogen</span></p></th>
+<th class="cl-7349f0c6"><p class="cl-7349c72c"><span class="cl-73465178">Country</span></p></th>
+<th class="cl-7349f0c7"><p class="cl-7349c72c"><span class="cl-73465178">Mean</span></p></th>
+<th class="cl-7349f0c8"><p class="cl-7349c72c"><span class="cl-73465178">SD</span></p></th>
+<th class="cl-7349f0c7"><p class="cl-7349c72c"><span class="cl-73465178">Mean</span></p></th>
+<th class="cl-7349f0c8"><p class="cl-7349c72c"><span class="cl-73465178">SD</span></p></th>
 </tr>
 </thead>
 <tbody>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Hahne</span><span class="cl-11b399bc">1</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">2009</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Influenza</span><span class="cl-11b399b2"> </span><span class="cl-11b399b2">A(H1N1)pdm09</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">Netherlands</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">1.7</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">1.2</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">1.7</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">1.2</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Hahne</span><span class="cl-7346518c">1</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">2009</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Influenza</span><span class="cl-73465182"> </span><span class="cl-73465182">A(H1N1)pdm09</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">Netherlands</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">1.7</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">1.2</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">1.7</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">1.2</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Cauchemez</span><span class="cl-11b399bc">2</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">2009</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Influenza</span><span class="cl-11b399b2"> </span><span class="cl-11b399b2">A(H1N1)pdm09</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">United</span><span class="cl-11b399b2"> </span><span class="cl-11b399b2">States</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">2.1</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">1.2</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">2.1</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">1.2</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Cauchemez</span><span class="cl-7346518c">2</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">2009</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Influenza</span><span class="cl-73465182"> </span><span class="cl-73465182">A(H1N1)pdm09</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">United</span><span class="cl-73465182"> </span><span class="cl-73465182">States</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">2.1</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">1.2</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">2.1</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">1.2</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Savage</span><span class="cl-11b399bc">3</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">2011</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Influenza</span><span class="cl-11b399b2"> </span><span class="cl-11b399b2">A(H1N1)pdm09</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">Canada</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">2.8</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">0.8</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">2.8</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">0.8</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Savage</span><span class="cl-7346518c">3</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">2011</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Influenza</span><span class="cl-73465182"> </span><span class="cl-73465182">A(H1N1)pdm09</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">Canada</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">2.8</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">0.8</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">2.8</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">0.8</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Papenburg</span><span class="cl-11b399bc">4</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">2010</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Influenza</span><span class="cl-11b399b2"> </span><span class="cl-11b399b2">A(H1N1)pdm09</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">Canada</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">2.9</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">1.2</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">2.9</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">1.2</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Papenburg</span><span class="cl-7346518c">4</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">2010</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Influenza</span><span class="cl-73465182"> </span><span class="cl-73465182">A(H1N1)pdm09</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">Canada</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">2.9</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">1.2</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">2.9</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">1.2</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">France</span><span class="cl-11b399bc">5</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">2010</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Influenza</span><span class="cl-11b399b2"> </span><span class="cl-11b399b2">A(H1N1)pdm09</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">United</span><span class="cl-11b399b2"> </span><span class="cl-11b399b2">States</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">3.0</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">0.9</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">3.0</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">0.9</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">France</span><span class="cl-7346518c">5</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">2010</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Influenza</span><span class="cl-73465182"> </span><span class="cl-73465182">A(H1N1)pdm09</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">United</span><span class="cl-73465182"> </span><span class="cl-73465182">States</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">3.0</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">0.9</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">3.0</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">0.9</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Morgan</span><span class="cl-11b399bc">6</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">2010</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Influenza</span><span class="cl-11b399b2"> </span><span class="cl-11b399b2">A(H1N1)pdm09</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">United</span><span class="cl-11b399b2"> </span><span class="cl-11b399b2">States</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">3.7</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">1.1</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">3.7</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">1.1</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Morgan</span><span class="cl-7346518c">6</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">2010</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Influenza</span><span class="cl-73465182"> </span><span class="cl-73465182">A(H1N1)pdm09</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">United</span><span class="cl-73465182"> </span><span class="cl-73465182">States</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">3.7</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">1.1</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">3.7</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">1.1</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa30"><p class="cl-11b688de"><span class="cl-11b399b2">Viboud</span><span class="cl-11b399bc">7</span></p></td>
-<td class="cl-11b6aa31"><p class="cl-11b688df"><span class="cl-11b399b2">2004</span></p></td>
-<td class="cl-11b6aa3a"><p class="cl-11b688de"><span class="cl-11b399b2">Influenza</span><span class="cl-11b399b2"> </span><span class="cl-11b399b2">A(H3N2)</span></p></td>
-<td class="cl-11b6aa3b"><p class="cl-11b688de"><span class="cl-11b399b2">France</span></p></td>
-<td class="cl-11b6aa44"><p class="cl-11b688df"><span class="cl-11b399b2">2.2</span></p></td>
-<td class="cl-11b6aa45"><p class="cl-11b688df"><span class="cl-11b399b2">0.8</span></p></td>
-<td class="cl-11b6aa44"><p class="cl-11b688df"><span class="cl-11b399b2">2.2</span></p></td>
-<td class="cl-11b6aa45"><p class="cl-11b688df"><span class="cl-11b399b2">0.8</span></p></td>
+<td class="cl-7349f0f8"><p class="cl-7349c736"><span class="cl-73465182">Viboud</span><span class="cl-7346518c">7</span></p></td>
+<td class="cl-7349f102"><p class="cl-7349c74a"><span class="cl-73465182">2004</span></p></td>
+<td class="cl-7349f103"><p class="cl-7349c736"><span class="cl-73465182">Influenza</span><span class="cl-73465182"> </span><span class="cl-73465182">A(H3N2)</span></p></td>
+<td class="cl-7349f104"><p class="cl-7349c736"><span class="cl-73465182">France</span></p></td>
+<td class="cl-7349f10c"><p class="cl-7349c74a"><span class="cl-73465182">2.2</span></p></td>
+<td class="cl-7349f10d"><p class="cl-7349c74a"><span class="cl-73465182">0.8</span></p></td>
+<td class="cl-7349f10c"><p class="cl-7349c74a"><span class="cl-73465182">2.2</span></p></td>
+<td class="cl-7349f10d"><p class="cl-7349c74a"><span class="cl-73465182">0.8</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Aaby</span><span class="cl-11b399bc">8</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">1990</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Measles</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">Kenya</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">9.9</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">2.4</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">9.9</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">2.4</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Aaby</span><span class="cl-7346518c">8</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">1990</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Measles</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">Kenya</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">9.9</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">2.4</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">9.9</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">2.4</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Bailey</span><span class="cl-11b399bc">9</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">1954</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Measles</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">England</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">10.9</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">1.9</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">10.9</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">1.9</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Bailey</span><span class="cl-7346518c">9</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">1954</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Measles</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">England</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">10.9</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">1.9</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">10.9</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">1.9</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Simpson</span><span class="cl-11b399bc">10</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">1952</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Measles</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">England</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">10.9</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">2.0</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">10.9</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">2.0</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Simpson</span><span class="cl-7346518c">10</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">1952</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Measles</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">England</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">10.9</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">2.0</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">10.9</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">2.0</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Chapin</span><span class="cl-11b399bc">11</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">1925</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Measles</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">United</span><span class="cl-11b399b2"> </span><span class="cl-11b399b2">States</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">11.9</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">2.6</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">11.9</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">2.6</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Chapin</span><span class="cl-7346518c">11</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">1925</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Measles</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">United</span><span class="cl-73465182"> </span><span class="cl-73465182">States</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">11.9</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">2.6</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">11.9</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">2.6</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Fine</span><span class="cl-11b399bc">12</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">2003</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Measles</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">England</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">13.7</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">1.5</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">13.7</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">1.5</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Fine</span><span class="cl-7346518c">12</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">2003</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Measles</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">England</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">13.7</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">1.5</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">13.7</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">1.5</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa4e"><p class="cl-11b688de"><span class="cl-11b399b2">Fine</span><span class="cl-11b399bc">12</span></p></td>
-<td class="cl-11b6aa4f"><p class="cl-11b688df"><span class="cl-11b399b2">2003</span></p></td>
-<td class="cl-11b6aa50"><p class="cl-11b688de"><span class="cl-11b399b2">Measles</span></p></td>
-<td class="cl-11b6aa58"><p class="cl-11b688de"><span class="cl-11b399b2">United</span><span class="cl-11b399b2"> </span><span class="cl-11b399b2">States</span></p></td>
-<td class="cl-11b6aa59"><p class="cl-11b688df"><span class="cl-11b399b2">13.8</span></p></td>
-<td class="cl-11b6aa5a"><p class="cl-11b688df"><span class="cl-11b399b2">2.5</span></p></td>
-<td class="cl-11b6aa59"><p class="cl-11b688df"><span class="cl-11b399b2">13.8</span></p></td>
-<td class="cl-11b6aa5a"><p class="cl-11b688df"><span class="cl-11b399b2">2.5</span></p></td>
+<td class="cl-7349f116"><p class="cl-7349c736"><span class="cl-73465182">Fine</span><span class="cl-7346518c">12</span></p></td>
+<td class="cl-7349f117"><p class="cl-7349c74a"><span class="cl-73465182">2003</span></p></td>
+<td class="cl-7349f120"><p class="cl-7349c736"><span class="cl-73465182">Measles</span></p></td>
+<td class="cl-7349f121"><p class="cl-7349c736"><span class="cl-73465182">United</span><span class="cl-73465182"> </span><span class="cl-73465182">States</span></p></td>
+<td class="cl-7349f12a"><p class="cl-7349c74a"><span class="cl-73465182">13.8</span></p></td>
+<td class="cl-7349f12b"><p class="cl-7349c74a"><span class="cl-73465182">2.5</span></p></td>
+<td class="cl-7349f12a"><p class="cl-7349c74a"><span class="cl-73465182">13.8</span></p></td>
+<td class="cl-7349f12b"><p class="cl-7349c74a"><span class="cl-73465182">2.5</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Simpson</span><span class="cl-11b399bc">10</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">1952</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Mumps</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">England</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">18.0</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">3.5</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">18.0</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">3.5</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Simpson</span><span class="cl-7346518c">10</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">1952</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Mumps</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">England</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">18.0</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">3.5</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">18.0</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">3.5</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa4e"><p class="cl-11b688de"><span class="cl-11b399b2">de</span><span class="cl-11b399b2"> </span><span class="cl-11b399b2">Greeff</span><span class="cl-11b399bc">13</span></p></td>
-<td class="cl-11b6aa4f"><p class="cl-11b688df"><span class="cl-11b399b2">2010</span></p></td>
-<td class="cl-11b6aa50"><p class="cl-11b688de"><span class="cl-11b399b2">Pertussis</span></p></td>
-<td class="cl-11b6aa58"><p class="cl-11b688de"><span class="cl-11b399b2">Netherlands</span></p></td>
-<td class="cl-11b6aa59"><p class="cl-11b688df"><span class="cl-11b399b2">22.8</span></p></td>
-<td class="cl-11b6aa5a"><p class="cl-11b688df"><span class="cl-11b399b2">6.5</span></p></td>
-<td class="cl-11b6aa59"><p class="cl-11b688df"><span class="cl-11b399b2">22.8</span></p></td>
-<td class="cl-11b6aa5a"><p class="cl-11b688df"><span class="cl-11b399b2">6.5</span></p></td>
+<td class="cl-7349f116"><p class="cl-7349c736"><span class="cl-73465182">de</span><span class="cl-73465182"> </span><span class="cl-73465182">Greeff</span><span class="cl-7346518c">13</span></p></td>
+<td class="cl-7349f117"><p class="cl-7349c74a"><span class="cl-73465182">2010</span></p></td>
+<td class="cl-7349f120"><p class="cl-7349c736"><span class="cl-73465182">Pertussis</span></p></td>
+<td class="cl-7349f121"><p class="cl-7349c736"><span class="cl-73465182">Netherlands</span></p></td>
+<td class="cl-7349f12a"><p class="cl-7349c74a"><span class="cl-73465182">22.8</span></p></td>
+<td class="cl-7349f12b"><p class="cl-7349c74a"><span class="cl-73465182">6.5</span></p></td>
+<td class="cl-7349f12a"><p class="cl-7349c74a"><span class="cl-73465182">22.8</span></p></td>
+<td class="cl-7349f12b"><p class="cl-7349c74a"><span class="cl-73465182">6.5</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Crowcroft</span><span class="cl-11b399bc">14</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">2008</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">RSV</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">England</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">7.5</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">2.1</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">7.5</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">2.1</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Crowcroft</span><span class="cl-7346518c">14</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">2008</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">RSV</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">England</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">7.5</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">2.1</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">7.5</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">2.1</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Aycock</span><span class="cl-11b399bc">15</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">1946</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Rubella</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">Unknown</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">18.3</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">2.0</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">18.3</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">2.0</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Aycock</span><span class="cl-7346518c">15</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">1946</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Rubella</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">Unknown</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">18.3</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">2.0</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">18.3</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">2.0</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Fine</span><span class="cl-11b399bc">12</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">2003</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Smallpox</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">Germany</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">16.7</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">3.3</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">16.7</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">3.3</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Fine</span><span class="cl-7346518c">12</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">2003</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Smallpox</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">Germany</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">16.7</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">3.3</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">16.7</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">3.3</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Fine</span><span class="cl-11b399bc">12</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">2003</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Smallpox</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">Kosovo</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">17.3</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">1.9</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">17.3</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">1.9</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Fine</span><span class="cl-7346518c">12</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">2003</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Smallpox</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">Kosovo</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">17.3</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">1.9</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">17.3</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">1.9</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Vally</span><span class="cl-11b399bc">16</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">2007</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Varicella</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">Australia</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">13.1</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">2.2</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">13.1</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">2.2</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Vally</span><span class="cl-7346518c">16</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">2007</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Varicella</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">Australia</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">13.1</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">2.2</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">13.1</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">2.2</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa12"><p class="cl-11b688de"><span class="cl-11b399b2">Simpson</span><span class="cl-11b399bc">10</span></p></td>
-<td class="cl-11b6aa13"><p class="cl-11b688df"><span class="cl-11b399b2">1952</span></p></td>
-<td class="cl-11b6aa1c"><p class="cl-11b688de"><span class="cl-11b399b2">Varicella</span></p></td>
-<td class="cl-11b6aa26"><p class="cl-11b688de"><span class="cl-11b399b2">England</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">14.1</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">2.4</span></p></td>
-<td class="cl-11b6aa27"><p class="cl-11b688df"><span class="cl-11b399b2">14.1</span></p></td>
-<td class="cl-11b6aa28"><p class="cl-11b688df"><span class="cl-11b399b2">2.4</span></p></td>
+<td class="cl-7349f0d0"><p class="cl-7349c736"><span class="cl-73465182">Simpson</span><span class="cl-7346518c">10</span></p></td>
+<td class="cl-7349f0d1"><p class="cl-7349c74a"><span class="cl-73465182">1952</span></p></td>
+<td class="cl-7349f0da"><p class="cl-7349c736"><span class="cl-73465182">Varicella</span></p></td>
+<td class="cl-7349f0e4"><p class="cl-7349c736"><span class="cl-73465182">England</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">14.1</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">2.4</span></p></td>
+<td class="cl-7349f0e5"><p class="cl-7349c74a"><span class="cl-73465182">14.1</span></p></td>
+<td class="cl-7349f0ee"><p class="cl-7349c74a"><span class="cl-73465182">2.4</span></p></td>
 </tr>
 <tr style="overflow-wrap:break-word;">
-<td class="cl-11b6aa62"><p class="cl-11b688de"><span class="cl-11b399b2">Lai</span><span class="cl-11b399bc">17</span></p></td>
-<td class="cl-11b6aa63"><p class="cl-11b688df"><span class="cl-11b399b2">2011</span></p></td>
-<td class="cl-11b6aa6c"><p class="cl-11b688de"><span class="cl-11b399b2">Varicella</span></p></td>
-<td class="cl-11b6aa6d"><p class="cl-11b688de"><span class="cl-11b399b2">Taiwan</span></p></td>
-<td class="cl-11b6aa6e"><p class="cl-11b688df"><span class="cl-11b399b2">14.2</span></p></td>
-<td class="cl-11b6aa76"><p class="cl-11b688df"><span class="cl-11b399b2">1.3</span></p></td>
-<td class="cl-11b6aa6e"><p class="cl-11b688df"><span class="cl-11b399b2">14.2</span></p></td>
-<td class="cl-11b6aa76"><p class="cl-11b688df"><span class="cl-11b399b2">1.3</span></p></td>
+<td class="cl-7349f134"><p class="cl-7349c736"><span class="cl-73465182">Lai</span><span class="cl-7346518c">17</span></p></td>
+<td class="cl-7349f13e"><p class="cl-7349c74a"><span class="cl-73465182">2011</span></p></td>
+<td class="cl-7349f148"><p class="cl-7349c736"><span class="cl-73465182">Varicella</span></p></td>
+<td class="cl-7349f149"><p class="cl-7349c736"><span class="cl-73465182">Taiwan</span></p></td>
+<td class="cl-7349f15c"><p class="cl-7349c74a"><span class="cl-73465182">14.2</span></p></td>
+<td class="cl-7349f166"><p class="cl-7349c74a"><span class="cl-73465182">1.3</span></p></td>
+<td class="cl-7349f15c"><p class="cl-7349c74a"><span class="cl-73465182">14.2</span></p></td>
+<td class="cl-7349f166"><p class="cl-7349c74a"><span class="cl-73465182">1.3</span></p></td>
 </tr>
 </tbody>
 </table>
@@ -2372,7 +2372,7 @@ successfully recaptures the estimates of the original study (Table
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

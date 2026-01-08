@@ -62,7 +62,7 @@
                         <h4 data-toc-skip class="author">Kylie
 Ainslie</h4>
             
-            <h4 data-toc-skip class="date">2025-11-04</h4>
+            <h4 data-toc-skip class="date">2026-01-08</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kylieainslie/mitey/blob/main/vignettes/articles/rt_estimation_validation.Rmd" class="external-link"><code>vignettes/articles/rt_estimation_validation.Rmd</code></a></small>
       <div class="d-none name"><code>rt_estimation_validation.Rmd</code></div>
@@ -330,7 +330,7 @@ interval distribution (mean and standard deviation).</p>
 <span><span class="co">#&gt; 4 2023-01-04    1.5       137</span></span>
 <span><span class="co">#&gt; 5 2023-01-05    1.5       145</span></span>
 <span><span class="co">#&gt; 6 2023-01-06    1.5       179</span></span></code></pre>
-<p><img src="rt_estimation_validation_files/figure-html/plot_synth_epi-1.png" width="700"></p>
+<p><img src="rt_estimation_validation_files/figure-html/plot_synth_epi-1.png" class="r-plt" alt="" width="700"></p>
 <div class="section level3">
 <h3 id="estimating-the-case-reproduction-number">Estimating the case reproduction number<a class="anchor" aria-label="anchor" href="#estimating-the-case-reproduction-number"></a>
 </h3>
@@ -377,7 +377,7 @@ the left by one serial interval. When we shift the estimates by a serial
 interval (blue dashed line), we see that our estimates are in agreement
 with the true
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>t</mi></msub><annotation encoding="application/x-tex">R_t</annotation></semantics></math>.</p>
-<p><img src="rt_estimation_validation_files/figure-html/plot_sim_rt-1.png" width="700"></p>
+<p><img src="rt_estimation_validation_files/figure-html/plot_sim_rt-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="sensitivity-to-serial-interval-parameters">Sensitivity to Serial Interval Parameters<a class="anchor" aria-label="anchor" href="#sensitivity-to-serial-interval-parameters"></a>
@@ -386,7 +386,7 @@ with the true
 to the specified serial interval distribution. Let’s explore how changes
 in the mean and standard deviation affect our estimates for the
 synthetic epidemic:</p>
-<p><img src="rt_estimation_validation_files/figure-html/sensitivity_analysis-1.png" width="864"></p>
+<p><img src="rt_estimation_validation_files/figure-html/sensitivity_analysis-1.png" class="r-plt" alt="" width="864"></p>
 </div>
 <div class="section level3">
 <h3 id="comparing-methods">Comparing methods<a class="anchor" aria-label="anchor" href="#comparing-methods"></a>
@@ -410,7 +410,7 @@ estimated by <code>EpiEstim</code> (by specifying
 <span><span class="co">#&gt; Estimation of the reproduction number with Laplacian-P-splines </span></span>
 <span><span class="co">#&gt; -------------------------------------------------------------- </span></span>
 <span><span class="co">#&gt; Total number of days:          80 </span></span>
-<span><span class="co">#&gt; Routine time (seconds):        16.69 </span></span>
+<span><span class="co">#&gt; Routine time (seconds):        16.529 </span></span>
 <span><span class="co">#&gt; Method:                        MCMC (with Langevin diffusion) </span></span>
 <span><span class="co">#&gt; Hyperparam. optim method:      Nelder-Mead </span></span>
 <span><span class="co">#&gt; Hyperparam. optim convergence: TRUE </span></span>
@@ -418,7 +418,7 @@ estimated by <code>EpiEstim</code> (by specifying
 <span><span class="co">#&gt; Min  reproduction number:      0.791 </span></span>
 <span><span class="co">#&gt; Max  reproduction number:      2.028 </span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------</span></span></code></pre></div>
-<p><img src="rt_estimation_validation_files/figure-html/plot_comparison_methods-1.png" width="100%"></p>
+<p><img src="rt_estimation_validation_files/figure-html/plot_comparison_methods-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 </div>
 <div class="section level2">
@@ -447,7 +447,7 @@ package and is called <code>zika2015</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">zika_epicurve</span> <span class="op">&lt;-</span> <span class="fu">epicurve</span><span class="op">(</span><span class="va">zika2015</span><span class="op">$</span><span class="va">incidence</span>, dates <span class="op">=</span> <span class="va">zika2015</span><span class="op">$</span><span class="va">date</span>, datelab <span class="op">=</span> <span class="st">"14d"</span><span class="op">)</span></span>
 <span><span class="va">zika_epicurve</span></span></code></pre></div>
-<p><img src="rt_estimation_validation_files/figure-html/zika_epicurve-1.png" width="700"></p>
+<p><img src="rt_estimation_validation_files/figure-html/zika_epicurve-1.png" class="r-plt" alt="" width="700"></p>
 <p>Now we’ll estimate the case reproduction number using
 <code><a href="../reference/wallinga_lipsitch.html">wallinga_lipsitch()</a></code>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -463,7 +463,7 @@ package and is called <code>zika2015</code>.</p>
 <span>  conf_level <span class="op">=</span> <span class="fl">0.95</span>,</span>
 <span>  shift <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="rt_estimation_validation_files/figure-html/zika_plot-1.png" width="700"></p>
+<p><img src="rt_estimation_validation_files/figure-html/zika_plot-1.png" class="r-plt" alt="" width="700"></p>
 <div class="section level4">
 <h4 id="compare-with-epilps-and-epiestim">Compare with EpiLPS and EpiEstim<a class="anchor" aria-label="anchor" href="#compare-with-epilps-and-epiestim"></a>
 </h4>
@@ -477,7 +477,7 @@ smoothed.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">si</span> <span class="op">&lt;-</span> <span class="fu">Idist</span><span class="op">(</span>mean <span class="op">=</span> <span class="fl">7</span>, sd <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span>
 <span><span class="va">epifit</span> <span class="op">&lt;-</span> <span class="fu">estimR</span><span class="op">(</span><span class="va">zika2015</span><span class="op">$</span><span class="va">incidence</span>, dates <span class="op">=</span> <span class="va">zika2015</span><span class="op">$</span><span class="va">dates</span>, si <span class="op">=</span> <span class="va">si</span><span class="op">$</span><span class="va">pvec</span>, WTR <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="rt_estimation_validation_files/figure-html/zika_comparison_plot-1.png" width="700"></p>
+<p><img src="rt_estimation_validation_files/figure-html/zika_comparison_plot-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 </div>
 <div class="section level3">
@@ -500,7 +500,7 @@ outbreak in China.</p>
 <span><span class="co">#&gt;  $ province               : Factor w/ 13 levels "Anhui","Beijing",..: 11 11 1 8 8 8 8 13 13 11 ...</span></span></code></pre></div>
 <p>The dataset contains details about 136 confirmed cases of H7N9
 influenza in China between February and May 2013.</p>
-<p><img src="rt_estimation_validation_files/figure-html/prepare_h7n9_data-1.png" width="700"></p>
+<p><img src="rt_estimation_validation_files/figure-html/prepare_h7n9_data-1.png" class="r-plt" alt="" width="700"></p>
 <p>The H7N9 influenza outbreak shows a clear epidemic pattern, with most
 cases occurring between March and April 2013. Based on the literature,
 the serial interval for influenza A (H7N9) has been estimated to be
@@ -524,11 +524,11 @@ Wallinga-Lipsitch method:</p>
 <span>  conf_level <span class="op">=</span> <span class="fl">0.95</span>,</span>
 <span>  shift <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="rt_estimation_validation_files/figure-html/h7n9_plot-1.png" width="700"></p>
+<p><img src="rt_estimation_validation_files/figure-html/h7n9_plot-1.png" class="r-plt" alt="" width="700"></p>
 <p>To provide a comprehensive methodological comparison, let’s compare
 our Wallinga-Lipsitch implementation with the <code>EpiLPS</code> and
 <code>EpiEstim</code> packages, similar to our Zika analysis:</p>
-<p><img src="rt_estimation_validation_files/figure-html/h7n9_compare_methods-1.png" width="700"></p>
+<p><img src="rt_estimation_validation_files/figure-html/h7n9_compare_methods-1.png" class="r-plt" alt="" width="700"></p>
 <p>The comparison reveals several interesting methodological insights
 when applied to the H7N9 outbreak:</p>
 <ol style="list-style-type: decimal">
@@ -613,7 +613,7 @@ bayesian tool for estimation of the time-varying reproduction number.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

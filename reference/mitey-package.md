@@ -1,0 +1,34 @@
+# mitey: Serial Interval and Case Reproduction Number Estimation
+
+Provides methods to estimate serial intervals and time-varying case
+reproduction numbers from infectious disease outbreak data. Serial
+intervals measure the time between symptom onset in linked transmission
+pairs, while case reproduction numbers quantify how many secondary cases
+each infected individual generates over time. These parameters are
+essential for understanding transmission dynamics, evaluating control
+measures, and informing public health responses. The package implements
+the maximum likelihood framework from Vink et al. (2014)
+[doi:10.1093/aje/kwu209](https://doi.org/10.1093/aje/kwu209) for serial
+interval estimation and the retrospective method from Wallinga &
+Lipsitch (2007)
+[doi:10.1098/rspb.2006.3754](https://doi.org/10.1098/rspb.2006.3754) for
+reproduction number estimation. Originally developed for scabies
+transmission analysis but applicable to other infectious diseases
+including influenza, COVID-19, and emerging pathogens. Designed for
+epidemiologists, public health researchers, and infectious disease
+modelers working with outbreak surveillance data.
+
+## See also
+
+Useful links:
+
+- <https://github.com/kylieainslie/mitey>
+
+- <https://kylieainslie.github.io/mitey/>
+
+- Report bugs at <https://github.com/kylieainslie/mitey/issues>
+
+## Author
+
+**Maintainer**: Kylie Ainslie <ainslie.kylie@gmail.com>
+([ORCID](https://orcid.org/0000-0001-5419-7206)) \[copyright holder\]
