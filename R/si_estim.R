@@ -260,7 +260,6 @@ si_estim <- function(
   }
 
   # Data-derived bounds for random starting points
-  data_mean <- mean(dat)
   data_sd <- sd(dat)
   data_range <- range(dat)
 
