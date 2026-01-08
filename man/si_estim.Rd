@@ -4,7 +4,7 @@
 \alias{si_estim}
 \title{Estimate Serial Interval Distribution Using the Vink Method}
 \usage{
-si_estim(dat, n = 50, dist = "normal", init = NULL, tol = 1e-06)
+si_estim(dat, n = 50, dist = "normal", init = NULL, tol = 1e-06, n_starts = 1)
 }
 \arguments{
 \item{dat}{numeric vector; index case-to-case (ICC) intervals in days. These are
@@ -32,6 +32,14 @@ good initial values can improve convergence, especially for challenging datasets
 early if the relative change in both mean and standard deviation between
 iterations is less than this value. Set to 0 to disable early stopping
 and always run all \code{n} iterations. Defaults to 1e-6}
+
+\item{n_starts}{integer; number of random restarts for the EM algorithm. The algorithm
+can converge to local optima, especially when initial values are far from
+the true parameters. Using multiple restarts with different starting points
+helps find the global optimum. The first restart uses the provided \code{init}
+values (or data-derived values if \code{init = NULL}), and subsequent restarts
+use random starting points sampled from the data range. The result with the
+highest log-likelihood is returned. Defaults to 1 (no additional restarts)}
 }
 \value{
 A named list containing:
@@ -44,6 +52,8 @@ on distribution choice (7 for normal, 4 for gamma)
 \item \code{converged}: Logical indicating whether the algorithm converged before
 reaching the maximum number of iterations
 \item \code{iterations}: Integer indicating the number of iterations performed
+\item \code{loglik}: Log-likelihood of the fitted model (used for model comparison)
+\item \code{n_restarts}: Number of restarts performed
 }
 }
 \description{
@@ -155,6 +165,11 @@ result_conv <- si_estim(large_icc)
 if (result_conv$converged) {
   message("Converged in ", result_conv$iterations, " iterations")
 }
+
+# Example 6: Use multiple restarts to avoid local optima
+# Useful when initial values might be far from true parameters
+result_restarts <- si_estim(large_icc, n_starts = 5)
+message("Best result from ", result_restarts$n_restarts, " restarts")
 
 }
 
