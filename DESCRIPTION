@@ -1,12 +1,9 @@
 Package: mitey
 Title: Serial Interval and Case Reproduction Number Estimation  
 Version: 0.3.0
-Authors@R: 
-    person(given = "Kylie", 
-           family = "Ainslie", 
-           role = c("aut", "cre", "cph"), 
-           email = "ainslie.kylie@gmail.com",
-           comment = c(ORCID = "0000-0001-5419-7206"))
+Authors@R: person("Kylie", "Ainslie", email = "ainslie.kylie@gmail.com", role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0001-5419-7206"))
+Author: Kylie Ainslie [aut, cre, cph] (<https://orcid.org/0000-0001-5419-7206>)
+Maintainer: Kylie Ainslie <ainslie.kylie@gmail.com>
 Description: Provides methods to estimate serial intervals and time-varying case
   reproduction numbers from infectious disease outbreak data. Serial intervals measure
   the time between symptom onset in linked transmission pairs, while case reproduction 

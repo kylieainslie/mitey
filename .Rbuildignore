@@ -1,5 +1,9 @@
 ^mitey\.Rproj$
 ^\.Rproj\.user$
+^\.DS_Store$
+^\.Rhistory$
+^\.\.Rcheck$
+^mitey$
 ^LICENSE\.md$
 ^_pkgdown\.yml$
 ^docs$
