@@ -73,3 +73,4 @@ data collection ended.
 \code{\link{calculate_si_probability_matrix}} for probability matrix creation,
 \code{\link{calculate_truncation_correction}} for correction details
 }
+\keyword{internal}

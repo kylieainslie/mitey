@@ -11,14 +11,18 @@
 #' @return numeric matrix; matrix of transmission probabilities where element \code{[i,j]}
 #'         represents the probability that case j infected case i based on their
 #'         time difference and the serial interval distribution
-#' @export
+#' @keywords internal
 #' @examples
+#' \dontrun{
 #' # Create sample day differences matrix
 #' dates <- as.Date(c("2023-01-01", "2023-01-03", "2023-01-05"))
 #' day_diffs <- create_day_diff_matrix(dates)
 #'
 #' # Calculate probability matrix
-#' prob_matrix <- calculate_si_probability_matrix(day_diffs, si_mean = 7, si_sd = 3, si_dist = "gamma")
+#' prob_matrix <- calculate_si_probability_matrix(
+#'   day_diffs, si_mean = 7, si_sd = 3, si_dist = "gamma"
+#' )
+#' }
 #'
 calculate_si_probability_matrix <- function(
   day_diffs,
@@ -41,10 +45,6 @@ calculate_si_probability_matrix <- function(
           si_prob[i, j] <- dgamma(day_diffs[i, j], shape = shape, rate = rate)
         } else if (si_dist == "normal") {
           si_prob[i, j] <- dnorm(day_diffs[i, j], mean = si_mean, sd = si_sd)
-          # Truncate negative values for normal distribution
-          if (day_diffs[i, j] <= 0) {
-            si_prob[i, j] <- 0
-          }
         }
       }
     }
@@ -62,12 +62,12 @@ calculate_si_probability_matrix <- function(
 #'              or any format coercible to dates
 #' @return numeric matrix; symmetric matrix where element \code{[i,j]} represents the
 #'         number of days between case i and case j (positive if i occurs after j)
-#' @export
+#' @keywords internal
 #' @examples
-#' # Create day difference matrix from onset dates
+#' \dontrun{
 #' onset_dates <- as.Date(c("2023-01-01", "2023-01-04", "2023-01-07", "2023-01-10"))
-#' day_differences <- create_day_diff_matrix(onset_dates)
-#' print(day_differences)
+#' create_day_diff_matrix(onset_dates)
+#' }
 #'
 create_day_diff_matrix <- function(dates) {
   n <- length(dates)
@@ -133,16 +133,12 @@ smooth_estimates <- function(r_estimate, window) {
 #' @return numeric vector; correction factors for each case. Values > 1 indicate
 #'         upward adjustment needed. Returns NA when correction would be unreliable
 #'         (probability of observation <= 0.5)
-#' @export
+#' @keywords internal
 #' @examples
-#' # Calculate truncation correction for recent cases
+#' \dontrun{
 #' case_dates <- seq(as.Date("2023-01-01"), as.Date("2023-01-20"), by = "day")
-#' corrections <- calculate_truncation_correction(
-#'   case_dates, si_mean = 7, si_sd = 3, si_dist = "gamma"
-#'   )
-#'
-#' # Show how correction increases for more recent cases
-#' tail(corrections, 5)
+#' calculate_truncation_correction(case_dates, si_mean = 7, si_sd = 3, si_dist = "gamma")
+#' }
 #'
 calculate_truncation_correction <- function(dates, si_mean, si_sd, si_dist) {
   n <- length(dates)
@@ -179,7 +175,7 @@ calculate_truncation_correction <- function(dates, si_mean, si_sd, si_dist) {
 #' @return numeric vector; bootstrapped daily incidence of the same length as input.
 #'         Total number of cases remains the same but their temporal distribution varies
 #'
-#'
+#' @keywords internal
 generate_case_bootstrap <- function(incidence) {
   # Create a case-level representation (each case is an individual unit)
   case_days <- rep(1:length(incidence), times = incidence)
@@ -245,7 +241,7 @@ generate_case_bootstrap <- function(incidence) {
 #'          \code{\link{calculate_si_probability_matrix}} for probability matrix creation,
 #'          \code{\link{calculate_truncation_correction}} for correction details
 #'
-#'
+#' @keywords internal
 calculate_r_estimates <- function(
   incidence,
   si_prob,
@@ -317,7 +313,7 @@ calculate_r_estimates <- function(
 #'   \item \code{r_corrected_lower, r_corrected_upper}: Confidence intervals for corrected R estimates
 #' }
 #'
-#'
+#' @keywords internal
 calculate_bootstrap_ci <- function(
   incidence,
   si_prob,

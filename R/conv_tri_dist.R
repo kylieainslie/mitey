@@ -7,20 +7,22 @@
 #' + component 6+7: Primary-Quaternary route
 #' @param x vector of index case to case intervals
 #' @param sigma standard deviation of density distribution
-#' @param r description??
+#' @param r numeric; the observed ICC interval value used for calculating integration bounds in "lower" and "upper" quantity modes
 #' @param mu mean of density distribution
 #' @param route integer; between 1 and 7 and indicates the route of transmission.
 #' @param quantity character; "zero", "lower", "upper"
 #'
 #' @return vector of density draws for each value of x
-#' @export
+#' @keywords internal
 #'
 #' @importFrom fdrtool dhalfnorm
 #' @importFrom stats dnorm
 #'
 #' @examples
+#' \dontrun{
 #' iccs <- 1:30
 #' conv_tri_dist(x = iccs, route = 1)
+#' }
 
 conv_tri_dist <- function(
   x,

@@ -1,6 +1,6 @@
 Package: mitey
 Title: Serial Interval and Case Reproduction Number Estimation  
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: person("Kylie", "Ainslie", email = "ainslie.kylie@gmail.com", role = c("aut", "cre", "cph"), comment = c(ORCID = "0000-0001-5419-7206"))
 Author: Kylie Ainslie [aut, cre, cph] (<https://orcid.org/0000-0001-5419-7206>)
 Maintainer: Kylie Ainslie <ainslie.kylie@gmail.com>
@@ -22,7 +22,7 @@ Date: 2025-08-16
 License: EUPL-1.2
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
     fdrtool,
     ggplot2,

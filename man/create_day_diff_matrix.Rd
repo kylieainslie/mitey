@@ -19,9 +19,10 @@ Creates a symmetric matrix containing the time differences (in days) between
 all pairs of cases based on their symptom onset dates.
 }
 \examples{
-# Create day difference matrix from onset dates
+\dontrun{
 onset_dates <- as.Date(c("2023-01-01", "2023-01-04", "2023-01-07", "2023-01-10"))
-day_differences <- create_day_diff_matrix(onset_dates)
-print(day_differences)
+create_day_diff_matrix(onset_dates)
+}
 
 }
+\keyword{internal}

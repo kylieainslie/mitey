@@ -119,7 +119,7 @@ plot_si_fit <- function(
         ),
         color = "red",
         linetype = "dashed",
-        size = 1
+        linewidth = 1
       ) +
       labs(x = "Index-case to case interval (days)", y = "Probability") +
       theme_minimal()
@@ -156,4 +156,93 @@ plot_si_fit <- function(
   }
 
   return(p)
+}
+
+#' Plot Serial Interval Fit from si_estim Result
+#'
+#' A convenience wrapper for \code{\link{plot_si_fit}} that accepts the output from
+#' \code{\link{si_estim}} directly, automatically handling the weight aggregation
+#' for different distribution types.
+#'
+#' @param si_result list; the output from \code{\link{si_estim}} containing mean, sd,
+#'                  and wts (weights) components
+#' @param dat numeric vector; the index case-to-case (ICC) intervals in days used
+#'            for estimation
+#' @param dist character; the distribution family used for estimation. Must be either
+#'             "normal" (default) or "gamma". Should match the distribution used in
+#'             the original \code{si_estim()} call
+#' @param scaling_factor numeric; multiplicative factor to adjust the height of the
+#'                       fitted density curve. Defaults to 1
+#'
+#' @return A \code{ggplot2} object showing the fitted distribution overlaid on a
+#'         histogram of the observed data
+#'
+#' @details
+#' This function simplifies the plotting workflow by automatically aggregating the
+
+#' component weights from \code{si_estim()} output:
+#' \itemize{
+#'   \item For \strong{normal distribution}: Aggregates 7 weights into 4 transmission
+#'         route weights (co-primary, primary-secondary, primary-tertiary,
+#'         primary-quaternary)
+#'   \item For \strong{gamma distribution}: Passes the first 3 weights (co-primary,
+#'         primary-secondary, primary-tertiary); the primary-quaternary weight is
+#'         derived internally by \code{f_gam()} as \code{1 - w1 - w2 - w3}
+#' }
+#'
+#' @seealso \code{\link{si_estim}} for serial interval estimation,
+#'          \code{\link{plot_si_fit}} for the underlying plotting function
+#'
+#' @export
+#' @examples
+#' # Simulate some ICC interval data
+#' set.seed(123)
+#' icc_data <- c(
+#'   abs(rnorm(15, mean = 0, sd = 2)),
+#'   rnorm(40, mean = 12, sd = 3),
+#'   rnorm(15, mean = 24, sd = 4)
+#' )
+#' icc_data <- round(pmax(icc_data, 0))
+#'
+#' # Estimate serial interval
+#' \donttest{
+#' result <- si_estim(icc_data, n = 50)
+#'
+#' # Plot using the convenience wrapper
+#' plot_si_fit_result(result, icc_data, dist = "normal")
+#' }
+#'
+plot_si_fit_result <- function(
+  si_result,
+  dat,
+  dist = c("normal", "gamma"),
+  scaling_factor = 1
+) {
+  dist <- match.arg(dist)
+
+ if (dist == "normal") {
+    # Aggregate 7 weights into 4 for normal distribution
+    # Component 1: Co-primary
+    # Components 2+3: Primary-secondary
+    # Components 4+5: Primary-tertiary
+    # Components 6+7: Primary-quaternary
+    weights <- c(
+      si_result$wts[1],
+      si_result$wts[2] + si_result$wts[3],
+      si_result$wts[4] + si_result$wts[5],
+      si_result$wts[6] + si_result$wts[7]
+    )
+  } else {
+    # Gamma: pass first 3 weights; f_gam() derives the 4th as 1 - w1 - w2 - w3
+    weights <- si_result$wts[1:3]
+  }
+
+  plot_si_fit(
+    dat = dat,
+    mean = si_result$mean,
+    sd = si_result$sd,
+    weights = weights,
+    dist = dist,
+    scaling_factor = scaling_factor
+  )
 }

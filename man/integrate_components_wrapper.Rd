@@ -67,16 +67,10 @@ distribution naturally handles the asymmetry that these components would otherwi
 model in the normal distribution case.
 }
 \examples{
-# Basic example with normal distribution
-# Returns 7 component values for ICC interval of 10 days
+\dontrun{
 integrate_components_wrapper(d = 10, mu = 15, sigma = 3, dist = "normal")
-
-# Same parameters with gamma distribution
-# Returns 4 component values (components 1, 2, 4, 6)
 integrate_components_wrapper(d = 10, mu = 15, sigma = 3, dist = "gamma")
-
-# Special case: ICC interval of 0 (simultaneous onset)
-integrate_components_wrapper(d = 0, mu = 12, sigma = 2, dist = "normal")
+}
 
 }
 \references{
@@ -88,3 +82,4 @@ diseases: A systematic review and analysis. American Journal of Epidemiology,
 \code{\link{integrate_component}}, \code{\link{si_estim}}, \code{\link{flower}},
 \code{\link{fupper}}, \code{\link{f0}}
 }
+\keyword{internal}
