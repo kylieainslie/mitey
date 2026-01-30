@@ -30,13 +30,13 @@ or levels of confidence.
 }
 \details{
 The weighted variance is calculated using the formula:
-\deqn{s^2_w = \frac{\sum w_i}{\sum w_i^2 - (\sum w_i)^2} \sum w_i (x_i - \bar{x}_w)^2}
+\deqn{s^2_w = \frac{\sum w_i}{(\sum w_i)^2 - \sum w_i^2} \sum w_i (x_i - \bar{x}_w)^2}
 
 where \eqn{\bar{x}_w} is the weighted mean and \eqn{w_i} are the weights.
 
 This function uses precision weights (also called reliability weights), which represent how much confidence or trust to place in each observation, rather than frequency weights that represent how many times to count each observation.
 
-The denominator correction (\eqn{\sum w_i^2 - (\sum w_i)^2}) provides an
+The denominator correction (\eqn{(\sum w_i)^2 - \sum w_i^2}) provides an
 unbiased estimator for precision weights. Examples of precision weights include
 probabilities (0-1), measurement confidence scores, or inverse error variances.
 }
