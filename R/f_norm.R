@@ -50,33 +50,15 @@
 #' American Journal of Epidemiology, 180(9), 865-875.
 #'
 #' @seealso \code{\link{si_estim}}, \code{\link{plot_si_fit}}, \code{\link{f_gam}}
-#' @export
+#' @keywords internal
 #' @importFrom stats dnorm
 #' @importFrom fdrtool dhalfnorm
 #' @examples
-#' # Example: Plot serial interval mixture density for scabies outbreak
-#'
-#' # Set parameters based on scabies epidemiology (longer serial interval)
-#' mu <- 123     # Mean serial interval of 123 days (from Ainslie et al.)
-#' sigma <- 32   # Standard deviation of 32 days
-#'
-#' # Set transmission route weights typical for scabies
-#' w1 <- 0.15    # 15% co-primary cases
-#' w2 <- 0.50    # 50% primary-secondary cases
-#' w3 <- 0.25    # 25% primary-tertiary cases
-#' # Remaining 10% are primary-quaternary cases (1 - w1 - w2 - w3 = 0.1)
-#'
-#' # Create sequence of time points
+#' \dontrun{
 #' x <- seq(0, 400, by = 1)
-#'
-#' # Calculate mixture density
-#' density_values <- f_norm(x, w1, w2, w3, mu, sigma)
-#'
-#' # Plot the result
-#' plot(x, density_values, type = "l", lwd = 2, col = "red",
-#'      xlab = "Days", ylab = "Density",
-#'      main = "Serial Interval Mixture Density (Normal Distribution)")
-#' grid()
+#' density_values <- f_norm(x, w1 = 0.15, w2 = 0.50, w3 = 0.25, mu = 123, sigma = 32)
+#' plot(x, density_values, type = "l")
+#' }
 #'
 f_norm <- function(
   x,

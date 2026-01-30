@@ -11,14 +11,18 @@
 #' @return numeric matrix; matrix of transmission probabilities where element \code{[i,j]}
 #'         represents the probability that case j infected case i based on their
 #'         time difference and the serial interval distribution
-#' @export
+#' @keywords internal
 #' @examples
+#' \dontrun{
 #' # Create sample day differences matrix
 #' dates <- as.Date(c("2023-01-01", "2023-01-03", "2023-01-05"))
 #' day_diffs <- create_day_diff_matrix(dates)
 #'
 #' # Calculate probability matrix
-#' prob_matrix <- calculate_si_probability_matrix(day_diffs, si_mean = 7, si_sd = 3, si_dist = "gamma")
+#' prob_matrix <- calculate_si_probability_matrix(
+#'   day_diffs, si_mean = 7, si_sd = 3, si_dist = "gamma"
+#' )
+#' }
 #'
 calculate_si_probability_matrix <- function(
   day_diffs,
@@ -62,12 +66,12 @@ calculate_si_probability_matrix <- function(
 #'              or any format coercible to dates
 #' @return numeric matrix; symmetric matrix where element \code{[i,j]} represents the
 #'         number of days between case i and case j (positive if i occurs after j)
-#' @export
+#' @keywords internal
 #' @examples
-#' # Create day difference matrix from onset dates
+#' \dontrun{
 #' onset_dates <- as.Date(c("2023-01-01", "2023-01-04", "2023-01-07", "2023-01-10"))
-#' day_differences <- create_day_diff_matrix(onset_dates)
-#' print(day_differences)
+#' create_day_diff_matrix(onset_dates)
+#' }
 #'
 create_day_diff_matrix <- function(dates) {
   n <- length(dates)
@@ -133,16 +137,12 @@ smooth_estimates <- function(r_estimate, window) {
 #' @return numeric vector; correction factors for each case. Values > 1 indicate
 #'         upward adjustment needed. Returns NA when correction would be unreliable
 #'         (probability of observation <= 0.5)
-#' @export
+#' @keywords internal
 #' @examples
-#' # Calculate truncation correction for recent cases
+#' \dontrun{
 #' case_dates <- seq(as.Date("2023-01-01"), as.Date("2023-01-20"), by = "day")
-#' corrections <- calculate_truncation_correction(
-#'   case_dates, si_mean = 7, si_sd = 3, si_dist = "gamma"
-#'   )
-#'
-#' # Show how correction increases for more recent cases
-#' tail(corrections, 5)
+#' calculate_truncation_correction(case_dates, si_mean = 7, si_sd = 3, si_dist = "gamma")
+#' }
 #'
 calculate_truncation_correction <- function(dates, si_mean, si_sd, si_dist) {
   n <- length(dates)

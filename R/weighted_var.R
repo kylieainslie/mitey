@@ -32,55 +32,18 @@
 #' @seealso \code{\link{weighted.mean}} for weighted mean calculation,
 #'          \code{\link{var}} for unweighted sample variance
 #'
-#' @export
+#' @keywords internal
 #' @importFrom stats weighted.mean
 #'
 #' @examples
-#' # Example 1: Basic weighted variance calculation
+#' \dontrun{
 #' values <- c(2.1, 3.5, 1.8, 4.2, 2.9)
 #' weights <- c(0.8, 0.3, 0.9, 0.5, 0.7)
 #' weighted_var(values, weights)
-#'
-#' # Example 2: Compare with unweighted variance
-#' x <- 1:10
-#' equal_weights <- rep(1, 10)
-#' unweighted_var <- var(x)
-#' weighted_var_equal <- weighted_var(x, equal_weights)
-#'
-#' # Example 3: Using precision weights
-#' # Measurements with different levels of confidence
-#' measurements <- c(10.2, 9.8, 10.5, 9.9, 10.1)
-#' confidence_levels <- c(0.9, 0.6, 0.8, 0.95, 0.7)  # How much we trust each measurement
-#'
-#' precision_weighted_var <- weighted_var(measurements, confidence_levels)
-#'
-#' # Example 4: Handling missing values
-#' x_with_na <- c(1, 2, NA, 4, 5)
-#' weights_with_na <- c(0.2, 0.3, 0.1, 0.8, 0.4)
-#'
-#' # This will return NA
-#' result_na <- weighted_var(x_with_na, weights_with_na, na.rm = FALSE)
-#'
-#' # This will calculate after removing NA
-#' result_removed <- weighted_var(x_with_na, weights_with_na, na.rm = TRUE)
-#'
-#' # Example 5: Different weight patterns and their effects
-#' data_points <- c(10, 15, 20, 25, 30)
-#'
-#' # Equal weights (should approximate unweighted variance)
-#' equal_wts <- rep(1, 5)
-#' var_equal <- weighted_var(data_points, equal_wts)
-#'
-#' # Emphasizing central values
-#' central_wts <- c(0.1, 0.3, 1.0, 0.3, 0.1)
-#' var_central <- weighted_var(data_points, central_wts)
-#'
-#' # Emphasizing extreme values
-#' extreme_wts <- c(1.0, 0.1, 0.1, 0.1, 1.0)
-#' var_extreme <- weighted_var(data_points, extreme_wts)
+#' }
 
 weighted_var <- function(x, w, na.rm = FALSE) {
-  if (!is.numeric(x) | !is.numeric(w)) {
+  if (!is.numeric(x) || !is.numeric(w)) {
     stop("x and/or w must be numeric")
   }
 

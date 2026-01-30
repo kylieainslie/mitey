@@ -11,7 +11,7 @@ conv_tri_dist(x, sigma = sd(x), r = x, mu = mean(x), route, quantity = "zero")
 
 \item{sigma}{standard deviation of density distribution}
 
-\item{r}{description??}
+\item{r}{numeric; the observed ICC interval value used for calculating integration bounds in "lower" and "upper" quantity modes}
 
 \item{mu}{mean of density distribution}
 
@@ -32,6 +32,9 @@ We split the folded normal distribution for Primary-Secondary, Primary-Tertiary 
 }
 }
 \examples{
+\dontrun{
 iccs <- 1:30
 conv_tri_dist(x = iccs, route = 1)
 }
+}
+\keyword{internal}

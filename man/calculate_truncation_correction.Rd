@@ -26,13 +26,10 @@ right-truncation bias. This bias occurs because cases near the end of the
 observation period may have generated secondary cases that are not yet observed.
 }
 \examples{
-# Calculate truncation correction for recent cases
+\dontrun{
 case_dates <- seq(as.Date("2023-01-01"), as.Date("2023-01-20"), by = "day")
-corrections <- calculate_truncation_correction(
-  case_dates, si_mean = 7, si_sd = 3, si_dist = "gamma"
-  )
-
-# Show how correction increases for more recent cases
-tail(corrections, 5)
+calculate_truncation_correction(case_dates, si_mean = 7, si_sd = 3, si_dist = "gamma")
+}
 
 }
+\keyword{internal}

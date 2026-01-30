@@ -40,30 +40,12 @@
 #' Vink MA, Bootsma MCJ, Wallinga J (2014). Serial intervals of respiratory infectious
 #' diseases: A systematic review and analysis. American Journal of Epidemiology,
 #' 180(9), 865-875.
-#' @export
+#' @keywords internal
 #' @examples
-#' # Basic example with lower integration (default)
-#' # Component 2 represents primary-secondary transmission
+#' \dontrun{
 #' integrate_component(d = 15, mu = 12, sigma = 3, comp = 2, dist = "normal", lower = TRUE)
-#'
-#' # Upper integration example
 #' integrate_component(d = 15, mu = 12, sigma = 3, comp = 2, dist = "normal", lower = FALSE)
-#'
-#' # Using gamma distribution
-#' integrate_component(d = 10, mu = 8, sigma = 2, comp = 1, dist = "gamma", lower = TRUE)
-#'
-#' # Component 1 (co-primary transmission) with normal distribution
-#' integrate_component(d = 5, mu = 10, sigma = 3, comp = 1, dist = "normal", lower = TRUE)
-#'
-#' # Compare different components for the same data point
-#' d_val <- 20
-#' mu_val <- 15
-#' sigma_val <- 4
-#'
-#' # Calculate for components 1, 2, and 4 (different transmission routes)
-#' sapply(c(1, 2, 4), function(comp) {
-#'   integrate_component(d_val, mu_val, sigma_val, comp, "normal", lower = TRUE)
-#' })
+#' }
 integrate_component <- function(
   d,
   mu,

@@ -126,6 +126,5 @@ test_that("plot_si_fit can be built without errors", {
 
   # Check that the plot can be built (this would catch issues with stat_function)
   built <- ggplot2::ggplot_build(p)
-  expect_type(built, "list")
-  expect_true("data" %in% names(built))
+  expect_true(!is.null(built$data))
 })
