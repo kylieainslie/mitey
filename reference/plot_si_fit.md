@@ -124,10 +124,6 @@ plot_si_fit(
   dist = "gamma",
   scaling_factor = 0.8
 )
-#> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-#> ℹ Please use `linewidth` instead.
-#> ℹ The deprecated feature was likely used in the mitey package.
-#>   Please report the issue at <https://github.com/kylieainslie/mitey/issues>.
 #> Warning: Removed 1 row containing missing values or values outside the scale range
 #> (`geom_function()`).
 

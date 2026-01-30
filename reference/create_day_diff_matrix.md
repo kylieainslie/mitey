@@ -24,13 +24,8 @@ number of days between case i and case j (positive if i occurs after j)
 ## Examples
 
 ``` r
-# Create day difference matrix from onset dates
+if (FALSE) { # \dontrun{
 onset_dates <- as.Date(c("2023-01-01", "2023-01-04", "2023-01-07", "2023-01-10"))
-day_differences <- create_day_diff_matrix(onset_dates)
-print(day_differences)
-#>      [,1] [,2] [,3] [,4]
-#> [1,]    0   -3   -6   -9
-#> [2,]    3    0   -3   -6
-#> [3,]    6    3    0   -3
-#> [4,]    9    6    3    0
+create_day_diff_matrix(onset_dates)
+} # }
 ```

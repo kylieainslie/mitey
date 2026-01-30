@@ -39,13 +39,8 @@ upward adjustment needed. Returns NA when correction would be unreliable
 ## Examples
 
 ``` r
-# Calculate truncation correction for recent cases
+if (FALSE) { # \dontrun{
 case_dates <- seq(as.Date("2023-01-01"), as.Date("2023-01-20"), by = "day")
-corrections <- calculate_truncation_correction(
-  case_dates, si_mean = 7, si_sd = 3, si_dist = "gamma"
-  )
-
-# Show how correction increases for more recent cases
-tail(corrections, 5)
-#> [1] NA NA NA NA NA
+calculate_truncation_correction(case_dates, si_mean = 7, si_sd = 3, si_dist = "gamma")
+} # }
 ```

@@ -40,10 +40,14 @@ their time difference and the serial interval distribution
 ## Examples
 
 ``` r
+if (FALSE) { # \dontrun{
 # Create sample day differences matrix
 dates <- as.Date(c("2023-01-01", "2023-01-03", "2023-01-05"))
 day_diffs <- create_day_diff_matrix(dates)
 
 # Calculate probability matrix
-prob_matrix <- calculate_si_probability_matrix(day_diffs, si_mean = 7, si_sd = 3, si_dist = "gamma")
+prob_matrix <- calculate_si_probability_matrix(
+  day_diffs, si_mean = 7, si_sd = 3, si_dist = "gamma"
+)
+} # }
 ```

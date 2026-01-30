@@ -100,19 +100,8 @@ of Epidemiology, 180(9), 865-875.
 ## Examples
 
 ``` r
-# Basic example with normal distribution
-# Returns 7 component values for ICC interval of 10 days
+if (FALSE) { # \dontrun{
 integrate_components_wrapper(d = 10, mu = 15, sigma = 3, dist = "normal")
-#> [1] 1.193978e-02 3.369814e-02 1.997254e-16 1.547844e-06 6.921256e-21
-#> [6] 1.234742e-11 5.012834e-26
-
-# Same parameters with gamma distribution
-# Returns 4 component values (components 1, 2, 4, 6)
 integrate_components_wrapper(d = 10, mu = 15, sigma = 3, dist = "gamma")
-#> [1] 1.196761e-02 3.355068e-02 2.444605e-10 6.004790e-24
-
-# Special case: ICC interval of 0 (simultaneous onset)
-integrate_components_wrapper(d = 0, mu = 12, sigma = 2, dist = "normal")
-#> [1] 2.791926e-01 1.042142e-08 1.371410e-09 1.145498e-16 1.483522e-17
-#> [6] 1.434277e-24 1.847568e-25
+} # }
 ```

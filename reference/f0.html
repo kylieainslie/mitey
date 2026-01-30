@@ -21,7 +21,7 @@ component 6+7: PQ route
 
     <a class="navbar-brand me-2" href="../index.html">mitey</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,31 +105,13 @@ $$\sigma^2 = k \times \theta^2$$.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Basic example with normal distribution</span></span></span>
-<span class="r-in"><span><span class="co"># Component 2 represents primary-secondary transmission</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># Basic example with normal distribution</span></span></span>
 <span class="r-in"><span><span class="fu">f0</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0.5</span>, mu <span class="op">=</span> <span class="fl">12</span>, sigma <span class="op">=</span> <span class="fl">3</span>, comp <span class="op">=</span> <span class="fl">2</span>, dist <span class="op">=</span> <span class="st">"normal"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8.569012e-05</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Same parameters with gamma distribution</span></span></span>
 <span class="r-in"><span><span class="fu">f0</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0.5</span>, mu <span class="op">=</span> <span class="fl">12</span>, sigma <span class="op">=</span> <span class="fl">3</span>, comp <span class="op">=</span> <span class="fl">2</span>, dist <span class="op">=</span> <span class="st">"gamma"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.195475e-15</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Component 1 represents co-primary transmission</span></span></span>
-<span class="r-in"><span><span class="fu">f0</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0.3</span>, mu <span class="op">=</span> <span class="fl">8</span>, sigma <span class="op">=</span> <span class="fl">2</span>, comp <span class="op">=</span> <span class="fl">1</span>, dist <span class="op">=</span> <span class="st">"normal"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.3927174</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Calculate for all transmission route components</span></span></span>
-<span class="r-in"><span><span class="va">x_val</span> <span class="op">&lt;-</span> <span class="fl">0.4</span></span></span>
-<span class="r-in"><span><span class="va">mu_val</span> <span class="op">&lt;-</span> <span class="fl">10</span></span></span>
-<span class="r-in"><span><span class="va">sigma_val</span> <span class="op">&lt;-</span> <span class="fl">3</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Components 1-7 represent different transmission routes:</span></span></span>
-<span class="r-in"><span><span class="co"># 1: Co-Primary, 2+3: Primary-Secondary, 4+5: Primary-Tertiary, 6+7: Primary-Quaternary</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>, <span class="kw">function</span><span class="op">(</span><span class="va">comp</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="fu">f0</span><span class="op">(</span><span class="va">x_val</span>, <span class="va">mu_val</span>, <span class="va">sigma_val</span>, <span class="va">comp</span>, <span class="st">"normal"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.246751e-01 9.536353e-04 3.920512e-04 2.618487e-06 1.076492e-06</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [6] 8.277535e-09 3.402996e-09</span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

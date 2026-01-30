@@ -19,7 +19,7 @@ component 6+7: Primary-Quaternary route
 
     <a class="navbar-brand me-2" href="../index.html">mitey</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,7 +76,7 @@ component 6+7: Primary-Quaternary route
 
 
 <dt id="arg-r">r<a class="anchor" aria-label="anchor" href="#arg-r"></a></dt>
-<dd><p>description??</p></dd>
+<dd><p>numeric; the observed ICC interval value used for calculating integration bounds in "lower" and "upper" quantity modes</p></dd>
 
 
 <dt id="arg-mu">mu<a class="anchor" aria-label="anchor" href="#arg-mu"></a></dt>
@@ -98,13 +98,10 @@ component 6+7: Primary-Quaternary route
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">iccs</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">30</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="va">iccs</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">30</span></span></span>
 <span class="r-in"><span><span class="fu">conv_tri_dist</span><span class="op">(</span>x <span class="op">=</span> <span class="va">iccs</span>, route <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  0.0000000 -0.1265320 -0.2490151 -0.3651828 -0.4729775 -0.5706108</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] -0.6566121 -0.7298632 -0.7896184 -0.8355101 -0.8675395 -0.8860538</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] -0.8917126 -0.8854446 -0.8683974 -0.8418841 -0.8073273 -0.7662056</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19] -0.7200021 -0.6701590 -0.6180381 -0.5648898 -0.5118284 -0.4598168</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] -0.4096583 -0.3619946 -0.3173109 -0.2759454 -0.2381022 -0.2038672</span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

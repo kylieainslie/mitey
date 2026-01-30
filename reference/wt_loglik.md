@@ -78,27 +78,10 @@ routine that uses this function
 ## Examples
 
 ``` r
-# Example usage within optimization context
-# Simulate some ICC interval data and weights
+if (FALSE) { # \dontrun{
 set.seed(123)
-icc_intervals <- rgamma(50, shape = 2, scale = 3)  # True mean=6, sd=sqrt(18)
+icc_intervals <- rgamma(50, shape = 2, scale = 3)
 weights <- runif(50, 0.1, 1)
-initial_params <- c(5, 4)
-likelihood_value <- wt_loglik(initial_params, icc_intervals, weights)
-
-# Example of parameter optimization
-# \donttest{
-optimized <- optim(
-  par = initial_params,
-  fn = wt_loglik,
-  dat = icc_intervals,
-  tau2 = weights,
-  method = "BFGS"
-)
-
-cat("Optimized mean:", optimized$par[1], "\n")
-#> Optimized mean: 4.737227 
-cat("Optimized sd:", optimized$par[2], "\n")
-#> Optimized sd: 4.018281 
-# }
+wt_loglik(c(5, 4), icc_intervals, weights)
+} # }
 ```

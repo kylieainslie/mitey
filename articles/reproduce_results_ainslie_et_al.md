@@ -1563,6 +1563,11 @@ ggplot(all_peak_months,
     panel.grid.major.x = element_line(color = "gray90", size = 0.5),
     panel.grid.minor.x = element_blank()
   )
+#> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+#> ℹ Please use `linewidth` instead.
+#> This warning is displayed once per session.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+#> generated.
 #> Warning: The `size` argument of `element_line()` is deprecated as of ggplot2 3.4.0.
 #> ℹ Please use the `linewidth` argument instead.
 #> This warning is displayed once per session.

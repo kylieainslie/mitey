@@ -232,6 +232,8 @@ if (require(ggplot2)) {
          title = "Time-varying Reproduction Number") +
     theme_minimal()
 }
+#> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+#> ℹ Please use `linewidth` instead.
 #> Warning: Removed 10 rows containing missing values or values outside the scale range
 #> (`geom_ribbon()`).
 #> Warning: Removed 11 rows containing missing values or values outside the scale range

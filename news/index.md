@@ -1,6 +1,58 @@
 # Changelog
 
-## mitey (development version)
+## mitey 0.3.1
+
+### New Features
+
+- **Convenience plotting function** - Added
+  [`plot_si_fit_result()`](https://kylieainslie.github.io/mitey/reference/plot_si_fit_result.md)
+  which accepts
+  [`si_estim()`](https://kylieainslie.github.io/mitey/reference/si_estim.md)
+  output directly, handling weight aggregation automatically for both
+  normal and gamma distributions
+
+### Bug Fixes
+
+- Fixed logical operator in
+  [`weighted_var()`](https://kylieainslie.github.io/mitey/reference/weighted_var.md)
+  (`|` changed to `||` for scalar comparison)
+- Fixed inverted denominator formula in
+  [`weighted_var()`](https://kylieainslie.github.io/mitey/reference/weighted_var.md)
+  documentation
+- Added defensive guards in
+  [`weighted_var()`](https://kylieainslie.github.io/mitey/reference/weighted_var.md)
+  for degenerate inputs (fewer than 2 values, zero weights)
+- Fixed `na.rm` handling in
+  [`weighted_var()`](https://kylieainslie.github.io/mitey/reference/weighted_var.md)
+  to also filter `NA` weights
+- Removed unreachable dead code in
+  [`calculate_si_probability_matrix()`](https://kylieainslie.github.io/mitey/reference/calculate_si_probability_matrix.md)
+- Fixed ggplot2 deprecation warning (`size` changed to `linewidth` in
+  [`plot_si_fit()`](https://kylieainslie.github.io/mitey/reference/plot_si_fit.md))
+- Fixed
+  [`ggplot_build()`](https://ggplot2.tidyverse.org/reference/ggplot_build.html)
+  type check in tests for newer ggplot2 versions
+- Added [`match.arg()`](https://rdrr.io/r/base/match.arg.html)
+  validation for `dist` parameter in
+  [`integrate_components_wrapper()`](https://kylieainslie.github.io/mitey/reference/integrate_components_wrapper.md)
+
+### API Changes
+
+- Reduced exported functions from 18 to 5. Internal helper functions
+  (`f0`, `flower`, `fupper`, `f_norm`, `f_gam`, `conv_tri_dist`,
+  `integrate_component`, `integrate_components_wrapper`, `wt_loglik`,
+  `weighted_var`, `calculate_si_probability_matrix`,
+  `create_day_diff_matrix`, `calculate_truncation_correction`) are now
+  marked as internal. They remain accessible via `mitey:::` if needed.
+
+### Documentation
+
+- Fixed incomplete `@param r` documentation in
+  [`conv_tri_dist()`](https://kylieainslie.github.io/mitey/reference/conv_tri_dist.md)
+- Added explicit `Author` and `Maintainer` fields to DESCRIPTION for R
+  4.5.2 compatibility
+- Updated `.Rbuildignore` to exclude `.DS_Store`, `.Rhistory`,
+  `..Rcheck`, and `.claude` directories
 
 ## mitey 0.3.0
 

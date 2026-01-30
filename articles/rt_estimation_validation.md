@@ -295,7 +295,7 @@ summary(fitmcmc)
 #> Estimation of the reproduction number with Laplacian-P-splines 
 #> -------------------------------------------------------------- 
 #> Total number of days:          80 
-#> Routine time (seconds):        16.029 
+#> Routine time (seconds):        16.259 
 #> Method:                        MCMC (with Langevin diffusion) 
 #> Hyperparam. optim method:      Nelder-Mead 
 #> Hyperparam. optim convergence: TRUE 
