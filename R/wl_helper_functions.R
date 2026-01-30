@@ -45,10 +45,6 @@ calculate_si_probability_matrix <- function(
           si_prob[i, j] <- dgamma(day_diffs[i, j], shape = shape, rate = rate)
         } else if (si_dist == "normal") {
           si_prob[i, j] <- dnorm(day_diffs[i, j], mean = si_mean, sd = si_sd)
-          # Truncate negative values for normal distribution
-          if (day_diffs[i, j] <= 0) {
-            si_prob[i, j] <- 0
-          }
         }
       }
     }
@@ -179,7 +175,7 @@ calculate_truncation_correction <- function(dates, si_mean, si_sd, si_dist) {
 #' @return numeric vector; bootstrapped daily incidence of the same length as input.
 #'         Total number of cases remains the same but their temporal distribution varies
 #'
-#'
+#' @keywords internal
 generate_case_bootstrap <- function(incidence) {
   # Create a case-level representation (each case is an individual unit)
   case_days <- rep(1:length(incidence), times = incidence)
@@ -245,7 +241,7 @@ generate_case_bootstrap <- function(incidence) {
 #'          \code{\link{calculate_si_probability_matrix}} for probability matrix creation,
 #'          \code{\link{calculate_truncation_correction}} for correction details
 #'
-#'
+#' @keywords internal
 calculate_r_estimates <- function(
   incidence,
   si_prob,
@@ -317,7 +313,7 @@ calculate_r_estimates <- function(
 #'   \item \code{r_corrected_lower, r_corrected_upper}: Confidence intervals for corrected R estimates
 #' }
 #'
-#'
+#' @keywords internal
 calculate_bootstrap_ci <- function(
   incidence,
   si_prob,

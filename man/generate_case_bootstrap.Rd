@@ -18,3 +18,4 @@ Creates a bootstrap sample by resampling individual cases with replacement,
 then reconstructing daily incidence counts. This maintains the temporal
 distribution while introducing sampling variation for uncertainty estimation.
 }
+\keyword{internal}

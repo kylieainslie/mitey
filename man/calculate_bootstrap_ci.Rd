@@ -47,3 +47,4 @@ Generates bootstrap confidence intervals for reproduction number estimates by
 resampling the incidence data multiple times and calculating quantiles of the
 resulting R distributions.
 }
+\keyword{internal}

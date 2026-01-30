@@ -75,6 +75,8 @@ integrate_components_wrapper <- function(
   sigma,
   dist = "normal"
 ) {
+  dist <- match.arg(dist, c("normal", "gamma"))
+
   if (dist == "normal") {
     comp_vec <- 1:7
   } else if (dist == "gamma") {

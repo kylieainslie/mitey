@@ -119,7 +119,7 @@ plot_si_fit <- function(
         ),
         color = "red",
         linetype = "dashed",
-        size = 1
+        linewidth = 1
       ) +
       labs(x = "Index-case to case interval (days)", y = "Probability") +
       theme_minimal()
