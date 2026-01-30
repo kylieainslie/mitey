@@ -56,7 +56,14 @@ weighted_var <- function(x, w, na.rm = FALSE) {
     x <- x[i]
     w <- w[i]
   }
+  if (length(x) < 2L) {
+    return(NA_real_)
+  }
   sum.w <- sum(w)
-  rtn <- (sum.w * (sum(w * (x - weighted.mean(x, w))^2))) / (sum.w^2 - sum(w^2))
+  denom <- sum.w^2 - sum(w^2)
+  if (sum.w == 0 || denom <= 0) {
+    return(NA_real_)
+  }
+  rtn <- (sum.w * (sum(w * (x - weighted.mean(x, w))^2))) / denom
   return(rtn)
 }
