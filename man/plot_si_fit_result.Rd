@@ -41,8 +41,9 @@ component weights from \code{si_estim()} output:
 \item For \strong{normal distribution}: Aggregates 7 weights into 4 transmission
 route weights (co-primary, primary-secondary, primary-tertiary,
 primary-quaternary)
-\item For \strong{gamma distribution}: Uses the 4 weights directly (components
-1, 2, 4, 6 mapped to the 4 transmission routes)
+\item For \strong{gamma distribution}: Passes the first 3 weights (co-primary,
+primary-secondary, primary-tertiary); the primary-quaternary weight is
+derived internally by \code{f_gam()} as \code{1 - w1 - w2 - w3}
 }
 }
 \examples{

@@ -185,8 +185,9 @@ plot_si_fit <- function(
 #'   \item For \strong{normal distribution}: Aggregates 7 weights into 4 transmission
 #'         route weights (co-primary, primary-secondary, primary-tertiary,
 #'         primary-quaternary)
-#'   \item For \strong{gamma distribution}: Uses the 4 weights directly (components
-#'         1, 2, 4, 6 mapped to the 4 transmission routes)
+#'   \item For \strong{gamma distribution}: Passes the first 3 weights (co-primary,
+#'         primary-secondary, primary-tertiary); the primary-quaternary weight is
+#'         derived internally by \code{f_gam()} as \code{1 - w1 - w2 - w3}
 #' }
 #'
 #' @seealso \code{\link{si_estim}} for serial interval estimation,
@@ -232,7 +233,7 @@ plot_si_fit_result <- function(
       si_result$wts[6] + si_result$wts[7]
     )
   } else {
-    # Gamma distribution uses 4 weights directly (components 1, 2, 4, 6)
+    # Gamma: pass first 3 weights; f_gam() derives the 4th as 1 - w1 - w2 - w3
     weights <- si_result$wts[1:3]
   }
 
