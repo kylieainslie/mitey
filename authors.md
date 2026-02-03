@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/kylieainslie/mitey/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/kylieainslie/mitey/blob/v0.3.1/inst/CITATION)
 
 Ainslie K (2025). *mitey: Serial Interval and Case Reproduction Number
 Estimation*.
