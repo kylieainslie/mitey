@@ -19,13 +19,15 @@ bibentry(
     person("J.", "Wallinga")
   ),
   year = "2025",
-  journal = "Available at SSRN",
-  doi = "10.2139/ssrn.5184990",
-  url = "https://dx.doi.org/10.2139/ssrn.5184990",
+  journal = "Nature Communications",
+  volume = "16",
+  pages = "10524",
+  doi = "10.1038/s41467-025-65544-y",
+  url = "https://doi.org/10.1038/s41467-025-65544-y",
   textVersion = paste(
     "Ainslie, K.E.C., Hooiveld, M., Wallinga, J. (2025).",
     "Estimation of the epidemiological characteristics of scabies.",
-    "Available at SSRN. https://dx.doi.org/10.2139/ssrn.5184990"
+    "Nature Communications, 16, 10524. https://doi.org/10.1038/s41467-025-65544-y"
   )
 )
 

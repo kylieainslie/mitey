@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 [![CRAN downloads](https://cranlogs.r-pkg.org/badges/mitey)](https://cran.r-project.org/package=mitey)
 <!-- badges: end -->
 
-The `mitey` package is a lightweight package designed originally as a companion to the analyses presented by [Ainslie et al. 2025](http://dx.doi.org/10.2139/ssrn.5184990) on scabies transmission. However, the methods featured in `mitey` are more widely applicable than in the context of scabies. Thus, the motivation behind creating the `mitey` package was twofold: 1) provide reproducible code to reproduce  and also provides flexible, documented code for methods to estimate epidemiological quantities of interest. 
+The `mitey` package is a lightweight package designed originally as a companion to the analyses presented by [Ainslie et al. 2025](https://doi.org/10.1038/s41467-025-65544-y) on scabies transmission. However, the methods featured in `mitey` are more widely applicable than in the context of scabies. Thus, the motivation behind creating the `mitey` package was twofold: 1) provide reproducible code to reproduce  and also provides flexible, documented code for methods to estimate epidemiological quantities of interest. 
 
 Currently, `mitey` includes methods to estimate a) the mean and standard deviation of the serial interval distribution using a maximum likelihood framework developed by [Vink et al. 2014](https://pubmed.ncbi.nlm.nih.gov/25294601/) and b) the time-varying reproduction number using the method developed by [Walling and Lipsitch 2007](https://doi.org/10.1098/rspb.2006.3754).
 
@@ -184,7 +184,7 @@ Expected run times for the examples provided above are shown in the table below.
 
 - A quick start guide showing examples of how to estimate the serial interval and time-varying reproduction number can be found [here](https://kylieainslie.github.io/mitey/articles/quick_start_guide.html).
 
-- A script that reproduces the results from [Ainslie et al. 2025](http://dx.doi.org/10.2139/ssrn.5184990) can be found [here](https://kylieainslie.github.io/mitey/articles/reproduce_results_ainslie_et_al.html).
+- A script that reproduces the results from [Ainslie et al. 2025](https://doi.org/10.1038/s41467-025-65544-y) can be found [here](https://kylieainslie.github.io/mitey/articles/reproduce_results_ainslie_et_al.html).
 
 - Validation of the method used to estimate the mean and standard deviation of the serial interval proposed by [Vink et al. 2014](https://pubmed.ncbi.nlm.nih.gov/25294601/) can be found [here](https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.html).
 
@@ -192,7 +192,7 @@ Expected run times for the examples provided above are shown in the table below.
 
 ## Data
 
-Several data files are stored in the repo so that the results presented in [Ainslie et al. 2025](http://dx.doi.org/10.2139/ssrn.5184990) are reproducible. Data files are stored in `inst/extdata/data/`. Below is a brief description of the different files.
+Several data files are stored in the repo so that the results presented in [Ainslie et al. 2025](https://doi.org/10.1038/s41467-025-65544-y) are reproducible. Data files are stored in `inst/extdata/data/`. Below is a brief description of the different files.
 
 - `si_data.rds`
   - *Description:* Data on date of symptom onset for scabies outbreaks described by [Kaburi et al.](https://doi.org/10.1186/s12889-019-7085-6), [Akunzirwe et al.](https://doi.org/10.21203/rs.3.rs-3205380/v1), [Tjon-Kon-Fat et al.](https://doi.org/10.1371/journal.pntd.0009485), and [Ariza et al.](https://doi.org/10.1007/s10096-012-1752-1). For all outbreaks except Kaburi et al. the raw data was not available, thus the date of symptom onset data had to be reconstructed using the epidemic curve provided in the manuscript. The original data from Kaburi et al. is also available in the `data` directory (`Kaburi_et_al_data_scabies.xlsx`).
@@ -213,7 +213,7 @@ This package is distributed under the European Union Public License (EUPL) v1.2.
 If you use this package, please cite both the manuscript and the software:
 
 #### Manuscript
-Ainslie, K.E.C., M. Hooiveld, J. Wallinga. (2025). Estimation of the epidemiological characteristics of scabies. *Available at SSRN*. https://dx.doi.org/10.2139/ssrn.5184990
+Ainslie, K.E.C., M. Hooiveld, J. Wallinga. (2025). Estimation of the epidemiological characteristics of scabies. *Nature Communications*, 16, 10524. https://doi.org/10.1038/s41467-025-65544-y
 
 #### Software
 ```{r}

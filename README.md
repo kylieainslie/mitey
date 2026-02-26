@@ -20,7 +20,7 @@ downloads](https://cranlogs.r-pkg.org/badges/mitey)](https://cran.r-project.org/
 
 The `mitey` package is a lightweight package designed originally as a
 companion to the analyses presented by [Ainslie et
-al. 2025](http://dx.doi.org/10.2139/ssrn.5184990) on scabies
+al. 2025](https://doi.org/10.1038/s41467-025-65544-y) on scabies
 transmission. However, the methods featured in `mitey` are more widely
 applicable than in the context of scabies. Thus, the motivation behind
 creating the `mitey` package was twofold: 1) provide reproducible code
@@ -220,7 +220,7 @@ intervals.
   [here](https://kylieainslie.github.io/mitey/articles/quick_start_guide.html).
 
 - A script that reproduces the results from [Ainslie et
-  al. 2025](http://dx.doi.org/10.2139/ssrn.5184990) can be found
+  al. 2025](https://doi.org/10.1038/s41467-025-65544-y) can be found
   [here](https://kylieainslie.github.io/mitey/articles/reproduce_results_ainslie_et_al.html).
 
 - Validation of the method used to estimate the mean and standard
@@ -236,7 +236,7 @@ intervals.
 ## Data
 
 Several data files are stored in the repo so that the results presented
-in [Ainslie et al. 2025](http://dx.doi.org/10.2139/ssrn.5184990) are
+in [Ainslie et al. 2025](https://doi.org/10.1038/s41467-025-65544-y) are
 reproducible. Data files are stored in `inst/extdata/data/`. Below is a
 brief description of the different files.
 
@@ -278,8 +278,8 @@ software:
 #### Manuscript
 
 Ainslie, K.E.C., M. Hooiveld, J. Wallinga. (2025). Estimation of the
-epidemiological characteristics of scabies. *Available at SSRN*.
-<https://dx.doi.org/10.2139/ssrn.5184990>
+epidemiological characteristics of scabies. *Nature Communications*, 16,
+10524. <https://doi.org/10.1038/s41467-025-65544-y>
 
 #### Software
 
