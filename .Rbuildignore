@@ -1,6 +1,6 @@
 ^mitey\.Rproj$
 ^\.Rproj\.user$
-^\.DS_Store$
+\.DS_Store$
 ^\.Rhistory$
 ^\.\.Rcheck$
 ^mitey$
@@ -9,6 +9,7 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+\.gitignore$
 ^doc$
 ^Meta$
 ^vignettes/articles$
