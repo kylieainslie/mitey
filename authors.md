@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/kylieainslie/mitey/blob/v0.3.1/inst/CITATION)
+[`inst/CITATION`](https://github.com/kylieainslie/mitey/blob/main/inst/CITATION)
 
 Ainslie K (2025). *mitey: Serial Interval and Case Reproduction Number
 Estimation*.
@@ -25,14 +25,16 @@ R package version 0.2.0, <https://github.com/kylieainslie/mitey>.
     }
 
 Ainslie, K.E.C., Hooiveld, M., Wallinga, J. (2025). Estimation of the
-epidemiological characteristics of scabies. Available at SSRN.
-https://dx.doi.org/10.2139/ssrn.5184990
+epidemiological characteristics of scabies. Nature Communications, 16,
+10524. https://doi.org/10.1038/s41467-025-65544-y
 
     @Article{,
       title = {Estimation of the epidemiological characteristics of scabies},
       author = {Kylie E. C. Ainslie and M. Hooiveld and J. Wallinga},
       year = {2025},
-      journal = {Available at SSRN},
-      doi = {10.2139/ssrn.5184990},
-      url = {https://dx.doi.org/10.2139/ssrn.5184990},
+      journal = {Nature Communications},
+      volume = {16},
+      pages = {10524},
+      doi = {10.1038/s41467-025-65544-y},
+      url = {https://doi.org/10.1038/s41467-025-65544-y},
     }

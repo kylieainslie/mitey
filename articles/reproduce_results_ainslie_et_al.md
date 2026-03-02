@@ -344,8 +344,12 @@ datasets from other infectious diseases.
     #> $n_restarts
     #> [1] 1
 
-    #> `summarise()` has grouped output by 'Author', 'Pathogen'. You can override
-    #> using the `.groups` argument.
+    #> `summarise()` has regrouped the output.
+    #> ℹ Summaries were computed grouped by Author, Pathogen, and Country.
+    #> ℹ Output is grouped by Author and Pathogen.
+    #> ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+    #> ℹ Use `summarise(.by = c(Author, Pathogen, Country))` for per-operation
+    #>   grouping (`?dplyr::dplyr_by`) instead.
     #> # A tibble: 6 × 13
     #>   Author Pathogen Country ICC_interval  mean    sd weight_1 weight_2  weight_3
     #>   <chr>  <chr>    <chr>          <dbl> <dbl> <dbl>    <dbl>    <dbl>     <dbl>
