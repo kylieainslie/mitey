@@ -74,12 +74,12 @@ These build the statistical foundation you'll need before implementing the EM al
 The concept of a likelihood function and what it means to maximise it is the single most important statistical idea for this project. Make sure you understand this before looking at any {mitey} source code.
 
 - [**StatQuest: Maximum Likelihood, clearly explained**](https://www.youtube.com/watch?v=XepXtl9YKwc) (YouTube, ~10 min) — watch this first. Visual and concrete, no prerequisites.
-- [**StatQuest: Probability vs Likelihood**](https://www.youtube.com/watch?v=pYxNSUDSFH4) (YouTube, ~5 min) — clears up a distinction that trips up almost everyone coming from an engineering background.
+- [**StatQuest: Probability vs Likelihood**](https://www.youtube.com/watch?v=pYxNSUDSFH4) (YouTube, ~5 min) — explains the distinction between probability and likelihood in statistics.
 
 **The EM algorithm**
 
 - [**Do & Batzoglou (2008)**, "What is the expectation maximization algorithm?"](https://doi.org/10.1038/nbt1406) (*Nature Biotechnology*) — three pages, written explicitly for practitioners without a deep statistics background. Works through a concrete coin-flipping example. Read this before looking at the {mitey} source code.
-- [**StatQuest: The EM Algorithm, clearly explained**](https://www.youtube.com/watch?v=REypj2sy_5U) (YouTube, ~20 min) — good visual companion to Do & Batzoglou.
+- [**The EM Algorithm, clearly explained**](https://www.youtube.com/watch?v=REypj2sy_5U) (YouTube, ~20 min) — good visual companion to Do & Batzoglou.
 
 **Mixture models**
 
