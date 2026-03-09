@@ -112,7 +112,12 @@ Vink et al. → Svensson → StatQuest MLE videos → Do & Batzoglou → Reynold
   - [ ] [RStudio](https://posit.co/downloads/) or [Positron](https://positron.posit.co/download.html)
   - [ ] [Git](https://git-scm.com/install/); 
   - [ ] connect Git to [GitHub](https://github.com/) (setup a GitHub account if you do not already have one) 
-  - [ ] clone [`{mitey}` repo](https://github.com/kylieainslie/mitey) and orient yourself with your working branch
+  - [ ] clone [`{mitey}` repo](https://github.com/kylieainslie/mitey) and check out your working branch:
+    ```bash
+    git clone https://github.com/kylieainslie/mitey.git
+    cd mitey
+    git checkout simon
+    ```
 
 
 **R and project orientation**
