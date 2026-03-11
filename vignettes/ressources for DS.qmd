@@ -1,12 +1,13 @@
 ---
-title: "DS ressources"
+title: "DS Resources"
 format: html
 editor: visual
 ---
 
-## Ressources for DS
+## Resources
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+- [Data Science Hangout](https://posit.co/data-science-hangout/)
+- [R for Data Science](https://r4ds.hadley.nz/) by Hadley Wickham
 
 ## Running Code
 
