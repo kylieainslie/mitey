@@ -1,0 +1,1 @@
+data<-read.csv("adult_train.csv")
