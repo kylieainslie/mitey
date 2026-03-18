@@ -3,7 +3,7 @@ library(zoo)
 library(ggplot2)
 library(dplyr)
 
-setwd("C:/Users/carre/OneDrive/Bureau/Mitey_project/mitey/Simon")
+setwd("C:/Users/carre/OneDrive/Bureau/Mitey_project/mitey/Simon/PROJECT_2_Economics_projects")
 data<-read.csv("economic_dataset.csv")
 #récupérer le csv
 

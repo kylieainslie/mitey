@@ -1,4 +1,4 @@
-setwd("C:/Users/carre/OneDrive/Bureau/Mitey_project/mitey/Simon")
+setwd("C:/Users/carre/OneDrive/Bureau/Mitey_project/mitey/Simon/PROJECT_2_Economics_projects")
 
 data<-read.csv("adult_train.csv")
 data[data==""]<-"NA"

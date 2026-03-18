@@ -1,6 +1,7 @@
 library(ggplot2)
 
-setwd("C:/Users/carre/OneDrive/Bureau/Mitey_project/mitey/Simon/gold vs inflation")
+setwd("C:/Users/carre/OneDrive/Bureau/Mitey_project/mitey/Simon/PROJECT_1_Gold_vs_inflation_correlation")
+
 df_gold<-read.csv("gold.csv")
 df_inf_rate<-read.csv("inflation_rate_US.csv")
 

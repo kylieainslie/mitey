@@ -3,7 +3,8 @@ library(tseries)
 library(forecast)
 library(dplyr)
 
-setwd("C:/Users/carre/OneDrive/Bureau/Mitey_project/mitey/Simon/")
+setwd("C:/Users/carre/OneDrive/Bureau/Mitey_project/mitey/Simon/PROJECT_3_Electricity_consumption_forecast_projects")
+
 df_elec <- read.csv("consommation-quotidienne-brute.csv", sep = ";")
 
 # Garder uniquement date + valeur
