@@ -1,5 +1,52 @@
 ---
-title: "reading_list"
+title: "Reading List"
 output: html_document
 ---
 
+## Background Reading
+ 
+
+### Epidemiology
+
+The key concepts are:
+
+**Serial interval** — the time between symptom onset in a person who infects someone else, and symptom onset in the person they infected. It's a measure of how fast a disease spreads and it differs from the *incubation period* (time from infection to symptoms in one person) and the *generation time* (time between infections, which can't be directly observed).
+
+**ICC intervals** — "index case-to-case" intervals are the raw data {mitey} uses. In a household outbreak, you observe the times between cases — but some of those cases infected each other directly, while others were both infected by a common source. The mixture model is the tool for separating those signals.
+
+1. [**Vink et al. (2014)**, "Serial intervals of respiratory infectious diseases: a systematic review and analysis"](https://doi.org/10.1093/aje/kwu209) (*American Journal of Epidemiology*) — the paper that {mitey} implements. Read this first. Focus on the biological motivation and the intuition for why a mixture model is needed; the methods section will make more sense after you've worked through the statistical reading below.
+
+2. [**Svensson (2007)**, "A note on generation times in epidemic models"](https://doi.org/10.1016/j.mbs.2006.10.010) (*Mathematical Biosciences*) — short and clear. Explains exactly why serial interval, generation time, and incubation period are different things — and why serial intervals can even be negative.
+
+3. [**Nishiura (2007)**, "Time variations in the transmissibility of pandemic influenza in Prussia, Germany, from 1918–19"](https://doi.org/10.1186/1742-4682-4-20) (*Theoretical Biology and Medical Modelling*, open access) — a worked example of the kind of analysis you'll be doing. Useful for seeing the concepts applied to a real outbreak.
+
+4. [**Lessler et al. (2009)**, "Incubation periods of acute respiratory viral infections: a systematic review"](https://doi.org/10.1016/S1473-3099(09)70069-6) (*Lancet Infectious Diseases*) — useful background on why parametric distributions (Normal, Gamma, lognormal) are commonly used to model infectious disease timing data.
+
+5. [**Anderson & May (1991)**, *Infectious Diseases of Humans: Dynamics and Control*](https://global.oup.com/academic/product/infectious-diseases-of-humans-9780198540403) (Oxford University Press) — not required, but your supervisor may point you to specific chapters for broader context.
+
+### Statistics
+
+These resources are suggested as a refresher. If comfortable with the material feel free to ignore.
+
+**Maximum likelihood estimation**
+
+The concept of a likelihood function and what it means to maximise it is the single most important statistical idea for this project. Make sure you understand this before looking at any {mitey} source code.
+
+- [**StatQuest: Maximum Likelihood, clearly explained**](https://www.youtube.com/watch?v=XepXtl9YKwc) (YouTube, ~10 min) — watch this first. Visual and concrete, no prerequisites.
+- [**StatQuest: Probability vs Likelihood**](https://www.youtube.com/watch?v=pYxNSUDSFH4) (YouTube, ~5 min) — explains the distinction between probability and likelihood in statistics.
+
+**The EM algorithm**
+
+- [**Do & Batzoglou (2008)**, "What is the expectation maximization algorithm?"](https://doi.org/10.1038/nbt1406) (*Nature Biotechnology*) — three pages, written explicitly for practitioners without a deep statistics background. Works through a concrete coin-flipping example. Read this before looking at the {mitey} source code.
+- [**The EM Algorithm, clearly explained**](https://www.youtube.com/watch?v=REypj2sy_5U) (YouTube, ~20 min) — good visual companion to Do & Batzoglou.
+
+**Mixture models**
+
+- [**Reynolds (2009)**, "Gaussian Mixture Models"](https://doi.org/10.1007/978-0-387-73003-5_196) (*Encyclopedia of Biometrics*) — concise overview of Gaussian mixture models and the EM algorithm as applied to them. Read after Do & Batzoglou.
+- **Bishop (2006)**, *Pattern Recognition and Machine Learning*, Chapter 9 — "Mixture Models and EM". More detailed treatment for when you want depth during implementation. The [full PDF is freely available](https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf).
+
+## Research Papers
+
+Interesting papers that you come across that may be helpful to the project can go here. It's helpful to include a short summary of what the paper is about or why it is relevant to the project.
+
+1. [** Chen et al. (2025)**, *Nature Communications*](https://www.nature.com/articles/s41467-025-60591-x#Bib1) Uses the Vink method to estimate generation time in different settings. This is a recent application of the method, so worth reading!
