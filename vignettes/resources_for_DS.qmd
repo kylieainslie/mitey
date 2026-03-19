@@ -6,8 +6,8 @@ editor: visual
 
 ## Resources
 
-- [Data Science Hangout](https://posit.co/data-science-hangout/)
-- [R for Data Science](https://r4ds.hadley.nz/) by Hadley Wickham
+-   [Data Science Hangout](https://posit.co/data-science-hangout/)
+-   [R for Data Science](https://r4ds.hadley.nz/) by Hadley Wickham
 
 ## Running Code
 
