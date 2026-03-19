@@ -50,3 +50,12 @@ The concept of a likelihood function and what it means to maximise it is the sin
 Interesting papers that you come across that may be helpful to the project can go here. It's helpful to include a short summary of what the paper is about or why it is relevant to the project.
 
 1. [** Chen et al. (2025)**, *Nature Communications*](https://www.nature.com/articles/s41467-025-60591-x#Bib1) Uses the Vink method to estimate generation time in different settings. This is a recent application of the method, so worth reading!
+
+## Other resources
+
+**Git Tutorial**
+
+- [Happy Git and GitHub for the useR](https://happygitwithr.com/)  - Happy Git provides instructions on how to:
+  - Install Git and get it working smoothly with GitHub, in the shell and in the RStudio IDE.
+  - Develop a few key workflows that cover your most common tasks.
+  - Integrate Git and GitHub into your daily work with R and R Markdown.
