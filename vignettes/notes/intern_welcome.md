@@ -47,7 +47,7 @@ The plan is designed to flex based on how things go. Monthly check-ins with your
 
 Work through these alongside the technical setup in Weeks 1–2. They're listed in the order that makes most sense to read them.
 
-### Epidemiology — start here
+### Epidemiology
 
 Before looking at any code, it's worth understanding what the package is doing and why. The key concepts are:
 
@@ -65,11 +65,13 @@ Before looking at any code, it's worth understanding what the package is doing a
 
 5. [**Anderson & May (1991)**, *Infectious Diseases of Humans: Dynamics and Control*](https://global.oup.com/academic/product/infectious-diseases-of-humans-9780198540403) (Oxford University Press) — not required, but your supervisor may point you to specific chapters for broader context.
 
-### Statistics — read in Weeks 2–3
+6. [** Chen et al. (2025)**, *Nature Communications*](https://www.nature.com/articles/s41467-025-60591-x#Bib1) Uses the Vink method to estimate generation time in different settings. This is a recent application of the method, so worth reading!
+
+### Statistics
 
 These build the statistical foundation you'll need before implementing the EM algorithm. The sequencing matters: read the epidemiology papers first so the statistics has a concrete problem to attach to.
 
-**Maximum likelihood estimation — start here**
+**Maximum likelihood estimation**
 
 The concept of a likelihood function and what it means to maximise it is the single most important statistical idea for this project. Make sure you understand this before looking at any {mitey} source code.
 
@@ -128,3 +130,15 @@ Vink et al. → Svensson → StatQuest MLE videos → Do & Batzoglou → Reynold
 - [ ] Read [{mitey} README](https://kylieainslie.github.io/mitey/) and run existing examples; begin personal notes document
 
 ---
+
+#### Week 2 — R Package Development & Statistical Computing
+- [ ] Read *R Packages* (Wickham & Bryan): package structure, `DESCRIPTION`, `NAMESPACE`, `R/` directory layout
+- [ ] Explore {mitey} files with this framework in mind; map all exported functions and their purpose
+- [ ] Learn `{devtools}` workflow: `load_all()`, `check()`, `document()`, `test()`
+- [ ] Learn `{roxygen2}` documentation format; find examples in {mitey} source
+- [ ] Learn `{testthat}` basics: how tests are written and run in R packages; run the existing {mitey} test suite
+- [ ] Study R optimization functions: `optim()`, `nlminb()` — compare to `scipy.optimize`
+- [ ] Read Vink et al. (2014) paper (or supervisor-provided summary); understand the 4-component mixture model conceptually
+- [ ] Read R4DS: Workflow chapters, Data Transformation, Functions
+
+
