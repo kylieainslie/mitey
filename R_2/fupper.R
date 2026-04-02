@@ -1,23 +1,22 @@
-library("fdrtool")
-#' Calculate flower for Different Components
+#' Calculate fupper for Different Components
 #'
-#' This function calculates the value of flower based on the component.
+#' This function calculates the value of fupper based on the component.
 #'
 #' @param x The value at which to evaluate the function.
 #' @param r The value of r.
 #' @param mu The mean value.
 #' @param sigma The standard deviation.
 #' @param comp The component number (1 to 7).
-#' @param dist string; assumed distribution of the serial interval; accepts "normal" or "gamma"; defaults to "normal"
+#' @param dist string; assumed distribution of the serial interval; accepts "normal" or "gamma"; defaults to "normal".
 #'
-#' @return The calculated value of flower.
+#' @return The calculated value of fupper.
 #' @keywords internal
 #' @examples
 #' \dontrun{
-#' flower(x = 15, r = 10, mu = 12, sigma = 3, comp = 2, dist = "normal")
-#' flower(x = 15, r = 10, mu = 12, sigma = 3, comp = 2, dist = "gamma")
+#' fupper(x = 15, r = 20, mu = 12, sigma = 3, comp = 2, dist = "normal")
+#' fupper(x = 15, r = 20, mu = 12, sigma = 3, comp = 2, dist = "gamma")
 #' }
-flower <- function(
+fupper <- function(
   x,
   r,
   mu,
@@ -36,14 +35,14 @@ flower <- function(
     return(
       switch(
         comp,
-        `1` = (x - r + 1) *
+        `1` = (r + 1 - x) *
           dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)),
-        `2` = (x - r + 1) * dnorm(x, mean = mu, sd = sigma),
-        `3` = (x - r + 1) * dnorm(x, mean = -mu, sd = sigma),
-        `4` = (x - r + 1) * dnorm(x, mean = 2 * mu, sd = sqrt(2) * sigma),
-        `5` = (x - r + 1) * dnorm(x, mean = -2 * mu, sd = sqrt(2) * sigma),
-        `6` = (x - r + 1) * dnorm(x, mean = 3 * mu, sd = sqrt(3) * sigma),
-        `7` = (x - r + 1) * dnorm(x, mean = -3 * mu, sd = sqrt(3) * sigma)
+        `2` = (r + 1 - x) * dnorm(x, mean = mu, sd = sigma),
+        `3` = (r + 1 - x) * dnorm(x, mean = -mu, sd = sigma),
+        `4` = (r + 1 - x) * dnorm(x, mean = 2 * mu, sd = sqrt(2) * sigma),
+        `5` = (r + 1 - x) * dnorm(x, mean = -2 * mu, sd = sqrt(2) * sigma),
+        `6` = (r + 1 - x) * dnorm(x, mean = 3 * mu, sd = sqrt(3) * sigma),
+        `7` = (r + 1 - x) * dnorm(x, mean = -3 * mu, sd = sqrt(3) * sigma)
       )
     )
   } else if (dist == "gamma") {
@@ -63,7 +62,7 @@ flower <- function(
           bessel_val <- besselK(x / (theta), 0.5 - k)
           # Replace Inf with 0 while keeping finite values
           bessel_val[!is.finite(bessel_val)] <- 0
-          return_val <- (x - r + 1) *
+          return_val <- (r + 1 - x) *
             1 /
             sqrt(pi) *
             2^(3 / 2 - k) *
@@ -76,12 +75,12 @@ flower <- function(
           return_val[is.nan(return_val)] <- 0
           return_val
         },
-        `2` = (x - r + 1) * dgamma(x, shape = k, scale = theta),
-        `3` = (x - r + 1) * dgamma(x, shape = k, scale = theta),
-        `4` = (x - r + 1) * dgamma(x, shape = 2 * k, scale = theta),
-        `5` = (x - r + 1) * dgamma(x, shape = 2 * k, scale = theta),
-        `6` = (x - r + 1) * dgamma(x, shape = 3 * k, scale = theta),
-        `7` = (x - r + 1) * dgamma(x, shape = 3 * k, scale = theta)
+        `2` = (r + 1 - x) * dgamma(x, shape = k, scale = theta),
+        `3` = (r + 1 - x) * dgamma(x, shape = k, scale = theta),
+        `4` = (r + 1 - x) * dgamma(x, shape = 2 * k, scale = theta),
+        `5` = (r + 1 - x) * dgamma(x, shape = 2 * k, scale = theta),
+        `6` = (r + 1 - x) * dgamma(x, shape = 3 * k, scale = theta),
+        `7` = (r + 1 - x) * dgamma(x, shape = 3 * k, scale = theta)
       )
     )
   }

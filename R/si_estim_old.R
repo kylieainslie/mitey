@@ -140,17 +140,18 @@
 #'
 #' \donttest{
 #' # Example 2: Larger simulated outbreak, specifying distribution
-#' large_icc <- c(
-#'   rep(1, 38),   # Short intervals (co-primary cases)
-#'   rep(2, 39),   #
-#'   rep(3, 30),   # Medium intervals (primary-secondary)
-#'   rep(4, 17),   #
-#'   rep(5, 7),    # Longer intervals (higher generation)
-#'   rep(6, 4),
-#'   rep(7, 2)
-#' )
+large_icc <- c(
+   rep(1, 38),   # Short intervals (co-primary cases)
+   rep(2, 39),   #
+   rep(3, 30),   # Medium intervals (primary-secondary)
+   rep(4, 17),   #
+   rep(5, 7),    # Longer intervals (higher generation)
+   rep(6, 4),
+   rep(7, 2)
+ )
 #'
-#' result_normal <- si_estim(large_icc, dist = "normal")
+result_normal <- si_estim(large_icc, dist = "normal")
+result_normal
 #' result_gamma <- si_estim(large_icc, dist = "gamma")
 #'
 #' # Example 3: Using custom initial values
