@@ -5,44 +5,31 @@
 #' (2014) method for serial interval estimation, assuming an underlying normal
 #' distribution for the serial interval.
 #'
-#' The function models four distinct transmission routes:
+#' The function models n_routes distinct transmission routes:
 #' \itemize{
 #'   \item Co-primary (CP): Cases infected simultaneously from the same source
 #'   \item Primary-secondary (PS): Direct transmission from index case
 #'   \item Primary-tertiary (PT): Transmission through one intermediate case
-#'   \item Primary-quaternary (PQ): Transmission through two intermediate cases
+#'   \item And so on up to n_routes
 #' }
 #'
-#' Each route contributes to the overall serial interval distribution with different
-#' means and variances. The co-primary component uses a half-normal distribution
-#' to model simultaneous infections (preventing negative serial intervals), while
-#' subsequent generations follow normal distributions with means that are multiples
-#' of the base serial interval.
-#'
-#' This function is primarily used internally by \code{\link{si_estim}} when
-#' \code{dist = "normal"} is specified (the default), and by \code{\link{plot_si_fit}}
-#' for visualizing fitted distributions. The normal distribution assumption allows
-#' for negative serial intervals, which may be more realistic for some pathogens.
-#'
 #' @param x quantile or vector of quantiles (time in days since index case symptom onset)
-#' @param w1 probability weight of being a co-primary case
-#' @param w2 probability weight of being a primary-secondary case
-#' @param w3 probability weight of being a primary-tertiary case
+#' @param weights numeric vector of length n_routes - 1; probability weights for each
+#'   transmission route starting from Co-primary. The weight for the last route is
+#'   derived as 1 - sum(weights).
 #' @param mu mean serial interval in days (can be any real number)
 #' @param sigma standard deviation of serial interval in days (must be positive)
 #'
 #' @details
-#' The weights w1, w2, and w3 must sum to <= 1, with the remaining probability
-#' (1 - w1 - w2 - w3) assigned to primary-quaternary cases. The transmission
-#' route distributions are parameterized as:
-#' Co-primary: Half-normal with scale parameter derived from sigma
-#' Primary-secondary: Normal(mu, sigma)
-#' Primary-tertiary: Normal(2*mu, sqrt(2)*sigma)
-#' Primary-quaternary: Normal(3*mu, sqrt(3)*sigma)
-#'
+#' The weights vector must have length n_routes - 1, with the remaining probability
+#' (1 - sum(weights)) assigned to the last route. The transmission route distributions
+#' are parameterized as:
+#' \itemize{
+#'   \item Co-primary: Half-normal with scale parameter derived from sigma
+#'   \item Route i (i >= 2): Normal(i * mu, sqrt(i) * sigma) and Normal(-i * mu, sqrt(i) * sigma)
+#' }
 #'
 #' @returns Vector of weighted density values corresponding to input quantiles x.
-#'   Returns the sum of densities from all four transmission routes.
 #'
 #' @references
 #' Vink, M. A., Bootsma, M. C. J., & Wallinga, J. (2014). Serial intervals of
@@ -55,23 +42,50 @@
 #' @importFrom fdrtool dhalfnorm
 #' @examples
 #' \dontrun{
+#' # 4 routes (default behaviour)
 #' x <- seq(0, 400, by = 1)
-#' density_values <- f_norm(x, w1 = 0.15, w2 = 0.50, w3 = 0.25, mu = 123, sigma = 32)
+#' density_values <- f_norm(x, weights = c(0.15, 0.50, 0.25), mu = 123, sigma = 32)
 #' plot(x, density_values, type = "l")
+#'
+#' # 5 routes
+#' density_values5 <- f_norm(x, weights = c(0.15, 0.50, 0.20, 0.10), mu = 123, sigma = 32)
+#' plot(x, density_values5, type = "l")
 #' }
 #'
 f_norm <- function(
-  x,
-  w1,
-  w2,
-  w3,
-  mu,
-  sigma
+    x,
+    weights,
+    mu,
+    sigma
 ) {
-  term1 <- w1 * dhalfnorm(x, sqrt(pi / 2) / (sqrt(2) * sigma))
-  term2 <- w2 * dnorm(x, mean = mu, sd = sigma)
-  term3 <- w3 * dnorm(x, mean = 2 * mu, sd = sqrt(2) * sigma)
-  term4 <- (1 - w1 - w2 - w3) * dnorm(x, mean = 3 * mu, sd = sqrt(3) * sigma)
+  n_routes <- length(weights) + 1L
 
-  return(term1 + term2 + term3 + term4)
+  if (any(weights < 0)) {
+    stop("All weights must be non-negative.")
+  }
+  if (sum(weights) > 1) {
+    stop("Sum of weights must not exceed 1.")
+  }
+
+  # Last route weight derived from the others
+  w_last <- 1 - sum(weights)
+
+  # Component 1: Co-primary (half-normal, special case)
+  result <- weights[1] * dhalfnorm(x, sqrt(pi / 2) / (sqrt(2) * sigma))
+
+
+  # Routes 2 to n_routes - 1
+  if (n_routes >= 3) {
+    for (i in 2:(n_routes - 1)) {
+      result <- result +
+        weights[i]/2 * dnorm(x, mean =  (i-1) * mu, sd = sqrt(i) * sigma) +
+        weights[i]/2 * dnorm(x, mean = -(i-1) * mu, sd = sqrt(i) * sigma)
+    }
+  }
+
+  # Last route
+  result <- result +
+    w_last/2 * dnorm(x, mean =  (n_routes - 1) * mu, sd = sqrt(n_routes - 1) * sigma) +
+    w_last/2 * dnorm(x, mean = -(n_routes - 1) * mu, sd = sqrt(n_routes - 1) * sigma)
+  return(result)
 }

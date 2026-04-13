@@ -13,7 +13,7 @@ test_that("plot_si_fit returns a ggplot object for normal distribution", {
     dat = icc_data,
     mean = 12.5,
     sd = 3.2,
-    weights = c(0.2, 0.6, 0.15, 0.05),
+    weights = c(0.2, 0.6, 0.15),
     dist = "normal"
   )
 
@@ -49,7 +49,7 @@ test_that("plot_si_fit handles scaling_factor parameter", {
     dat = icc_data,
     mean = 10,
     sd = 3,
-    weights = c(0.1, 0.7, 0.15, 0.05),
+    weights = c(0.1, 0.7, 0.15),
     dist = "normal",
     scaling_factor = 1
   )
@@ -59,7 +59,7 @@ test_that("plot_si_fit handles scaling_factor parameter", {
     dat = icc_data,
     mean = 10,
     sd = 3,
-    weights = c(0.1, 0.7, 0.15, 0.05),
+    weights = c(0.1, 0.7, 0.15),
     dist = "normal",
     scaling_factor = 0.5
   )
@@ -88,8 +88,7 @@ test_that("plot_si_fit works with real si_estim output", {
     weights = c(
       si_results$wts[1],
       si_results$wts[2] + si_results$wts[3],
-      si_results$wts[4] + si_results$wts[5],
-      si_results$wts[6] + si_results$wts[7]
+      si_results$wts[4] + si_results$wts[5]
     ),
     dist = "normal"
   )
@@ -104,7 +103,7 @@ test_that("plot_si_fit handles small datasets", {
     dat = small_data,
     mean = 7,
     sd = 1.5,
-    weights = c(0.1, 0.8, 0.08, 0.02),
+    weights = c(0.1, 0.8, 0.08),
     dist = "normal"
   )
 
@@ -120,7 +119,7 @@ test_that("plot_si_fit can be built without errors", {
     dat = icc_data,
     mean = 10,
     sd = 3,
-    weights = c(0.1, 0.7, 0.15, 0.05),
+    weights = c(0.1, 0.7, 0.15),
     dist = "normal"
   )
 

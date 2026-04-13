@@ -1,11 +1,11 @@
 #' Calculate f0 for Different Components
 #'
 #' This function calculates the value of f0 based on the component, where the components
-#' represent the transmission routes: Co-Primary (CP), Primary-Secondary (PS), Primary-Tertiary (PT), and Primary-Quaternary (PQ). We split the PS, PT and PQ routes into two parts, such that
+#' represent the transmission routes: Co-Primary (CP), Primary-Secondary (PS), Primary-Tertiary (PT), and Primary-Quaternary (PQ) and beyond. We split the PS, PT, PQ (and higher) routes into two parts, such that
 #'  - component 1: CP route
-#'  - component 2+3: PS route
-#'  - component 4+5: PT route
-#'  - component 6+7: PQ route
+#'  - components 2+3: PS route
+#'  - components 4+5: PT route
+#'  - components 2i + (2i+1): route i+1
 #'
 #'  If the dist = gamma, then the mean (\eqn{\mu}) and standard deviation (sigma) are converted into the
 #'  shape (k) and scale (theta) parameters for the gamma distribution, such that the mean (\eqn{\mu}
@@ -16,7 +16,8 @@
 #' @param x numeric; the value at which to evaluate the function.
 #' @param mu numeric; the mean value.
 #' @param sigma numeric; the standard deviation.
-#' @param comp integer; the component number (1 to 7).
+#' @param comp integer; the component number. Component 1 is Co-Primary. Even components
+#'   2i are positive routes, odd components 2i+1 are negative routes (normal only).
 #' @param dist string; assumed distribution of the serial interval; takes "normal" or "gamma"; defaults to "normal"
 #'
 #' @return The calculated value of f0.
@@ -30,11 +31,11 @@
 #' f0(x = 0.5, mu = 12, sigma = 3, comp = 2, dist = "gamma")
 #' }
 f0 <- function(
-  x,
-  mu,
-  sigma,
-  comp,
-  dist = "normal"
+    x,
+    mu,
+    sigma,
+    comp,
+    dist = "normal"
 ) {
   # error messages
   if (dist != "normal" && dist != "gamma") {
@@ -43,57 +44,47 @@ f0 <- function(
     )
   }
 
+  # Component 1: Co-Primary route (special case, unchanged)
+  if (comp == 1) {
+    if (dist == "normal") {
+      return((2 - 2 * x) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)))
+    } else {
+      k <- (mu^2) / (sigma^2)
+      theta <- (sigma^2) / mu
+      if (k <= 0 || theta <= 0) return(0)
+      bessel_val <- besselK(x / theta, 0.5 - k)
+      bessel_val[!is.finite(bessel_val)] <- 0
+      return_val <- (2 - 2 * x) *
+        1 / sqrt(pi) *
+        2^(3/2 - k) *
+        theta^(-0.5 - k) *
+        x^(-0.5 + k) *
+        bessel_val *
+        1 / gamma(k)
+      return_val[is.nan(return_val)] <- 0
+      return(return_val)
+    }
+  }
+
+  # Components 2 and above: generic route logic
+  # Even comp = 2i  -> positive route i, mean = i*mu,    sd = sqrt(i)*sigma
+  # Odd  comp = 2i+1 -> negative route i, mean = -i*mu,  sd = sqrt(i)*sigma
+  if (comp %% 2 == 0) {
+    i <- comp / 2
+    route_mean <- i * mu
+  } else {
+    i <- (comp - 1) / 2
+    route_mean <- -i * mu
+  }
+  route_sd <- sqrt(i) * sigma
+
   if (dist == "normal") {
-    return(
-      switch(
-        comp,
-        `1` = (2 - 2 * x) *
-          dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)),
-        `2` = (2 - 2 * x) * dnorm(x, mean = mu, sd = sigma),
-        `3` = (2 - 2 * x) * dnorm(x, mean = -mu, sd = sigma),
-        `4` = (2 - 2 * x) * dnorm(x, mean = 2 * mu, sd = sqrt(2) * sigma),
-        `5` = (2 - 2 * x) * dnorm(x, mean = -2 * mu, sd = sqrt(2) * sigma),
-        `6` = (2 - 2 * x) * dnorm(x, mean = 3 * mu, sd = sqrt(3) * sigma),
-        `7` = (2 - 2 * x) * dnorm(x, mean = -3 * mu, sd = sqrt(3) * sigma)
-      )
-    )
-  } else if (dist == "gamma") {
-    # convert mean and sd for normal distn into shape and scale parameters for gamma distn.
+    return((2 - 2 * x) * dnorm(x, mean = route_mean, sd = route_sd))
+  } else {
+    # Gamma: only even components (positive routes) are used
     k <- (mu^2) / (sigma^2)
     theta <- (sigma^2) / mu
-
-    if (k <= 0 || theta <= 0) {
-      return(0)
-    }
-
-    return(
-      switch(
-        comp,
-        `1` = {
-          # Handle potential numerical issues
-          bessel_val <- besselK(x / (theta), 0.5 - k)
-          # Replace Inf with 0 while keeping finite values
-          bessel_val[!is.finite(bessel_val)] <- 0
-          return_val <- (2 - 2 * x) *
-            1 /
-            sqrt(pi) *
-            2^(3 / 2 - k) *
-            theta^(-0.5 - k) *
-            x^(-0.5 + k) *
-            bessel_val *
-            1 /
-            gamma(k)
-          # Replace NaN with 0 while keeping finite values
-          return_val[is.nan(return_val)] <- 0
-          return_val
-        },
-        `2` = (2 - 2 * x) * dgamma(x, shape = k, scale = theta),
-        `3` = (2 - 2 * x) * dgamma(x, shape = k, scale = theta),
-        `4` = (2 - 2 * x) * dgamma(x, shape = 2 * k, scale = theta),
-        `5` = (2 - 2 * x) * dgamma(x, shape = 2 * k, scale = theta),
-        `6` = (2 - 2 * x) * dgamma(x, shape = 3 * k, scale = theta),
-        `7` = (2 - 2 * x) * dgamma(x, shape = 3 * k, scale = theta)
-      )
-    )
+    if (k <= 0 || theta <= 0) return(0)
+    return((2 - 2 * x) * dgamma(x, shape = i * k, scale = theta))
   }
 }

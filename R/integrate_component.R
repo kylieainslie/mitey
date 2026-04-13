@@ -25,7 +25,10 @@
 #' @param d numeric; the index case-to-case (ICC) interval in days for which to calculate the likelihood contribution
 #' @param mu numeric; the mean of the serial interval distribution in days
 #' @param sigma numeric; the standard deviation of the serial interval distribution in days
-#' @param comp integer; the transmission route component number (1 to 7). See Details for component definitions
+
+#' @param comp integer; the transmission route component number. Component 1 is Co-Primary.
+#'   Even components 2i are positive routes, odd components 2i+1 are negative routes (normal only).
+#'
 #' @param dist character; the assumed underlying distribution of the serial interval.
 #'             Must be either "normal" or "gamma". Defaults to "normal"
 #' @param lower logical; if \code{TRUE} (default), performs integration using \code{flower} and \code{fupper} functions. If \code{FALSE}, uses \code{f0} function
