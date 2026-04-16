@@ -1,5 +1,11 @@
 library(dplyr)
 
+
+validation_data <- readRDS("vignettes/articles/validation_data.rds")
+
+vink_estimates <-readRDS("vignettes/articles/vink_estimates.rds")
+vink_estimates
+
 subset_measles<-validation_data %>% filter (Pathogen == "Measles", Country == "Kenya")
 icc_measles <- subset_measles[5] %>% unlist(,use.names = FALSE)
 si_estim(icc_measles,n_routes=6)
