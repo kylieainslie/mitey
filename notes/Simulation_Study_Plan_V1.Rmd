@@ -1,0 +1,331 @@
+---
+title: "Simulation Study plan"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+# 1. Introduction
+
+This document presents a simulation study plan for evaluating a proportional lognormal mixture model for inferring the serial interval (SI) distribution from observed index case-to-case (ICC) intervals. The plan follows the ADEMP structure: Aims, Data-generating mechanisms, Estimands, Methods, and Performance measures.
+
+The serial interval, defined as the time between symptom onset in a primary case and symptom onset in a secondary case, is a key epidemiologic quantity for reconstructing transmission chains, linking epidemic growth to the reproduction number, and informing outbreak control. In household data, however, the true infector–infectee pair is usually unobserved, so observed ICC intervals are typically a mixture of several transmission routes rather than direct serial intervals alone. The proposed model is motivated by the transmission-path mixture representation used for ICC intervals, in which observed household intervals may arise from four routes: co-primary (CP), primary-secondary (PS), primary-tertiary (PT), and primary-quaternary (PQ). In the original Vink framework, these paths are linked through sums or differences of a common serial interval distribution, typically assumed to follow a normal or gamma form. In the present study, we aim to relax the i.i.d. assumption on serial intervals within this mixture framework and instead explore a lognormal specification for all four transmission paths. For simplicity, each path is modeled directly by a lognormal component, with proportional scaling across PS, PT, and PQ, while CP is assigned its own location parameter.
+
+# 2. Simulation Study
+
+## 2.1 Aims
+
+### 2.1.1 Primary aim
+
+To assess whether the proposed proportional lognormal mixture model can correctly recognize the underlying data-generating structure and get unbiased and consistent estimates of the PS serial interval from ICC interval data when the true data-generating process follows the same proportional lognormal mixture specification.
+
+### 2.1.2 Secondary aims
+
+-   To examine the robustness of the proposed proportional lognormal mixture model when key modeling assumptions are mildly violated.
+
+-   To compare the proposed model with the normal and gamma mixture models considered in Vink et al. by using simulated data generated under different distributional settings, and to evaluate their relative performance in terms of bias, consistency, and robustness through model comparison criteria.
+
+### 2.1.3 Questions of interest
+
+The simulation study is designed to answer the following questions:
+
+-   Does the proposed proportional lognormal mixture model accurately estimate the parameters of the PS serial interval distribution when the model is correctly specified?
+-   How does the proposed model perform under mild misspecification of the data-generating mechanism?
+-   How does the performance of the proposed lognormal mixture model compare with that of the normal and gamma mixture models considered in Vink et al. across different simulated distributional settings?
+
+## 2.2 Data-generating mechanisms
+
+### 2.2.1 Basic structure
+
+For each simulated dataset, let the observed ICC interval $Y$ arise from a four-component mixture:
+
+$$
+Y \sim \sum_{g \in \{CP, PS, PT, PQ\}} w_g f_g(y), \qquad \sum_g w_g = 1.
+$$
+
+The path-specific distributions are defined as:
+
+$$
+CP \sim \text{Lognormal}(\mu_{CP}, \sigma^2),
+$$
+
+$$
+PS \sim \text{Lognormal}(\mu, \sigma^2),
+$$
+
+$$
+PT \sim \text{Lognormal}(\mu+\log k_{PT}, \sigma^2),
+$$
+
+$$
+PQ \sim \text{Lognormal}(\mu+\log k_{PQ}, \sigma^2),
+$$
+
+where $k_{PT} > 1$ and $k_{PQ} > k_{PT}$ are fixed proportional scaling constants. In the baseline design, $k_{PT}=2$ and $k_{PQ}=3$.
+
+This parameterization implies that PS, PT, and PQ are shape-matched lognormal distributions with equal shape parameter, and that PT/PQ are multiplicative scale enlargements of the PS distribution. CP is modeled separately through its own meanlog parameter.
+
+### 2.2.2 Baseline scenario
+
+A baseline scenario will be used to evaluate the validity of the proposed estimation procedure under correct model specification. In this setting, simulated ICC interval data will be generated from the same proportional lognormal mixture model assumed in estimation, so that the fitted model is correctly specified.
+
+The primary purpose of this scenario is to assess whether the proposed method can accurately recover the true underlying PS serial interval parameters, as well as the overall transmission-path mixture structure, from the simulated data.
+
+-   ICC sample size: $n_{obs} = 300$
+-   Mixture weights: $(w_{CP}, w_{PS}, w_{PT}, w_{PQ}) = (0.20, 0.45, 0.25, 0.10)$
+-   $\mu_{CP} = \log(1.5)$
+-   $\mu_{PS} = \log(4.0)$
+-   $\sigma = 0.35$
+-   $k_{PT}=2$, $k_{PQ}=3$
+
+This produces a short CP component, a central PS component, and longer PT/PQ components with increasing separation.
+
+### 2.2.3 Simulation design under correct specification
+
+#### Stage A: baseline validation
+
+The baseline scenario described in Section 2.2.2 will serve as the main setting. Under this scenario, ICC interval data are generated from the same proportional lognormal mixture model used for estimation. The purpose is to assess whether the proposed estimation procedure can recover the true PS SI parameters, the CP-specific location parameter, and the mixture weights with acceptable accuracy and stability.
+
+#### Stage B: finite-sample assessment
+
+To evaluate finite-sample performance and consistency, the ICC sample size will be varied as
+
+$$
+  n_{obs} \in \{100, 300, 600, 1000\}.
+$$
+
+This part of the design is intended to assess whether parameter estimation becomes less biased, more precise, and more stable as the amount of information increases.
+
+#### Stage C: Additional Factors under correct specification
+
+Several additional factors will be varied under correct specification to assess how estimation behaves when the ICC mixture becomes easier or harder to separate.
+
+##### Factor 1: separation between CP and PS
+
+To study identifiability near the left part of the ICC distribution, the CP location parameter will be varied as follows:
+
+-   weak separation: $\mu_{CP} = \log(2.2)$
+-   moderate separation: $\mu_{CP} = \log(1.5)$
+-   strong separation: $\mu_{CP} = \log(1.0)$
+
+Smaller separation between CP and PS is expected to make path identification more difficult and may therefore increase bias or instability in the estimated PS distribution.
+
+##### Factor 2: log-scale dispersion
+
+To assess the effect of component overlap , the common log-scale standard deviation will be varied as
+
+$$
+  \sigma \in \{0.25, 0.35, 0.50\}.
+$$
+
+Larger values of $\sigma$ generate greater overlap between mixture components and heavier right tails, which may make both parameter estimation and route separation more challenging.
+
+##### Factor 3: mixture weights
+
+To examine sensitivity to route prevalence, the mixture weights will be varied across the following patterns:
+
+-   Baisc: $(0.20, 0.45, 0.25, 0.10)$
+-   CP-heavy: $(0.35, 0.40, 0.18, 0.07)$
+-   higher-generation-heavy: $(0.10, 0.40, 0.30, 0.20)$
+
+This factor is included because estimation may be more difficult when the PS component is less dominant or when a large proportion of ICC intervals arise from CP or higher-generation paths.
+
+##### Factor 4: proportional scaling of PT and PQ
+
+To test sensitivity to the spacing between PS, PT, and PQ, the proportional constants will be varied as follows:
+
+-   mild scaling: $(k_{PT}, k_{PQ}) = (1.8, 2.6)$
+-   default scaling: $(k_{PT}, k_{PQ}) = (2.0, 3.0)$
+-   stronger scaling: $(k_{PT}, k_{PQ}) = (2.2, 3.4)$
+
+Changing these ratios alters the separation among the non-CP components and therefore affects the degree of mixture identifiability.
+
+### 2.2.4 Misspecification scenarios
+
+Misspecification scenarios are included to address the secondary aim: robustness under mild departures from the assumed proportional lognormal mixture structure.
+
+#### Scenario 1: incorrect proportional scaling in estimation
+
+Data will be generated from the proportional lognormal mixture model, but with scaling constants different from those imposed in estimation. For example, data may be generated under
+
+$$
+  (k_{PT}, k_{PQ}) = (1.7, 2.5),
+$$
+
+while the fitted model fixes
+
+$$
+  (k_{PT}, k_{PQ}) = (2.0, 3.0).
+$$
+
+This scenario assesses sensitivity to misspecification of the spacing between PS, PT, and PQ.
+
+#### Scenario 2: CP-specific dispersion
+
+Data will be generated with a CP component having a different log-scale standard deviation from the other three paths, for example
+
+$$
+  CP \sim \text{Lognormal}(\mu_{CP}, \sigma_{CP}^2), \qquad \sigma_{CP} \neq \sigma,
+$$
+
+while the fitted model still assumes a common log-scale standard deviation across all four components.
+
+This scenario evaluates robustness to misspecification of the equal-dispersion assumption.
+
+#### Scenario 3: alternative positive distributions for path components
+
+One or more path-specific components will be generated from another positive distribution, such as normal, gamma or Weibull, with moments chosen to be similar to the baseline lognormal setting, while the fitted model remains the proportional lognormal mixture model.
+
+This scenario evaluates whether the proposed method remains robust to moderate distributional misspecification.
+
+#### Scenario 4: route-specific nonproportional spacing
+
+Data will be generated from path-specific lognormal distributions that do not satisfy the proportional scaling restriction across PS, PT, and PQ. For example, PS, PT, and PQ may each have their own free location parameter, without requiring PT and PQ to be multiplicative rescalings of PS.
+
+This scenario directly tests the consequence of misspecifying the structural constraint that defines the proposed model.
+
+### 2.2.5 Model Comparison scenarios
+
+A separate set of scenarios will be used to address the second secondary aim, namely comparison of the proposed lognormal mixture model with the normal and gamma mixture models considered in Vink et al.
+
+Because the three fitted models do not share exactly the same parameterization, comparison will focus on common inferential targets rather than on internal model parameters alone.
+
+Three data-generating families will be considered:
+
+1.  Proportional lognormal data generation\
+    Data are generated under the proposed proportional lognormal mixture model.
+
+2.  Vink-style normal data generation\
+    Data are generated under the normal mixture mechanism used in the original Vink framework.
+
+3.  Vink-style gamma data generation\
+    Data are generated under the gamma mixture mechanism used in the original Vink framework.
+
+Within each family, a limited set of sample sizes and dispersion settings will be considered. The purpose is to determine whether each fitted method performs best under its own assumed family and how severely its performance deteriorates when the fitted family is misspecified.
+
+## 2.3 Estimands and targets
+
+The primary estimand is the PS serial interval distribution, treated as the target SI distribution under the proposed approximation.
+
+Because the proposed model is parameterized on the log scale, estimation is carried out through the underlying lognormal parameters for the PS component. However, the main quantities of substantive interest are the corresponding summaries on the natural time scale.
+
+The primary estimands are:
+
+-   the mean of the PS serial interval distribution;
+-   the variance of the PS serial interval distribution;
+-   the median of the PS serial interval distribution;
+-   selected quantiles of the PS serial interval distribution, in particular the 2.5th and 97.5th percentiles.
+
+Under the lognormal specification
+
+$$
+PS \sim \text{Lognormal}(\mu, \sigma^2),
+$$
+
+these quantities are determined by the underlying model parameters $\mu_{PS}$ and $\sigma$, where $\mu$ is the log-scale mean and $\sigma$ is the log-scale standard deviation. In particular,
+
+$$
+E(PS) = \exp\left(\mu + \frac{1}{2}\sigma^2\right),
+$$
+
+$$
+\mathrm{Var}(PS) = \left(\exp(\sigma^2)-1\right)\exp\left(2\mu+\sigma^2\right),
+$$
+
+and
+
+$$
+\mathrm{Median}(PS) = \exp(\mu).
+$$
+
+Meanwhile, the underlying log-scale parameters $\mu_{PS}$ and $\sigma$ will also be recorded and evaluated,
+
+Additional model-based estimands include:
+
+-   the CP location parameter, $\mu_{CP}$;
+-   the mixture weights $(w_{CP}, w_{PS}, w_{PT}, w_{PQ})$.
+
+## 2.4 Methods
+
+### 2.4.1 Primary method
+
+The primary method is the proposed proportional lognormal Expectation-Maximization (EM) estimation model, adapted from the mixture modeling framework developed by Vink et al. (2014). Here, we change the assumption of the SI distribution from gamma/normal to lognormal. Furthermore, we relax the strict independent and i.i.d. convolution assumption for different generation transmissions. Instead, we impose structured constraints on the distributions of the four transmission paths, which may ensure parameter identifiability.
+
+Model Specification: The underlying continuous transmission time $x$ is modeled as a finite mixture of four path-specific lognormal components, $g \in \{CP, PS, PT, PQ\}$. To ensure structural identifiability and epidemiological plausibility, the continuous probability density function $f(x | \Theta)$ relies on a restricted parameter space $\Theta = \{\mu_{CP}, \mu, \sigma, w_{CP}, w_{PS}, w_{PT}, w_{PQ}\}$, where $\sum_g w_g = 1$:
+
+$$f(x | \Theta) = \sum_{g \in \{CP, PS, PT, PQ\}} w_g \cdot \text{Lognormal}(x | \mu_g, \sigma)$$
+
+The path-specific location parameters ($\mu_g$) incorporate the following structural constraints:
+
+A free location parameter for the Co-Primary (CP) component: $\mu_g = \mu_{CP}$.
+
+A common PS location parameter representing the Serial Interval (SI): $\mu_g = \mu$. Proportional scaling constraints are imposed for the Primary-Tertiary (PT) and Primary-Quaternary (PQ) pathways through fixed scaling constants $k_{PT}$ and $k_{PQ}$:
+
+$$
+\mu_{PT} = \mu + \log k_{PT}, \qquad
+\mu_{PQ} = \mu + \log k_{PQ}.
+$$
+
+Under the lognormal parameterization, adding $\log k$ to the log-scale mean corresponds to multiplying the median on the natural time scale by $k$. Therefore, this specification implies that the PT and PQ distributions are proportional enlargements of the PS distribution. The main motivation for this constraint is to impose an interpretable ordering across transmission pathways—so that longer transmission paths correspond to longer ICC intervals on average.
+
+A common log-scale standard deviation ($\sigma$) shared across all four components. We assume homoscedasticity on the log scale, meaning the dispersion remains constant across different transmission pathways.
+
+Likelihood Formulation (Interval Censoring): Because symptom onset data are typically reported in discrete calendar days, the observed interval $y_i \ge 0$ is subject to double interval censoring. Assuming the true continuous infection time is uniformly distributed over the given day, the marginal probability of observing a discrete interval $y_i$ for path $g$ is the convolution of the continuous lognormal density with the triangular measurement error function $h(x|y_i) = \max(0, 1 - |x - y_i|)$:
+
+$$P_g(y_i | \mu_g, \sigma) = \int_{\max(0, y_i-1)}^{y_i+1} \text{Lognormal}(x | \mu_g, \sigma) \cdot (1 - |x - y_i|) dx$$
+
+The observed-data log-likelihood across all $n_{obs}$ ICC interval pairs $\mathbf{y} = (y_1, \dots, y_{n_{obs}})$ is then given by:
+
+$$\mathcal{L}(\Theta | \mathbf{y}) = \sum_{i=1}^{n_{obs}} \log \left( \sum_{g \in \{CP, PS, PT, PQ\}} w_g P_g(y_i | \mu_g, \sigma) \right)$$
+
+EM Algorithm Implementation: To maximize $\mathcal{L}(\Theta | \mathbf{y})$, we implement an Expectation-Maximization (EM) algorithm. Let $m$ denote the current iteration step.
+
+E-step (Mixture weights estimation): We calculate the responsibility $\gamma_{i,g}^{(m)}$, which represents the posterior probability that observation $y_i$ originates from transmission component $g$:
+
+$$\gamma_{i,g}^{(m)} = \frac{w_g^{(m)} P_g(y_i | \mu_g^{(m)}, \sigma^{(m)})}{\sum_{l \in \{CP, PS, PT, PQ\}} w_l^{(m)} P_l(y_i | \mu_l^{(m)}, \sigma^{(m)})}$$
+
+M-step (Distribution parameters update): We update the parameters by maximizing the expected complete-data log-likelihood:
+
+Weights: Updated analytically by averaging the responsibilities across all observations:
+
+$$w_g^{(m+1)} = \frac{1}{n_{obs}} \sum_{i=1}^{n_{obs}} \gamma_{i,g}^{(m)}$$
+
+$$\Phi^{(m+1)} = \arg\max_{\Phi} \sum_{i=1}^{n_{obs}} \sum_{g \in \{CP, PS, PT, PQ\}} \gamma_{i,g}^{(m)} \log P_g(y_i | \mu_g, \sigma)$$
+
+### 2.4.2 Comparision methods
+
+The benchmark methods for comparision are:
+
+1.  the Vink normal mixture model, implemented through `si_estim(dat, dist = "normal")`; and\
+2.  the Vink gamma mixture model, implemented through `si_estim(dat, dist = "gamma")`.
+
+## 2.5 Performance measures
+
+### 2.5.1 Performance measures for the primary aim
+
+To evaluate whether the proposed lognormal method can recover the PS SI distribution under correct specification, the following measures will be reported for the PS-related estimands.
+
+-   Bias will be computed for estimated PS mean, median and quantiles.
+
+-   Root mean squared error will be used as a joint summary of bias and variability.
+
+-   95% coverage probability will be evaluated for $\mu_{PS}$, the PS mean, and the PS median.
+
+-   To assess recovery of the underlying transmission-path mixture structure, bias and RMSE will also be evaluated for $\mu_{CP}$ and the mixture weights.
+
+### 2.5.2 Performance measures for robustness
+
+To assess robustness under misspecification, the same performance measures described in Section 2.5.1 will be evaluated under each misspecified scenario. The purpose is to examine how far the resulting estimates depart from the true values when the assumed model structure is mildly misspecified, and to determine whether the proposed method remains reasonably robust.
+
+### 2.5.3 Performance measures for model comparison
+
+For comparison with the Vink normal and gamma models,the following measures will be used:
+
+-   bias of the estimated SI mean and standard deviation;
+-   RMSE of the estimated SI mean and median;
+-   coverage;
+-   convergence rate;
+-   model-fit criteria such as log-likelihood, AIC, and BIC
+
+The purpose is to assess, across different data-generating distributional settings, which fitted model achieves the best overall performance in terms of estimation accuracy, stability, and robustness.
