@@ -61,6 +61,7 @@ all_results <- targets %>%
   }) %>%
   compact() # Remove empty elements
 
+#try
 # 5. Display individual tables
 for (tbl in all_results) {
   cat("\n" , paste(rep("=", 30), collapse = ""), "\n")
