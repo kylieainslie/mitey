@@ -2,11 +2,11 @@ library(dplyr)
 library(purrr)
 library(tidyr)
 
-# 1. Chargement des données
-# On utilise le chemin relatif tel que défini dans votre fichier essai_avec_data.R
+# 1. Data loading
+# Use the relative path as defined in your essai_avec_data.R file
 validation_data <- readRDS("vignettes/articles/validation_data.rds")
 
-# 2. Définition manuelle des cibles
+# 2. Manual definition of targets
 targets <- tribble(
   ~Pathogen,                ~Country,  ~Author,
   "Measles",                "Kenya",   "Aaby",
@@ -17,9 +17,9 @@ targets <- tribble(
   "Influenza A(H1N1)pdm09", "USA",     "Cauchemez"
 )
 
-# 3. Fonction d'analyse par route
+# 3. Route analysis function
 analyze_routes <- function(p, c, a, routes_to_test = 2:6) {
-  # Filtrage des données (colonne 5 pour les ICC)
+  # Data filtering (column 5 for ICC)
   subset_data <- validation_data %>%
     filter(Pathogen == p, Country == c, Author == a)
 
@@ -31,7 +31,7 @@ analyze_routes <- function(p, c, a, routes_to_test = 2:6) {
 
   map_df(routes_to_test, function(nr) {
     res <- tryCatch({
-      # Utilisation de si_estim du package mitey
+      # Use si_estim from the mitey package
       si_estim(icc_values, n_routes = nr, dist = "normal")
     }, error = function(e) return(NULL))
 
@@ -48,20 +48,20 @@ analyze_routes <- function(p, c, a, routes_to_test = 2:6) {
   })
 }
 
-# 4. Exécution et séparation en plusieurs tableaux
+# 4. Execution and separation into multiple tables
 all_results <- targets %>%
   pmap(function(Pathogen, Country, Author) {
     res_table <- analyze_routes(Pathogen, Country, Author)
     if (!is.null(res_table)) {
-      # On ajoute le nom pour identifier le tableau dans la liste
+      # Add the name to identify the table in the list
       attr(res_table, "title") <- paste(Pathogen, "-", Country)
       return(res_table)
     }
     return(NULL)
   }) %>%
-  compact() # Supprime les éléments vides
+  compact() # Remove empty elements
 
-# 5. Affichage des tableaux individuels
+# 5. Display individual tables
 for (tbl in all_results) {
   cat("\n" , paste(rep("=", 30), collapse = ""), "\n")
   cat("TABLEAU :", attr(tbl, "title"), "\n")
