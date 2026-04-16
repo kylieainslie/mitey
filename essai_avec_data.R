@@ -2,6 +2,7 @@ library(dplyr)
 
 
 validation_data <- readRDS("vignettes/articles/validation_data.rds")
+validation_data
 
 vink_estimates <-readRDS("vignettes/articles/vink_estimates.rds")
 vink_estimates
