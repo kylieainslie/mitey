@@ -127,15 +127,20 @@ plot_si_fit <- function(
       stat_function(
         fun  = f_norm,
         args = list(
-          weights = weights,
-          mu      = mean,
-          sigma   = sd
+          weights  = weights,
+          mu       = mean,
+          sigma    = sd,
+          n_routes = n_routes
         ),
         color     = "red",
         linetype  = "solid",
         linewidth = 1
       ) +
-      labs(x = "Index-case to case interval (days)", y = "Density") +
+      labs(
+        x     = "Index-case to case interval (days)",
+        y     = "Density",
+        title = paste("Serial interval mixture fit -", n_routes, "transmission routes")
+      ) +
       theme_minimal() +
       geom_vline(xintercept = mean, linetype = "dashed", color = "black")
   }

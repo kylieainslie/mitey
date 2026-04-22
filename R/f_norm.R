@@ -56,9 +56,9 @@ f_norm <- function(
     x,
     weights,
     mu,
-    sigma
+    sigma,
+    n_routes
 ) {
-  n_routes <- length(weights) + 1L
 
   if (any(weights < 0)) {
     stop("All weights must be non-negative.")
