@@ -74,11 +74,20 @@ plot_si_fit <- function(
 ) {
   n_routes <- as.integer(n_routes)
 
-  if (length(weights) != n_routes - 1L) {
-    stop(paste0(
-      "weights must have length n_routes - 1 = ", n_routes - 1L,
-      ", but has length ", length(weights), "."
-    ))
+  if (dist == "normal") {
+    if (length(weights) != 2L * n_routes - 1L) {
+      stop(paste0(
+        "weights must have length 2*n_routes - 1 = ", 2L * n_routes - 1L,
+        ", but has length ", length(weights), "."
+      ))
+    }
+  } else {
+    if (length(weights) != n_routes - 1L) {
+      stop(paste0(
+        "weights must have length n_routes - 1 = ", n_routes - 1L,
+        ", but has length ", length(weights), "."
+      ))
+    }
   }
 
   breaks <- seq(min(dat) - 0.51, max(dat) + 0.51, by = 1)
@@ -96,7 +105,8 @@ plot_si_fit <- function(
         args = list(
           weights = weights,
           mu      = mean,
-          sigma   = sd
+          sigma   = sd,
+          n_routes = n_routes
         ),
         color     = "red",
         linetype  = "dashed",
@@ -193,21 +203,11 @@ plot_si_fit_result <- function(
   n_routes <- as.integer(si_result$n_routes)
 
   if (dist == "normal") {
-    # wts layout: [1] = CP, then pairs [2i, 2i+1] for i in 1:(n_routes-1)
-    # Aggregate: CP weight + summed pairs for each route
-    weights <- numeric(n_routes - 1L)
-    weights[1] <- si_result$wts[1]  # Co-primary
-    for (i in seq_len(n_routes - 2L)) {
-      # Pair indices in wts: 2i and 2i+1 (1-based)
-      idx_pos <- 2L * i
-      idx_neg <- 2L * i + 1L
-      weights[i + 1L] <- (si_result$wts[idx_pos] + si_result$wts[idx_neg])
-    }
+    weights <- si_result$wts  # poids bruts, longueur 2*n_routes - 1
   } else {
-    # Gamma: wts layout [1] = CP, [2] = PS, ..., [n_routes] = last route
-    # Pass first n_routes - 1 weights; f_gam derives the last one
     weights <- si_result$wts[seq_len(n_routes - 1L)]
   }
+
 
   plot_si_fit(
     dat            = dat,

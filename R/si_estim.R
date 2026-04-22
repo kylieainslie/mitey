@@ -173,6 +173,7 @@ si_estim <- function(
       denom <- colSums(tau)
       tau   <- sweep(tau, 2, denom, "/")
 
+
       # Component weights
       w <- rowSums(tau) / j
 

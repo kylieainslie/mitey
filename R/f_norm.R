@@ -78,8 +78,8 @@ f_norm <- function(
   if (n_routes >= 3) {
     for (i in 2:(n_routes - 1)) {
       result <- result +
-        weights[i]/2 * dnorm(x, mean =  (i-1) * mu, sd = sqrt(i) * sigma) +
-        weights[i]/2 * dnorm(x, mean = -(i-1) * mu, sd = sqrt(i) * sigma)
+        weights[2*i-2] * dnorm(x, mean =  (i-1) * mu, sd = sqrt(i-1) * sigma) +
+        weights[2*i-1] * dnorm(x, mean = -(i-1) * mu, sd = sqrt(i-1) * sigma)
     }
   }
 
