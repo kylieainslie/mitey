@@ -11,6 +11,6 @@ n_optimal3 <- function(dat) {
   as.integer(max(dat) / sd(dat))
 }
 
-n_optimal1(icc_Influenza_Canada)
-n_optimal2(icc_Influenza_Canada)
-n_optimal3(icc_Influenza_Canada)
+#n_optimal1(icc_Influenza_Canada)
+#n_optimal2(icc_Influenza_Canada)
+#n_optimal3(icc_Influenza_Canada)
