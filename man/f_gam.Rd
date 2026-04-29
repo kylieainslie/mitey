@@ -4,16 +4,14 @@
 \alias{f_gam}
 \title{Calculate serial interval mixture density assuming underlying gamma distribution}
 \usage{
-f_gam(x, w1, w2, w3, mu, sigma)
+f_gam(x, weights, mu, sigma)
 }
 \arguments{
 \item{x}{quantile or vector of quantiles (time in days since index case symptom onset)}
 
-\item{w1}{probability weight of being a co-primary case}
-
-\item{w2}{probability weight of being a primary-secondary case}
-
-\item{w3}{probability weight of being a primary-tertiary case}
+\item{weights}{numeric vector of length n_routes - 1; probability weights for each
+transmission route starting from Co-primary. The weight for the last route is
+derived as 1 - sum(weights).}
 
 \item{mu}{mean serial interval in days (must be positive)}
 
@@ -21,7 +19,6 @@ f_gam(x, w1, w2, w3, mu, sigma)
 }
 \value{
 Vector of weighted density values corresponding to input quantiles x.
-Returns the sum of densities from all four transmission routes.
 }
 \description{
 This function computes the weighted mixture density for serial intervals based on
@@ -30,35 +27,31 @@ different transmission routes in an outbreak. It implements part of the Vink et 
 distribution for the serial interval.
 }
 \details{
-The function models four distinct transmission routes:
+The function models n_routes distinct transmission routes:
 \itemize{
 \item Co-primary (CP): Cases infected simultaneously from the same source
 \item Primary-secondary (PS): Direct transmission from index case
 \item Primary-tertiary (PT): Transmission through one intermediate case
-\item Primary-quaternary (PQ): Transmission through two intermediate cases
+\item And so on up to n_routes
 }
 
-Each route contributes to the overall serial interval distribution with different
-means and variances. The co-primary component uses a modified gamma distribution
-to account for simultaneous infections, while subsequent generations follow
-gamma distributions with progressively longer means and larger variances.
-
-This function is primarily used internally by \code{\link{si_estim}} when
-\code{dist = "gamma"} is specified, and by \code{\link{plot_si_fit}} for
-visualizing fitted distributions.
-
-The weights w1, w2, and w3 must sum to <= 1, with the remaining probability
-(1 - w1 - w2 - w3) assigned to primary-quaternary cases. The function converts
-the mean and standard deviation to gamma distribution shape (k) and scale (\\theta)
-parameters using the method of moments:
+The weights vector must have length n_routes - 1, with the remaining probability
+(1 - sum(weights)) assigned to the last route. The function converts mean and
+standard deviation to gamma distribution shape (k) and scale (theta) parameters:
 \deqn{k = \mu^2 / \sigma^2}
 \deqn{\theta = \sigma^2 / \mu}
+Route i uses shape i * k and scale theta.
 }
 \examples{
 \dontrun{
+# 4 routes (default behaviour)
 x <- seq(0.1, 30, by = 0.1)
-density_values <- f_gam(x, w1 = 0.1, w2 = 0.6, w3 = 0.2, mu = 6.5, sigma = 2.8)
+density_values <- f_gam(x, weights = c(0.1, 0.6, 0.2), mu = 6.5, sigma = 2.8)
 plot(x, density_values, type = "l")
+
+# 5 routes
+density_values5 <- f_gam(x, weights = c(0.1, 0.6, 0.15, 0.10), mu = 6.5, sigma = 2.8)
+plot(x, density_values5, type = "l")
 }
 
 }

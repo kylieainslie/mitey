@@ -1,6 +1,6 @@
 ---
 title: "Flexible Number of Transmission Routes in Serial Interval Estimation"
-author: "[Your name]"
+author: "Simon Carreel"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
@@ -34,7 +34,7 @@ library(patchwork)   # to assemble multiple plots
 library(fdrtool) 
 ```
 
-```````````````{r theme, echo = FALSE}
+```{r theme, echo = FALSE}
 COL_PRIMARY   <- "#2C6FAC"
 COL_SECONDARY <- "#E05A2B"
 COL_COPRIM    <- "#6BAE75"
@@ -43,7 +43,7 @@ COL_ROUTE5    <- "#E8A838"
 COL_ROUTE6    <- "#C0392B"
 COL_ASYMP     <- "#BDBDBD"
 COL_TRUE_SI   <- "#E74C3C"
-```````````````
+```
 
 ------------------------------------------------------------------------
 
@@ -51,52 +51,44 @@ COL_TRUE_SI   <- "#E74C3C"
 
 The **serial interval** (SI) is defined as the time elapsed between symptom onset in a primary case (the infector) and symptom onset in the secondary case they directly infected [@vink2014].
 
-<!-- FIGURE 1: schematic timeline infector → infectee with the SI indicated -->
 
-```{=html}
-<!-- [TO INSERT: timeline diagram showing two individuals, a transmission arrow,
-     and a brace marking the SI between the two symptom onset dates] -->
-```
 
 ```{r fig1, echo = FALSE, fig.cap = "Figure 1 — Definition of the serial interval"}
 
 fig1_data <- data.frame(
-  person = c("Infector", "Infector", "Infectee", "Infectee"),
-  
-  t_symp = c(0, 3, 8, 11),   # dates 
-  y1      = c(1, 1, 1, 1), # position verticale
-  y2      = c(1.1, 1.25, 0.75, 0.9 ),
-  y3      = c(1.2, 1.2, 0.8, 0.8), 
-  events = c("Infection of person 1","Symptom onset of person 1","Infection of person 2","Symptom onset of person 2")
+  person = c("Infector", "Infectee"),
+  t_inf  = c(0, 6),    # dates d'infection (non observées)
+  t_symp = c(4, 14),   # dates d'apparition des symptômes
+  y      = c(1.5, 0.5) # position verticale
 )
- 
+
 # Repères de temps clés
-t_symp_A <- 3
-t_symp_B <- 11
- 
+t_symp_A <- 4
+t_symp_B <- 14
+
 fig1 <- ggplot() +
   # Lignes horizontales (timeline)
   geom_segment(
     data = fig1_data,
-    aes(x = 0, xend = 18, y = y1, yend = y1),
+    aes(x = 0, xend = 18, y = y, yend = y),
     color = "grey70", linewidth = 0.6
   ) +
   # Points : symptom onset
   geom_point(
     data = fig1_data,
-    aes(x = t_symp, y = y1, color = person),
+    aes(x = t_symp, y = y, color = person),
     size = 5, show.legend = FALSE
   ) +
   # Étiquettes des personnes
   geom_text(
     data = fig1_data,
-    aes(x = -0.5, y = y3, label = person, color = person),
+    aes(x = -0.5, y = y, label = person, color = person),
     hjust = 1, fontface = "bold", size = 4, show.legend = FALSE
   ) +
   # Étiquettes "Symptom onset"
   geom_text(
     data = fig1_data,
-    aes(x = t_symp, y = y2, label = events),
+    aes(x = t_symp, y = y + 0.18, label = "Symptom\nonset"),
     size = 3, color = "grey30", lineheight = 0.85
   ) +
   # Accolade / flèche double pour l'IS
@@ -134,12 +126,11 @@ fig1 <- ggplot() +
     panel.grid.minor   = element_blank(),
     plot.title       = element_text(face = "bold", size = 13)
   )
- 
+
 fig1
  
 
 ```
-
 
 In epidemiology, the serial interval is a fundamental parameter for several reasons:
 
@@ -148,7 +139,7 @@ In epidemiology, the serial interval is a fundamental parameter for several reas
 -   **Calibrating transmission models.** Compartmental models (SIR, SEIR, etc.) and renewal equation models use the SI as a direct input to simulate epidemic dynamics and evaluate the impact of interventions.
 -   **Designing control measures.** The duration of quarantine, the contact-tracing window, and the timing of vaccination campaigns are all partly calibrated on the SI.
 
-In practice, the SI is often confused with the **generation interval** (the time between infection of the primary case and infection of the secondary case). The two coincide when infectiousness begins at symptom onset, but they can diverge for pathogens with substantial pre-symptomatic transmission [@nishiura2010].
+In practice, the SI is often confused with the **generation interval** (the time between infection of the primary case and infection of the secondary case).
 
 ------------------------------------------------------------------------
 
@@ -170,11 +161,11 @@ In practice, such data are rare. The most common alternatives are:
 
 Several biases affect SI estimation from observed data:
 
--   **Epidemic growth bias.** During epidemic growth, infector–infectee pairs with short SIs are over-represented in surveillance data, because recent infectors are more likely to still be under observation [@park2019].
+-   **Epidemic growth bias.** During epidemic growth, infector–infectee pairs with short SIs are over-represented in surveillance data, because recent infectors are more likely to still be under observation.
 -   **Right-truncation.** Secondary cases whose symptoms appear after the study end date are not observed, artificially shortening the estimated SI.
 -   **Negative serial intervals.** When the secondary case develops symptoms before the identified infector (pre-symptomatic transmission), the observed SI is negative.
 
-These corrections are well documented in the literature [@ali2023] but require additional assumptions. It is precisely to sidestep some of these difficulties that household-based ICC methods were developed.
+These corrections are well documented in the literature but require additional assumptions. It is precisely to sidestep some of these difficulties that household-based ICC methods were developed.
 
 ------------------------------------------------------------------------
 
@@ -184,10 +175,7 @@ These corrections are well documented in the literature [@ali2023] but require a
 
 In a household or institutional setting (care home, school classroom), the **index case** — the first person to show symptoms — is identified, and the symptom onset date of every other case is recorded. The difference between the index case onset date and each subsequent case onset date is an **ICC interval**.
 
-```{=html}
-<!-- FIGURE 2: schematic of a household with an index case and several secondary
-     cases, showing the different ICC values -->
-```
+
 
 ```{r fig2, echo = FALSE}
 household <- data.frame(
@@ -252,16 +240,7 @@ fig2
 
 
 
-```{=html}
-<!-- [TO INSERT: timeline of a household, index case at t = 0, arrows pointing
-     to cases at t = ICC_1, ICC_2, etc.] -->
-```
-
 The appeal of ICC data is their availability: they do not require identifying exactly who infected whom, only that symptom onset dates are recorded within a well-defined group.
-
-```         
-
-
 
 ## The mixture model: transmission routes
 
@@ -272,20 +251,171 @@ The key insight of Vink et al. is that each observed ICC can correspond to **sev
 -   **Primary-Tertiary (PT):** The index case infected an asymptomatic intermediate, who then infected the observed case. ICC ≈ 2 × SI. Distribution: $\mathcal{N}(2\mu, 2\sigma^2)$.
 -   **Primary-Quaternary (PQ):** Two asymptomatic intermediates between the index case and the observed case. ICC ≈ 3 × SI. Distribution: $\mathcal{N}(3\mu, 3\sigma^2)$.
 
-```{=html}
-<!-- FIGURE 3: diagram of the 4 transmission routes, with the transmission chain
-     for each route and the expected ICC distribution -->
+```{r fig3, echo = FALSE}
+mu_ex    <- 10
+sigma_ex <- 2
+x_seq    <- seq(-5, 40, length.out = 400)
+
+# Densités pour chaque route
+dens_CP <- fdrtool::dhalfnorm(x_seq,
+                              theta = sqrt(pi / 2) / (sqrt(2) * sigma_ex))
+dens_PS <- dnorm(x_seq, mean = mu_ex,      sd = sigma_ex)
+dens_PT <- dnorm(x_seq, mean = 2 * mu_ex,  sd = sqrt(2) * sigma_ex)
+dens_PQ <- dnorm(x_seq, mean = 3 * mu_ex,  sd = sqrt(3) * sigma_ex)
+
+dens_df <- data.frame(
+  x    = rep(x_seq, 4),
+  dens = c(dens_CP, dens_PS, dens_PT, dens_PQ),
+  route = rep(
+    c("Co-Primary (CP)\nICC ~ 0",
+      "Primary-Secondary (PS)\nICC ~ SI",
+      "Primary-Tertiary (PT)\nICC ~ 2 × SI",
+      "Primary-Quaternary (PQ)\nICC ~ 3 × SI"),
+    each = length(x_seq)
+  )
+)
+dens_df$route <- factor(dens_df$route, levels = unique(dens_df$route))
+
+route_colors <- c(
+  "Co-Primary (CP)\nICC ~ 0"              = COL_COPRIM,
+  "Primary-Secondary (PS)\nICC ~ SI"      = COL_PRIMARY,
+  "Primary-Tertiary (PT)\nICC ~ 2 × SI"   = COL_SECONDARY,
+  "Primary-Quaternary (PQ)\nICC ~ 3 × SI" = COL_QUAT
+)
+
+# Schémas de chaînes de transmission (coordonnées des nœuds)
+make_chain <- function(n_asymp, y_base = 0.7, x_start = 0, x_step = mu_ex) {
+  
+  if (n_asymp == -1) {
+    # Cas Co-Primary : seulement 2 nœuds, tous les deux symptomatiques
+    x_nodes <- x_start + c(0, x_step)
+    symp    <- c(TRUE, TRUE)
+  } else {
+    n_total <- n_asymp + 2  # index + intermédiaires + cas observé
+    x_nodes <- x_start + (0:(n_total - 1)) * x_step
+    symp    <- c(TRUE, rep(FALSE, n_asymp), TRUE)
+  }
+  
+  data.frame(
+    x    = x_nodes,
+    y    = y_base,
+    symp = symp
+  )
+}
+
+make_arrows <- function(nodes) {
+  data.frame(
+    x    = head(nodes$x, -1),
+    xend = tail(nodes$x, -1),
+    y    = head(nodes$y, -1),
+    yend = tail(nodes$y, -1)
+  )
+}
+
+# Un panneau par route
+make_route_panel <- function(route_label, n_asymp, color,
+                             mu_val, sigma_val, x_seq) {
+  nodes  <- make_chain(n_asymp, y_base = 0.72)
+  arrows <- make_arrows(nodes)
+
+  # Densité
+  if (n_asymp == -1) {
+    # CP : demi-normale
+    dens <- fdrtool::dhalfnorm(x_seq,
+                               theta = sqrt(pi / 2) / (sqrt(2) * sigma_val))
+    mean_val <- NA
+  } else {
+    route_i  <- n_asymp + 1
+    dens     <- dnorm(x_seq,
+                      mean = route_i * mu_val,
+                      sd   = sqrt(route_i) * sigma_val)
+    mean_val <- route_i * mu_val
+  }
+  dens_panel <- data.frame(x = x_seq, y = dens)
+
+  p <- ggplot() +
+    # ---- chaîne de transmission ----
+    geom_segment(
+      data = arrows,
+      aes(x = x, xend = xend, y = y, yend = yend),
+      arrow = arrow(length = unit(0.15, "cm"), type = "closed"),
+      color = "grey50", linewidth = 0.7
+    ) +
+    # nœuds symptomatiques (ronds pleins)
+    geom_point(
+      data = nodes %>% filter(symp),
+      aes(x = x, y = y),
+      color = color, size = 5
+    ) +
+    # nœuds asymptomatiques (ronds vides gris)
+    geom_point(
+      data = nodes %>% filter(!symp),
+      aes(x = x, y = y),
+      color = COL_ASYMP, size = 5, shape = 1, stroke = 1.5
+    ) +
+    # étiquettes "Index" et "Observed"
+    annotate("text", x = nodes$x[1],
+             y = nodes$y[1] + 0.2, label = "Index",
+             size = 2.8, color = color, fontface = "bold") +
+    annotate("text", x = tail(nodes$x, 1),
+             y = tail(nodes$y, 1) + 0.2, label = "Observed",
+             size = 2.8, color = color, fontface = "bold") +
+    # ---- densité ----
+    geom_area(
+      data = dens_panel,
+      aes(x = x, y = y *2 + 0.0),   # mise à l'échelle pour le panneau
+      fill = color, alpha = 0.25
+    ) +
+    geom_line(
+      data = dens_panel,
+      aes(x = x, y = y * 2 + 0.0),
+      color = color, linewidth = 1
+    ) +
+    # ligne verticale sur la moyenne (sauf CP)
+    {if (!is.na(mean_val))
+      geom_vline(xintercept = mean_val,
+                 linetype = "dashed", color = color, linewidth = 0.6)} +
+    labs(title = route_label, x = "ICC (days)", y = NULL) +
+    scale_x_continuous(limits = c(-3, 38)) +
+    scale_y_continuous(limits = c(-0.05, 0.95)) +
+    theme_minimal(base_size = 10) +
+    theme(
+      axis.text.y        = element_blank(),
+      axis.ticks.y       = element_blank(),
+      panel.grid.major.y = element_blank(),
+      panel.grid.minor   = element_blank(),
+      plot.title         = element_text(face = "bold", color = color, size = 10)
+    )
+  p
+}
+
+p_CP <- make_route_panel("Co-Primary (CP)  —  ICC ≈ 0",
+                         n_asymp = -1, color = COL_COPRIM,
+                         mu_val = mu_ex, sigma_val = sigma_ex, x_seq = x_seq)
+p_PS <- make_route_panel("Primary-Secondary (PS)  —  ICC ≈ SI",
+                         n_asymp = 0, color = COL_PRIMARY,
+                         mu_val = mu_ex, sigma_val = sigma_ex, x_seq = x_seq)
+p_PT <- make_route_panel("Primary-Tertiary (PT)  —  ICC ≈ 2 × SI",
+                         n_asymp = 1, color = COL_SECONDARY,
+                         mu_val = mu_ex, sigma_val = sigma_ex, x_seq = x_seq)
+p_PQ <- make_route_panel("Primary-Quaternary (PQ)  —  ICC ≈ 3 × SI",
+                         n_asymp = 2, color = COL_QUAT,
+                         mu_val = mu_ex, sigma_val = sigma_ex, x_seq = x_seq)
+
+fig3 <- (p_CP | p_PS) / (p_PT | p_PQ) +
+  plot_annotation(
+    title   = "Figure 3 — The four transmission routes and their expected ICC distributions",
+    caption = "Filled nodes: symptomatic cases  |  Open nodes: asymptomatic cases\nDashed line: expected mean ICC for each route",
+    theme   = theme(
+      plot.title   = element_text(face = "bold", size = 13),
+      plot.caption = element_text(color = "grey50", size = 8)
+    )
+  )
+
+fig3
 ```
 
-```{r fig3}
 
-```
-
-
-```{=html}
-<!-- [TO INSERT: 4 panels, one per route, showing the transmission chain
-     (nodes with or without symptoms) and the ICC probability density] -->
-```
 
 The observed ICC density is therefore a **mixture** of these components:
 
@@ -329,34 +459,408 @@ For some diseases, a substantial fraction of infections remains asymptomatic. A 
 
 In this context, long transmission chains are plausible: the index case may have infected one asymptomatic intermediate, who infected another, who infected yet another, before the observed case finally shows symptoms.
 
-```{=html}
-<!-- FIGURE 4: schematic of a long transmission chain for a highly asymptomatic
-     disease, showing 5 or 6 links between the index case and the observed case -->
+
+
+```{r chain_with_6_routes , echo = FALSE}
+# Chaîne avec 4 intermédiaires asymptomatiques (route 6)
+n_asymp_long <- 4
+nodes_long   <- make_chain(n_asymp = n_asymp_long, y_base = 1,
+                           x_start = 0, x_step = 2.2)
+arrows_long  <- make_arrows(nodes_long)
+
+# Accolade ICC totale
+icc_total_x  <- c(nodes_long$x[1], tail(nodes_long$x, 1))
+
+fig4 <- ggplot() +
+  # Flèches de transmission
+  geom_segment(
+    data = arrows_long,
+    aes(x = x, xend = xend, y = y, yend = yend),
+    arrow = arrow(length = unit(0.2, "cm"), type = "closed"),
+    color = "grey50", linewidth = 0.9
+  ) +
+  # Nœuds symptomatiques
+  geom_point(
+    data = nodes_long %>% filter(symp),
+    aes(x = x, y = y),
+    color = COL_PRIMARY, size = 8
+  ) +
+  # Nœuds asymptomatiques
+  geom_point(
+    data = nodes_long %>% filter(!symp),
+    aes(x = x, y = y),
+    color = COL_ASYMP, size = 8, shape = 1, stroke = 2
+  ) +
+  # Étiquettes nœuds
+  geom_text(
+    data = nodes_long,
+    aes(x = x, y = y+0.1,
+        label = ifelse(symp,
+                       ifelse(x == min(x), "Index", "Observed"),
+                       "?")),
+    color = ifelse(nodes_long$symp, "white", "grey40"),
+    fontface = "bold", size = 3.5
+  ) +
+  # Légendes sous chaque nœud
+  geom_text(
+    data = nodes_long,
+    aes(x = x, y = y - 0.22,
+        label = ifelse(symp,
+                       ifelse(x == min(x), "Symptomatic\n(index)", "Symptomatic\n(observed)"),
+                       "Asymptomatic\n(unobserved)")),
+    size = 2.8,
+    color = ifelse(nodes_long$symp, COL_PRIMARY, "grey55"),
+    lineheight = 0.85
+  ) +
+  # Double flèche ICC
+  geom_segment(
+    aes(x = icc_total_x[1], xend = icc_total_x[2],
+        y = 1.45, yend = 1.45),
+    arrow = arrow(ends = "both", length = unit(0.2, "cm"), type = "closed"),
+    color = COL_ROUTE5, linewidth = 1.3
+  ) +
+  annotate(
+    "text",
+    x = mean(icc_total_x), y = 1.58,
+    label = paste0("Observed ICC  ≈  5 × SI   (", n_asymp_long,
+                   " asymptomatic intermediates)"),
+    color = COL_ROUTE5, fontface = "bold", size = 3.8
+  ) +
+  # Accolades SI individuels (petites flèches sous la chaîne)
+  {
+    si_arrows <- data.frame(
+      x    = head(nodes_long$x, -1),
+      xend = tail(nodes_long$x, -1)
+    )
+    geom_segment(
+      data = si_arrows,
+      aes(x = x + 0.1, xend = xend - 0.1, y = 0.65, yend = 0.65),
+      arrow = arrow(ends = "both", length = unit(0.12, "cm"), type = "open"),
+      color = "grey60", linewidth = 0.6
+    )
+  } +
+  annotate(
+    "text", x = mean(nodes_long$x), y = 0.52,
+    label = "Each arrow ≈ 1 serial interval (SI)",
+    color = "grey55", size = 3, fontface = "italic"
+  ) +
+  scale_x_continuous(limits = c(-1.2, max(nodes_long$x) + 1.5)) +
+  scale_y_continuous(limits = c(0.3, 1.75)) +
+  labs(
+    title   = "Figure 4 — Long transmission chain in a highly asymptomatic disease",
+    subtitle = "The observed ICC spans 5 serial intervals, but only 2 symptomatic cases are recorded",
+    x = NULL, y = NULL
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.text        = element_blank(),
+    axis.ticks       = element_blank(),
+    panel.grid       = element_blank(),
+    plot.title       = element_text(face = "bold", size = 13),
+    plot.subtitle    = element_text(color = "grey40", size = 10)
+  )
+
+fig4
+
+
 ```
 
-```{=html}
-<!-- [TO INSERT: linear chain of nodes, some greyed out (asymptomatic),
-     with the total ICC indicated] -->
-```
 
 If such long chains are frequent but the algorithm is limited to 4 routes, the PT or PQ component will absorb ICC values that actually correspond to routes of order 5 or 6. This leads to **overestimation of the SI**, because the algorithm assigns an ICC of $5\mu$ to the component centred at $3\mu$.
 
-```{=html}
-<!-- FIGURE 5: comparison of the estimated vs. true density for different numbers
-     of routes (simulation with n_routes = 4 vs. n_routes = 6) -->
+```{r example_with_6_routes, fig5, echo = FALSE}
+set.seed(42)
+
+true_mu    <- 10   # Vrai IS moyen : 10 jours
+true_sigma <- 2    # Vrai écart-type : 2 jours
+N          <- 400  # Nombre total d'observations
+
+# Poids des 6 routes
+# (CP, PS, PT, PQ, Route-5, Route-6)
+route_weights <- c(
+  CP = 0.10,
+  PS = 0.30,
+  PT = 0.25,
+  PQ = 0.18,
+  R5 = 0.10,
+  R6 = 0.07
+)
+# Nombre de tirages par route
+n_per_route <- round(route_weights * N)
+
+# Route 1 — Co-Primary : demi-normale
+CP <- fdrtool::rhalfnorm(
+  n_per_route["CP"],
+  theta = sqrt(pi / 2) / (sqrt(2) * true_sigma)
+)
+
+# Route 2 — Primary-Secondary : N(mu, sigma^2)
+PS <- rnorm(n_per_route["PS"],
+            mean = true_mu,
+            sd   = true_sigma)
+
+# Route 3 — Primary-Tertiary : N(2*mu, 2*sigma^2)
+PT <- rnorm(n_per_route["PT"],
+            mean = 2 * true_mu,
+            sd   = sqrt(2) * true_sigma)
+
+# Route 4 — Primary-Quaternary : N(3*mu, 3*sigma^2)
+PQ <- rnorm(n_per_route["PQ"],
+            mean = 3 * true_mu,
+            sd   = sqrt(3) * true_sigma)
+
+# Route 5 : N(4*mu, 4*sigma^2)
+R5 <- rnorm(n_per_route["R5"],
+            mean = 4 * true_mu,
+            sd   = sqrt(4) * true_sigma)
+
+# Route 6 : N(5*mu, 5*sigma^2)
+R6 <- rnorm(n_per_route["R6"],
+            mean = 5 * true_mu,
+            sd   = sqrt(5) * true_sigma)
+
+# Assemblage et arrondi à l'entier (jours)
+icc_data <- round(c(CP, PS, PT, PQ, R5, R6))
+
+# Vérification rapide
+cat("=== Simulation summary ===\n")
+cat("N observations :", length(icc_data), "\n")
+cat("True SI mean   :", true_mu, "days\n")
+cat("True SI sd     :", true_sigma, "days\n")
+cat("ICC range      :", min(icc_data), "to", max(icc_data), "days\n")
+cat("ICC mean       :", round(mean(icc_data), 2), "days\n\n")
+cat("Observations per route:\n")
+print(n_per_route)
+
+# Histogramme de vérification
+hist_sim <- ggplot(data.frame(icc = icc_data), aes(x = icc)) +
+  geom_histogram(
+    binwidth = 1, fill = "lightsteelblue", color = "white", linewidth = 0.3
+  ) +
+  geom_vline(xintercept = true_mu,       linetype = "dashed",
+             color = COL_TRUE_SI, linewidth = 1) +
+  geom_vline(xintercept = 2 * true_mu,   linetype = "dashed",
+             color = COL_TRUE_SI, linewidth = 0.7, alpha = 0.6) +
+  geom_vline(xintercept = 3 * true_mu,   linetype = "dashed",
+             color = COL_TRUE_SI, linewidth = 0.7, alpha = 0.6) +
+  geom_vline(xintercept = 4 * true_mu,   linetype = "dashed",
+             color = COL_TRUE_SI, linewidth = 0.7, alpha = 0.4) +
+  geom_vline(xintercept = 5 * true_mu,   linetype = "dashed",
+             color = COL_TRUE_SI, linewidth = 0.7, alpha = 0.4) +
+  annotate("text", x = true_mu + 0.5, y = Inf,
+           label = "SI", color = COL_TRUE_SI,
+           vjust = 2, hjust = 0, size = 3.5, fontface = "italic") +
+  labs(
+    title    = "Simulated ICC data — 6 transmission routes",
+    subtitle = paste0("True SI: mean = ", true_mu, " days, sd = ", true_sigma,
+                      " days  |  N = ", length(icc_data), " observations"),
+    x = "ICC interval (days)",
+    y = "Count"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(plot.title    = element_text(face = "bold", size = 13),
+        plot.subtitle = element_text(color = "grey40", size = 10))
+
+hist_sim
 ```
 
-```{=html}
-<!-- [TO INSERT: two density curves overlaid on the same histogram — one with
-     4 routes (shifted right, overestimation), one with 6 routes (correct fit),
-     and a vertical line at the true SI] -->
+
+```{r, echo = FALSE, eval= FALSE}
+
+result_4_routes <-si_estim(icc_data)
+graph<- mitey::plot_si_fit_result(result_4_routes,icc_data)
+graph
+
 ```
+
 
 ## Highly symptomatic diseases: the risk of over-parameterisation
 
 Conversely, for a disease where almost all infections are symptomatic (e.g. measles or smallpox), it is unlikely that several asymptomatic intermediates follow one another in a single transmission chain. In this case, **modelling 4 routes introduces unnecessary parameters** (the weights for PT and PQ routes will be estimated near zero), at the cost of precision and numerical stability of the EM algorithm.
 
 A model with only 2 or 3 routes would be more parsimonious and would yield more stable estimates.
+
+```{r symptomatic-simulation, echo = FALSE}
+# --- Simulation : maladie très symptomatique (2 routes suffisent) ---
+set.seed(123)
+
+true_mu_symp    <- 20    # Vrai IS : 15 jours
+true_sigma_symp <- 17 # Vrai écart-type : 6 jours
+N_symp          <- 350
+
+# Poids : quasi-exclusivement CP et PS, PT anecdotique
+n_symp <- round(c(
+  CP = 0.25,
+  PS = 0.75,
+  PT = 0.00
+) * N_symp)
+
+icc_symp <- round(c(
+  fdrtool::rhalfnorm(
+    n_symp["CP"],
+    theta = sqrt(pi / 2) / (sqrt(2) * true_sigma_symp)
+  ),
+  rnorm(n_symp["PS"],
+        mean = true_mu_symp,
+        sd   = true_sigma_symp),
+  rnorm(n_symp["PT"],
+        mean = 2 * true_mu_symp,
+        sd   = sqrt(2) * true_sigma_symp)
+))
+
+cat("True SI mean :", true_mu_symp, "days\n")
+cat("N observations :", length(icc_symp), "\n")
+cat("ICC range :", min(icc_symp), "to", max(icc_symp), "days\n")
+```
+
+```{r symptomatic-fit-4routes, echo = FALSE}
+# --- Estimation avec 4 routes (comportement par défaut) ---
+result_symp_4 <- si_estim(
+  dat      = icc_symp,
+  dist     = "normal",
+  n_routes = 4L,
+  n        = 50
+)
+
+cat("=== 4 routes ===\n")
+cat("Estimated mean :", round(result_symp_4$mean, 2), "days\n")
+cat("Estimated sd   :", round(result_symp_4$sd,   2), "days\n")
+cat("Converged      :", result_symp_4$converged, "\n")
+cat("Component weights:\n")
+print(round(result_symp_4$wts, 3))
+
+plot_4 <- plot_si_fit_result(
+  si_result = result_symp_4,
+  dat       = icc_symp,
+  dist      = "normal"
+) +
+  geom_vline(
+    xintercept = true_mu_symp,
+    color = COL_TRUE_SI, linetype = "dotted", linewidth = 1
+  ) +
+  annotate("text",
+           x = true_mu_symp + 0.3, y = Inf,
+           label = paste0("True SI = ", true_mu_symp, " days"),
+           color = COL_TRUE_SI, vjust = 2, hjust = 0, size = 3.2) +
+  labs(
+    title    = "Fit with 4 routes (default)",
+    subtitle = paste0("Estimated mean = ", round(result_symp_4$mean, 2),
+                      " days  |  True SI = ", true_mu_symp, " days")
+  )
+plot_4
+```
+
+```{r symptomatic-fit-3 routes, echo = FALSE}
+# --- Estimation avec 3 routes (modèle parcimonieux) ---
+result_symp_3 <- si_estim(
+  dat      = icc_symp,
+  dist     = "normal",
+  n_routes = 3L,
+  n        = 50
+)
+
+cat("=== 3 routes ===\n")
+cat("Estimated mean :", round(result_symp_3$mean, 3), "days\n")
+cat("Estimated sd   :", round(result_symp_3$sd,   3), "days\n")
+cat("Converged      :", result_symp_3$converged, "\n")
+cat("Component weights:\n")
+print(round(result_symp_3$wts, 3))
+
+plot_3 <- plot_si_fit_result(
+  si_result = result_symp_3,
+  dat       = icc_symp,
+  dist      = "normal"
+) +
+  geom_vline(
+    xintercept = true_mu_symp,
+    color = COL_TRUE_SI, linetype = "dotted", linewidth = 1
+  ) +
+  annotate("text",
+           x = true_mu_symp + 0.3, y = Inf,
+           label = paste0("True SI = ", true_mu_symp, " days"),
+           color = COL_TRUE_SI, vjust = 2, hjust = 0, size = 3.2) +
+  labs(
+    title    = "Fit with 3 routes (parsimonious)",
+    subtitle = paste0("Estimated mean = ", round(result_symp_3$mean, 2),
+                      " days  |  True SI = ", true_mu_symp, " days")
+  )
+
+plot_3
+```
+
+```{r symptomatic-aic-bic, echo = FALSE}
+# --- Comparaison formelle AIC/BIC ---
+# On boucle manuellement pour éviter les graphiques intermédiaires
+# que compare_n_routes() affiche automatiquement
+aic_bic_symp <- lapply(2:6, function(k) {
+  fit      <- si_estim(icc_symp, dist = "normal", n_routes = k, n = 50)
+  n_params <- 2L + (2L * k - 2L)
+  n_obs    <- length(icc_symp)
+  data.frame(
+    n_routes  = k,
+    mu        = fit$mean,
+    sigma     = fit$sd,
+    loglik    = fit$loglik,
+    aic       = -2 * fit$loglik + 2 * n_params,
+    bic       = -2 * fit$loglik + log(n_obs) * n_params,
+    converged = fit$converged
+  )
+}) |> do.call(what = rbind)
+
+# Identifier les minima
+best_aic <- aic_bic_symp$n_routes[which.min(aic_bic_symp$aic)]
+best_bic <- aic_bic_symp$n_routes[which.min(aic_bic_symp$bic)]
+
+cat("Best n_routes by AIC :", best_aic, "\n")
+cat("Best n_routes by BIC :", best_bic, "\n")
+print(aic_bic_symp[, c("n_routes", "mu", "sigma", "loglik", "aic", "bic")])
+
+# Graphique AIC / BIC
+aic_bic_long <- tidyr::pivot_longer(
+  aic_bic_symp,
+  cols      = c(aic, bic),
+  names_to  = "criterion",
+  values_to = "value"
+)
+
+ggplot(aic_bic_long, aes(x = n_routes, y = value,
+                          color = toupper(criterion),
+                          group = criterion)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 3) +
+  # Mettre en évidence le minimum BIC
+  geom_point(
+    data = aic_bic_long |> dplyr::filter(
+      criterion == "bic", n_routes == best_bic
+    ),
+    aes(x = n_routes, y = value),
+    shape = 21, size = 6, stroke = 2,
+    color = COL_PRIMARY, fill = "white"
+  ) +
+  annotate("text",
+           x = best_bic + 0.15, y = min(aic_bic_symp$bic),
+           label = paste0("BIC minimum\n(n = ", best_bic, " routes)"),
+           color = COL_PRIMARY, hjust = 0, size = 3.5) +
+  scale_color_manual(
+    values = c("AIC" = COL_SECONDARY, "BIC" = COL_PRIMARY),
+    name   = "Criterion"
+  ) +
+  scale_x_continuous(breaks = 2:6) +
+  labs(
+    title    = "Figure 6 — Model selection by AIC and BIC",
+    subtitle = "Highly symptomatic disease — BIC selects the most parsimonious model",
+    x        = "Number of routes",
+    y        = "Criterion value (lower = better)"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title    = element_text(face = "bold", size = 13),
+    plot.subtitle = element_text(color = "grey40", size = 10),
+    legend.position = "top"
+  )
+```
+
+
 
 ## Summary
 

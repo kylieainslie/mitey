@@ -4,88 +4,72 @@
 \alias{plot_si_fit}
 \title{Visualize Serial Interval Distribution Fit to Outbreak Data}
 \usage{
-plot_si_fit(dat, mean, sd, weights, dist = "normal", scaling_factor = 1)
+plot_si_fit(
+  dat,
+  mean,
+  sd,
+  weights,
+  dist = "normal",
+  scaling_factor = 1,
+  n_routes = 4L
+)
 }
 \arguments{
-\item{dat}{numeric vector; the index case-to-case (ICC) intervals in days.
-These represent the time differences between symptom onset in the
-index case (case with earliest symptom onset) and each other case
-in the outbreak}
+\item{dat}{numeric vector; the index case-to-case (ICC) intervals in days.}
 
-\item{mean}{numeric; the estimated mean of the serial interval distribution in days,
-typically obtained from \code{si_estim()}}
+\item{mean}{numeric; the estimated mean of the serial interval distribution in days.}
 
 \item{sd}{numeric; the estimated standard deviation of the serial interval
-distribution in days, typically obtained from \code{si_estim()}}
+distribution in days.}
 
-\item{weights}{numeric vector; the estimated weights for different transmission
-route components. Length and interpretation depends on distribution:
-\itemize{
-\item \strong{Normal distribution}: 4 weights corresponding to aggregated
-transmission routes (co-primary, primary-secondary, primary-tertiary,
-primary-quaternary)
-\item \strong{Gamma distribution}: 3 weights for the reduced component set
-}}
+\item{weights}{numeric vector of length n_routes - 1; the estimated weights for
+each transmission route component, starting from Co-primary. The last route
+weight is derived internally as 1 - sum(weights).}
 
-\item{dist}{character; the distribution family used for serial interval estimation.
-Must be either "normal" (default) or "gamma". Should match the
-distribution used in the original \code{si_estim()} call}
+\item{dist}{character; the distribution family. Must be either "normal" (default)
+or "gamma".}
 
 \item{scaling_factor}{numeric; multiplicative factor to adjust the height of the
-fitted density curve relative to the histogram. Values > 1
-make the curve higher, values < 1 make it lower. Defaults to 1.
-Useful when histogram and density have different scales.}
+fitted density curve. Defaults to 1.}
+
+\item{n_routes}{integer; number of transmission routes modelled. Must be >= 2.
+Defaults to 4. Must match the value used in \code{si_estim()}.}
 }
 \value{
-A \code{ggplot2} object that can be further customized or displayed.
-The plot includes appropriate axis labels, legend, and styling for
-publication-quality figures
+A \code{ggplot2} object.
 }
 \description{
 Creates a diagnostic plot showing the fitted serial interval mixture distribution
 overlaid on a histogram of observed index case-to-case (ICC) intervals from outbreak
 data.
 }
-\details{
-The function displays:
-\itemize{
-\item \strong{Histogram}: Observed ICC intervals binned by day, representing the
-empirical distribution of time differences between symptom onset in the
-index case and all other cases in the outbreak
-\item \strong{Fitted curve}: The estimated mixture distribution combining different
-transmission routes (co-primary, primary-secondary, primary-tertiary, and
-primary-quaternary), weighted according to their estimated probabilities
-\item \strong{Reference line}: For normal distributions, a dashed vertical line
-indicates the estimated mean serial interval
-}
-}
 \examples{
-# Example 1: Visualize fit for simulated outbreak data
+# Example 1: 4 routes, normal distribution
 set.seed(123)
-# Simulate ICC intervals from mixed distribution
 icc_data <- c(
-  rnorm(20, mean = 0, sd = 2),      # Co-primary cases
-  rnorm(50, mean = 12, sd = 3),     # Primary-secondary cases
-  rnorm(20, mean = 24, sd = 4)      # Primary-tertiary cases
+  rnorm(20, mean = 0, sd = 2),
+  rnorm(50, mean = 12, sd = 3),
+  rnorm(20, mean = 24, sd = 4)
 )
-icc_data <- round(pmax(icc_data, 0))  # Ensure non-negative
+icc_data <- round(pmax(icc_data, 0))
 
-# Plot with estimated parameters
 plot_si_fit(
   dat = icc_data,
   mean = 12.5,
   sd = 3.2,
-  weights = c(0.2, 0.6, 0.15, 0.05),
-  dist = "normal"
+  weights = c(0.2, 0.6, 0.15),
+  dist = "normal",
+  n_routes = 4
 )
 
-# Example 2: Using gamma distribution
+# Example 2: 5 routes, gamma distribution
 plot_si_fit(
   dat = icc_data,
   mean = 12.0,
   sd = 3.5,
-  weights = c(0.25, 0.65, 0.10),
+  weights = c(0.25, 0.65, 0.05, 0.03),
   dist = "gamma",
+  n_routes = 5,
   scaling_factor = 0.8
 )
 

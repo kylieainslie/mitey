@@ -15,7 +15,8 @@ fupper(x, r, mu, sigma, comp, dist = "normal")
 
 \item{sigma}{The standard deviation.}
 
-\item{comp}{The component number (1 to 7).}
+\item{comp}{integer; the component number. Component 1 is Co-Primary. Even components
+2i are positive routes, odd components 2i+1 are negative routes (normal only).}
 
 \item{dist}{string; assumed distribution of the serial interval; accepts "normal" or "gamma"; defaults to "normal".}
 }
