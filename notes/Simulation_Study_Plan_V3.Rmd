@@ -1,0 +1,457 @@
+---
+title: "Simulation Study Plan"
+author: "Terry Xue"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    number_sections: false
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: false
+    theme: readable
+    df_print: paged
+fontsize: 11pt
+geometry: margin=1in
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+# 1. Introduction
+
+This document presents a simulation study plan for evaluating a structurally constrained lognormal model for inferring the serial interval (SI) distribution from observed index case-to-case (ICC) intervals. The plan follows the ADEMP structure: Aims, Data-generating mechanisms, Estimands, Methods, and Performance measures.
+
+The serial interval, defined as the time between symptom onset in a primary case and symptom onset in a secondary case, is a key epidemiologic quantity for reconstructing transmission chains, linking epidemic growth to the reproduction number, and informing outbreak control. In household data, however, the true infector--infectee pair is usually unobserved, so observed ICC intervals are typically a mixture of several transmission routes rather than direct serial intervals alone.
+
+The current model is motivated by the transmission-path mixture framework of Vink et al. (2014). In that framework, the observed ICC distribution is represented as a mixture of latent transmission paths, including co-primary (CP), primary-secondary (PS), primary-tertiary (PT), and primary-quaternary (PQ) paths. The primary scientific target is the PS serial interval distribution. The other path components are not the main estimands, but they must be represented in the mixture model so that the PS component can be recovered more accurately from the observed ICC intervals.
+
+The key issue is that latent path assignment depends on the assumed path-specific distributions. If the model assigns inappropriate shapes or locations to CP, PT, or PQ, observations may be incorrectly attributed to the PS component or removed from it, leading to biased PS estimates. Since the PS serial interval may be positive and right-skewed in some settings, it is reasonable to consider whether a lognormal model may provide a useful alternative to the normal model.
+
+However, the current approach does not simply retain the original independent and identically distributed convolution structure after replacing the latent SI distribution by a lognormal distribution. Instead, it directly specifies four ordered lognormal path components and imposes structural constraints on their log-scale locations and common log-scale dispersion. This deliberately relaxes the strict iid convolution assumption and treats the four transmission paths as components in a structurally constrained lognormal mixture. The purpose is to provide a tractable and interpretable mechanism for separating nuisance path components from the PS component, while the final estimands remain the natural-scale summaries of the PS serial interval.
+
+# 2. Simulation Study
+
+## 2.1 Aims
+
+### 2.1.1 Primary aim
+
+To assess whether the proposed structurally constrained lognormal model can recover the PS serial interval distribution from ICC interval data with acceptable bias, precision, and stability when the data-generating process follows the same structurally constrained lognormal specification.
+
+### 2.1.2 Secondary aims
+
+-   To examine the robustness of the proposed structurally constrained lognormal model when key modeling assumptions are mildly violated.
+
+-   To compare the proposed structurally constrained lognormal model with the normal and gamma mixture models considered in Vink et al. by using simulated data generated under different distributional settings, and to evaluate their relative performance in terms of bias, consistency, and robustness through model comparison criteria.
+
+### 2.1.3 Questions of interest
+
+The simulation study is designed to answer the following questions:
+
+-   Does the proposed structurally constrained lognormal model accurately estimate the PS serial interval distribution when the model is correctly specified?
+-   How does the proposed structurally constrained lognormal model perform under mild misspecification of the data-generating mechanism?
+-   How does the performance of the proposed structurally constrained lognormal model compare with that of the normal and gamma mixture models considered in Vink et al. across different simulated distributional settings?
+
+## 2.2 Data-generating mechanisms
+
+### 2.2.1 Basic structure
+
+For each simulated dataset, let the observed ICC interval $Y$ arise from a four-component mixture:
+
+$$
+Y \sim \sum_{g \in \{CP, PS, PT, PQ\}} w_g f_g(y), \qquad \sum_g w_g = 1.
+$$
+
+The path-specific distributions are directly specified as lognormal components with constrained log-scale locations:
+
+$$
+X_g \sim \mathrm{Lognormal}(\mu + \log k_g, \sigma^2),
+\qquad g \in \{CP, PS, PT, PQ\},
+$$
+
+where $\mu$ is the log-scale location parameter for the PS component, $\sigma$ is the common log-scale standard deviation, and $k_g$ is a fixed path-specific location multiplier. In the baseline setting,
+
+$$
+k_{CP}=0.5, \qquad k_{PS}=1, \qquad k_{PT}=2, \qquad k_{PQ}=3.
+$$
+
+Therefore, the four path-specific components are
+
+$$
+CP \sim \mathrm{Lognormal}(\mu+\log 0.5, \sigma^2),
+$$
+
+$$
+PS \sim \mathrm{Lognormal}(\mu, \sigma^2),
+$$
+
+$$
+PT \sim \mathrm{Lognormal}(\mu+\log 2, \sigma^2),
+$$
+
+and
+
+$$
+PQ \sim \mathrm{Lognormal}(\mu+\log 3, \sigma^2).
+$$
+
+This parameterization treats CP, PS, PT, and PQ consistently within the same structurally constrained lognormal framework. CP is not assigned an independent free location parameter in the baseline model. Instead, all four paths are ordered relative to the PS component through fixed log-scale shifts. Under the common log-scale variance assumption, these constraints imply proportional relationships for the natural-scale means and variances.
+
+For a component with multiplier $k_g$,
+
+$$
+E(X_g)=k_g E(X_{PS}),
+$$
+
+and
+
+$$
+\mathrm{Var}(X_g)=k_g^2 \mathrm{Var}(X_{PS}).
+$$
+
+Thus, the model keeps a compact log-scale parameterization while allowing the natural-scale location and variability to increase with the path multiplier.
+
+### 2.2.2 Baseline scenario
+
+A baseline scenario will be used to evaluate the validity of the proposed estimation procedure under correct model specification. In this setting, simulated ICC interval data will be generated from the same structurally constrained lognormal model assumed in estimation, so that the fitted model is correctly specified.
+
+The primary purpose of this scenario is to assess whether the proposed method can accurately recover the PS serial interval distribution and the overall mixture structure from the simulated data.
+
+-   ICC sample size: $n_{obs} = 300$
+-   Mixture weights: $(w_{CP}, w_{PS}, w_{PT}, w_{PQ}) = (0.20, 0.45, 0.25, 0.10)$
+-   PS log-scale location: $\mu = \log(4.0)$
+-   Common log-scale standard deviation: $\sigma = 0.35$
+-   Path multipliers: $(k_{CP}, k_{PS}, k_{PT}, k_{PQ})=(0.5, 1, 2, 3)$
+
+This produces a short CP component, a central PS component, and longer PT/PQ components with increasing separation. Under $\mu=\log(4.0)$, the natural-scale medians are 2, 4, 8, and 12 days for CP, PS, PT, and PQ, respectively.
+
+The baseline path-specific parameter settings are summarized below.
+
+| Component | Multiplier | Log-scale location | Log-scale SD | Natural-scale median | Natural-scale mean relation | Natural-scale variance relation |
+|:--|:--:|:--|:--:|:--|:--|:--|
+| CP | $0.5$ | $\mu+\log 0.5$ | $\sigma$ | $0.5\exp(\mu)$ | $0.5E(X_{PS})$ | $0.25\mathrm{Var}(X_{PS})$ |
+| PS | $1$ | $\mu$ | $\sigma$ | $\exp(\mu)$ | $E(X_{PS})$ | $\mathrm{Var}(X_{PS})$ |
+| PT | $2$ | $\mu+\log 2$ | $\sigma$ | $2\exp(\mu)$ | $2E(X_{PS})$ | $4\mathrm{Var}(X_{PS})$ |
+| PQ | $3$ | $\mu+\log 3$ | $\sigma$ | $3\exp(\mu)$ | $3E(X_{PS})$ | $9\mathrm{Var}(X_{PS})$ |
+
+### 2.2.3 Simulation design under correct specification
+
+#### Stage A: baseline validation
+
+The baseline scenario described in Section 2.2.2 will serve as the main setting. Under this scenario, ICC interval data are generated from the same structurally constrained lognormal model used for estimation. The purpose is to assess whether the proposed estimation procedure can recover the true PS SI parameters and the mixture weights with acceptable accuracy and stability.
+
+#### Stage B: finite-sample assessment
+
+To evaluate finite-sample performance and consistency, the ICC sample size will be varied as
+
+$$
+  n_{obs} \in \{100, 300, 600, 1000\}.
+$$
+
+This part of the design is intended to assess whether parameter estimation becomes less biased, more precise, and more stable as the amount of information increases.
+
+#### Stage C: additional factors under correct specification
+
+Several additional factors will be varied under correct specification to assess how estimation behaves when the ICC mixture becomes easier or harder to separate.
+
+##### Factor 1: spacing among path components
+
+To assess sensitivity to the spacing among CP, PS, PT, and PQ, the multiplier set will be varied as follows:
+
+-   closer spacing: $(k_{CP}, k_{PS}, k_{PT}, k_{PQ})=(0.7, 1, 1.8, 2.6)$
+-   baseline spacing: $(k_{CP}, k_{PS}, k_{PT}, k_{PQ})=(0.5, 1, 2.0, 3.0)$
+-   wider spacing: $(k_{CP}, k_{PS}, k_{PT}, k_{PQ})=(0.4, 1, 2.2, 3.4)$
+
+Changing these ratios alters the separation among all four mixture components and therefore affects the degree of mixture identifiability.
+
+##### Factor 2: log-scale dispersion
+
+To assess the effect of component overlap, the common log-scale standard deviation will be varied as
+
+$$
+  \sigma \in \{0.25, 0.35, 0.50\}.
+$$
+
+Larger values of $\sigma$ generate greater overlap between mixture components and heavier right tails, which may make both parameter estimation and route separation more challenging.
+
+##### Factor 3: mixture weights
+
+To examine sensitivity to route prevalence, the mixture weights will be varied across the following patterns:
+
+-   Basic: $(0.20, 0.45, 0.25, 0.10)$
+-   CP-heavy: $(0.35, 0.40, 0.18, 0.07)$
+-   Higher-generation-heavy: $(0.10, 0.40, 0.30, 0.20)$
+
+This factor is included because estimation may be more difficult when the PS component is less dominant or when a large proportion of ICC intervals arise from CP or higher-generation paths.
+
+The main parameter variations under correct specification are summarized below.
+
+| Scenario block | Varied parameter | Baseline value | Alternative values | Purpose |
+|:--|:--|:--|:--|:--|
+| Baseline validation | None | Main baseline setting | Not applicable | Assess recovery under correct specification |
+| Finite-sample assessment | $n_{obs}$ | $300$ | $100, 600, 1000$ | Assess finite-sample performance |
+| Path spacing | $(k_{CP},k_{PS},k_{PT},k_{PQ})$ | $(0.5,1,2.0,3.0)$ | $(0.7,1,1.8,2.6)$; $(0.4,1,2.2,3.4)$ | Assess sensitivity to mixture separation |
+| Log-scale dispersion | $\sigma$ | $0.35$ | $0.25, 0.50$ | Assess component overlap and tail behavior |
+| Mixture weights | $(w_{CP},w_{PS},w_{PT},w_{PQ})$ | $(0.20,0.45,0.25,0.10)$ | CP-heavy; higher-generation-heavy | Assess sensitivity to route prevalence |
+
+### 2.2.4 Misspecification scenarios
+
+Misspecification scenarios are included to address the secondary aim: robustness under mild departures from the assumed structurally constrained lognormal model.
+
+#### Scenario 1: incorrect path multipliers in estimation
+
+Data will be generated from the structurally constrained lognormal model, but with path multipliers different from those imposed in estimation. For example, data may be generated under
+
+$$
+  (k_{CP}, k_{PS}, k_{PT}, k_{PQ}) = (0.6, 1, 1.7, 2.5),
+$$
+
+while the fitted model fixes
+
+$$
+  (k_{CP}, k_{PS}, k_{PT}, k_{PQ}) = (0.5, 1, 2.0, 3.0).
+$$
+
+This scenario assesses sensitivity to misspecification of the spacing among the four path components.
+
+#### Scenario 2: unequal log-scale dispersion across paths
+
+Data will be generated with path-specific log-scale standard deviations, for example
+
+$$
+  X_g \sim \mathrm{Lognormal}(\mu+\log k_g, \sigma_g^2), \qquad g \in \{CP, PS, PT, PQ\},
+$$
+
+where the values of $\sigma_g$ are not all equal, while the fitted model still assumes a common log-scale standard deviation across all four components.
+
+This scenario evaluates robustness to misspecification of the equal-dispersion assumption.
+
+#### Scenario 3: alternative positive distributions for path components
+
+One or more path-specific components will be generated from another positive distribution, such as gamma or Weibull, with moments chosen to be similar to the baseline lognormal setting, while the fitted model remains the structurally constrained lognormal model.
+
+This scenario evaluates whether the proposed method remains robust to moderate distributional misspecification.
+
+#### Scenario 4: route-specific unconstrained locations
+
+Data will be generated from path-specific lognormal distributions that do not satisfy the fixed multiplier restriction across CP, PS, PT, and PQ. For example, each path may have its own free log-scale location parameter,
+
+$$
+  X_g \sim \mathrm{Lognormal}(\mu_g, \sigma^2), \qquad g \in \{CP, PS, PT, PQ\},
+$$
+
+without requiring $\mu_g=\mu+\log k_g$.
+
+This scenario directly tests the consequence of misspecifying the structural location constraint that defines the proposed model.
+
+### 2.2.5 Model comparison scenarios
+
+A separate set of scenarios will be used to address the second secondary aim, namely comparison of the proposed structurally constrained lognormal model with the normal and gamma mixture models considered in Vink et al.
+
+Because the three fitted models do not share exactly the same parameterization, comparison will focus on common inferential targets rather than on internal model parameters alone.
+
+Three data-generating families will be considered:
+
+1.  Structurally constrained lognormal data generation  
+    Data are generated under the proposed structurally constrained lognormal model.
+
+2.  Vink-style normal data generation  
+    Data are generated under the normal mixture mechanism used in the original Vink framework.
+
+3.  Vink-style gamma data generation  
+    Data are generated under the gamma mixture mechanism used in the original Vink framework.
+
+Within each family, a limited set of sample sizes and dispersion settings will be considered. The purpose is to determine whether each fitted method performs best under its own assumed family and how severely its performance deteriorates when the fitted family is misspecified.
+
+## 2.3 Estimands and targets
+
+The primary estimand is the PS serial interval distribution, treated as the target SI distribution under the proposed structurally constrained lognormal model.
+
+Because the proposed model is parameterized on the log scale, estimation is carried out through the underlying lognormal parameters for the PS component. However, the main quantities of substantive interest are the corresponding summaries on the natural time scale.
+
+The primary estimands are:
+
+-   the mean of the PS serial interval distribution;
+-   the variance of the PS serial interval distribution;
+-   the median of the PS serial interval distribution;
+-   selected quantiles of the PS serial interval distribution, in particular the 2.5th and 97.5th percentiles.
+
+Under the lognormal specification
+
+$$
+PS \sim \mathrm{Lognormal}(\mu, \sigma^2),
+$$
+
+these quantities are determined by the underlying PS log-scale parameters $\mu$ and $\sigma$, where $\mu$ is the log-scale mean and $\sigma$ is the log-scale standard deviation. In particular,
+
+$$
+E(PS) = \exp\left(\mu + \frac{1}{2}\sigma^2\right),
+$$
+
+$$
+\mathrm{Var}(PS) = \left(\exp(\sigma^2)-1\right)\exp\left(2\mu+\sigma^2\right),
+$$
+
+and
+
+$$
+\mathrm{Median}(PS) = \exp(\mu).
+$$
+
+Meanwhile, the underlying PS log-scale parameters $\mu$ and $\sigma$ will also be recorded and evaluated.
+
+Additional model-based estimands include the mixture weights
+
+$$
+(w_{CP}, w_{PS}, w_{PT}, w_{PQ}).
+$$
+
+## 2.4 Methods
+
+### 2.4.1 Primary method
+
+The primary method is the proposed structurally constrained lognormal Expectation-Maximization (EM) estimation model, adapted from the mixture modeling framework developed by Vink et al. (2014). Here, the four transmission paths are represented directly by lognormal components with structurally constrained log-scale locations. This relaxes the strict independent and iid convolution assumption used to derive higher-generation paths in the original Vink framework. Instead, the model imposes simple path-ordering constraints to support mixture separation and PS recovery.
+
+Model specification: The underlying continuous transmission time $x$ is modeled as a finite mixture of four path-specific lognormal components, $g \in \{CP, PS, PT, PQ\}$. To ensure structural identifiability and epidemiological plausibility, the continuous probability density function $f(x | \Theta)$ relies on a restricted parameter space
+
+$$
+\Theta = \{\mu, \sigma, w_{CP}, w_{PS}, w_{PT}, w_{PQ}\},
+$$
+
+where $\sum_g w_g = 1$ and the path multipliers are fixed in the baseline model as
+
+$$
+(k_{CP}, k_{PS}, k_{PT}, k_{PQ})=(0.5,1,2,3).
+$$
+
+The continuous mixture density is
+
+$$
+f(x | \Theta)
+=
+\sum_{g \in \{CP, PS, PT, PQ\}} w_g \cdot
+\mathrm{Lognormal}(x | \mu+\log k_g, \sigma^2).
+$$
+
+The path-specific log-scale locations are therefore
+
+$$
+\mu_{CP}=\mu+\log 0.5,
+$$
+
+$$
+\mu_{PS}=\mu,
+$$
+
+$$
+\mu_{PT}=\mu+\log 2,
+$$
+
+and
+
+$$
+\mu_{PQ}=\mu+\log 3.
+$$
+
+Under the common log-scale variance assumption, these log-scale constraints imply proportional relationships on the original time scale:
+
+$$
+E(X_g)=k_gE(X_{PS}),
+$$
+
+and
+
+$$
+\mathrm{Var}(X_g)=k_g^2\mathrm{Var}(X_{PS}).
+$$
+
+Thus, the model keeps a compact parameter space while allowing the path components to be ordered in a biologically interpretable way.
+
+Likelihood formulation (interval censoring): Because symptom onset data are typically reported in discrete calendar days, the observed interval $y_i \ge 0$ is subject to double interval censoring. Assuming the true continuous onset time is uniformly distributed over the reported day, the marginal probability of observing a discrete interval $y_i$ for path $g$ is the convolution of the continuous lognormal density with the triangular measurement error function $h(x|y_i) = \max(0, 1 - |x - y_i|)$:
+
+$$
+P_g(y_i | \mu, \sigma)
+=
+\int_{\max(0, y_i-1)}^{y_i+1}
+\mathrm{Lognormal}(x | \mu+\log k_g, \sigma^2)
+\cdot (1 - |x - y_i|) dx.
+$$
+
+The observed-data log-likelihood across all $n_{obs}$ ICC interval pairs $\mathbf{y} = (y_1, \dots, y_{n_{obs}})$ is then given by
+
+$$
+\mathcal{L}(\Theta | \mathbf{y})
+=
+\sum_{i=1}^{n_{obs}}
+\log
+\left(
+\sum_{g \in \{CP, PS, PT, PQ\}} w_g P_g(y_i | \mu, \sigma)
+\right).
+$$
+
+EM algorithm implementation: To maximize $\mathcal{L}(\Theta | \mathbf{y})$, we implement an Expectation-Maximization (EM) algorithm. Let $r$ denote the current iteration step.
+
+E-step: We calculate the responsibility $\gamma_{i,g}^{(r)}$, which represents the posterior probability that observation $y_i$ originates from transmission component $g$:
+
+$$
+\gamma_{i,g}^{(r)}
+=
+\frac{w_g^{(r)} P_g(y_i | \mu^{(r)}, \sigma^{(r)})}
+{\sum_{l \in \{CP, PS, PT, PQ\}} w_l^{(r)} P_l(y_i | \mu^{(r)}, \sigma^{(r)})}.
+$$
+
+M-step: We update the parameters by maximizing the expected complete-data log-likelihood.
+
+The weights are updated analytically by averaging the responsibilities across all observations:
+
+$$
+w_g^{(r+1)} = \frac{1}{n_{obs}} \sum_{i=1}^{n_{obs}} \gamma_{i,g}^{(r)}.
+$$
+
+The distributional parameters are updated by numerical maximization:
+
+$$
+(\mu^{(r+1)},\sigma^{(r+1)})
+=
+\arg\max_{\mu,\sigma}
+\sum_{i=1}^{n_{obs}} \sum_{g \in \{CP, PS, PT, PQ\}}
+\gamma_{i,g}^{(r)} \log P_g(y_i | \mu, \sigma).
+$$
+
+### 2.4.2 Comparison methods
+
+The benchmark methods for comparison are:
+
+1.  the Vink normal mixture model, implemented through `si_estim(dat, dist = "normal")`; and  
+2.  the Vink gamma mixture model, implemented through `si_estim(dat, dist = "gamma")`.
+
+## 2.5 Performance measures
+
+### 2.5.1 Performance measures for the primary aim
+
+To evaluate whether the proposed structurally constrained lognormal model can recover the PS SI distribution under correct specification, the following measures will be reported for the PS-related estimands.
+
+-   Bias will be computed for estimated PS mean, median and quantiles.
+
+-   Root mean squared error will be used as a joint summary of bias and variability.
+
+-   95% coverage probability will be evaluated for $\mu_{PS}$, the PS mean, and the PS median.
+
+-   To assess recovery of the underlying transmission-path mixture structure, bias and RMSE will also be evaluated for the mixture weights.
+
+### 2.5.2 Performance measures for robustness
+
+To assess robustness under misspecification, the same performance measures described in Section 2.5.1 will be evaluated under each misspecified scenario. The purpose is to examine how far the resulting estimates depart from the true values when the assumed model structure is mildly misspecified, and to determine whether the proposed method remains reasonably robust.
+
+### 2.5.3 Performance measures for model comparison
+
+For comparison with the Vink normal and gamma models, the following measures will be used:
+
+-   bias of the estimated SI mean and standard deviation;
+-   RMSE of the estimated SI mean and median;
+-   coverage;
+-   convergence rate;
+-   model-fit criteria such as log-likelihood, AIC, and BIC.
+
+The purpose is to assess, across different data-generating distributional settings, which fitted model achieves the best overall performance in terms of estimation accuracy, stability, and robustness.

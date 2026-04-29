@@ -1,0 +1,75 @@
+---
+title: "Background and derivations"
+output: html_document
+date: "2026-04-23"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Model in Vink's settings
+
+
+# Limitations and questions
+
+limitations: all transmission path follows normal distribution and the SI in the different transmission path are assumed to be iid.
+
+question: if i use four lognormal distribution with four set different parameters, then the parameter estimation may got unidentifiable. Though I don't actually care how the relationship bewtwen the dist of four transmission path is, I need some restrictions to make the model more identifiable. Shall I remain the iid assumption to connect the parameter of four distributions in the mixture or relax it to correlation only?
+
+answer: Algebraic Scaling Constraints. for example ,the PS follows a lognormal dist with mean of miu and sd of sigma, then the PT may follow lognrmal dist with mean of k*miu and sd of sigma. Further research may consider using a hierarchical model.(e.g. all means of four dist shares a pior distribution using Bayesian method)
+
+
+Relax iid assumption to 所有分位数都按同样比例放大，分布形状本身不变。也就是说，PT 和 PQ 只是“更往右平移/拉伸”的同形分布. where I only want to hold a potential weak assumption that PT should be larger than PS, PQ should be larger than PQ, and their transmission stability is almost the same (sharing the same variance). They have the same distribution shape. But CP is exceptional.  
+
+The aim is to model and test in what SI assumed distribution will the whole model fits the ICC interval data better(since we can never observe SI, we can only say that the best-fitted model will have the most probably true assumption for SI, but the mechanism may require further discussion).
+
+Mechanism is:
+SI------> model ------> ICC data
+0
+based on Vink settings, we want to estimate parameters for SI distribution, but we can only observe ICC interval. The components of ICC interval is not SI directly, may be different combination of SI due to various transmission path. Normal/gamma distribution for SI is tried, but the overall distribution for ICC may not be the best fit based on normal/gamma distribution. So we want to try lognormal distribution for SI. 
+
+###lognormal based on iid for SI in four transmission path
+If based on iid assumption, we can have the distribution of all transmission path once SI's distribution are lognormal, though they are not in closed forms.
+
+### logormal based on relaxed SI relationship in four transmission path
+In this circumstances, we don't actually care about how distribution of CP, PQ, PT are got through PS, but we assume directly the form for them and they are just related to PS in a reasonable way. ultilize all the observation information to build the model for bettter explanation and fitting and less residuals, but actually we only need PS. Other path distribution can be reasonbly changed.
+
+***Question***
+The SI interval may get shorter for the later generation in the household as more people are infected and the probability to get infected become higher? The more chance there is for the later person to be exposed to the virus compared with the initial and second case in the household. So the SI (if observed) for later person might be shorter.
+
+negative case for SI should be considered if secondary case has earlier symptom onset than primary case.
+
+all possible situations that leads to variation in cross-generation ICC intervals, may be also considered in PS. The PS distribution has included many possible scenarios such as isolation.
+
+
+1. 为什么“不独立” (Not Independent)？—— 共享的家庭环境与宿主特征 (Shared Frailty & Correlation)假设在总体数据中，PS 确实是一个包含了“快传播”和“慢传播”的宽泛的 Lognormal 分布。但是，当 A、B、C 处于同一个家庭中时，他们的传播特征是被“绑定”的。例子（正相关）： 假设 A 感染了一种高载毒量的毒株，或者这个家庭的通风极差、卫生习惯不好。A 传给 B 的速度非常快（$SI_1$ 很短）。因为 B 也处于同样的高载毒量环境和糟糕的卫生条件中，B 获得极高初始感染剂量后，潜伏期缩短，排毒极快，于是 B 传给 C 的速度也会非常快（$SI_2$ 也很短）。结果： 在同一个家庭中，$SI_1$ 和 $SI_2$ 往往具有高度的正相关性。如果它们是正相关的，那么 $PT = SI_1 + SI_2$ 的方差，会远远大于两个独立随机变量相加的方差。独立的假设在这里彻底破产。2. 为什么“不同分布” (Not Identically Distributed)？—— 代际间隔收缩与右截断 (Generation Interval Contraction & Right-Truncation)这是传染病动力学中非常著名的一个现象（你上传的文献中 Kenah et al. 2008  就专门论述了这一点）。例子（右截断）： 想象一个家庭，A 感染了。过了几天 A 出现症状并确诊，整个家庭瞬间拉响警报，全员戴口罩并把 A 和 B 都隔离在单独的房间。A 传给 B 时（第一代），家庭毫无防备，所以 $SI_1$ 可以比较长。但是，B 要想成功传给 C（形成第二代），必须抢在家庭采取干预措施（发现 A 确诊）之前完成！ 如果 B 是一个“慢吞吞”的传播者（处于 PS 分布的右尾），由于全家已经戴上口罩，B 根本就没有机会把病毒传给 C。结果： 凡是能被我们观察到的 $A \rightarrow B \rightarrow C$ 传播链，其中的 $SI_2$ (B传C) 都不可避免地被“掐头去尾”了。能够成功实现后续传播的 $SI_2$，系统性地比第一代的 $SI_1$ 要短。 它们根本不服从同一个分布（后面的代际分布被压扁、左移了）。3. 网络的耗竭 (Depletion of Susceptibles)—— 竞争风险 (Competing Risks)例子： 在一个 4 口之家中，A 先发病。A 是一个超级传播源。A 传给了 B。现在 B 想要传给 C 和 D，但是 C 和 D 在过去几天里，不仅暴露在 B 面前，同时也一直暴露在源头 A 面前。结果： C 如果抵抗力差，早就在第一波被 A 感染了（变成了 CP 或 PS）。留给 B 去感染的，往往是那些潜伏期长、抵抗力强的人。此时 B 传 C 的动力学特征，和 A 传 B 的特征完全不同，因为池子里的“易感者（Susceptibles）”已经被筛选过一遍了。
+
+In the ICC context, index case is the forst case, so observed PS has to be the first to the second or third,  2 -> 3 is not condisered.
+
+***Question***
+Cases following timeline:
+Index A----- B ------- C ----D
+day 1 -----day4------day 7--- day 8
+
+If A and B are both infected from outside the household, then the ICC will has no relation with PS or SI, it may distributed on a wide range scale.
+Otherwise if a person is considered to be infected by houshold members, then PS, PT, PQ are considered.
+
+***Answer***
+Following this thought, the CP is unidentifiable. In Vink's paper definition, the CP should be two person be infected with the same person outside and the exposure to the person at the same time, so it is short and relatively identifiable.
+
+*** question ***
+发病顺序（Order of onset）包含了丰富的信息，单纯只用时间间隔（Time interval）实浪费了这部分数据。whether consider to incorparate generation time / existing cases in the household as the prior information for the inference for the true generation the new case belongs to?
+
+
+*** answer ***
+时间的流行病学锚点： 病毒从感染一个人，到在这个人体内复制、排毒，再到感染下一个人并导致其出现症状，这个过程受到严格的生物学规律约束（即潜伏期和代际间隔的自然属性）。虽然有个体差异，但它的底层分布（如你定义的 $PS$ 分布）是相对稳定的。顺序的网络敏感性：特别是你提到的“距离 index case 时间很短，但是是第三个发病”的情况。如果时间极短（比如只隔了 2-3 天）却已经出现了 3 个病例，这在生物学上几乎不可能完成 $A \rightarrow B \rightarrow C$ 的连续两代传播（PT），这更可能是一次同源爆发（Co-Primary, CP），或者是 A 作为超级传播者同时引发的多个 PS 传播。
+相比之下，“第几个发病”极度依赖于家庭的接触模式（谁和谁睡一个房间、谁照顾谁）。顺序是随机网络的副产品，包含了太多的干扰噪音。
+
+identify transmission path according to the time window the case is in 
+
+
+
+
+
+

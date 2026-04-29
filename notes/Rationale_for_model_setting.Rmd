@@ -1,0 +1,1101 @@
+---
+title: "Companion Derivation Note for the Lognormal Model Setting"
+author: "Terry Xue"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    number_sections: false
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: false
+    theme: readable
+    df_print: paged
+fontsize: 11pt
+geometry: margin=1in
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+# Purpose of this note
+
+This document is written as a companion note to the simulation study
+plan, which aims to make the model-development logic explicit before
+jumping into the current proportional lognormal model setting.
+
+The current simulation plan already presents a lognormal mixture model
+and a set of simulation scenarios. However, the rationale
+leundefinedading to this model needs to be shown more clearly. In
+particular, the plan should explain how the current lognormal working
+model was developed from the original framework of Vink et al. (2014),
+why the original normal/gamma assumptions may be insufficient for the
+current research question, and why the final model is set as a
+**structurally constrained lognormal mixture model.**
+
+Each stage in this note addresses a limitation or question raised by the
+previous stage:
+
+1.  **Stage 1** reviews the original Vink framework and its normal/gamma
+    path-mixture construction.
+2.  **Stage 2** clarifies the main limitation for the current project:
+    PS is the primary estimand, while CP, PT, and PQ are nuisance path
+    components that must be separated from PS.
+3.  **Stage 3** asks what happens if the latent primary-secondary serial
+    interval is changed from normal/gamma to lognormal while keeping the
+    original Vink transmission-path logic.
+4.  **Stage 4** explains why the exact lognormal extension becomes
+    mathematically and computationally difficult.
+5.  **Stage 5** introduces a structurally constrained lognormal mixture
+    model as a practical working model.
+6.  **Stage 6** discusses how the working-model parameters should be
+    chosen after the basic distributional form has been selected. It
+    first considers natural-scale moment constraints and then motivates
+    the simpler log-scale parameterization.
+
+The output of this note aims to provide a rationale for a mathematically
+reasonable model setting that should then be evaluated through the
+simulation study.
+
+# Notation and epidemiologic setting
+
+Let $X$ denote the serial interval (SI), defined as the time between
+symptom onset in a primary case and symptom onset in its secondary case.
+
+For household data, the directly observed quantity is usually not the
+true infector--infectee SI. Instead, the observed quantity is the index
+case--to--case (ICC) interval, namely the time from symptom onset in the
+index case to symptom onset in another observed case in the same
+household.
+
+Following Vink et al. (2014), an observed ICC interval may arise from
+several latent transmission paths:
+
+-   **CP**: co-primary path;
+-   **PS**: primary-secondary path;
+-   **PT**: primary-tertiary path;
+-   **PQ**: primary-quaternary path.
+
+Let the mixture weights be $$
+(w_{CP}, w_{PS}, w_{PT}, w_{PQ}),
+\qquad
+w_{CP}+w_{PS}+w_{PT}+w_{PQ}=1.
+$$
+
+The observed ICC density can be written generically as $$
+f_Y(y)
+=
+w_{CP} f_{CP}(y)
++
+w_{PS} f_{PS}(y)
++
+w_{PT} f_{PT}(y)
++
+w_{PQ} f_{PQ}(y).
+$$
+
+The primary scientific target of the current project is the **PS serial
+interval distribution**. The other paths are nuisance transmission
+components that contaminate the observed ICC interval sample. The
+purpose of modeling CP, PT, and PQ is therefore to separate these
+nuisance components from the PS component as well as possible, so that
+the PS distribution can be estimated with less bias.
+
+Throughout this note, $\theta$ and $\tau^2$ are used only when
+describing the original Vink normal model. For the lognormal model, the
+notation is kept consistent with the main simulation study plan:
+
+-   $\mathrm{Lognormal}(\mu,\sigma^2)$ means that
+    $\log X\sim N(\mu,\sigma^2)$;
+-   $\mu$ is the log-scale location parameter for the PS component;
+-   $\sigma$ is the common log-scale standard deviation;
+-   $m$ and $v$ are reserved for natural-scale means and variances.
+
+# Stage 1: The original Vink framework
+
+## 1.1 Core idea of the Vink construction
+
+The original Vink framework starts from one underlying SI distribution
+and derives the path-specific ICC distributions from it.
+
+Under the baseline normal specification, write $$
+X \sim N(\theta,\tau^2).
+$$
+
+Let $X_1,X_2,X_3$ be independent and identically distributed copies of
+$X$. The four path-specific ICC intervals are then constructed as
+follows.
+
+## 1.2 Co-primary path
+
+For the co-primary path, two household members are assumed to have been
+infected independently by the same source outside the household. The
+observed ICC interval is $$
+Y_{CP}=|X_1-X_2|.
+$$
+
+Under the normal assumption, $$
+X_1-X_2 \sim N(0,2\tau^2),
+$$ so $Y_{CP}$ has a half-normal type distribution.
+
+## 1.3 Primary-secondary path
+
+For direct primary-secondary transmission, $$
+Y_{PS}=|X|.
+$$
+
+Under the normal SI assumption, this gives a folded normal distribution
+with parameters $\theta$ and $\tau^2$.
+
+## 1.4 Primary-tertiary path
+
+For a two-step transmission chain, $$
+Y_{PT}=|X_1+X_2|.
+$$
+
+Under the normal assumption, $$
+X_1+X_2 \sim N(2\theta,2\tau^2),
+$$ so $Y_{PT}$ is again folded normal after taking the absolute value.
+
+## 1.5 Primary-quaternary path
+
+For a three-step transmission chain, $$
+Y_{PQ}=|X_1+X_2+X_3|.
+$$
+
+Under the normal assumption, $$
+X_1+X_2+X_3 \sim N(3\theta,3\tau^2),
+$$ so the corresponding ICC distribution is again folded normal after
+taking the absolute value.
+
+## 1.6 Summary of the original normal model
+
+The normal model is mathematically attractive because sums and
+differences of independent normal variables remain normal. This gives
+convenient closed-form path distributions for CP, PS, PT, and PQ.
+
+A gamma alternative is also considered in the original Vink analysis
+when positivity and right-skewness are important. However, the same
+general issue remains for the current project: the classification of an
+observed ICC interval into CP, PS, PT, or PQ depends strongly on the
+path-specific distributions assumed in the mixture model.
+
+# Stage 2: why the current project needs to go beyond the Vink model
+
+The current project is not only interested in reproducing the original
+Vink analysis. The main target is the PS serial interval distribution.
+CP, PT, and PQ are nuisance path components: they are not the primary
+scientific estimands, but they contaminate the ICC interval sample and
+must be separated from PS to obtain an accurate PS estimate.
+
+In a mixture model, this separation is driven by the path-specific
+distributions specified for CP, PS, PT, and PQ. If these component
+distributions are poorly specified, the posterior path responsibilities
+can be distorted. As a result, ICC intervals that should mainly inform
+PS may be assigned to nuisance paths, or nuisance-path intervals may be
+misclassified as PS. Either situation can lead to biased estimates of
+the PS serial interval.
+
+Therefore, the distributional assumption for the underlying PS serial
+interval is not only a technical detail. It directly affects path
+classification and PS recovery. From an epidemiologic perspective, the
+PS serial interval may be positive and right-skewed, because
+transmission timing is shaped by incubation period, infectiousness
+profile, symptom development, reporting delay, and behavioural response.
+A lognormal distribution is therefore a plausible alternative to the
+normal specification.
+
+The next question is then:
+
+What happens if the latent PS serial interval in the Vink construction
+is lognormal rather than normal?
+
+The following stages explore this question step by step. The aim is not
+to jump directly to the final working model, but to show why such a
+working model becomes a reasonable approximation after considering the
+exact lognormal extension.
+
+# Stage 3: exact lognormal extension of the Vink construction
+
+## 3.1 Replace the latent SI distribution
+
+A direct extension is to keep the Vink transmission-path construction
+but replace the latent SI distribution by a lognormal distribution: $$
+X \sim \mathrm{Lognormal}(\mu,\sigma^2),
+$$ meaning that $$
+\log X \sim N(\mu,\sigma^2).
+$$
+
+The lognormal density is $$
+f_X(x;\mu,\sigma)
+=
+\frac{1}{x\sigma\sqrt{2\pi}}
+\exp\left\{-\frac{(\log x-\mu)^2}{2\sigma^2}\right\},
+\qquad x>0.
+$$
+
+This retains the original Vink logic:
+
+-   the transmission-path distributions are induced from one common
+    latent SI distribution;
+-   the observed ICC distribution is a mixture of the induced
+    path-specific distributions;
+-   the higher-generation paths are generated through independent and
+    identically distributed copies of the latent SI.
+
+Let $$
+X_1,X_2,X_3 \stackrel{i.i.d.}{\sim}
+\mathrm{Lognormal}(\mu,\sigma^2).
+$$
+
+Under the exact lognormal extension, the four path-specific ICC
+variables are $$
+Y_{CP}=|X_1-X_2|,
+\qquad
+Y_{PS}=X_1,
+\qquad
+Y_{PT}=X_1+X_2,
+\qquad
+Y_{PQ}=X_1+X_2+X_3.
+$$
+
+Because a lognormal random variable is positive, the PS, PT, and PQ
+components do not require folding.
+
+## 3.2 Path density for PS
+
+For the PS path, $$
+Y_{PS}=X_1.
+$$
+
+Therefore, for $y>0$, $$
+f_{PS}(y)
+=
+f_X(y;\mu,\sigma)
+=
+\frac{1}{y\sigma\sqrt{2\pi}}
+\exp\left\{-\frac{(\log y-\mu)^2}{2\sigma^2}\right\}.
+$$
+
+## 3.3 Path density for PT
+
+For the PT path, $$
+Y_{PT}=X_1+X_2.
+$$
+
+The density is the convolution of two lognormal densities: $$
+f_{PT}(y)
+=
+\int_0^y
+f_X(x;\mu,\sigma)
+f_X(y-x;\mu,\sigma)
+\,dx,
+\qquad y>0.
+$$
+
+Substituting the lognormal density gives $$
+\begin{aligned}
+f_{PT}(y)
+&=
+\int_0^y
+\frac{1}{x\sigma\sqrt{2\pi}}
+\exp\left\{-\frac{(\log x-\mu)^2}{2\sigma^2}\right\}
+\frac{1}{(y-x)\sigma\sqrt{2\pi}}
+\exp\left\{-\frac{(\log (y-x)-\mu)^2}{2\sigma^2}\right\}
+\,dx.
+\end{aligned}
+$$
+
+This does not simplify to a standard closed-form lognormal density.
+
+## 3.4 Path density for PQ
+
+For the PQ path, $$
+Y_{PQ}=X_1+X_2+X_3.
+$$
+
+The density is a three-fold convolution: $$
+f_{PQ}(y)
+=
+\int_0^y \int_0^{y-x_1}
+ f_X(x_1;\mu,\sigma)
+ f_X(x_2;\mu,\sigma)
+ f_X(y-x_1-x_2;\mu,\sigma)
+\,dx_2\,dx_1,
+\qquad y>0.
+$$
+
+After substituting the lognormal density, this becomes $$
+\begin{aligned}
+f_{PQ}(y)
+&=
+\int_0^y \int_0^{y-x_1}
+\frac{1}{x_1\sigma\sqrt{2\pi}}
+\exp\left\{-\frac{(\log x_1-\mu)^2}{2\sigma^2}\right\} \\
+&\quad \times
+\frac{1}{x_2\sigma\sqrt{2\pi}}
+\exp\left\{-\frac{(\log x_2-\mu)^2}{2\sigma^2}\right\} \\
+&\quad \times
+\frac{1}{(y-x_1-x_2)\sigma\sqrt{2\pi}}
+\exp\left\{-\frac{(\log (y-x_1-x_2)-\mu)^2}{2\sigma^2}\right\}
+\,dx_2\,dx_1.
+\end{aligned}
+$$
+
+This is also not a convenient closed-form density.
+
+## 3.5 Path density for CP
+
+For the CP path, $$
+Y_{CP}=|X_1-X_2|.
+$$
+
+Let $$
+D=X_1-X_2.
+$$
+
+Because $X_1$ and $X_2$ are i.i.d., the distribution of $D$ is symmetric
+around zero. For $y>0$, $$
+f_D(y)
+=
+\int_0^\infty
+f_X(x+y;\mu,\sigma)
+f_X(x;\mu,\sigma)
+\,dx.
+$$
+
+Therefore, $$
+f_{CP}(y)
+=
+f_{|D|}(y)
+=
+f_D(y)+f_D(-y)
+=
+2\int_0^\infty
+f_X(x+y;\mu,\sigma)
+f_X(x;\mu,\sigma)
+\,dx,
+\qquad y>0.
+$$
+
+Substituting the lognormal density gives $$
+\begin{aligned}
+f_{CP}(y)
+&=
+2\int_0^\infty
+\frac{1}{(x+y)\sigma\sqrt{2\pi}}
+\exp\left\{-\frac{(\log (x+y)-\mu)^2}{2\sigma^2}\right\} \\
+&\quad \times
+\frac{1}{x\sigma\sqrt{2\pi}}
+\exp\left\{-\frac{(\log x-\mu)^2}{2\sigma^2}\right\}
+\,dx,
+\qquad y>0.
+\end{aligned}
+$$
+
+# Stage 4: why an exact lognormal extension is difficult
+
+The exact lognormal extension preserves the epidemiologic logic of
+Vink's framework, but it creates a practical difficulty.
+
+The PS component remains easy to evaluate. However, CP, PT, and PQ
+require numerical integration of lognormal difference or sum
+distributions. In an EM algorithm, these path probabilities must be
+evaluated repeatedly during the E-step and the M-step.
+
+This creates several problems:
+
+1.  **High computational cost**: each likelihood evaluation becomes
+    time-consuming and expensive, especially for PT and PQ.
+2.  **Limited return considering the study purpose**: the current
+    project does not primarily aim to estimate the exact CP, PT, or PQ
+    density. The primary aim is to recover the PS SI distribution while
+    accounting for nuisance paths in the ICC data.
+
+These reasons lead to the following methodological compromise.
+
+# Stage 5: a structurally constrained lognormal mixture model
+
+## 5.1 Principles of the constrained lognormal mixture model
+
+The exact lognormal Vink extension is conceptually attractive but
+computationally awkward. The scientific goal of the current simulation
+study is more focused: to examine whether the PS serial interval can be
+recovered accurately when ICC intervals arise from a mixture of latent
+transmission paths.
+
+Therefore, instead of insisting that CP, PT, and PQ must be represented
+by their exact lognormal difference or convolution distributions, the
+four path-specific densities are approximated by ordered lognormal
+components.
+
+This working model is not claiming that the true PT path is exactly
+lognormal, nor that the true CP path is exactly lognormal. Rather, it
+uses a set of lognormal components with related constraints to
+approximate the relative positions and shapes of the latent transmission
+paths:
+
+-   CP should tend to be located to the left of PS;
+-   PS is the primary target distribution;
+-   PT should tend to be located to the right of PS;
+-   PQ should tend to be located further right than PT;
+-   uncertainty should expand on the original time scale as the path
+    moves further away from the index case.
+
+Thus, the model is described as a **structurally constrained lognormal
+mixture model**, which can be shown as $$
+f_Y(y)
+=
+\sum_{g\in\{CP,PS,PT,PQ\}}
+ w_g f_g(y),
+$$ where $f_g$ denotes the lognormal density used for path $g$ in this
+working-model section.
+
+## 5.2 Basic distributional form
+
+The selected working distribution for each path is lognormal: $$
+X_g \sim \mathrm{Lognormal}(\mu_g,\sigma_g^2),
+\qquad g\in\{CP,PS,PT,PQ\}.
+$$
+
+At this stage, the distributional family has been chosen, but the
+parameter constraints have not yet been fixed. The next question is how
+the four path-specific parameter pairs $(\mu_g,\sigma_g^2)$ should be
+related so that the model is both interpretable and consistent with the
+main simulation study plan.
+
+# Stage 6: choosing parameter constraints for the working model
+
+After Stage 5 fixes the basic working distribution as lognormal, the
+next task is to choose how the path-specific lognormal parameters should
+be constrained.
+
+This step should start from the study target. The final estimands of
+interest are still on the original time scale: the PS mean, variance,
+standard deviation, median, and selected quantiles. Therefore, a natural
+first attempt is to impose simple constraints directly on natural-scale
+moments. After deriving the log-scale parameters implied by those
+natural-scale constraints, we can then examine whether this is the most
+convenient parameterization for the working mixture model.
+
+The purpose of this stage is to build a reasonable baseline working
+model that can later be evaluated in the simulation study.
+
+## 6.1 General lognormal identities
+
+If
+
+$$
+X \sim \mathrm{Lognormal}(\mu,\sigma^2),
+$$
+
+then
+
+$$
+E(X)=\exp\left(\mu+\frac{\sigma^2}{2}\right),
+$$
+
+$$
+\mathrm{Var}(X)=\left(e^{\sigma^2}-1\right)e^{2\mu+\sigma^2},
+$$
+
+and
+
+$$
+\mathrm{Median}(X)=e^\mu.
+$$
+
+Conversely, if the natural-scale mean and variance are
+
+$$
+m=E(X), \qquad v=\mathrm{Var}(X),
+$$
+
+then the corresponding log-scale parameters are
+
+$$
+\sigma^2=\log\left(1+\frac{v}{m^2}\right),
+$$
+
+and
+
+$$
+\mu=
+\log(m)-\frac{1}{2}\sigma^2
+=
+\log\left(\frac{m^2}{\sqrt{v+m^2}}\right).
+$$
+
+Here, the term natural scale refers to the original time scale of the
+ICC interval or serial interval. Therefore, the natural-scale mean and
+variance are the mean and variance of the random variable $X$ itself,
+not the mean and variance of $\log(X)$.
+
+## 6.2 First attempt: imposing constraints directly on natural-scale moments
+
+After choosing the lognormal family for the path-specific working model,
+the most direct idea is to impose constraints on the quantities that are
+ultimately of scientific interest. These quantities are defined on the
+original time scale, including the mean and variance of the PS serial
+interval.
+
+Let each path-specific ICC component be approximated by a lognormal
+distribution,
+
+$$
+X_g \sim \mathrm{Lognormal}(\mu_g,\sigma_g^2),
+\qquad g \in \{CP, PS, PT, PQ\},
+$$
+
+where $\mu_g$ and $\sigma_g^2$ are the mean and variance on the log
+scale.
+
+A natural-scale parameterization starts by defining
+
+$$
+m_g = E(X_g), \qquad v_g = \mathrm{Var}(X_g).
+$$
+
+Since the primary target is the PS serial interval, let
+
+$$
+m_{PS}=m,
+\qquad 
+v_{PS}=v.
+$$
+
+For the baseline setting, impose the following natural-scale mean
+constraints:
+
+$$
+m_{CP}=0.5m,
+\qquad
+m_{PS}=m,
+\qquad
+m_{PT}=2m,
+\qquad
+m_{PQ}=3m.
+$$
+
+As an initial attempt, suppose the four paths share the same
+natural-scale variance:
+
+$$
+v_{CP}=v_{PS}=v_{PT}=v_{PQ}=v.
+$$
+
+Then the implied log-scale parameters are obtained from the standard
+lognormal moment transformation.
+
+For the CP component,
+
+$$
+\sigma_{CP}^2
+=
+\log\left(1+\frac{v}{(0.5m)^2}\right)
+=
+\log\left(1+\frac{4v}{m^2}\right),
+$$
+
+and
+
+$$
+\mu_{CP}
+=
+\log(0.5m)-\frac{1}{2}\sigma_{CP}^2.
+$$
+
+For the PS component,
+
+$$
+\sigma_{PS}^2
+=
+\log\left(1+\frac{v}{m^2}\right),
+$$
+
+and
+
+$$
+\mu_{PS}
+=
+\log(m)-\frac{1}{2}\sigma_{PS}^2.
+$$
+
+For the PT component,
+
+$$
+\sigma_{PT}^2
+=
+\log\left(1+\frac{v}{(2m)^2}\right)
+=
+\log\left(1+\frac{v}{4m^2}\right),
+$$
+
+and
+
+$$
+\mu_{PT}
+=
+\log(2m)-\frac{1}{2}\sigma_{PT}^2.
+$$
+
+For the PQ component,
+
+$$
+\sigma_{PQ}^2
+=
+\log\left(1+\frac{v}{(3m)^2}\right)
+=
+\log\left(1+\frac{v}{9m^2}\right),
+$$
+
+and
+
+$$
+\mu_{PQ}
+=
+\log(3m)-\frac{1}{2}\sigma_{PQ}^2.
+$$
+
+Under this natural-scale constrained parameterization, the continuous
+mixture density is
+
+$$
+f(x \mid \Theta)
+=
+w_{CP} f_{CP}(x)
++
+w_{PS} f_{PS}(x)
++
+w_{PT} f_{PT}(x)
++
+w_{PQ} f_{PQ}(x),
+$$
+
+where
+
+$$
+w_{CP}+w_{PS}+w_{PT}+w_{PQ}=1.
+$$
+
+The lognormal density is
+
+$$
+f_g(x)
+=
+\frac{1}{x\sigma_g\sqrt{2\pi}}
+\exp\left[
+-\frac{(\log x-\mu_g)^2}{2\sigma_g^2}
+\right],
+\qquad x>0.
+$$
+
+Therefore, after substituting the natural-scale moment constraints, the
+full baseline mixture density becomes
+
+$$
+\begin{aligned}
+f(x \mid \Theta)
+=&\;
+w_{CP}
+\frac{1}{x\sqrt{\log\left(1+\frac{4v}{m^2}\right)}\sqrt{2\pi}}
+\exp\left[
+-\frac{
+\left\{
+\log x-
+\left[
+\log(0.5m)
+-\frac{1}{2}\log\left(1+\frac{4v}{m^2}\right)
+\right]
+\right\}^2
+}{
+2\log\left(1+\frac{4v}{m^2}\right)
+}
+\right]
+\\[6pt]
+&+
+w_{PS}
+\frac{1}{x\sqrt{\log\left(1+\frac{v}{m^2}\right)}\sqrt{2\pi}}
+\exp\left[
+-\frac{
+\left\{
+\log x-
+\left[
+\log(m)
+-\frac{1}{2}\log\left(1+\frac{v}{m^2}\right)
+\right]
+\right\}^2
+}{
+2\log\left(1+\frac{v}{m^2}\right)
+}
+\right]
+\\[6pt]
+&+
+w_{PT}
+\frac{1}{x\sqrt{\log\left(1+\frac{v}{4m^2}\right)}\sqrt{2\pi}}
+\exp\left[
+-\frac{
+\left\{
+\log x-
+\left[
+\log(2m)
+-\frac{1}{2}\log\left(1+\frac{v}{4m^2}\right)
+\right]
+\right\}^2
+}{
+2\log\left(1+\frac{v}{4m^2}\right)
+}
+\right]
+\\[6pt]
+&+
+w_{PQ}
+\frac{1}{x\sqrt{\log\left(1+\frac{v}{9m^2}\right)}\sqrt{2\pi}}
+\exp\left[
+-\frac{
+\left\{
+\log x-
+\left[
+\log(3m)
+-\frac{1}{2}\log\left(1+\frac{v}{9m^2}\right)
+\right]
+\right\}^2
+}{
+2\log\left(1+\frac{v}{9m^2}\right)
+}
+\right].
+\end{aligned}
+$$
+
+This formulation has the advantage of starting directly from the
+natural-scale estimands. However, the resulting mixture density is
+algebraically cumbersome. The constraints are simple on the natural
+scale, but the parameters that enter the lognormal density are nonlinear
+transformations of $m$ and $v$.
+
+In addition, the assumption of a common natural-scale variance across
+CP, PS, PT, and PQ maybe a strong modeling choice. If PT and PQ
+represent longer transmission paths, it may be more natural to allow
+their uncertainty on the original time scale to increase with path
+length.
+
+For these reasons, a second parameterization way is considered, where
+the structural constraints are imposed directly on the log-scale
+parameters.
+
+## 6.3 Second attempt: imposing constraints on log-scale parameters
+
+The difficulty in Section 6.2 suggests that it may be more convenient to
+impose structural constraints directly on the log-scale parameters of
+the lognormal distribution.
+
+This does not mean that our target of interest changes to the log scale.
+The final estimands remain the natural-scale summaries of the PS serial
+interval, including the PS mean, variance, standard deviation, median,
+and quantiles. The log scale is used mainly as a convenient modeling
+scale for specifying the mixture components.
+
+For the baseline setting, let the four path-specific components be
+
+$$
+X_{CP}\sim \mathrm{Lognormal}(\mu+\log 0.5,\sigma^2),
+$$
+
+$$
+X_{PS}\sim \mathrm{Lognormal}(\mu,\sigma^2),
+$$
+
+$$
+X_{PT}\sim \mathrm{Lognormal}(\mu+\log 2,\sigma^2),
+$$
+
+and
+
+$$
+X_{PQ}\sim \mathrm{Lognormal}(\mu+\log 3,\sigma^2).
+$$
+
+Equivalently, this uses simple additive shifts on the log-scale location
+parameter:
+
+$$
+\mu_{CP}=\mu+\log 0.5,
+$$
+
+$$
+\mu_{PS}=\mu,
+$$
+
+$$
+\mu_{PT}=\mu+\log 2,
+$$
+
+and
+
+$$
+\mu_{PQ}=\mu+\log 3.
+$$
+
+The continuous mixture density is therefore
+
+$$
+\begin{aligned}
+f(x \mid \Theta)
+=&\;
+w_{CP}
+\frac{1}{x\sigma\sqrt{2\pi}}
+\exp\left[
+-\frac{\left\{\log x-(\mu+\log 0.5)\right\}^2}{2\sigma^2}
+\right]
+\\[6pt]
+&+
+w_{PS}
+\frac{1}{x\sigma\sqrt{2\pi}}
+\exp\left[
+-\frac{(\log x-\mu)^2}{2\sigma^2}
+\right]
+\\[6pt]
+&+
+w_{PT}
+\frac{1}{x\sigma\sqrt{2\pi}}
+\exp\left[
+-\frac{\left\{\log x-(\mu+\log 2)\right\}^2}{2\sigma^2}
+\right]
+\\[6pt]
+&+
+w_{PQ}
+\frac{1}{x\sigma\sqrt{2\pi}}
+\exp\left[
+-\frac{\left\{\log x-(\mu+\log 3)\right\}^2}{2\sigma^2}
+\right],
+\end{aligned}
+$$
+
+with
+
+$$
+w_{CP}+w_{PS}+w_{PT}+w_{PQ}=1.
+$$
+
+Compared with the natural-scale parameterization in Section 6.2, this
+model is much more compact. The fitted parameters are $\mu$, $\sigma$,
+and the mixture weights, while the path-specific locations are generated
+through simple fixed shifts on the log scale.
+
+The next question is what this log-scale constraint implies on the
+original time scale.
+
+For a path-specific component with multiplier $k$, write
+
+$$
+X_k \sim \mathrm{Lognormal}(\mu+\log k,\sigma^2),
+$$
+
+where, in the baseline setting,
+
+$$
+k=0.5 \text{ for CP}, \qquad
+k=1 \text{ for PS}, \qquad
+k=2 \text{ for PT}, \qquad
+k=3 \text{ for PQ}.
+$$
+
+The natural-scale mean is
+
+$$
+E(X_k)
+=
+\exp\left(\mu+\log k+\frac{1}{2}\sigma^2\right)
+=
+k\exp\left(\mu+\frac{1}{2}\sigma^2\right).
+$$
+
+Since
+
+$$
+E(X_{PS})
+=
+\exp\left(\mu+\frac{1}{2}\sigma^2\right),
+$$
+
+we have
+
+$$
+E(X_k)=kE(X_{PS}).
+$$
+
+Therefore, although the constraints are imposed directly on the
+log-scale location parameters, they imply proportional relationships for
+the natural-scale means:
+
+$$
+E(X_{CP})=0.5E(X_{PS}),
+$$
+
+$$
+E(X_{PT})=2E(X_{PS}),
+$$
+
+and
+
+$$
+E(X_{PQ})=3E(X_{PS}).
+$$
+
+The difference from Section 6.2 lies in the variance structure.
+
+For the same component,
+
+$$
+\mathrm{Var}(X_k)
+=
+\left(e^{\sigma^2}-1\right)
+e^{2(\mu+\log k)+\sigma^2}.
+$$
+
+Thus,
+
+$$
+\mathrm{Var}(X_k)
+=
+k^2
+\left(e^{\sigma^2}-1\right)
+e^{2\mu+\sigma^2}.
+$$
+
+Since
+
+$$
+\mathrm{Var}(X_{PS})
+=
+\left(e^{\sigma^2}-1\right)
+e^{2\mu+\sigma^2},
+$$
+
+we obtain
+
+$$
+\mathrm{Var}(X_k)=k^2\mathrm{Var}(X_{PS}).
+$$
+
+Therefore, imposing common variance on the log scale implies that the
+natural-scale variance increases quadratically with the location
+multiplier:
+
+$$
+\mathrm{Var}(X_{CP})=0.25\mathrm{Var}(X_{PS}),
+$$
+
+$$
+\mathrm{Var}(X_{PT})=4\mathrm{Var}(X_{PS}),
+$$
+
+and
+
+$$
+\mathrm{Var}(X_{PQ})=9\mathrm{Var}(X_{PS}).
+$$
+
+Equivalently, the natural-scale standard deviation scales in the same
+proportion as the natural-scale mean:
+
+$$
+\mathrm{SD}(X_{CP})=0.5\mathrm{SD}(X_{PS}),
+$$
+
+$$
+\mathrm{SD}(X_{PT})=2\mathrm{SD}(X_{PS}),
+$$
+
+and
+
+$$
+\mathrm{SD}(X_{PQ})=3\mathrm{SD}(X_{PS}).
+$$
+
+This variance structure may be cleaner with the biological
+interpretation of longer transmission chains. If PT and PQ represent
+longer paths from the index case, the accumulated time interval is
+expected to be larger, and the uncertainty on the original time scale
+may also increase. The common log-scale variance assumption captures
+this by allowing variability to expand with path length.
+
+The estimands remain on the natural scale. This parametraion gives a
+compact lognormal mixture model while still producing interpretable
+natural-scale mean and variance relationships.
+
+For the PS component, the final natural-scale estimands are
+
+$$
+E(X_{PS})
+=
+\exp\left(\mu+\frac{1}{2}\sigma^2\right),
+$$
+
+$$
+\mathrm{Var}(X_{PS})
+=
+\left(e^{\sigma^2}-1\right)e^{2\mu+\sigma^2},
+$$
+
+$$
+\mathrm{SD}(X_{PS})
+=
+\sqrt{
+\left(e^{\sigma^2}-1\right)e^{2\mu+\sigma^2}
+},
+$$
+
+and
+
+$$
+\mathrm{Median}(X_{PS})=\exp(\mu).
+$$
+
+The $p$-th quantile of the PS distribution is
+
+$$
+Q_p(X_{PS})
+=
+\exp(\mu+\sigma z_p),
+$$
+
+where $z_p$ is the $p$-th quantile of the standard normal distribution.
+
+Therefore, the baseline working model is specified through simple
+log-scale constraints, but its performance will be evaluated through
+natural-scale PS estimands. Whether this parameterization is reasonable
+enough will be tested through the simulation study.
+
+# Conclusion
+
+The rationale leading to the current model setting can be summarized as
+follows:
+
+1.  Start from the original Vink normal/gamma path-mixture framework.
+2.  Recognize that PS is the primary estimand, while CP, PT, and PQ are
+    nuisance path components that must be separated from PS.
+3.  Note that path separation depends on the distributional assumptions
+    imposed on the mixture components.
+4.  Consider whether a right-skewed lognormal SI distribution may be
+    more appropriate than a normal SI distribution.
+5.  Derive the exact lognormal extension of the Vink framework,
+    including the integral forms for CP, PT, and PQ.
+6.  Recognize that the exact extension is mathematically valid but
+    computationally inconvenient.
+7.  Introduce a structurally constrained lognormal mixture model as a
+    baseline working model.
+8.  Start parameter selection from natural-scale moment constraints,
+    then move to log-scale parameterization because it is simpler and
+    reasonable biologically.
+9.  Report and evaluate the main estimands on the original time scale.
+10. Use the simulation study to test whether this working model can
+    recover the PS distribution accurately and robustly.
