@@ -15,6 +15,10 @@ bibliography: references.bib
 ---
 
 ```{r setup, include = FALSE}
+
+devtools::load_all()
+# Doit afficher le corps de ta nouvelle fonction avec weights_list
+
 knitr::opts_chunk$set(
   collapse   = TRUE,
   comment    = "#>",
@@ -25,6 +29,7 @@ knitr::opts_chunk$set(
   message    = FALSE
 )
 ```
+
 
 ```{r packages, echo = FALSE}
 library(mitey)
@@ -152,7 +157,7 @@ In practice, such data are rare. The most common alternatives are:
 | Approach | Data required | Main sources of bias |
 |------------------------|------------------------|------------------------|
 | Direct infector–infectee pairs | Contact-tracing surveys | Epidemic growth bias, right-truncation |
-| Household data (ICC intervals) | Symptom onset dates within a household | Multiple transmission routes (see §3) |
+| Outbreak data (ICC intervals) | Symptom onset dates within a household | Multiple transmission routes (see §3) |
 | Bayesian reconstruction | Partial transmission tree | Strongly prior-dependent |
 
 ## Classical biases and corrections
@@ -557,14 +562,11 @@ fig4
 
 If such long chains are frequent but the algorithm is limited to 4 routes, the PT or PQ component will absorb ICC values that actually correspond to routes of order 5 or 6. This leads to **overestimation of the SI**, because the algorithm assigns an ICC of $5\mu$ to the component centred at $3\mu$.
 
-
-
 ## Highly symptomatic diseases: the risk of over-parameterisation
 
 Conversely, for a disease where almost all infections are symptomatic (e.g. measles or smallpox), it is unlikely that several asymptomatic intermediates follow one another in a single transmission chain. In this case, **modelling 4 routes introduces unnecessary parameters** (the weights for PT and PQ routes will be estimated near zero), at the cost of precision and numerical stability of the EM algorithm.
 
 A model with only 2 or 3 routes would be more parsimonious and would yield more stable estimates.
-
 
 ## Summary
 
@@ -684,7 +686,6 @@ comparison <- compare_n_routes(
 
 The function returns a summary table and automatically displays the fitted distribution plots for each value of `n_routes` tested:
 
-
 ```{r symptomatic-aic-bic, echo = FALSE, eval = FALSE}
 # --- Comparaison formelle AIC/BIC ---
 # On boucle manuellement pour éviter les graphiques intermédiaires
@@ -757,7 +758,6 @@ ggplot(aic_bic_long, aes(x = n_routes, y = value,
   )
 ```
 
-
 ```{r compare-n-routes-output, eval=FALSE, echo = TRUE}
 # Structure of the output
 # n_routes | mu   | sigma | loglik | aic    | bic    | n_params | converged | iterations
@@ -765,8 +765,6 @@ ggplot(aic_bic_long, aes(x = n_routes, y = value,
 # 3        | ...  | ...   | ...    | ...    | ...    | ...      | TRUE      | ...
 # ...
 ```
-
-
 
 ## Starting heuristics: `n_optimal1()`, `n_optimal2()`
 
@@ -776,7 +774,7 @@ Two simple data-driven heuristics are available to guide the initial choice of `
 # Heuristic 1: based on the 95th percentile and the mean
 n_optimal1(icc_data)   # as.integer(quantile(dat, 0.95) / mean(dat))
 
-# Heuristic 3: based on the relative range
+# Heuristic 2: based on the relative range
 n_optimal2(icc_data)   # as.integer(max(dat) / sd(dat))
 ```
 
@@ -790,23 +788,23 @@ These heuristics are not rigorous estimators but reasonable **starting points** 
 
 We simulate a disease with a high probability of asymptomatic infection. This results in ICC values that may correspond to long transmission chains: some observed ICCs are 5× or 6× the true SI.
 
-
 ```{r simulation-high-asymptomatic, fig5, echo = FALSE}
 set.seed(42)
 
 true_mu_asymp    <- 10   # Vrai IS moyen : 10 jours
 true_sigma_asymp <- 2    # Vrai écart-type : 2 jours
-N          <- 400  # Nombre total d'observations
+N          <- 300  # Nombre total d'observations
 
 # Poids des 6 routes
 # (CP, PS, PT, PQ, Route-5, Route-6)
+
 route_weights <- c(
   CP = 0.10,
-  PS = 0.30,
-  PT = 0.25,
-  PQ = 0.18,
-  R5 = 0.10,
-  R6 = 0.07
+  PS = 0.34,
+  PT = 0.23,
+  PQ = 0.13,
+  R5 = 0.12,
+  R6 = 0.08
 )
 # Nombre de tirages par route
 n_per_route <- round(route_weights * N)
@@ -844,6 +842,7 @@ R6 <- rnorm(n_per_route["R6"],
 
 # Assemblage et arrondi à l'entier (jours)
 icc_asymp <- round(c(CP, PS, PT, PQ, R5, R6))
+icc_asymp<-abs(icc_asymp)
 
 # Vérification rapide
 cat("=== Simulation summary ===\n")
@@ -887,17 +886,18 @@ hist_sim <- ggplot(data.frame(icc = icc_asymp), aes(x = icc)) +
 hist_sim
 ```
 
+The original code with 4 routes will find a density function as below.
 
 ```{r example_asymptomatic, echo = FALSE}
 
 result_asymp_4 <-si_estim(icc_asymp)
-graph<- mitey::plot_si_fit_result(result_asymp_4,icc_asymp)+
+graph<- plot_si_fit_result(result_asymp_4,icc_asymp)+
   geom_vline(
     xintercept = true_mu_asymp,
     color = COL_TRUE_SI, linetype = "dotted", linewidth = 1
   ) +
   annotate("text",
-           x = true_mu_asymp + 0.3, y = Inf,
+           x = true_mu_asymp - 7, y = Inf,
            label = paste0("True SI = ", true_mu_asymp, " days"),
            color = COL_TRUE_SI, vjust = 2, hjust = 0, size = 3.2) +
   labs(
@@ -909,30 +909,28 @@ graph
 
 ```
 
+The compare_n_routes used below shows how setting the number of routes helps the algorithm capture the distribution.
 
-
-```{r compare-routes-asym, eval=FALSE, echo = FALSE}
+```{r compare-routes-asym, eval=TRUE, echo = FALSE}
 # Formal comparison by AIC/BIC
 comparison_asym <- compare_n_routes(
   dat          = icc_asymp,
-  n_routes_max = 8L,
+  n_routes_max = 7L,
   dist         = "normal"
 )
 ```
-
 
 ## Example 2 — Highly symptomatic disease (simulated data)
 
 We now simulate a disease where almost all cases are symptomatic: long routes (PT, PQ) are very rare.
 
-
-```{r symptomatic-simulation, echo = FALSE}
+```{r symptomatic-simulation, echo = FALSE, eval = TRUE}
 # --- Simulation : maladie très symptomatique (2 routes suffisent) ---
 set.seed(123)
 
 true_mu_symp    <- 20    # Vrai IS : 20 jours
-true_sigma_symp <- 17 # Vrai écart-type : 17 jours
-N_symp          <- 350
+true_sigma_symp <- 3 # Vrai écart-type : 17 jours
+N_symp          <- 300
 
 # Poids : quasi-exclusivement CP et PS, PT anecdotique
 n_symp <- round(c(
@@ -959,7 +957,7 @@ cat("N observations :", length(icc_symp), "\n")
 cat("ICC range :", min(icc_symp), "to", max(icc_symp), "days\n")
 ```
 
-```{r symptomatic-fit-4routes, echo = FALSE}
+```{r symptomatic-fit-4routes, echo = FALSE, eval = FALSE}
 # --- Estimation avec 4 routes (comportement par défaut) ---
 result_symp_4 <- si_estim(
   dat      = icc_symp,
@@ -996,7 +994,7 @@ plot_4 <- plot_si_fit_result(
 plot_4
 ```
 
-```{r symptomatic-fit-3 routes, echo = FALSE}
+```{r symptomatic-fit-3 routes, echo = FALSE, eval = FALSE}
 # --- Estimation avec 3 routes (modèle parcimonieux) ---
 result_symp_3 <- si_estim(
   dat      = icc_symp,
@@ -1035,29 +1033,151 @@ plot_3
 ```
 
 
-
-## Example 3 — Real data: scabies
-
-Scabies is a parasitic skin disease caused by the mite *Sarcoptes scabiei*, characterised by a long incubation period (up to 6 weeks for a primary infestation) and transmission that can go unnoticed for several weeks. It therefore represents a textbook case for the benefit of allowing a higher number of routes.
-
-```{r scabies-example, eval=FALSE}
-# Load scabies data (published studies)
-# file_path <- here("vignettes", "data", "si_data.rds")
-# scabies_data <- readRDS(file_path)
-
-# Select one study
-# icc_scabies <- scabies_data %>%
-#   filter(study == "Akunzirwe et al.") %>%
-#   pull(icc_interval)
-
-# Compare the optimal number of routes
-comparison_scabies <- compare_n_routes(
-  dat          = icc_scabies,
-  n_routes_max = 8L,
+```{r compare-routes-sym, eval=TRUE, echo = FALSE}
+# Formal comparison by AIC/BIC
+comparison_sym <- compare_n_routes(
+  dat          = icc_symp,
+  n_routes_max = 4L,
   dist         = "normal"
 )
 ```
+The example above shows us that the initial algorithm is robust to the case where the number of routes set in the algorithm is greater that the number of actual routes. Then, the algorihm will find weights close to 0. 
 
+## Example 3 — Example with real outbreak data - Influenza in Canada
+
+We now run the simulation using real outbreak data and compare the results from 4 to 8 routes.
+
+```{r Influenza Canada real data recreation, echo = FALSE}
+icc_Influenza_Canada<-c(1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,5,6,6,6,6,7,8,9,10,13,16,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,6,6,6,7,8,8,9,14,16,17,20)
+```
+
+The example below uses the data from outbreak of Influenza in the study [INSERT STUDY] in Canada. With four routes, we can see the algorithm does not capture the ICC who's value are greater than 4\*mu $n_{\text{routes}}$.
+
+```{r Influenza Canada 4 routes, echo = FALSE}
+# --- Estimation avec 4 routes (comportement par défaut) ---
+result_Influenza <- si_estim(
+  dat      = icc_Influenza_Canada,
+  dist     = "normal",
+  n_routes = 4L,
+  n        = 50
+)
+
+cat("=== 4 routes ===\n")
+cat("Estimated mean :", round(result_Influenza$mean, 2), "days\n")
+cat("Estimated sd   :", round(result_Influenza$sd,   2), "days\n")
+cat("Converged      :", result_Influenza$converged, "\n")
+cat("Component weights:\n")
+print(round(result_Influenza$wts, 3))
+
+plot_influenza <- plot_si_fit_result(
+  si_result = result_Influenza,
+  dat       = icc_Influenza_Canada,
+  dist      = "normal"
+) +
+  labs(
+    title    = "Fit with 4 routes (default)",
+    subtitle = paste0("Estimated mean = ", round(result_Influenza$mean, 2)," days")
+  )
+plot_influenza
+```
+
+
+With the new version of the algorithm, those last value are well captured by the 8 routes.
+
+
+```{r Influenza Canada 8 routes, echo = FALSE}
+# --- Estimation avec 8 routes ---
+result_Influenza_8 <- si_estim(
+  dat      = icc_Influenza_Canada,
+  dist     = "normal",
+  n_routes = 8L,
+  n        = 50
+)
+
+cat("=== 8 routes ===\n")
+cat("Estimated mean :", round(result_Influenza_8$mean, 2), "days\n")
+cat("Estimated sd   :", round(result_Influenza_8$sd,   2), "days\n")
+cat("Converged      :", result_Influenza_8$converged, "\n")
+cat("Component weights:\n")
+print(round(result_Influenza_8$wts, 3))
+
+plot_influenza_8 <- plot_si_fit_result(
+  si_result = result_Influenza_8,
+  dat       = icc_Influenza_Canada,
+  dist      = "normal"
+) +
+  labs(
+    title    = "Fit with 8 routes",
+    subtitle = paste0("Estimated mean = ", round(result_Influenza$mean, 2)," days")
+  )
+plot_influenza_8
+```
+
+## Example 4 — Example with real outbreak data - Pertussis in Netherlands
+
+```{r Pertussis Netherlands Greef, echo = FALSE}
+icc_pertussis_netherlands<-c(0,0,0,0,1,2,2,2,2,3,3,3,3,3,4,4,4,5,5,5,5,5,5,5,6,6,6,6,6,6,7,7,7,7,7,7,8,8,8,8,8,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,11,11,11,11,12,12,12,12,12,12,12,12,12,13,13,13,13,13,13,13,13,13,14,14,14,14,14,14,15,15,15,15,15,15,15,15,15,16,16,16,16,16,16,16,16,17,17,17,17,17,17,18,18,18,18,18,18,18,18,19,19,19,19,19,19,19,19,19,20,20,20,20,20,20,20,20,20,20,20,21,21,21,21,21,21,22,22,22,22,22,22,22,22,23,23,23,23,23,23,23,23,24,24,24,24,24,24,24,24,25,25,25,25,25,25,25,26,26,26,27,27,27,27,27,28,28,28,28,28,28,28,28,28,28,28,29,29,29,29,29,29,30,30,30,30,30,30,30,30,30,30,31,31,31,31,31,31,32,32,32,32,33,33,33,33,33,33,33,34,34,34,35,35,35,35,36,36,36,36,37,37,37,37,37,38,38,40,40,40,40,41,41,41,41,42,42,42,42,42,42,42,43,44,45,46,47,47,47,47,47,48,48,49,49,50,51,51,51,52,52,52,53,53,53,54,54,55,56,56,57,58,59,60,61,62,64,64,65,66,67,67,68,70,72,76,77,80,81,84,90,92,93,101,105,108,116,116,130,155)
+```
+
+Using the dataset from a pertussis outbreak in Netherlands, from the study [INSERT STUDY], the last values are not captured by the first algorithm.
+
+```{r Pertussis Netherlands 4 routes, echo = FALSE}
+# --- Estimation avec 4 routes (comportement par défaut) ---
+result_pertussis_4 <- si_estim(
+  dat      = icc_pertussis_netherlands,
+  dist     = "normal",
+  n_routes = 4L,
+  n        = 50
+)
+
+cat("=== 4 routes ===\n")
+cat("Estimated mean :", round(result_pertussis_4$mean, 2), "days\n")
+cat("Estimated sd   :", round(result_pertussis_4$sd,   2), "days\n")
+cat("Converged      :", result_pertussis_4$converged, "\n")
+cat("Component weights:\n")
+print(round(result_pertussis_4$wts, 3))
+
+plot_pertussis <- plot_si_fit_result(
+  si_result = result_pertussis_4,
+  dat       = icc_pertussis_netherlands,
+  dist      = "normal"
+) +
+  labs(
+    title    = "Fit with 4 routes (default)",
+    subtitle = paste0("Estimated mean = ", round(result_pertussis_4$mean, 2)," days")
+  )
+plot_pertussis
+```
+
+With the new version of the algorithm, those last value are well captured by the 8 routes.
+
+```{r Pertussis Netherlands 8 routes, echo = FALSE}
+# --- Estimation avec 8 routes ---
+result_Pertussis_8 <- si_estim(
+  dat      = icc_pertussis_netherlands,
+  dist     = "normal",
+  n_routes = 8L,
+  n        = 50
+)
+
+cat("=== 8 routes ===\n")
+cat("Estimated mean :", round(result_Pertussis_8$mean, 2), "days\n")
+cat("Estimated sd   :", round(result_Pertussis_8$sd,   2), "days\n")
+cat("Converged      :", result_Pertussis_8$converged, "\n")
+cat("Component weights:\n")
+print(round(result_Pertussis_8$wts, 3))
+
+plot_pertussis_8 <- plot_si_fit_result(
+  si_result = result_Pertussis_8,
+  dat       = icc_pertussis_netherlands,
+  dist      = "normal"
+) +
+  labs(
+    title    = "Fit with 8 routes",
+    subtitle = paste0("Estimated mean = ", round(result_Pertussis_8$mean, 2)," days")
+  )
+plot_pertussis_8
+```
 
 ------------------------------------------------------------------------
 
@@ -1082,8 +1202,8 @@ n1 <- n_optimal1(icc_data)
 n2 <- n_optimal2(icc_data)
 
 
-cat("Heuristics:", n1, n2, n3, "\n")
-n_max_explore <- max(n1, n2, n3) + 2   # safety margin
+cat("Heuristics:", n1, n2, "\n")
+n_max_explore <- max(n1, n2) + 2   # safety margin
 
 # Step 2: compare models from 2 to n_max_explore routes
 comparison <- compare_n_routes(
@@ -1104,7 +1224,6 @@ plot_si_fit_result(result_final, dat = icc_data, dist = "normal")
 
 -   The method still relies on the assumption that the index case is indeed the person with the earliest symptom onset date in the household, which may not always hold.
 -   The maximum number of routes is limited in practice by sample size: with small datasets, the weights of high-order routes will be estimated with large uncertainty. As a rule of thumb, avoid exploring routes whose expected ICC ($k \times \mu$) exceeds the 95th percentile of the observed data.
--   A natural extension would be a fully Bayesian formulation of the mixture model, which would provide uncertainty intervals on all parameters jointly and handle small samples more gracefully.
 
 ------------------------------------------------------------------------
 

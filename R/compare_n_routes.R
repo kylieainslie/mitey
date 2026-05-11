@@ -1,3 +1,4 @@
+#' @export
 compare_n_routes <- function(
     dat,
     n_routes_max = 8L,
@@ -6,6 +7,7 @@ compare_n_routes <- function(
     ...
 ) {
   results <- vector("list", n_routes_max - 1L)
+  weights_list <- vector("list", n_routes_max - 1L)
 
   for (n_routes in 2:n_routes_max) {
     fit <- si_estim(dat, n = n, dist = dist, n_routes = n_routes, ...)
@@ -32,23 +34,44 @@ compare_n_routes <- function(
       converged  = fit$converged,
       iterations = fit$iterations
     )
+
+    wts        <- fit$wts
+    wt_names   <- paste0("w", seq_along(wts))   # w1, w2, w3, ...
+    wts_df     <- as.data.frame(t(wts))
+    names(wts_df) <- wt_names
+    wts_df$n_routes <- n_routes
+    weights_list[[n_routes - 1L]] <- wts_df
   }
 
   results_df <- do.call(rbind, results)
 
-  # identifier le meilleur selon BIC
+  weights_df <- do.call(
+    dplyr::bind_rows,          # bind_rows gère les colonnes manquantes → NA
+    weights_list
+  )
+  # Réordonner : n_routes en première colonne
+  weights_df <- weights_df[, c("n_routes",
+                               setdiff(names(weights_df), "n_routes"))]
+
+
+  cat("\n")
+  cat("\n")
+  cat("\n=== Components weights by model ===\n")
+  cat("(CP = w1 ; PS = w2/w3 ; PT = w4/w5 ; etc. — NA = no component)\n\n")
+  print(weights_df, digits = 3, row.names = FALSE)
+
+  # Identify the best using BIC
   best_bic <- results_df$n_routes[which.min(results_df$bic)]
   best_aic <- results_df$n_routes[which.min(results_df$aic)]
 
-  # calculer les n_optimal
+  # Compute the n_optimal
   n_opt1 <- n_optimal1(dat)
   n_opt2 <- n_optimal2(dat)
-  n_opt3 <- n_optimal3(dat)
 
-  cat("=== Comparaison des n_routes ===\n")
+  cat("=== Comparison of the n_routes ===\n")
   print(results_df, digits = 4)
-  cat("\nMeilleur n_routes selon BIC :", best_bic, "\n")
-  cat("Meilleur n_routes selon AIC :", best_aic, "\n")
+  cat("\nBest n_routes according to BIC :", best_bic, "\n")
+  cat("Best n_routes according to AIC :", best_aic, "\n")
 
   invisible(results_df)
 }
