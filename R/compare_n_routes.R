@@ -46,10 +46,10 @@ compare_n_routes <- function(
   results_df <- do.call(rbind, results)
 
   weights_df <- do.call(
-    dplyr::bind_rows,          # bind_rows gère les colonnes manquantes → NA
+    dplyr::bind_rows,
     weights_list
   )
-  # Réordonner : n_routes en première colonne
+
   weights_df <- weights_df[, c("n_routes",
                                setdiff(names(weights_df), "n_routes"))]
 

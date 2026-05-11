@@ -146,6 +146,7 @@ si_estim <- function(
   ## --- EM helper ---
 
   run_single_em <- function(mu_init, sigma_init) {
+    # E-step
     mu    <- mu_init
     sigma <- sigma_init
     converged      <- FALSE

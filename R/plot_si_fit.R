@@ -208,7 +208,7 @@ plot_si_fit_result <- function(
   n_routes <- as.integer(si_result$n_routes)
 
   if (dist == "normal") {
-    weights <- si_result$wts  # poids bruts, longueur 2*n_routes - 1
+    weights <- si_result$wts
   } else {
     weights <- si_result$wts[seq_len(n_routes - 1L)]
   }
