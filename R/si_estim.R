@@ -214,7 +214,7 @@ si_estim <- function(
       }
     }
 
-    loglik <- calculate_mixture_loglik(dat, mu, sigma, w, comp_vec, dist)
+    loglik <- calculate_mixture_loglik(dat, mu, sigma, w, comp_vec, dist, wind)
 
     list(
       mean       = mu,
@@ -264,7 +264,7 @@ si_estim <- function(
 #'
 #' @return numeric; log-likelihood value
 #' @keywords internal
-calculate_mixture_loglik <- function(dat, mu, sigma, wts, comp_vec, dist,wind = 1) {
+calculate_mixture_loglik <- function(dat, mu, sigma, wts, comp_vec, dist,wind) {
   j      <- length(dat)
   loglik <- 0
 

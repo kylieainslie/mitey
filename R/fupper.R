@@ -37,14 +37,14 @@ fupper <- function(
   # Component 1: Co-Primary route (special case, unchanged)
   if (comp == 1) {
     if (dist == "normal") {
-      return((r + 1/wind - x/wind) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)))
+      return((r/wind + 1 - x/wind) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)))
     } else {
       k <- (mu^2) / (sigma^2)
       theta <- (sigma^2) / mu
       if (k <= 0 || theta <= 0) return(0)
       bessel_val <- besselK(x / theta, 0.5 - k)
       bessel_val[!is.finite(bessel_val)] <- 0
-      return_val <- (r + 1/wind - x/wind) *
+      return_val <- (r/wind + 1 - x/wind) *
         1 / sqrt(pi) *
         2^(3/2 - k) *
         theta^(-0.5 - k) *
@@ -67,11 +67,11 @@ fupper <- function(
   route_sd <- sqrt(i) * sigma
 
   if (dist == "normal") {
-    return((r + 1/wind - x/wind) * dnorm(x, mean = route_mean, sd = route_sd))
+    return((r/wind + 1 - x/wind) * dnorm(x, mean = route_mean, sd = route_sd))
   } else {
     k <- (mu^2) / (sigma^2)
     theta <- (sigma^2) / mu
     if (k <= 0 || theta <= 0) return(0)
-    return((r + 1/wind - x/wind) * dgamma(x, shape = i * k, scale = theta))
+    return((r/wind + 1 - x/wind) * dgamma(x, shape = i * k, scale = theta))
   }
 }

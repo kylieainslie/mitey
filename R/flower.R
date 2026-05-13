@@ -41,7 +41,7 @@ flower <- function(
     if(dist == "normal") {
       pos <- x > 0
       if (any(pos)) {
-        result[pos] <- (x[pos]/wind - r + 1/wind) *
+        result[pos] <- (x[pos]/wind - r/wind + 1) *
         dhalfnorm(x[pos], theta = sqrt(pi / 2) / (sqrt(2) * sigma))
     }
     return(result)
@@ -55,7 +55,7 @@ flower <- function(
       if (any(pos)) {
         bessel_val <- besselK(x[pos] / theta, 0.5 - k)
         bessel_val[!is.finite(bessel_val)] <- 0
-        result[pos] <- (x[pos]/wind - r + 1/wind) *
+        result[pos] <- (x[pos]/wind - r/wind + 1) *
           1 / sqrt(pi) *
           2^(3/2 - k) *
           theta^(-0.5 - k) *
@@ -83,7 +83,7 @@ flower <- function(
 
     pos <- x > 0
     if (any(pos)) {
-      result[pos] <- (x[pos]/wind - r + 1/wind) *
+      result[pos] <- (x[pos]/wind - r/wind + 1) *
         dnorm(x[pos], mean = route_mean, sd = route_sd)
     }
     return(result)
@@ -93,6 +93,6 @@ flower <- function(
     k <- (mu^2) / (sigma^2)
     theta <- (sigma^2) / mu
     if (k <= 0 || theta <= 0) return(0)
-    return((x/wind - r + 1/wind) * dgamma(x, shape = i * k, scale = theta))
+    return((x/wind - r/wind + 1) * dgamma(x, shape = i * k, scale = theta))
   }
 }

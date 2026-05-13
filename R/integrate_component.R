@@ -63,13 +63,14 @@ integrate_component <- function(
     return(
       integrate(
         f = flower,
-        lower = max(d - wind, 1e-10),
+        lower = max(d-wind, 1e-10),
         upper = d,
         r = d,
         mu = mu,
         sigma = sigma,
         comp = comp,
-        dist = dist
+        dist = dist,
+        wind = wind
       )[[1]] +
 
         integrate(
@@ -80,19 +81,21 @@ integrate_component <- function(
           mu = mu,
           sigma = sigma,
           comp = comp,
-          dist = dist
+          dist = dist,
+          wind = wind
         )[[1]]
     )
   } else {
     return(
       integrate(
         f = f0,
-        lower = d,
+        lower = max(d, 1e-10),
         upper = (d + wind),
         mu = mu,
         sigma = sigma,
         comp = comp,
-        dist = dist
+        dist = dist,
+        wind = wind
       )[[1]]
     )
   }
