@@ -32,6 +32,7 @@
 #' @param dist character; the assumed underlying distribution of the serial interval.
 #'             Must be either "normal" or "gamma". Defaults to "normal"
 #' @param lower logical; if \code{TRUE} (default), performs integration using \code{flower} and \code{fupper} functions. If \code{FALSE}, uses \code{f0} function
+#' @param wind The window censure interval
 #'
 #' @return numeric; the integrated likelihood value for the specified component and data point. Used in the EM algorithm for serial interval estimation
 #'
@@ -55,13 +56,14 @@ integrate_component <- function(
   sigma,
   comp,
   dist = c("normal", "gamma"),
-  lower = TRUE
+  lower = TRUE,
+  wind = 1
 ) {
   if (lower) {
     return(
       integrate(
         f = flower,
-        lower = (d - 1),
+        lower = max(d - wind, 1e-10),
         upper = d,
         r = d,
         mu = mu,
@@ -73,7 +75,7 @@ integrate_component <- function(
         integrate(
           f = fupper,
           lower = d,
-          upper = (d + 1),
+          upper = (d + wind),
           r = d,
           mu = mu,
           sigma = sigma,
@@ -86,7 +88,7 @@ integrate_component <- function(
       integrate(
         f = f0,
         lower = d,
-        upper = (d + 1),
+        upper = (d + wind),
         mu = mu,
         sigma = sigma,
         comp = comp,

@@ -9,7 +9,8 @@
 #' @param comp integer; the component number. Component 1 is Co-Primary. Even components
 #'   2i are positive routes, odd components 2i+1 are negative routes (normal only).
 #' @param dist string; assumed distribution of the serial interval; accepts "normal" or "gamma"; defaults to "normal"
-#'
+#' @param wind The window censure interval
+#'.
 #' @return The calculated value of flower.
 #' @keywords internal
 #' @examples
@@ -23,7 +24,8 @@ flower <- function(
     mu,
     sigma,
     comp,
-    dist = "normal"
+    dist = "normal",
+    wind = 1
 ) {
   # error messages
   if (dist != "normal" && dist != "gamma") {
@@ -34,23 +36,35 @@ flower <- function(
 
   # Component 1: Co-Primary route (special case, unchanged)
   if (comp == 1) {
-    if (dist == "normal") {
-      return((x - r + 1) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)))
-    } else {
+    result <- numeric(length(x))
+
+    if(dist == "normal") {
+      pos <- x > 0
+      if (any(pos)) {
+        result[pos] <- (x[pos]/wind - r + 1/wind) *
+        dhalfnorm(x[pos], theta = sqrt(pi / 2) / (sqrt(2) * sigma))
+    }
+    return(result)
+  }
+
+    else {
       k <- (mu^2) / (sigma^2)
       theta <- (sigma^2) / mu
-      if (k <= 0 || theta <= 0) return(0)
-      bessel_val <- besselK(x / theta, 0.5 - k)
-      bessel_val[!is.finite(bessel_val)] <- 0
-      return_val <- (x - r + 1) *
-        1 / sqrt(pi) *
-        2^(3/2 - k) *
-        theta^(-0.5 - k) *
-        x^(-0.5 + k) *
-        bessel_val *
-        1 / gamma(k)
-      return_val[is.nan(return_val)] <- 0
-      return(return_val)
+      if (k <= 0 || theta <= 0) return(rep(0, length(x)))
+      pos <- x > 0
+      if (any(pos)) {
+        bessel_val <- besselK(x[pos] / theta, 0.5 - k)
+        bessel_val[!is.finite(bessel_val)] <- 0
+        result[pos] <- (x[pos]/wind - r + 1/wind) *
+          1 / sqrt(pi) *
+          2^(3/2 - k) *
+          theta^(-0.5 - k) *
+          x[pos]^(-0.5 + k) *
+          bessel_val *
+          1 / gamma(k)
+        result[is.nan(result)] <- 0
+      }
+      return(result)
     }
   }
 
@@ -65,11 +79,20 @@ flower <- function(
   route_sd <- sqrt(i) * sigma
 
   if (dist == "normal") {
-    return((x - r + 1) * dnorm(x, mean = route_mean, sd = route_sd))
+    result <- numeric(length(x))
+
+    pos <- x > 0
+    if (any(pos)) {
+      result[pos] <- (x[pos]/wind - r + 1/wind) *
+        dnorm(x[pos], mean = route_mean, sd = route_sd)
+    }
+    return(result)
+
+
   } else {
     k <- (mu^2) / (sigma^2)
     theta <- (sigma^2) / mu
     if (k <= 0 || theta <= 0) return(0)
-    return((x - r + 1) * dgamma(x, shape = i * k, scale = theta))
+    return((x/wind - r + 1/wind) * dgamma(x, shape = i * k, scale = theta))
   }
 }

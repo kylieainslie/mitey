@@ -9,6 +9,7 @@
 #' @param comp integer; the component number. Component 1 is Co-Primary. Even components
 #'   2i are positive routes, odd components 2i+1 are negative routes (normal only).
 #' @param dist string; assumed distribution of the serial interval; accepts "normal" or "gamma"; defaults to "normal".
+#' @param wind The window censure interval
 #'
 #' @return The calculated value of fupper.
 #' @keywords internal
@@ -23,7 +24,8 @@ fupper <- function(
     mu,
     sigma,
     comp,
-    dist = "normal"
+    dist = "normal",
+    wind = 1
 ) {
   # error messages
   if (dist != "normal" && dist != "gamma") {
@@ -35,14 +37,14 @@ fupper <- function(
   # Component 1: Co-Primary route (special case, unchanged)
   if (comp == 1) {
     if (dist == "normal") {
-      return((r + 1 - x) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)))
+      return((r + 1/wind - x/wind) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)))
     } else {
       k <- (mu^2) / (sigma^2)
       theta <- (sigma^2) / mu
       if (k <= 0 || theta <= 0) return(0)
       bessel_val <- besselK(x / theta, 0.5 - k)
       bessel_val[!is.finite(bessel_val)] <- 0
-      return_val <- (r + 1 - x) *
+      return_val <- (r + 1/wind - x/wind) *
         1 / sqrt(pi) *
         2^(3/2 - k) *
         theta^(-0.5 - k) *
@@ -65,11 +67,11 @@ fupper <- function(
   route_sd <- sqrt(i) * sigma
 
   if (dist == "normal") {
-    return((r + 1 - x) * dnorm(x, mean = route_mean, sd = route_sd))
+    return((r + 1/wind - x/wind) * dnorm(x, mean = route_mean, sd = route_sd))
   } else {
     k <- (mu^2) / (sigma^2)
     theta <- (sigma^2) / mu
     if (k <= 0 || theta <= 0) return(0)
-    return((r + 1 - x) * dgamma(x, shape = i * k, scale = theta))
+    return((r + 1/wind - x/wind) * dgamma(x, shape = i * k, scale = theta))
   }
 }

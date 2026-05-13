@@ -16,6 +16,7 @@
 #' @param n_routes integer; number of transmission routes to model. Must be >= 2.
 #'   Defaults to 4 (Co-Primary, Primary-Secondary, Primary-Tertiary, Primary-Quaternary).
 #'   Increasing this allows modelling longer transmission chains.
+#' @param wind The window censure interval
 #'
 #' @return A named list containing:
 #' \itemize{
@@ -61,7 +62,8 @@ si_estim <- function(
     init     = NULL,
     tol      = 1e-6,
     n_starts = 1,
-    n_routes = 4L
+    n_routes = 4L,
+    wind = 1
 ) {
   ## --- Input validation ---
 
@@ -165,7 +167,8 @@ si_estim <- function(
             dat[l], mu, sigma,
             comp  = comp_vec[comp_idx],
             dist  = dist,
-            lower = use_lower
+            lower = use_lower,
+            wind = wind
           )
         }
       }
@@ -257,10 +260,11 @@ si_estim <- function(
 #' @param wts numeric vector; component weights
 #' @param comp_vec integer vector; component indices
 #' @param dist character; distribution type ("normal" or "gamma")
+#' @param wind The window censure interval
 #'
 #' @return numeric; log-likelihood value
 #' @keywords internal
-calculate_mixture_loglik <- function(dat, mu, sigma, wts, comp_vec, dist) {
+calculate_mixture_loglik <- function(dat, mu, sigma, wts, comp_vec, dist,wind = 1) {
   j      <- length(dat)
   loglik <- 0
 
@@ -273,7 +277,8 @@ calculate_mixture_loglik <- function(dat, mu, sigma, wts, comp_vec, dist) {
         dat[l], mu, sigma,
         comp  = comp,
         dist  = dist,
-        lower = use_lower
+        lower = use_lower,
+        wind = wind
       )
       prob <- prob + wts[comp_idx] * comp_prob
     }

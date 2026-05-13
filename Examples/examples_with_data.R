@@ -41,3 +41,6 @@ plot_si_fit_result(result6,icc_Influenza_Canada)
 result4_new <-si_estim(icc_Influenza_Canada,n_routes=4)
 result4_new
 plot_si_fit_result(result4_new,icc_Influenza_Canada)
+
+
+result4_new <-si_estim(icc_Influenza_Canada,n_routes=4, wind=2)
