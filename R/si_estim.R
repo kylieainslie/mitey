@@ -184,6 +184,7 @@ si_estim <- function(
       # M-step: update mu and sigma
       if (dist == "normal") {
         # Use the first positive-route component (index 2 in comp_vec = component 2)
+
         pos_idx <- which(comp_vec == 2L)
         mu    <- weighted.mean(dat, tau[pos_idx, ])
         sigma <- sqrt(weighted_var(dat, tau[pos_idx, ]))
@@ -245,6 +246,7 @@ si_estim <- function(
 
   best_result$n_restarts <- n_starts
   best_result$n_routes   <- n_routes
+  best_result$wind   <- wind
 
   return(best_result)
 }

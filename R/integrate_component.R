@@ -60,10 +60,11 @@ integrate_component <- function(
   wind = 1
 ) {
   if (lower) {
+    lower_bound <- max(d - wind, 1e-10)
     return(
       integrate(
         f = flower,
-        lower = max(d-wind, 1e-10),
+        lower = lower_bound,
         upper = d,
         r = d,
         mu = mu,
@@ -86,10 +87,11 @@ integrate_component <- function(
         )[[1]]
     )
   } else {
+    lower_bound <- max(d, 1e-10)
     return(
       integrate(
         f = f0,
-        lower = max(d, 1e-10),
+        lower = lower_bound,
         upper = (d + wind),
         mu = mu,
         sigma = sigma,

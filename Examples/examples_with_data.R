@@ -38,9 +38,35 @@ plot_si_fit_result(result5,icc_Influenza_Canada)
 plot_si_fit_result(result6,icc_Influenza_Canada)
 
 
-result4_new <-si_estim(icc_Influenza_Canada,n_routes=4)
-result4_new
-plot_si_fit_result(result4_new,icc_Influenza_Canada)
+subset_Measles_England<-validation_data %>% filter (Pathogen == "Measles", Country == "England", Author == "Fine")
+subset_Measles_England
+icc_Measles_England <- subset_Measles_England[5] %>% unlist(,use.names = FALSE)
+icc_Measles_England
+result_new <-si_estim(icc_Measles_England,n_routes=4, wind=7)
+plot_si_fit_result(result_new,icc_Measles_England)
 
 
-result4_new <-si_estim(icc_Influenza_Canada,n_routes=4, wind=2)
+
+
+icc_Influenza_Canada
+
+result2_new <-si_estim(icc_Influenza_Canada,n_routes=4, wind=2)
+result3_new <-si_estim(icc_Influenza_Canada,n_routes=4, wind=3)
+plot_si_fit_result(result2_new,icc_Influenza_Canada)
+plot_si_fit_result(result3_new,icc_Influenza_Canada)
+
+
+weights2<- result2_new$wts
+
+weights3<- result3_new$wts
+
+
+
+
+subset<-validation_data %>% filter (Pathogen == "Varicella", Country == "Australia", Author == "Vally")
+
+icc <- subset[5] %>% unlist(,use.names = FALSE)
+
+result_new <-si_estim(icc,n_routes=4, wind=3)
+plot_si_fit_result(result_new,icc)
+

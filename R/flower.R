@@ -27,6 +27,7 @@ flower <- function(
     dist = "normal",
     wind = 1
 ) {
+
   # error messages
   if (dist != "normal" && dist != "gamma") {
     stop(
@@ -38,14 +39,16 @@ flower <- function(
   if (comp == 1) {
     result <- numeric(length(x))
 
-    if(dist == "normal") {
-      pos <- x > 0
+    if (dist == "normal") {
+      pos <- x > 0   # strictly positive — excludes x = 0
       if (any(pos)) {
         result[pos] <- (x[pos]/wind - r/wind + 1) *
-        dhalfnorm(x[pos], theta = sqrt(pi / 2) / (sqrt(2) * sigma))
+          dhalfnorm(x[pos], theta = sqrt(pi / 2) / (sqrt(2) * sigma))
+      }
+
+      return(result)
     }
-    return(result)
-  }
+
 
     else {
       k <- (mu^2) / (sigma^2)
@@ -64,6 +67,7 @@ flower <- function(
           1 / gamma(k)
         result[is.nan(result)] <- 0
       }
+      result[!is.finite(result)] <- 0
       return(result)
     }
   }
@@ -86,6 +90,7 @@ flower <- function(
       result[pos] <- (x[pos]/wind - r/wind + 1) *
         dnorm(x[pos], mean = route_mean, sd = route_sd)
     }
+    result[!is.finite(result)] <- 0
     return(result)
 
 

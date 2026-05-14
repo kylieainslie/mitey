@@ -63,7 +63,7 @@ f_norm <- function(
   if (any(weights < 0)) {
     stop("All weights must be non-negative.")
   }
-  if (sum(weights) > 1) {
+  if (sum(weights) > 1  + .Machine$double.eps * 100) {
     stop("Sum of weights must not exceed 1.")
   }
 

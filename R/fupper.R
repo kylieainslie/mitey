@@ -27,6 +27,7 @@ fupper <- function(
     dist = "normal",
     wind = 1
 ) {
+
   # error messages
   if (dist != "normal" && dist != "gamma") {
     stop(
@@ -37,7 +38,10 @@ fupper <- function(
   # Component 1: Co-Primary route (special case, unchanged)
   if (comp == 1) {
     if (dist == "normal") {
-      return((r/wind + 1 - x/wind) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)))
+      result <- (r/wind + 1 - x/wind) * dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma))
+      result[!is.finite(result)] <- 0
+      return(result)
+
     } else {
       k <- (mu^2) / (sigma^2)
       theta <- (sigma^2) / mu
