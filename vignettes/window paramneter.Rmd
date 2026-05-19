@@ -1,0 +1,166 @@
+---
+title: "Accounting for Date Uncertainty with the `wind` Parameter"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Accounting for Date Uncertainty with the `wind` Parameter}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment  = "#>",
+  fig.width  = 7,
+  fig.height = 4,
+  warning  = FALSE
+)
+library(mitey)
+library(extraDistr)
+```
+
+## 1. The `mitey` package in brief
+
+The `mitey` package implements the Vink et al. (2014) method for estimating the
+**serial interval** of an infectious disease from outbreak data. The serial
+interval is defined as the time between symptom onset in a primary (index) case
+and symptom onset in a secondary case infected by that primary case.
+
+In practice, what is recorded during an outbreak is not the serial interval
+itself but the **index-case-to-case (ICC) interval**: the observed time between
+the symptom onset date of the index case and the symptom onset date of the
+secondary case. The core function `si_estim()` fits a mixture model to a vector
+of ICC intervals and returns estimates of the mean $\mu$ and standard deviation
+$\sigma$ of the underlying serial interval distribution, along with the weights
+of the different transmission routes (co-primary, primary-secondary,
+primary-tertiary, etc.).
+
+---
+
+## 2. The problem: date uncertainty propagates to interval uncertainty
+
+In many outbreak investigations, symptom onset dates are not recorded with
+daily precision. A surveillance system may aggregate reports **weekly** or surveys might be done during the weekdays. In such settings,
+what is known is not the exact day of symptom onset, but only that it occurred
+**within a given observation window**.
+
+## 2.1. A worked example: weekday-only recording
+
+As a concrete illustration, suppose the index case has a symptom onset
+drawn uniformly between day 1 and day 14, and the secondary case develops
+symptoms a number of days later drawn from a normal distribution with
+mean $\mu = 22$ and standard deviation $\sigma = 3$. Under daily
+recording, the ICC interval $I = P_2 - P_1$ exactly follows this normal
+distribution. Under weekday-only recording, onset dates falling on
+weekends are pushed forward to the next Monday, distorting both the
+marginal distributions of $P_1$ and $P_2$ and, crucially, the
+distribution of their difference.
+
+```{r}
+library(extraDistr)
+
+N     <- 10000
+mu    <- 22
+sigma <- 3
+
+# P1: index case onset, uniformly distributed between day 1 and 14
+P1   <- rdunif(n = N, min = 1, max = 14)
+
+# norm: true serial interval drawn from a normal distribution
+norm <- trunc(rnorm(n = N, mean = mu, sd = sigma))
+
+# P2: secondary case onset
+P2 <- P1 + norm
+
+# I: true ICC interval
+I <- P2 - P1
+
+breaks1 <- seq(0.5, 15.5, 1)
+
+par(mfrow = c(1, 3))
+hist(P1, main = "P1: index case onset\n(Uniform)", xlab = "Days",
+     col = "skyblue", breaks = breaks1)
+hist(P2, main = "P2: secondary case onset\n(P1 + SI)", xlab = "Days",
+     col = "lightgreen")
+hist(I,  main = "True ICC interval\n(I = P2 - P1)", xlab = "Days",
+     col = "cyan")
+par(mfrow = c(1, 1))
+```
+
+
+
+Now suppose that symptom onset dates are only recorded on weekdays.
+Dates falling on a Saturday (day $\equiv 6 \pmod 7$) or Sunday
+(day $\equiv 0 \pmod 7$) are instead recorded on the following Monday.
+This shifts $P_1$ and $P_2$ forward by up to two days, and the
+resulting observed ICC interval $I' = P_2' - P_1'$ can differ
+substantially from the true interval $I$.
+
+```{r}
+# Shift weekend dates to the following Monday
+shift_to_weekday <- function(x) {
+  remainder <- x %% 7
+  ifelse(remainder == 0 & x > 3, x + 1,
+  ifelse(remainder == 6 & x > 3, x + 2, x))
+}
+
+P1_prime <- shift_to_weekday(P1)
+P2_prime <- shift_to_weekday(P2)
+I_prime  <- P2_prime - P1_prime
+
+par(mfrow = c(1, 3))
+hist(P1_prime, main = "P1': recorded onset\n(weekdays only)", xlab = "Days",
+     col = "skyblue", breaks = breaks1)
+hist(P2_prime, main = "P2': recorded onset\n(weekdays only)", xlab = "Days",
+     col = "lightgreen")
+hist(I_prime,  main = "Observed ICC interval\n(I' = P2' - P1')", xlab = "Days",
+     col = "cyan")
+par(mfrow = c(1, 1))
+```
+
+Comparing the two distributions makes the problem clear: the weekday
+recording rule creates gaps and spikes in the observed ICC distribution
+that have nothing to do with the underlying biology. Feeding these
+shifted intervals directly into `si_estim()` without correction will
+bias the estimates of $\mu$ and $\sigma$.
+
+
+## 3. Solution: the `wind` parameter
+
+### Idea
+
+Instead of treating each observed value $d$ as a point observation, `mitey`
+treats it as the **centre of an uncertainty window** of width `wind`. The true
+ICC interval is assumed to lie somewhere in $[d - w,\; d + w]$, with
+probability decreasing as we move away from $d$.
+
+The likelihood contribution of observation $d$ is therefore not simply
+$f_{\text{SI}}(d)$ but the **weighted integral** of the serial interval density
+over the window:
+
+$$L(d \mid \mu, \sigma) =
+  \int_{d-w}^{d+w} f_{\text{SI}}(x)\; f_\triangle(x \mid d, w)\; dx$$
+
+where $f_\triangle(x \mid d, w)$ is a **triangular weight function** centred at
+$d$, equal to 1 at $x = d$ and falling linearly to 0 at $x = d \pm w$.
+
+### Why a triangular weight?
+
+If both $P_1$ and $P_2$ can each fall **uniformly** within a window of width
+$w$ around their recorded date, the difference $P_2 - P_1$ follows a
+**triangular distribution** on $[-w, w]$ around the true difference. The
+triangular weight function directly reflects this uncertainty structure.
+
+### Usage
+
+Simply pass the observation window (in the same unit as your ICC intervals,
+typically days) to `si_estim()` via the `wind` argument:
+
+```{r usage, eval = FALSE}
+# Without correction (default: wind = 1, point observation)
+result_no_corr <- si_estim(icc_data, n = 100)
+
+# With a 7-day observation window
+result_corrected <- si_estim(icc_data, n = 100, wind = 7)
+```
+
