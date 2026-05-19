@@ -67,6 +67,23 @@ subset<-validation_data %>% filter (Pathogen == "Varicella", Country == "Austral
 
 icc <- subset[5] %>% unlist(,use.names = FALSE)
 
-result_new <-si_estim(icc,n_routes=4, wind=3)
-plot_si_fit_result(result_new,icc)
+result_wind1 <-si_estim(ICC_dataset,n_routes=4, wind=1)
+plot_si_fit_result(result_wind1,ICC_dataset)
+result_wind1$mean
+result_wind1$sd
 
+result_wind7 <-si_estim(ICC_dataset,n_routes=4, wind=7)
+plot_si_fit_result(result_wind7,ICC_dataset)
+result_wind7$mean
+result_wind7$sd
+
+result_wind14 <-si_estim(ICC_dataset,n_routes=4, wind=14)
+plot_si_fit_result(result_wind14,ICC_dataset)
+result_wind14$mean
+result_wind14$sd
+
+
+result_true <-si_estim(ICC_real,n_routes=4, wind=7)
+plot_si_fit_result(result_true,ICC_real)
+result_true$mean
+result_true$sd
