@@ -210,7 +210,7 @@ plot_si_fit_result <- function(
   if (dist == "normal") {
     weights <- si_result$wts
   } else {
-    weights <- si_result$wts[seq_len(n_routes - 1L)]
+    weights <- si_result$wts[seq_len(n_routes)]
   }
 
 
