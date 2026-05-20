@@ -54,12 +54,6 @@ compare_n_routes <- function(
                                setdiff(names(weights_df), "n_routes"))]
 
 
-  cat("\n")
-  cat("\n")
-  cat("\n=== Components weights by model ===\n")
-  cat("(CP = w1 ; PS = w2/w3 ; PT = w4/w5 ; etc. — NA = no component)\n\n")
-  print(weights_df, digits = 3, row.names = FALSE)
-
   # Identify the best using BIC
   best_bic <- results_df$n_routes[which.min(results_df$bic)]
   best_aic <- results_df$n_routes[which.min(results_df$aic)]

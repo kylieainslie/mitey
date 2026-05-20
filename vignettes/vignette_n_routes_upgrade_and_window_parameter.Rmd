@@ -1,5 +1,5 @@
 ---
-title: "Flexible Number of Transmission Routes in Serial Interval Estimation"
+title: "Flexible Number of Transmission Routes and accounting for date uncertainty in Serial Interval Estimation"
 author: "Simon Carreel"
 date: "`r Sys.Date()`"
 output:
@@ -273,9 +273,9 @@ The appeal of ICC data is their availability: they do not require identifying ex
 The key insight of Vink et al. is that each observed ICC can correspond to **several distinct transmission scenarios**, called routes:
 
 -   **Co-primary (CP):** Both the index case and the observed case were infected by the same external source at roughly the same time. The ICC reflects variability in incubation, not the SI. Expected distribution: half-normal centred at zero.
--   **Primary-Secondary (PS):** The index case directly infected the observed case. ICC ≈ SI. Distribution: $\mathcal{N}(\mu, \sigma^2)$.
--   **Primary-Tertiary (PT):** The index case infected an asymptomatic intermediate, who then infected the observed case. ICC ≈ 2 × SI. Distribution: $\mathcal{N}(2\mu, 2\sigma^2)$.
--   **Primary-Quaternary (PQ):** Two asymptomatic intermediates between the index case and the observed case. ICC ≈ 3 × SI. Distribution: $\mathcal{N}(3\mu, 3\sigma^2)$.
+-   **Primary-Secondary (PS):** The index case directly infected the observed case. ICC ≈ SI. Distribution: $\mathrm{N}(\mu, \sigma^2)$.
+-   **Primary-Tertiary (PT):** The index case infected an asymptomatic intermediate, who then infected the observed case. ICC ≈ 2 × SI. Distribution: $\mathrm{N}(2\mu, 2\sigma^2)$.
+-   **Primary-Quaternary (PQ):** Two asymptomatic intermediates between the index case and the observed case. ICC ≈ 3 × SI. Distribution: $\mathrm{N}(3\mu, 3\sigma^2)$.
 
 ```{r four_transmission_routes_fig3, echo = FALSE}
 mu_ex    <- 10
@@ -467,7 +467,7 @@ result$sd     # Estimated standard deviation (days)
 ```
 
 
-# Accounting for symptom onset date uncertainty: the `wind` parameter
+# Accounting for symptom onset date uncertainty
 
 ## The problem
 
@@ -488,7 +488,7 @@ wind_ex <- 7
 df_wind <- data.frame(
   label = c("True onset\n(index)", "True onset\n(secondary)",
              "Reported onset\n(index)", "Reported onset\n(secondary)"),
-  x     = c(0, 10, 0 + 2, 10 + 5),
+  x     = c(2, 15, 7, 21),
   y     = c(2, 2, 1, 1),
   type  = c("true", "true", "reported", "reported")
 )
@@ -501,34 +501,34 @@ ggplot(df_wind) +
   geom_point(data = df_wind[df_wind$type == "reported", ],
              aes(x = x, y = y), color = "#E05A2B", size = 5, shape = 17) +
   # Ligne vraie ICC
-  geom_segment(aes(x = 0, xend = 10, y = 2, yend = 2),
+  geom_segment(aes(x = 2, xend = 15, y = 2, yend = 2),
                arrow = arrow(ends = "both", length = unit(0.2, "cm"),
                              type = "closed"),
                color = "#2C6FAC", linewidth = 1) +
-  annotate("text", x = 5, y = 2.2, label = "True ICC = 10 days",
+  annotate("text", x = 5, y = 2.2, label = "True ICC = 13 days",
            color = "#2C6FAC", fontface = "bold", size = 3.5) +
   # Ligne ICC reportée
-  geom_segment(aes(x = 2, xend = 15, y = 1, yend = 1),
+  geom_segment(aes(x = 7, xend = 21, y = 1, yend = 1),
                arrow = arrow(ends = "both", length = unit(0.2, "cm"),
                              type = "closed"),
                color = "#E05A2B", linewidth = 1) +
-  annotate("text", x = 8.5, y = 0.8, label = "Reported ICC = 13 days",
+  annotate("text", x = 8.5, y = 0.8, label = "Reported ICC = 14 days",
            color = "#E05A2B", fontface = "bold", size = 3.5) +
   # Incertitudes
   geom_errorbarh(aes(xmin = 0, xmax = 0 + wind_ex, y = 1.5,
                      height = 0.15), color = "grey50", linewidth = 0.8) +
-  geom_errorbarh(aes(xmin = 10, xmax = 10 + wind_ex, y = 1.5,
+  geom_errorbarh(aes(xmin = 14, xmax = 14 + wind_ex, y = 1.5,
                      height = 0.15), color = "grey50", linewidth = 0.8) +
   annotate("text", x = wind_ex / 2, y = 1.65,
            label = paste0("wind = ", wind_ex), color = "grey40", size = 3) +
   annotate("text", x = 10 + wind_ex / 2, y = 1.65,
            label = paste0("wind = ", wind_ex), color = "grey40", size = 3) +
-  scale_x_continuous(limits = c(-1, 20)) +
+  scale_x_continuous(limits = c(-1, 22)) +
   scale_y_continuous(limits = c(0.5, 2.5),
                      breaks = c(1, 2),
                      labels = c("Reported dates", "True dates")) +
   labs(
-    title    = "Figure X — Reporting delay distorts the observed ICC",
+    title    = "Figure 4 — Reporting delay distorts the observed ICC",
     subtitle = paste0("With wind = ", wind_ex,
                       ", each date can be shifted by up to ", wind_ex,
                       " days"),
@@ -600,76 +600,7 @@ As a rule of thumb:
 | Weekly reporting | 7 |
 | Bi-weekly reporting | 14 |
 
-## Sensitivity analysis
 
-When the reporting window is not known with certainty, a **sensitivity analysis**
-over a grid of plausible `wind` values is recommended before drawing conclusions.
-
-```{r wind-sensitivity, echo = FALSE, eval = FALSE}
-# --- Simulation avec wind réel = 7 ---
-set.seed(99)
-
-true_mu_wind    <- 12
-true_sigma_wind <- 3
-N_wind          <- 300
-
-# Générer les vraies dates d'apparition des symptômes
-n_per_route_wind <- round(c(CP = 0.15, PS = 0.55, PT = 0.20, PQ = 0.10) * N_wind)
-
-true_icc <- round(c(
-  fdrtool::rhalfnorm(n_per_route_wind["CP"],
-                     theta = sqrt(pi / 2) / (sqrt(2) * true_sigma_wind)),
-  rnorm(n_per_route_wind["PS"], mean = true_mu_wind,        sd = true_sigma_wind),
-  rnorm(n_per_route_wind["PT"], mean = 2 * true_mu_wind,    sd = sqrt(2) * true_sigma_wind),
-  rnorm(n_per_route_wind["PQ"], mean = 3 * true_mu_wind,    sd = sqrt(3) * true_sigma_wind)
-))
-
-# Ajouter un bruit de reporting de ±7 jours
-true_icc_obs <- true_icc + sample(-7:7, length(true_icc), replace = TRUE)
-true_icc_obs <- abs(true_icc_obs)  # les ICC ne peuvent pas être négatifs
-
-# Estimer avec différentes valeurs de wind
-wind_grid <- c(1, 2, 3, 7, 14)
-
-sens_results <- lapply(wind_grid, function(w) {
-  fit <- si_estim(true_icc_obs, dist = "normal", wind = w, n = 50)
-  data.frame(
-    wind      = w,
-    mean_est  = fit$mean,
-    sd_est    = fit$sd,
-    converged = fit$converged
-  )
-})
-sens_df <- do.call(rbind, sens_results)
-
-cat("=== Sensitivity analysis — wind parameter ===\n")
-cat("True SI mean :", true_mu_wind, "days\n\n")
-print(sens_df, digits = 3, row.names = FALSE)
-```
-
-```{r wind-sensitivity-plot, echo = FALSE, eval = FALSE}
-ggplot(sens_df, aes(x = factor(wind))) +
-  geom_hline(yintercept = true_mu_wind, linetype = "dashed",
-             color = "#E74C3C", linewidth = 1) +
-  geom_point(aes(y = mean_est), color = "#2C6FAC", size = 4) +
-  geom_errorbar(aes(ymin = mean_est - sd_est,
-                    ymax = mean_est + sd_est),
-                color = "#2C6FAC", width = 0.2, linewidth = 0.8) +
-  annotate("text", x = 0.7, y = true_mu_wind + 0.3,
-           label = paste0("True SI = ", true_mu_wind, " days"),
-           color = "#E74C3C", size = 3.2, hjust = 0) +
-  labs(
-    title    = "Figure X — Sensitivity of SI estimates to the wind parameter",
-    subtitle = "Points: estimated mean ± 1 SD  |  Red line: true SI",
-    x        = "wind value",
-    y        = "Estimated mean SI (days)"
-  ) +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.title    = element_text(face = "bold", size = 13),
-    plot.subtitle = element_text(color = "grey40", size = 10)
-  )
-```
 ------------------------------------------------------------------------
 
 # The key limitation: an arbitrarily fixed number of routes
@@ -772,7 +703,7 @@ fig4 <- ggplot() +
   scale_x_continuous(limits = c(-1.2, max(nodes_long$x) + 1.5)) +
   scale_y_continuous(limits = c(0.3, 1.75)) +
   labs(
-    title   = "Figure 4 — Long transmission chain in a highly asymptomatic disease",
+    title   = "Figure 5 — Long transmission chain in a highly asymptomatic disease",
     subtitle = "The observed ICC spans 5 serial intervals, but only 2 symptomatic cases are recorded",
     x = NULL, y = NULL
   ) +
@@ -808,8 +739,8 @@ df_routes <- data.frame(
     "Highly symptomatic disease"
   ),
   Examples = c(
-    "Scabies, some COVID-19 variants",
-    "Influenza, SARS-CoV-2 (Delta variant)",
+    "Hepatitis A",
+    "Influenza",
     "Measles, smallpox"
   ),
   `Recommended routes` = c(
@@ -888,7 +819,7 @@ plot_si_fit_result(result, dat = icc_data, dist = "normal")
 The function returns the same fields as before, with two additions:
 
 -   `n_routes`: the number of routes used (useful for traceability)
--   `loglik`: the log-likelihood of the fitted model (useful for model comparison, see §6)
+-   `loglik`: the log-likelihood of the fitted model (useful for model comparison, see §7)
 
 ------------------------------------------------------------------------
 
@@ -919,78 +850,6 @@ comparison <- compare_n_routes(
 ```
 
 The function returns a summary table and automatically displays the fitted distribution plots for each value of `n_routes` tested:
-
-```{r symptomatic-aic-bic, echo = FALSE, eval = FALSE}
-# --- Comparaison formelle AIC/BIC ---
-# On boucle manuellement pour éviter les graphiques intermédiaires
-# que compare_n_routes() affiche automatiquement
-aic_bic_symp <- lapply(2:6, function(k) {
-  fit      <- si_estim(icc_symp, dist = "normal", n_routes = k, n = 50)
-  n_params <- 2L + (2L * k - 2L)
-  n_obs    <- length(icc_symp)
-  data.frame(
-    n_routes  = k,
-    mu        = fit$mean,
-    sigma     = fit$sd,
-    loglik    = fit$loglik,
-    aic       = -2 * fit$loglik + 2 * n_params,
-    bic       = -2 * fit$loglik + log(n_obs) * n_params,
-    converged = fit$converged
-  )
-}) |> do.call(what = rbind)
-
-# Identifier les minima
-best_aic <- aic_bic_symp$n_routes[which.min(aic_bic_symp$aic)]
-best_bic <- aic_bic_symp$n_routes[which.min(aic_bic_symp$bic)]
-
-cat("Best n_routes by AIC :", best_aic, "\n")
-cat("Best n_routes by BIC :", best_bic, "\n")
-print(aic_bic_symp[, c("n_routes", "mu", "sigma", "loglik", "aic", "bic")])
-
-# Graphique AIC / BIC
-aic_bic_long <- tidyr::pivot_longer(
-  aic_bic_symp,
-  cols      = c(aic, bic),
-  names_to  = "criterion",
-  values_to = "value"
-)
-
-ggplot(aic_bic_long, aes(x = n_routes, y = value,
-                          color = toupper(criterion),
-                          group = criterion)) +
-  geom_line(linewidth = 1) +
-  geom_point(size = 3) +
-  # Mettre en évidence le minimum BIC
-  geom_point(
-    data = aic_bic_long |> dplyr::filter(
-      criterion == "bic", n_routes == best_bic
-    ),
-    aes(x = n_routes, y = value),
-    shape = 21, size = 6, stroke = 2,
-    color = COL_PRIMARY, fill = "white"
-  ) +
-  annotate("text",
-           x = best_bic + 0.15, y = min(aic_bic_symp$bic),
-           label = paste0("BIC minimum\n(n = ", best_bic, " routes)"),
-           color = COL_PRIMARY, hjust = 0, size = 3.5) +
-  scale_color_manual(
-    values = c("AIC" = COL_SECONDARY, "BIC" = COL_PRIMARY),
-    name   = "Criterion"
-  ) +
-  scale_x_continuous(breaks = 2:6) +
-  labs(
-    title    = "Figure 6 — Model selection by AIC and BIC",
-    subtitle = "Highly symptomatic disease — BIC selects the most parsimonious model",
-    x        = "Number of routes",
-    y        = "Criterion value (lower = better)"
-  ) +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.title    = element_text(face = "bold", size = 13),
-    plot.subtitle = element_text(color = "grey40", size = 10),
-    legend.position = "top"
-  )
-```
 
 ```{r compare-n-routes-output, eval=FALSE, echo = TRUE}
 # Structure of the output
@@ -1285,7 +1144,7 @@ We now run the simulation using real outbreak data and compare the results from 
 icc_Influenza_Canada<-c(1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,5,6,6,6,6,7,8,9,10,13,16,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,6,6,6,7,8,8,9,14,16,17,20)
 ```
 
-The example below uses the data from outbreak of Influenza in the study [INSERT STUDY] in Canada. With four routes, we can see the algorithm does not capture the ICC who's value are greater than 4\*mu $n_{\text{routes}}$.
+The example below uses the data from outbreak of Influenza in the study [INSERT STUDY] in Canada. With four routes, we can see the algorithm does not capture the ICC who's value are greater than $4\mu$.
 
 ```{r Influenza Canada 4 routes, echo = FALSE}
 # --- Estimation avec 4 routes (comportement par défaut) ---
@@ -1419,11 +1278,11 @@ plot_pertussis_8
 
 ## Summary
 
-This vignette has presented the extension brought to the `si_estim()` function of the `mitey` package, which now allows the user to freely specify the number of transmission routes $n_{\text{routes}}$.
+This vignette has presented the extension brought to the `si_estim()` function of the `mitey` package, which now allows the user to freely specify the number of transmission routes $n_{\text{routes}}$ and an uncertainty window of the recorded dates.
 
 The key takeaways are:
 
--   The number of routes is a **modelling choice** that should be guided by the biology of the disease and validated by statistical criteria (AIC/BIC).
+-   The number of routes is a **modelling choice** that should be guided by the biology of the disease.
 -   Using **too few routes** for a highly asymptomatic disease leads to overestimation of the SI.
 -   Using **too many routes** for a highly symptomatic disease introduces unnecessary parameters and can destabilise the EM algorithm.
 -   The `compare_n_routes()` function automates the comparison and allows the optimal model to be selected objectively.
@@ -1454,10 +1313,6 @@ result_final <- si_estim(icc_data, dist = "normal", n_routes = n_opt)
 plot_si_fit_result(result_final, dat = icc_data, dist = "normal")
 ```
 
-## Limitations and perspectives
-
--   The method still relies on the assumption that the index case is indeed the person with the earliest symptom onset date in the household, which may not always hold.
--   The maximum number of routes is limited in practice by sample size: with small datasets, the weights of high-order routes will be estimated with large uncertainty. As a rule of thumb, avoid exploring routes whose expected ICC ($k \times \mu$) exceeds the 95th percentile of the observed data.
 
 ------------------------------------------------------------------------
 
