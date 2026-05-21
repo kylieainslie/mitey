@@ -125,7 +125,7 @@ si_estim <- function(
   if (dist == "normal") {
     comp_vec <- c(1L, unlist(lapply(seq_len(n_routes - 1), function(i) c(2L*i, 2L*i + 1L))))
   } else {
-    comp_vec <- c(1L, 2L * seq_len(n_routes))
+    comp_vec <- c(1L, 2L * seq_len(n_routes - 1L))
   }
 
   n_comp <- length(comp_vec)
