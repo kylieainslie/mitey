@@ -67,15 +67,11 @@ f_norm <- function(
     stop("Sum of weights must not exceed 1.")
   }
 
-  # Last route weight derived from the others
-  w_last <- 1 - sum(weights)
-  cat("w_last:", w_last,"\n")
 
   # Component 1: Co-primary (half-normal, special case)
   result <- weights[1] * dhalfnorm(x, sqrt(pi / 2) / (sqrt(2) * sigma))
 
 
-  # Routes 2 to n_routes - 1
   for (i in 2:(n_routes)) {
     result <- result +
       weights[2*i-2] * dnorm(x, mean =  (i-1) * mu, sd = sqrt(i-1) * sigma) +

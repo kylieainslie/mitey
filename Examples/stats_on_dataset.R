@@ -12,4 +12,4 @@ stats <- validation_data %>%
     .groups = "drop"
   )
 
-print(stats)
+print(stats, n=100)

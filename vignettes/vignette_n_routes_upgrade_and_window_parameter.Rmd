@@ -1001,6 +1001,7 @@ graph<- plot_si_fit_result(result_asymp_4,icc_asymp)+
 graph
 
 ```
+The fourth route looks overestimated, which is because all the ICC intervals whose values are greater than $4\mu$ are assigned by the algorithm to the fourth route. This increases the fourth route weight.
 
 The compare_n_routes used below shows how setting the number of routes helps the algorithm capture the distribution.
 
@@ -1012,6 +1013,9 @@ comparison_asym <- compare_n_routes(
   dist         = "normal"
 )
 ```
+
+These graphs show how increasing the number of routes has splitted all ICC intervals in the right component they belong to.
+
 
 ## Example 2 --- Highly symptomatic disease (simulated data)
 
@@ -1141,10 +1145,10 @@ The example above shows us that the initial algorithm is robust to the case wher
 We now run the simulation using real outbreak data and compare the results from 4 to 8 routes.
 
 ```{r Influenza Canada real data recreation, echo = FALSE}
-icc_Influenza_Canada<-c(1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,5,6,6,6,6,7,8,9,10,13,16,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,6,6,6,7,8,8,9,14,16,17,20)
+icc_Influenza_Canada<-c(0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 8, 8, 9, 14, 16, 17, 20)
 ```
 
-The example below uses the data from outbreak of Influenza in the study [INSERT STUDY] in Canada. With four routes, we can see the algorithm does not capture the ICC who's value are greater than $4\mu$.
+The example below uses the data from outbreak of Influenza A(H1N1)pdm09 in the study from Savage, in 2011 in Canada.
 
 ```{r Influenza Canada 4 routes, echo = FALSE}
 # --- Estimation avec 4 routes (comportement par défaut) ---
@@ -1173,8 +1177,9 @@ plot_influenza <- plot_si_fit_result(
   )
 plot_influenza
 ```
+In the original version of the algorithm, the ICC intervals whose values are greater than $4\mu$ are captured by the fourth route.
 
-With the new version of the algorithm, those last value are well captured by the 8 routes.
+With the new version of the algorithm, those last value are well captured by the 8 routes : the weight for the fourth route has decreased, and the ICC intervals are splitted in the route they belong to. 
 
 ```{r Influenza Canada 8 routes, echo = FALSE}
 # --- Estimation avec 8 routes ---
@@ -1210,7 +1215,7 @@ plot_influenza_8
 icc_pertussis_netherlands<-c(0,0,0,0,1,2,2,2,2,3,3,3,3,3,4,4,4,5,5,5,5,5,5,5,6,6,6,6,6,6,7,7,7,7,7,7,8,8,8,8,8,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,11,11,11,11,12,12,12,12,12,12,12,12,12,13,13,13,13,13,13,13,13,13,14,14,14,14,14,14,15,15,15,15,15,15,15,15,15,16,16,16,16,16,16,16,16,17,17,17,17,17,17,18,18,18,18,18,18,18,18,19,19,19,19,19,19,19,19,19,20,20,20,20,20,20,20,20,20,20,20,21,21,21,21,21,21,22,22,22,22,22,22,22,22,23,23,23,23,23,23,23,23,24,24,24,24,24,24,24,24,25,25,25,25,25,25,25,26,26,26,27,27,27,27,27,28,28,28,28,28,28,28,28,28,28,28,29,29,29,29,29,29,30,30,30,30,30,30,30,30,30,30,31,31,31,31,31,31,32,32,32,32,33,33,33,33,33,33,33,34,34,34,35,35,35,35,36,36,36,36,37,37,37,37,37,38,38,40,40,40,40,41,41,41,41,42,42,42,42,42,42,42,43,44,45,46,47,47,47,47,47,48,48,49,49,50,51,51,51,52,52,52,53,53,53,54,54,55,56,56,57,58,59,60,61,62,64,64,65,66,67,67,68,70,72,76,77,80,81,84,90,92,93,101,105,108,116,116,130,155)
 ```
 
-Using the dataset from a pertussis outbreak in Netherlands, from the study [INSERT STUDY], the last values are not captured by the first algorithm.
+Using the dataset from a pertussis outbreak in Netherlands, from Greeff's study in 2010, the last values are not captured by the first algorithm.
 
 ```{r Pertussis Netherlands 4 routes, echo = FALSE}
 # --- Estimation avec 4 routes (comportement par défaut) ---
@@ -1240,7 +1245,7 @@ plot_pertussis <- plot_si_fit_result(
 plot_pertussis
 ```
 
-With the new version of the algorithm, those last value are well captured by the 8 routes.
+With the new version of the algorithm, those last value are captured better by the 8 routes.
 
 ```{r Pertussis Netherlands 8 routes, echo = FALSE}
 # --- Estimation avec 8 routes ---
