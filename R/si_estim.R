@@ -225,6 +225,7 @@ si_estim <- function(
       iterations = iterations_used,
       loglik     = loglik
     )
+
   }
 
   ## --- Run restarts ---

@@ -67,15 +67,27 @@ f_norm <- function(
     stop("Sum of weights must not exceed 1.")
   }
 
+  if (length(weights)!=n_routes -1) {
+    stop("f norm takes n_routes - 1 weights, more have been given ")
+  }
+
 
   # Component 1: Co-primary (half-normal, special case)
   result <- weights[1] * dhalfnorm(x, sqrt(pi / 2) / (sqrt(2) * sigma))
 
-
-  for (i in 2:(n_routes)) {
-    result <- result +
-      weights[2*i-2] * dnorm(x, mean =  (i-1) * mu, sd = sqrt(i-1) * sigma) +
-      weights[2*i-1] * dnorm(x, mean = -(i-1) * mu, sd = sqrt(i-1) * sigma)
+  if (n_routes >2){
+    for (i in 2:(n_routes - 1)) {
+      result <- result +
+        weights[i] * dnorm(x, mean =  (i-1) * mu, sd = sqrt(i-1) * sigma)
     }
+
+  }
+
+
+
+
+  last_weight<-1-sum(weights)
+  result <- result + last_weight*dnorm(x, mean =  (n_routes -1) * mu, sd = sqrt(n_routes -1) * sigma)
+
   return(result)
 }

@@ -73,22 +73,10 @@ plot_si_fit <- function(
     n_routes       = 4L
 ) {
   n_routes <- as.integer(n_routes)
-
-  if (dist == "normal") {
-    if (length(weights) != 2L * n_routes - 1L) {
-      stop(paste0(
-        "weights must have length 2*n_routes - 1 = ", 2L * n_routes - 1L,
-        ", but has length ", length(weights), "."
-      ))
-    }
-  } else {
-    if (length(weights) != n_routes - 1L) {
-      stop(paste0(
-        "weights must have length n_routes - 1 = ", n_routes - 1L,
-        ", but has length ", length(weights), "."
-      ))
-    }
+  if (length(weights) != n_routes) {
+    stop(paste0("In plot_si_fit, weights must have length n_routes = ", n_routes,", but has length ", length(weights), "."))
   }
+
 
   breaks <- seq(min(dat) - 0.51, max(dat) + 0.51, by = 1)
 
@@ -103,7 +91,7 @@ plot_si_fit <- function(
       stat_function(
         fun  = f_gam,
         args = list(
-          weights = weights,
+          weights = weights[1:n_routes-1],
           mu      = mean,
           sigma   = sd,
           n_routes = n_routes
@@ -127,7 +115,7 @@ plot_si_fit <- function(
       stat_function(
         fun  = f_norm,
         args = list(
-          weights  = weights,
+          weights  = weights[1:n_routes-1],
           mu       = mean,
           sigma    = sd,
           n_routes = n_routes
@@ -208,7 +196,16 @@ plot_si_fit_result <- function(
   n_routes <- as.integer(si_result$n_routes)
 
   if (dist == "normal") {
-    weights <- si_result$wts
+
+    wts <- si_result$wts
+    if (length(wts) != 2*n_routes -1) {
+      stop(paste0("In plot_si_fit_result, in normal distribution, weights must have length 2n_routes -1 = ", 2*n_routes - 1,", but has length ", length(weights), "."))
+    }
+
+    weights <- c(wts[1], wts[seq(2, length(wts)-1, by=2)] + wts[seq(3, length(wts), by=2)])
+
+
+
   } else {
     weights <- si_result$wts[seq_len(n_routes)]
   }
