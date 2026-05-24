@@ -30,7 +30,7 @@ knitr::opts_chunk$set(
 library(mitey)
 library(ggplot2)
 library(dplyr)
-library(patchwork)   # to assemble multiple plots
+library(patchwork)   
 library(fdrtool) 
 ```
 

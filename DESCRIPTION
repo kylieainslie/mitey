@@ -32,6 +32,7 @@ BugReports: https://github.com/kylieainslie/mitey/issues
 Suggests: 
     BH,
     brms,
+    patchwork,
     broom,
     cowplot,
     dplyr,
