@@ -73,6 +73,7 @@ plot_si_fit <- function(
     n_routes       = 4L
 ) {
   n_routes <- as.integer(n_routes)
+
   if (length(weights) != n_routes) {
     stop(paste0("In plot_si_fit, weights must have length n_routes = ", n_routes,", but has length ", length(weights), "."))
   }

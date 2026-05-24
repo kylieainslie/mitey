@@ -142,3 +142,26 @@ Vink et al. → Svensson → StatQuest MLE videos → Do & Batzoglou → Reynold
 - [ ] Read R4DS: Workflow chapters, Data Transformation, Functions
 
 
+
+
+
+
+
+RESSOURCES FOR DS 
+
+---
+title: "DS Resources"
+format: html
+editor: visual
+---
+
+## Resources
+
+-   [Data Science Hangout](https://posit.co/data-science-hangout/)
+-   [R for Data Science](https://r4ds.hadley.nz/) by Hadley Wickham
+-   [Happy Git and GitHub for the useR](https://happygitwithr.com/) - Happy Git provides instructions on how to:
+    -   Install Git and get it working smoothly with GitHub, in the shell and in the RStudio IDE.
+    -   Develop a few key workflows that cover your most common tasks.
+    -   Integrate Git and GitHub into your daily work with R and R Markdown.
+
+

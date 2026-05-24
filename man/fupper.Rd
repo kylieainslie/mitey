@@ -4,7 +4,7 @@
 \alias{fupper}
 \title{Calculate fupper for Different Components}
 \usage{
-fupper(x, r, mu, sigma, comp, dist = "normal")
+fupper(x, r, mu, sigma, comp, dist = "normal", wind = 1)
 }
 \arguments{
 \item{x}{The value at which to evaluate the function.}
@@ -19,6 +19,8 @@ fupper(x, r, mu, sigma, comp, dist = "normal")
 2i are positive routes, odd components 2i+1 are negative routes (normal only).}
 
 \item{dist}{string; assumed distribution of the serial interval; accepts "normal" or "gamma"; defaults to "normal".}
+
+\item{wind}{The window censure interval}
 }
 \value{
 The calculated value of fupper.

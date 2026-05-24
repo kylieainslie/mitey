@@ -10,7 +10,8 @@ integrate_component(
   sigma,
   comp,
   dist = c("normal", "gamma"),
-  lower = TRUE
+  lower = TRUE,
+  wind = 1
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ Even components 2i are positive routes, odd components 2i+1 are negative routes 
 Must be either "normal" or "gamma". Defaults to "normal"}
 
 \item{lower}{logical; if \code{TRUE} (default), performs integration using \code{flower} and \code{fupper} functions. If \code{FALSE}, uses \code{f0} function}
+
+\item{wind}{The window censure interval}
 }
 \value{
 numeric; the integrated likelihood value for the specified component and data point. Used in the EM algorithm for serial interval estimation

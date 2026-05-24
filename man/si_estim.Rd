@@ -11,7 +11,8 @@ si_estim(
   init = NULL,
   tol = 1e-06,
   n_starts = 1,
-  n_routes = 4L
+  n_routes = 4L,
+  wind = 1
 )
 }
 \arguments{
@@ -32,6 +33,8 @@ deviation. If NULL (default), uses the sample mean and sample standard deviation
 \item{n_routes}{integer; number of transmission routes to model. Must be >= 2.
 Defaults to 4 (Co-Primary, Primary-Secondary, Primary-Tertiary, Primary-Quaternary).
 Increasing this allows modelling longer transmission chains.}
+
+\item{wind}{The window censure interval}
 }
 \value{
 A named list containing:

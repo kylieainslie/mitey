@@ -4,7 +4,7 @@
 \alias{f0}
 \title{Calculate f0 for Different Components}
 \usage{
-f0(x, mu, sigma, comp, dist = "normal")
+f0(x, mu, sigma, comp, dist = "normal", wind = 1)
 }
 \arguments{
 \item{x}{numeric; the value at which to evaluate the function.}
@@ -17,6 +17,8 @@ f0(x, mu, sigma, comp, dist = "normal")
 2i are positive routes, odd components 2i+1 are negative routes (normal only).}
 
 \item{dist}{string; assumed distribution of the serial interval; takes "normal" or "gamma"; defaults to "normal"}
+
+\item{wind}{The window censure interval}
 }
 \value{
 The calculated value of f0.

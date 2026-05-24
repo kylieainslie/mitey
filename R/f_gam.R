@@ -84,7 +84,7 @@ f_gam <- function(
   # Routes 2 to n_routes - 1
   if (n_routes >= 3) {
     for (i in 2:(n_routes - 1)) {
-      result <- result + weights[i] * dgamma(x, shape = i * k, scale = theta)
+      result <- result + weights[i] * dgamma(x, shape = (i-1) * k, scale = theta)
     }
   }
 

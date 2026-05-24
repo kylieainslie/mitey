@@ -25,7 +25,7 @@ test_that("si_estim produces correct estimates with simulated data", {
 
   # Test normal distribution estimates
   expect_type(result_normal, "list")
-  expect_setequal(names(result_normal), c("mean", "sd", "wts", "converged", "iterations", "loglik", "n_restarts", "n_routes"))
+  expect_setequal(names(result_normal), c("mean", "sd", "wts", "converged", "iterations", "loglik", "n_restarts", "n_routes", "wind"))
 
   # Check that the estimate is close to true value
   expect_true(abs(result_normal$mean[1] - true_mu) < 1,

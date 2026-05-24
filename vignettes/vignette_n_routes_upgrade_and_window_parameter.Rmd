@@ -15,10 +15,6 @@ bibliography: references.bib
 ---
 
 ```{r setup, include = FALSE}
-
-devtools::load_all()
-# Doit afficher le corps de ta nouvelle fonction avec weights_list
-
 knitr::opts_chunk$set(
   collapse   = TRUE,
   comment    = "#>",
