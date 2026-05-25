@@ -82,7 +82,7 @@ compare_n_routes <- function(
 
   for (n_routes in 2:n_routes_max) {
     fit <- si_estim(dat, n = n, dist = dist, n_routes = n_routes, ...)
-    print(plot_si_fit_result(fit,dat))
+    print(plot_si_fit_result(fit,dat,dist=dist))
 
     if (dist == "normal") {
       n_params <- 2L + (2L * n_routes - 2L)

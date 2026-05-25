@@ -197,7 +197,6 @@ plot_si_fit_result <- function(
   n_routes <- as.integer(si_result$n_routes)
 
   if (dist == "normal") {
-
     wts <- si_result$wts
     if (length(wts) != 2*n_routes -1) {
       stop(paste0("In plot_si_fit_result, in normal distribution, weights must have length 2n_routes -1 = ", 2*n_routes - 1,", but has length ", length(weights), "."))
