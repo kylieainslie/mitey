@@ -47,7 +47,7 @@
 #'   dat = icc_data,
 #'   mean = 12.5,
 #'   sd = 3.2,
-#'   weights = c(0.2, 0.6, 0.15),
+#'   weights = c(0.2, 0.6, 0.15, 0.05),
 #'   dist = "normal",
 #'   n_routes = 4
 #' )
@@ -57,7 +57,7 @@
 #'   dat = icc_data,
 #'   mean = 12.0,
 #'   sd = 3.5,
-#'   weights = c(0.25, 0.65, 0.05, 0.03),
+#'   weights = c(0.25, 0.65, 0.05, 0.03, 0.02),
 #'   dist = "gamma",
 #'   n_routes = 5,
 #'   scaling_factor = 0.8
