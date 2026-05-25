@@ -15,9 +15,3 @@ PQ <- rnorm(route_weights[4]*N, mean=3*true_mean, sd=sqrt(3)*true_sd)      # Pri
 # Combine and round to days
 sim_icc_intervals <- round(c(CP, PS, PT, PQ))
 
-# Visualize the simulated data
-hist(sim_icc_intervals,
-     breaks = seq(min(sim_icc_intervals)-0.5, max(sim_icc_intervals)+0.5, by=1),
-     main = "Simulated ICC Intervals",
-     xlab = "Days since index case onset",
-     col = "lightblue")
