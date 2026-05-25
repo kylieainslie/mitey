@@ -93,8 +93,8 @@ jobs:
       - name: Run R CMD check
         uses: r-lib/actions/check-r-package@v2
         with:
-          build-vignettes: true
-          upload-logs: true
+          build_args: 'c("--no-manual", "--as-cran")'
+          upload-results: true
 
       # Step 7: Upload check results
       - name: Upload R CMD check results
