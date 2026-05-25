@@ -94,7 +94,7 @@ jobs:
         uses: r-lib/actions/check-r-package@v2
         with:
           build_args: '"--no-manual"'
-          args: '"--as-cran"'
+          args: '"--no-manual", "--as-cran"'
           upload-results: true
 
       # Step 7: Upload check results
