@@ -49,7 +49,7 @@ test_that("si_estim produces correct estimates with simulated data", {
 
   # Basic validation for gamma distribution
   expect_type(result_gamma, "list")
-  expect_named(result_gamma, c("mean", "sd", "wts", "converged", "iterations", "loglik", "n_restarts", "n_routes"))
+  expect_named(result_gamma, c("mean", "sd", "wts", "converged", "iterations", "loglik", "n_restarts", "n_routes", "wind"))
 
   # Gamma may not match as closely since data was generated using normal distribution
   # But should still be reasonable
