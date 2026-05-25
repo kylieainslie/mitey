@@ -8,7 +8,7 @@ output:
     toc_depth: 3
     number_sections: true
 vignette: >
-  %\VignetteIndexEntry{Flexible Number of Transmission Routes in Serial Interval Estimation}
+  %\VignetteIndexEntry{Flexible Number of Transmission Routes and accounting for date uncertainty in Serial Interval Estimation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
@@ -470,31 +470,27 @@ df_wind <- data.frame(
 )
 
 ggplot(df_wind) +
-  # Vraies dates
   geom_point(data = df_wind[df_wind$type == "true", ],
              aes(x = x, y = y), color = "#2C6FAC", size = 5) +
-  # Dates reportées
   geom_point(data = df_wind[df_wind$type == "reported", ],
              aes(x = x, y = y), color = "#E05A2B", size = 5, shape = 17) +
   # Ligne vraie ICC
-  geom_segment(aes(x = 2, xend = 15, y = 2, yend = 2),
-               arrow = arrow(ends = "both", length = unit(0.2, "cm"),
-                             type = "closed"),
-               color = "#2C6FAC", linewidth = 1) +
+  annotate("segment", x = 2, xend = 15, y = 2, yend = 2,
+           arrow = arrow(ends = "both", length = unit(0.2, "cm"), type = "closed"),
+           color = "#2C6FAC", linewidth = 1) +
   annotate("text", x = 5, y = 2.2, label = "True ICC = 13 days",
            color = "#2C6FAC", fontface = "bold", size = 3.5) +
   # Ligne ICC reportée
-  geom_segment(aes(x = 7, xend = 21, y = 1, yend = 1),
-               arrow = arrow(ends = "both", length = unit(0.2, "cm"),
-                             type = "closed"),
-               color = "#E05A2B", linewidth = 1) +
+  annotate("segment", x = 7, xend = 21, y = 1, yend = 1,
+           arrow = arrow(ends = "both", length = unit(0.2, "cm"), type = "closed"),
+           color = "#E05A2B", linewidth = 1) +
   annotate("text", x = 8.5, y = 0.8, label = "Reported ICC = 14 days",
            color = "#E05A2B", fontface = "bold", size = 3.5) +
   # Incertitudes
-  geom_errorbarh(aes(xmin = 0, xmax = 0 + wind_ex, y = 1.5,
-                     height = 0.15), color = "grey50", linewidth = 0.8) +
-  geom_errorbarh(aes(xmin = 14, xmax = 14 + wind_ex, y = 1.5,
-                     height = 0.15), color = "grey50", linewidth = 0.8) +
+  annotate("errorbarh", xmin = 0, xmax = wind_ex, y = 1.5,
+           height = 0.15, color = "grey50", linewidth = 0.8) +
+  annotate("errorbarh", xmin = 14, xmax = 14 + wind_ex, y = 1.5,
+           height = 0.15, color = "grey50", linewidth = 0.8) +
   annotate("text", x = wind_ex / 2, y = 1.65,
            label = paste0("wind = ", wind_ex), color = "grey40", size = 3) +
   annotate("text", x = 10 + wind_ex / 2, y = 1.65,
@@ -506,15 +502,14 @@ ggplot(df_wind) +
   labs(
     title    = "Figure 4 — Reporting delay distorts the observed ICC",
     subtitle = paste0("With wind = ", wind_ex,
-                      ", each date can be shifted by up to ", wind_ex,
-                      " days"),
+                      ", each date can be shifted by up to ", wind_ex, " days"),
     x = "Time (days)", y = NULL
   ) +
   theme_minimal(base_size = 12) +
   theme(
-    panel.grid.minor   = element_blank(),
-    plot.title         = element_text(face = "bold", size = 13),
-    plot.subtitle      = element_text(color = "grey40", size = 10)
+    panel.grid.minor = element_blank(),
+    plot.title       = element_text(face = "bold", size = 13),
+    plot.subtitle    = element_text(color = "grey40", size = 10)
   )
 ```
 
