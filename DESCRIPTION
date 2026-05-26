@@ -58,7 +58,8 @@ Suggests:
     tidybayes,
     tidyr,
     viridis,
-    zoo
+    zoo,
+    remotes
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Depends:
