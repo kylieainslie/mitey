@@ -218,7 +218,7 @@ fig2 <- ggplot(household) +
     aes(x = t_symp / 2, y = y + 0.18,
         label = paste0("ICC = ", t_symp, " days")),
     size = 3, color = COL_SECONDARY, fill = "white",
-    label.size = 0.2, label.padding = unit(0.15, "lines")
+    linewidth = 0.2, label.padding = unit(0.15, "lines")
   ) +
   # Ligne verticale cas index
   geom_vline(xintercept = 0, linetype = "dashed",
