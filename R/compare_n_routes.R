@@ -69,7 +69,6 @@
 #' results_gam <- compare_n_routes(icc_data, n_routes_max = 5, dist = "gamma", n = 50)
 #' }
 
-#' @export
 compare_n_routes <- function(
     dat,
     n_routes_max = 8L,
