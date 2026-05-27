@@ -27,8 +27,6 @@ knitr::opts_chunk$set(
 ```
 
 ```{r packages, echo = FALSE}
-#library(mitey)
-remotes::install_github("kylieainslie/mitey")
 library(mitey)
 library(ggplot2)
 library(dplyr)
