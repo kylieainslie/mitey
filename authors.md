@@ -12,7 +12,7 @@ Source:
 
 Ainslie K (2025). *mitey: Serial Interval and Case Reproduction Number
 Estimation*.
-[doi:10.5281/zenodo.15446456](https://doi.org/10.5281/zenodo.15446456),
+[doi:10.5281/zenodo.15446456](https://doi.org/10.5281/zenodo.15446456).
 R package version 0.2.0, <https://github.com/kylieainslie/mitey>.
 
     @Manual{,

@@ -2,6 +2,9 @@
 
 ## All functions
 
+- [`compare_n_routes()`](https://kylieainslie.github.io/mitey/reference/compare_n_routes.md)
+  : Compare Serial Interval Models Across Different Numbers of
+  Transmission Routes
 - [`generate_synthetic_epidemic()`](https://kylieainslie.github.io/mitey/reference/generate_synthetic_epidemic.md)
   : Generate Synthetic Epidemic Data Using the Renewal Equation
 - [`plot_si_fit()`](https://kylieainslie.github.io/mitey/reference/plot_si_fit.md)

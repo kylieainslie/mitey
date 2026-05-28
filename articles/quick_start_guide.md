@@ -5,6 +5,7 @@
 First, let’s load the required packages:
 
 ``` r
+
 library(mitey)
 library(dplyr)
 library(tidyr)
@@ -118,6 +119,12 @@ si_results
 #> [1] -1844.759
 #> 
 #> $n_restarts
+#> [1] 1
+#> 
+#> $n_routes
+#> [1] 4
+#> 
+#> $wind
 #> [1] 1
 ```
 

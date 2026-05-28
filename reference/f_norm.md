@@ -8,7 +8,7 @@ assuming an underlying normal distribution for the serial interval.
 ## Usage
 
 ``` r
-f_norm(x, w1, w2, w3, mu, sigma)
+f_norm(x, weights, mu, sigma, n_routes)
 ```
 
 ## Arguments
@@ -18,17 +18,11 @@ f_norm(x, w1, w2, w3, mu, sigma)
   quantile or vector of quantiles (time in days since index case symptom
   onset)
 
-- w1:
+- weights:
 
-  probability weight of being a co-primary case
-
-- w2:
-
-  probability weight of being a primary-secondary case
-
-- w3:
-
-  probability weight of being a primary-tertiary case
+  numeric vector of length n_routes - 1; probability weights for each
+  transmission route starting from Co-primary. The weight for the last
+  route is derived as 1 - sum(weights).
 
 - mu:
 
@@ -41,11 +35,10 @@ f_norm(x, w1, w2, w3, mu, sigma)
 ## Value
 
 Vector of weighted density values corresponding to input quantiles x.
-Returns the sum of densities from all four transmission routes.
 
 ## Details
 
-The function models four distinct transmission routes:
+The function models n_routes distinct transmission routes:
 
 - Co-primary (CP): Cases infected simultaneously from the same source
 
@@ -53,28 +46,16 @@ The function models four distinct transmission routes:
 
 - Primary-tertiary (PT): Transmission through one intermediate case
 
-- Primary-quaternary (PQ): Transmission through two intermediate cases
+- And so on up to n_routes
 
-Each route contributes to the overall serial interval distribution with
-different means and variances. The co-primary component uses a
-half-normal distribution to model simultaneous infections (preventing
-negative serial intervals), while subsequent generations follow normal
-distributions with means that are multiples of the base serial interval.
+The weights vector must have length n_routes - 1, with the remaining
+probability (1 - sum(weights)) assigned to the last route. The
+transmission route distributions are parameterized as:
 
-This function is primarily used internally by
-[`si_estim`](https://kylieainslie.github.io/mitey/reference/si_estim.md)
-when `dist = "normal"` is specified (the default), and by
-[`plot_si_fit`](https://kylieainslie.github.io/mitey/reference/plot_si_fit.md)
-for visualizing fitted distributions. The normal distribution assumption
-allows for negative serial intervals, which may be more realistic for
-some pathogens.
+- Co-primary: Half-normal with scale parameter derived from sigma
 
-The weights w1, w2, and w3 must sum to \<= 1, with the remaining
-probability (1 - w1 - w2 - w3) assigned to primary-quaternary cases. The
-transmission route distributions are parameterized as: Co-primary:
-Half-normal with scale parameter derived from sigma Primary-secondary:
-Normal(mu, sigma) Primary-tertiary: Normal(2\*mu, sqrt(2)*sigma)
-Primary-quaternary: Normal(3*mu, sqrt(3)\*sigma)
+- Route i (i \>= 2): Normal(i \* mu, sqrt(i) \* sigma) and Normal(-i \*
+  mu, sqrt(i) \* sigma)
 
 ## References
 
@@ -92,8 +73,13 @@ American Journal of Epidemiology, 180(9), 865-875.
 
 ``` r
 if (FALSE) { # \dontrun{
+# 4 routes (default behaviour)
 x <- seq(0, 400, by = 1)
-density_values <- f_norm(x, w1 = 0.15, w2 = 0.50, w3 = 0.25, mu = 123, sigma = 32)
+density_values <- f_norm(x, weights = c(0.15, 0.50, 0.25), mu = 123, sigma = 32)
 plot(x, density_values, type = "l")
+
+# 5 routes
+density_values5 <- f_norm(x, weights = c(0.15, 0.50, 0.20, 0.10), mu = 123, sigma = 32)
+plot(x, density_values5, type = "l")
 } # }
 ```

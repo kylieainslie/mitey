@@ -4,6 +4,9 @@
 
 - [Code validation for Vink
   method](https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.md):
+- [Flexible Number of Transmission Routes and accounting for date
+  uncertainty in Serial Interval
+  Estimation](https://kylieainslie.github.io/mitey/articles/presentation_changes_to_the_original_code.md):
 - [Quick Start Guide: Estimating Epidemiological Parameters with
   \`mitey\`](https://kylieainslie.github.io/mitey/articles/quick_start_guide.md):
 - [Reproduce Results from Ainslie et

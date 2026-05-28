@@ -8,7 +8,7 @@ assuming an underlying gamma distribution for the serial interval.
 ## Usage
 
 ``` r
-f_gam(x, w1, w2, w3, mu, sigma)
+f_gam(x, weights, mu, sigma)
 ```
 
 ## Arguments
@@ -18,17 +18,11 @@ f_gam(x, w1, w2, w3, mu, sigma)
   quantile or vector of quantiles (time in days since index case symptom
   onset)
 
-- w1:
+- weights:
 
-  probability weight of being a co-primary case
-
-- w2:
-
-  probability weight of being a primary-secondary case
-
-- w3:
-
-  probability weight of being a primary-tertiary case
+  numeric vector of length n_routes - 1; probability weights for each
+  transmission route starting from Co-primary. The weight for the last
+  route is derived as 1 - sum(weights).
 
 - mu:
 
@@ -41,11 +35,10 @@ f_gam(x, w1, w2, w3, mu, sigma)
 ## Value
 
 Vector of weighted density values corresponding to input quantiles x.
-Returns the sum of densities from all four transmission routes.
 
 ## Details
 
-The function models four distinct transmission routes:
+The function models n_routes distinct transmission routes:
 
 - Co-primary (CP): Cases infected simultaneously from the same source
 
@@ -53,25 +46,13 @@ The function models four distinct transmission routes:
 
 - Primary-tertiary (PT): Transmission through one intermediate case
 
-- Primary-quaternary (PQ): Transmission through two intermediate cases
+- And so on up to n_routes
 
-Each route contributes to the overall serial interval distribution with
-different means and variances. The co-primary component uses a modified
-gamma distribution to account for simultaneous infections, while
-subsequent generations follow gamma distributions with progressively
-longer means and larger variances.
-
-This function is primarily used internally by
-[`si_estim`](https://kylieainslie.github.io/mitey/reference/si_estim.md)
-when `dist = "gamma"` is specified, and by
-[`plot_si_fit`](https://kylieainslie.github.io/mitey/reference/plot_si_fit.md)
-for visualizing fitted distributions.
-
-The weights w1, w2, and w3 must sum to \<= 1, with the remaining
-probability (1 - w1 - w2 - w3) assigned to primary-quaternary cases. The
-function converts the mean and standard deviation to gamma distribution
-shape (k) and scale (\theta) parameters using the method of moments:
-\$\$k = \mu^2 / \sigma^2\$\$ \$\$\theta = \sigma^2 / \mu\$\$
+The weights vector must have length n_routes - 1, with the remaining
+probability (1 - sum(weights)) assigned to the last route. The function
+converts mean and standard deviation to gamma distribution shape (k) and
+scale (theta) parameters: \$\$k = \mu^2 / \sigma^2\$\$ \$\$\theta =
+\sigma^2 / \mu\$\$ Route i uses shape i \* k and scale theta.
 
 ## References
 
@@ -89,8 +70,13 @@ American Journal of Epidemiology, 180(9), 865-875.
 
 ``` r
 if (FALSE) { # \dontrun{
+# 4 routes (default behaviour)
 x <- seq(0.1, 30, by = 0.1)
-density_values <- f_gam(x, w1 = 0.1, w2 = 0.6, w3 = 0.2, mu = 6.5, sigma = 2.8)
+density_values <- f_gam(x, weights = c(0.1, 0.6, 0.2), mu = 6.5, sigma = 2.8)
 plot(x, density_values, type = "l")
+
+# 5 routes
+density_values5 <- f_gam(x, weights = c(0.1, 0.6, 0.15, 0.10), mu = 6.5, sigma = 2.8)
+plot(x, density_values5, type = "l")
 } # }
 ```

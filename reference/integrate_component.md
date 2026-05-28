@@ -15,7 +15,8 @@ integrate_component(
   sigma,
   comp,
   dist = c("normal", "gamma"),
-  lower = TRUE
+  lower = TRUE,
+  wind = 1
 )
 ```
 
@@ -37,8 +38,9 @@ integrate_component(
 
 - comp:
 
-  integer; the transmission route component number (1 to 7). See Details
-  for component definitions
+  integer; the transmission route component number. Component 1 is
+  Co-Primary. Even components 2i are positive routes, odd components
+  2i+1 are negative routes (normal only).
 
 - dist:
 
@@ -49,6 +51,10 @@ integrate_component(
 
   logical; if `TRUE` (default), performs integration using `flower` and
   `fupper` functions. If `FALSE`, uses `f0` function
+
+- wind:
+
+  The window censure interval
 
 ## Value
 

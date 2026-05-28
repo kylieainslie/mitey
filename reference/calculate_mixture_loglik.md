@@ -6,7 +6,7 @@ model.
 ## Usage
 
 ``` r
-calculate_mixture_loglik(dat, mu, sigma, wts, comp_vec, dist)
+calculate_mixture_loglik(dat, mu, sigma, wts, comp_vec, dist, wind)
 ```
 
 ## Arguments
@@ -34,6 +34,10 @@ calculate_mixture_loglik(dat, mu, sigma, wts, comp_vec, dist)
 - dist:
 
   character; distribution type ("normal" or "gamma")
+
+- wind:
+
+  The window censure interval
 
 ## Value
 

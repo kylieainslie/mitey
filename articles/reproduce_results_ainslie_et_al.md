@@ -343,6 +343,12 @@ datasets from other infectious diseases.
     #> 
     #> $n_restarts
     #> [1] 1
+    #> 
+    #> $n_routes
+    #> [1] 4
+    #> 
+    #> $wind
+    #> [1] 1
 
     #> `summarise()` has regrouped the output.
     #> ℹ Summaries were computed grouped by Author, Pathogen, and Country.
@@ -1215,7 +1221,7 @@ plots_gam <- df_merged_gam %>%
     dat = .x$icc_interval,
     mean = .x$mean[1],
     sd = .x$sd[1],
-    weights = c(.x$weight_1[1], .x$weight_2[1], .x$weight_4[1]),
+    weights = c(.x$weight_1[1], .x$weight_2[1], .x$weight_3[1], .x$weight_4[1]),
     dist = "gamma"
   ))
 

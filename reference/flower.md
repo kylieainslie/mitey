@@ -5,7 +5,7 @@ This function calculates the value of flower based on the component.
 ## Usage
 
 ``` r
-flower(x, r, mu, sigma, comp, dist = "normal")
+flower(x, r, mu, sigma, comp, dist = "normal", wind = 1)
 ```
 
 ## Arguments
@@ -28,12 +28,18 @@ flower(x, r, mu, sigma, comp, dist = "normal")
 
 - comp:
 
-  The component number (1 to 7).
+  integer; the component number. Component 1 is Co-Primary. Even
+  components 2i are positive routes, odd components 2i+1 are negative
+  routes (normal only).
 
 - dist:
 
   string; assumed distribution of the serial interval; accepts "normal"
   or "gamma"; defaults to "normal"
+
+- wind:
+
+  The window censure interval .
 
 ## Value
 

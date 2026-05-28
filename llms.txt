@@ -343,6 +343,9 @@ to discuss potential improvements or report bugs.
 
 ## All functions
 
+- [`compare_n_routes()`](https://kylieainslie.github.io/mitey/reference/compare_n_routes.md)
+  : Compare Serial Interval Models Across Different Numbers of
+  Transmission Routes
 - [`generate_synthetic_epidemic()`](https://kylieainslie.github.io/mitey/reference/generate_synthetic_epidemic.md)
   : Generate Synthetic Epidemic Data Using the Renewal Equation
 - [`plot_si_fit()`](https://kylieainslie.github.io/mitey/reference/plot_si_fit.md)
@@ -363,6 +366,9 @@ to discuss potential improvements or report bugs.
 
 - [Code validation for Vink
   method](https://kylieainslie.github.io/mitey/articles/code_validation_for_Vink_method.md):
+- [Flexible Number of Transmission Routes and accounting for date
+  uncertainty in Serial Interval
+  Estimation](https://kylieainslie.github.io/mitey/articles/presentation_changes_to_the_original_code.md):
 - [Quick Start Guide: Estimating Epidemiological Parameters with
   \`mitey\`](https://kylieainslie.github.io/mitey/articles/quick_start_guide.md):
 - [Reproduce Results from Ainslie et

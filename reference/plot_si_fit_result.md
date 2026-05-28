@@ -5,7 +5,7 @@ A convenience wrapper for
 that accepts the output from
 [`si_estim`](https://kylieainslie.github.io/mitey/reference/si_estim.md)
 directly, automatically handling the weight aggregation for different
-distribution types.
+distribution types and number of routes.
 
 ## Usage
 
@@ -24,59 +24,47 @@ plot_si_fit_result(
 
   list; the output from
   [`si_estim`](https://kylieainslie.github.io/mitey/reference/si_estim.md)
-  containing mean, sd, and wts (weights) components
+  containing mean, sd, wts, and n_routes components.
 
 - dat:
 
-  numeric vector; the index case-to-case (ICC) intervals in days used
-  for estimation
+  numeric vector; the index case-to-case (ICC) intervals in days.
 
 - dist:
 
-  character; the distribution family used for estimation. Must be either
-  "normal" (default) or "gamma". Should match the distribution used in
-  the original
-  [`si_estim()`](https://kylieainslie.github.io/mitey/reference/si_estim.md)
-  call
+  character; the distribution family. Must be either "normal" (default)
+  or "gamma". Should match the distribution used in
+  [`si_estim()`](https://kylieainslie.github.io/mitey/reference/si_estim.md).
 
 - scaling_factor:
 
   numeric; multiplicative factor to adjust the height of the fitted
-  density curve. Defaults to 1
+  density curve. Defaults to 1.
 
 ## Value
 
-A `ggplot2` object showing the fitted distribution overlaid on a
-histogram of the observed data
+A `ggplot2` object.
 
 ## Details
 
-This function simplifies the plotting workflow by automatically
-aggregating the component weights from
-[`si_estim()`](https://kylieainslie.github.io/mitey/reference/si_estim.md)
-output:
+This function reads `n_routes` directly from the `si_result` object and
+aggregates component weights automatically:
 
-- For **normal distribution**: Aggregates 7 weights into 4 transmission
-  route weights (co-primary, primary-secondary, primary-tertiary,
-  primary-quaternary)
+- For normal distribution: the Co-primary weight is taken directly, and
+  weights for routes 2 to n_routes are aggregated by summing the two
+  symmetric components (positive and negative).
 
-- For **gamma distribution**: Passes the first 3 weights (co-primary,
-  primary-secondary, primary-tertiary); the primary-quaternary weight is
-  derived internally by
-  [`f_gam()`](https://kylieainslie.github.io/mitey/reference/f_gam.md)
-  as `1 - w1 - w2 - w3`
+- For gamma distribution: weights are taken directly as the first
+  n_routes - 1 values from `si_result$wts`.
 
 ## See also
 
-[`si_estim`](https://kylieainslie.github.io/mitey/reference/si_estim.md)
-for serial interval estimation,
+[`si_estim`](https://kylieainslie.github.io/mitey/reference/si_estim.md),
 [`plot_si_fit`](https://kylieainslie.github.io/mitey/reference/plot_si_fit.md)
-for the underlying plotting function
 
 ## Examples
 
 ``` r
-# Simulate some ICC interval data
 set.seed(123)
 icc_data <- c(
   abs(rnorm(15, mean = 0, sd = 2)),
@@ -85,12 +73,15 @@ icc_data <- c(
 )
 icc_data <- round(pmax(icc_data, 0))
 
-# Estimate serial interval
 # \donttest{
+# 4 routes (default)
 result <- si_estim(icc_data, n = 50)
-
-# Plot using the convenience wrapper
 plot_si_fit_result(result, icc_data, dist = "normal")
+
+
+# 5 routes
+result5 <- si_estim(icc_data, n = 50, n_routes = 5)
+plot_si_fit_result(result5, icc_data, dist = "normal")
 
 # }
 ```

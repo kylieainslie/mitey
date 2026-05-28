@@ -96,6 +96,12 @@ results
 #> 
 #> $n_restarts
 #> [1] 1
+#> 
+#> $n_routes
+#> [1] 4
+#> 
+#> $wind
+#> [1] 1
 ```
 
 The output of `si_estim` is a named list with elements `mean`, `sd`,
