@@ -4,7 +4,7 @@
 \alias{calculate_mixture_loglik}
 \title{Calculate Log-Likelihood for Mixture Model}
 \usage{
-calculate_mixture_loglik(dat, mu, sigma, wts, comp_vec, dist)
+calculate_mixture_loglik(dat, mu, sigma, wts, comp_vec, dist, wind)
 }
 \arguments{
 \item{dat}{numeric vector; the data}
@@ -18,6 +18,8 @@ calculate_mixture_loglik(dat, mu, sigma, wts, comp_vec, dist)
 \item{comp_vec}{integer vector; component indices}
 
 \item{dist}{character; distribution type ("normal" or "gamma")}
+
+\item{wind}{The window censure interval}
 }
 \value{
 numeric; log-likelihood value

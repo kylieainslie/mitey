@@ -31,7 +31,7 @@ test_that("plot_si_fit returns a ggplot object for gamma distribution", {
     dat = icc_data,
     mean = 8.0,
     sd = 2.0,
-    weights = c(0.25, 0.65, 0.10),
+    weights = c(0.25, 0.65, 0.10, 0.0),
     dist = "gamma"
   )
 

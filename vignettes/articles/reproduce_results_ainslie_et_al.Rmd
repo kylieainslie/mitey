@@ -1236,7 +1236,7 @@ plots_gam <- df_merged_gam %>%
     dat = .x$icc_interval,
     mean = .x$mean[1],
     sd = .x$sd[1],
-    weights = c(.x$weight_1[1], .x$weight_2[1], .x$weight_4[1]),
+    weights = c(.x$weight_1[1], .x$weight_2[1], .x$weight_3[1], .x$weight_4[1]),
     dist = "gamma"
   ))
 

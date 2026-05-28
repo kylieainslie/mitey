@@ -4,7 +4,7 @@
 \alias{flower}
 \title{Calculate flower for Different Components}
 \usage{
-flower(x, r, mu, sigma, comp, dist = "normal")
+flower(x, r, mu, sigma, comp, dist = "normal", wind = 1)
 }
 \arguments{
 \item{x}{The value at which to evaluate the function.}
@@ -15,9 +15,13 @@ flower(x, r, mu, sigma, comp, dist = "normal")
 
 \item{sigma}{The standard deviation.}
 
-\item{comp}{The component number (1 to 7).}
+\item{comp}{integer; the component number. Component 1 is Co-Primary. Even components
+2i are positive routes, odd components 2i+1 are negative routes (normal only).}
 
 \item{dist}{string; assumed distribution of the serial interval; accepts "normal" or "gamma"; defaults to "normal"}
+
+\item{wind}{The window censure interval
+.}
 }
 \value{
 The calculated value of flower.

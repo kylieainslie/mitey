@@ -5,82 +5,56 @@
 #' It is a key component of the Vink method's Expectation-Maximization algorithm for
 #' estimating serial interval parameters from outbreak data.
 #'
-#' The function handles different integration scenarios based on the distribution type
-#' and ICC interval value:
-#' \itemize{
-#'   \item For \strong{normal distribution}: Uses all 7 components representing the full
-#'         mixture of transmission routes (co-primary, primary-secondary with positive
-#'         and negative components, primary-tertiary, and primary-quaternary routes)
-#'   \item For \strong{gamma distribution}: Uses components 1, 2, 4, and 6 only, as
-#'         the gamma distribution naturally handles only positive serial intervals,
-#'         eliminating the need for negative component pairs
-#'   \item For \strong{ICC interval = 0}: Uses upper integration (\code{lower = FALSE})
-#'         representing the special case of simultaneous symptom onset
-#'   \item For \strong{ICC interval > 0}: Uses lower integration (\code{lower = TRUE})
-#'         representing the standard transmission likelihood calculation
-#' }
-#'
-#' @param d numeric; the index case-to-case (ICC) interval in days. Represents the
-#'          time difference between the symptom onset of the index case (latest case)
-#'          and the current case being evaluated. Must be non-negative
-#' @param mu numeric; the mean of the serial interval distribution in days. Must be
-#'           positive for meaningful epidemiological interpretation
-#' @param sigma numeric; the standard deviation of the serial interval distribution
-#'              in days. Must be positive
+#' @param d numeric; the index case-to-case (ICC) interval in days. Must be non-negative.
+#' @param mu numeric; the mean of the serial interval distribution in days.
+#' @param sigma numeric; the standard deviation of the serial interval distribution in days.
 #' @param dist character; the assumed underlying distribution family for the serial
 #'             interval. Must be either "normal" or "gamma". Defaults to "normal".
-#'             Gamma distribution is often preferred for serial intervals as it
-#'             naturally restricts to positive values
+#' @param n_routes integer; the number of transmission routes to model. Must be >= 2.
+#'   Defaults to 4 (Co-Primary, Primary-Secondary, Primary-Tertiary, Primary-Quaternary).
+#'   For normal distribution, generates 2*n_routes - 1 components.
+#'   For gamma distribution, generates n_routes components.
 #'
 #' @return numeric vector; integrated likelihood values for each relevant transmission
-#'         route component. The length depends on the distribution:
+#'         route component. The length depends on the distribution and n_routes:
 #' \itemize{
-#'   \item Normal distribution: 7 values (components 1-7)
-#'   \item Gamma distribution: 4 values (components 1, 2, 4, 6)
+#'   \item Normal distribution: 2*n_routes - 1 values
+#'   \item Gamma distribution: n_routes values
 #' }
-#'
-#' @details
-#' This function is primarily used internally by \code{si_estim()} as part of the
-#' E-step in the EM algorithm. Each component represents a different hypothesis
-#' about the transmission route:
-#' \itemize{
-#'   \item Component 1: Co-primary transmission (simultaneous exposure)
-#'   \item Components 2-3: Primary-secondary transmission (direct transmission)
-#'   \item Components 4-5: Primary-tertiary transmission (second generation)
-#'   \item Components 6-7: Primary-quaternary transmission (third generation)
-#' }
-#'
-#' For gamma distributions, components 3, 5, and 7 are omitted because the gamma
-#' distribution naturally handles the asymmetry that these components would otherwise
-#' model in the normal distribution case.
-#'
-#' @seealso \code{\link{integrate_component}}, \code{\link{si_estim}}, \code{\link{flower}},
-#'          \code{\link{fupper}}, \code{\link{f0}}
-#'
-#' @references
-#' Vink MA, Bootsma MCJ, Wallinga J (2014). Serial intervals of respiratory infectious
-#' diseases: A systematic review and analysis. American Journal of Epidemiology,
-#' 180(9), 865-875.
 #'
 #' @keywords internal
 #' @examples
 #' \dontrun{
+#' # Default 4 routes
 #' integrate_components_wrapper(d = 10, mu = 15, sigma = 3, dist = "normal")
 #' integrate_components_wrapper(d = 10, mu = 15, sigma = 3, dist = "gamma")
+#'
+#' # 5 routes
+#' integrate_components_wrapper(d = 10, mu = 15, sigma = 3, dist = "normal", n_routes = 5)
+#' integrate_components_wrapper(d = 10, mu = 15, sigma = 3, dist = "gamma", n_routes = 5)
 #' }
 #'
 integrate_components_wrapper <- function(
-  d,
-  mu,
-  sigma,
-  dist = "normal"
+    d,
+    mu,
+    sigma,
+    dist    = "normal",
+    n_routes = 4L
 ) {
   dist <- match.arg(dist, c("normal", "gamma"))
 
+  if (!is.numeric(n_routes) || length(n_routes) != 1 ||
+      is.na(n_routes) || n_routes < 2 || n_routes != floor(n_routes)) {
+    stop("n_routes must be an integer >= 2.")
+  }
+  n_routes <- as.integer(n_routes)
+
   if (dist == "normal") {
-    comp_vec <- 1:7
-  } else if (dist == "gamma") {
-    comp_vec <- c(1, 2, 4, 6)
+    # Component 1 (CP) + pairs (2i, 2i+1) for i in 1:(n_routes - 1)
+    comp_vec <- c(1L, unlist(lapply(seq_len(n_routes - 1L), function(i) c(2L*i, 2L*i + 1L))))
+  } else {
+    # Component 1 (CP) + even components 2i for i in 1:(n_routes - 1)
+    comp_vec <- c(1L, 2L * seq_len(n_routes - 1L))
   }
 
   result <- sapply(comp_vec, function(comp) {
@@ -90,5 +64,6 @@ integrate_components_wrapper <- function(
       integrate_component(d, mu, sigma, comp, dist = dist, lower = TRUE)
     }
   })
+
   return(result)
 }

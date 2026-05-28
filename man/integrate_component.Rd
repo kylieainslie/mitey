@@ -10,7 +10,8 @@ integrate_component(
   sigma,
   comp,
   dist = c("normal", "gamma"),
-  lower = TRUE
+  lower = TRUE,
+  wind = 1
 )
 }
 \arguments{
@@ -20,12 +21,15 @@ integrate_component(
 
 \item{sigma}{numeric; the standard deviation of the serial interval distribution in days}
 
-\item{comp}{integer; the transmission route component number (1 to 7). See Details for component definitions}
+\item{comp}{integer; the transmission route component number. Component 1 is Co-Primary.
+Even components 2i are positive routes, odd components 2i+1 are negative routes (normal only).}
 
 \item{dist}{character; the assumed underlying distribution of the serial interval.
 Must be either "normal" or "gamma". Defaults to "normal"}
 
 \item{lower}{logical; if \code{TRUE} (default), performs integration using \code{flower} and \code{fupper} functions. If \code{FALSE}, uses \code{f0} function}
+
+\item{wind}{The window censure interval}
 }
 \value{
 numeric; the integrated likelihood value for the specified component and data point. Used in the EM algorithm for serial interval estimation

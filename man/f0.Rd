@@ -4,7 +4,7 @@
 \alias{f0}
 \title{Calculate f0 for Different Components}
 \usage{
-f0(x, mu, sigma, comp, dist = "normal")
+f0(x, mu, sigma, comp, dist = "normal", wind = 1)
 }
 \arguments{
 \item{x}{numeric; the value at which to evaluate the function.}
@@ -13,21 +13,24 @@ f0(x, mu, sigma, comp, dist = "normal")
 
 \item{sigma}{numeric; the standard deviation.}
 
-\item{comp}{integer; the component number (1 to 7).}
+\item{comp}{integer; the component number. Component 1 is Co-Primary. Even components
+2i are positive routes, odd components 2i+1 are negative routes (normal only).}
 
 \item{dist}{string; assumed distribution of the serial interval; takes "normal" or "gamma"; defaults to "normal"}
+
+\item{wind}{The window censure interval}
 }
 \value{
 The calculated value of f0.
 }
 \description{
 This function calculates the value of f0 based on the component, where the components
-represent the transmission routes: Co-Primary (CP), Primary-Secondary (PS), Primary-Tertiary (PT), and Primary-Quaternary (PQ). We split the PS, PT and PQ routes into two parts, such that
+represent the transmission routes: Co-Primary (CP), Primary-Secondary (PS), Primary-Tertiary (PT), and Primary-Quaternary (PQ) and beyond. We split the PS, PT, PQ (and higher) routes into two parts, such that
 \itemize{
 \item component 1: CP route
-\item component 2+3: PS route
-\item component 4+5: PT route
-\item component 6+7: PQ route
+\item components 2+3: PS route
+\item components 4+5: PT route
+\item components 2i + (2i+1): route i+1
 }
 }
 \details{
