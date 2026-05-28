@@ -1,0 +1,146 @@
+---
+title: "Report Outline Draft"
+date: "2026-05-28"
+output:
+  pdf_document:
+    toc: false
+    toc_depth: 3
+    number_sections: true
+  html_document:
+    toc: false
+    toc_depth: 3
+    number_sections: true
+---
+
+# Introduction
+
+## Study motivation (aim)
+
+The serial interval, SI, is the time between symptom onset in a primary case and symptom onset in the corresponding secondary case.
+
+SI summarises how quickly transmission tends to occur and how much this timing varies between cases, which is an important quantity for epidemic models, reproduction number estimation, and public health intervention planning.
+
+However, the SI is not directly observable in many outbreak settings because the true infector–infectee pairs are usually unknown.
+
+## Aim and contribution
+
+The broad aim of this report is to develop and evaluate a method for estimating the mean and sd of SI distribution from observable symptom-onset data, as well as extending the `{mitey}` R package for inferring parameters of serial distribution.
+
+The method is based on Vink et al. transmission-path mixture framework, and our contribution is to extend the existing framework by considering a lognormal distributional assumption for the SI.
+
+# Background
+
+The flow of current framework, everything before my framework.
+
+## Definition of SI and ICC: compromise as ICC interval proxy
+
+The serial interval, SI, is the time between symptom onset in a primary case and symptom onset in the corresponding secondary case.
+
+The serial interval can’t be observed and measured directly because the true infector-infectee pair is unknown. Instead, we have observable symptom-onset data and derive the ICC interval as an observable proxy.
+
+ICC interval is defined as the time duration between the symptom onset of the infected case and the index case which is the first recognized case in the outbreak.
+
+## Transmission path
+
+Why use ICC interval? How it helps to infer SI?
+
+If transmission path can be clarified given ICC interval, then the direct infector-infectee interval can be known. Then serial interval can be inferred.
+
+How many paths can correspond to an ICC interval? Four transmission path framework.
+
+Reason for four transmission paths.
+
+## Mixture model formulation
+
+Each ICC interval can be interpreted as a probabilistic mixture of the four latent paths: CP, PS, PT and PQ.
+
+\[
+f_Y(y) =
+w_{CP} f_{CP}(y)
++ w_{PS} f_{PS}(y)
++ w_{PT} f_{PT}(y)
++ w_{PQ} f_{PQ}(y),
+\]
+
+where
+
+\[
+w_{CP} + w_{PS} + w_{PT} + w_{PQ} = 1.
+\]
+
+## Assumptions in the mixture model
+
+SI follows normal or Gamma distribution. PS is the serial interval here.
+
+Assume that the latent transmission intervals are independent copies drawn from the same underlying SI distribution such as Normal or Gamma.
+
+Independent copies of \(X\) are used to derive path-specific ICC distributions.
+
+Normal or gamma assumptions are both analytically convenient for sum or differences.
+
+# Methods: Lognormal Extension of the Transmission-Path Mixture Model
+
+## Motivation for extension
+
+The fitting process of the mixture model relies on the distributional forms and parameter settings of the four latent paths, all of which are currently linked to the same underlying serial interval distribution assumption now, assumed to be either Normal or Gamma.
+
+## Extension to lognormal: new mixture model
+
+### Assumptions for SI
+The underlying distribution for serial interval is now assumed to follows a lognormal distribution.
+
+### Derivation for distribution of four transmission path
+The mathematical form ofdistributions of four latent path will be derived and to show there is non-closed form for the density, which is the main statistical challenge here.
+
+## Discretization of the ICC interval
+
+In real world infectious disease outbreak data, symptom onset times are often recorded by calendar day rather than as exact continuous times. 
+Triangular distribution function can deal with the interval censoring and connect the continuous transmission-path model to the discrete symptom onset data.
+
+## Estimating mixture model parameters using EM algorithm
+
+### Reason for using EM algorithm
+
+### E step
+In the E-step, calculate the probability that each ICC interval belongs to each latent path.
+
+### M step
+In the M-step, update the mixture weights and distributional parameters using these probabilities.
+
+### Iteration process
+Repeat this process until the likelihood or parameter estimates stabilise.
+
+
+## R package for implementing the methods
+
+
+# Simulation Study
+
+Evaluation to validate the methods above.
+
+## Aim
+
+Validating the log-normal extension to get unbiased estimates given know true parameter settings.
+
+Test the robustness of the extended methods.
+
+Compare the performance of these methods given real infectious disease data.
+
+## Estimands and targets
+
+## Data-generating mechanism
+
+## Simulation scenarios
+
+## Performance measures
+
+# Results
+
+# Discussion
+
+## Summary of findings
+
+## Limitations
+
+## Future work
+
