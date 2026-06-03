@@ -1,0 +1,637 @@
+---
+title: "Report Draft V1"
+date: "2026-06-04"
+output:
+  pdf_document:
+    toc: false
+    toc_depth: 3
+    number_sections: true
+  html_document:
+    toc: false
+    toc_depth: 3
+    number_sections: true
+---
+
+# Introduction
+
+## Serial interval and Epidemiological importance
+
+The serial interval (SI) is defined as the time duration between symptom onset in a primary case (the infector) and symptom onset in the corresponding secondary case (the infectee).  Because the exact moment of infection is rarely observable, the serial interval serves as a practical and measurable proxy for the generation time. It is a fundamental quantity in infectious disease epidemiology which summarizes how quickly disease transmission tends to occur.Accurate estimation of the SI is important for verifying epidemiological links between individuals, tracing the most likely sources of infection, and diagnosing new cases within transmission clusters. The SI also provides an essential input for epidemic transmission models and for estimating reproduction numbers, such as the basic reproduction number and the time-varying reproduction number. In practice, accurate SI estimates can support public health planning by designing optimal isolation or quarantine strategies to interrupt transmission chains and forecasting  short-term outbreak.
+
+## Statistical Challenge and Existing Framework
+
+Despite its  epidemiological importance, direct empirical measurement of the serial interval (SI) remains challenging in real-world outbreak settings. True infector-infectee transmission pairs are usually unobserved. Researchers generally can only know that an individual has been infected upon their presentation of clinical symptoms. Consequently, available surveillance data often consist of a timeline of symptom-onset dates, lacking the transmission network necessary to measure the SI directly.
+
+To address this problem, Vink et al. (2014) proposed a transmission-path mixture framework for estimating the SI from index case-to-case (ICC) intervals. The ICC interval is the observed time duration between symptom onset in the index case of a cluster and symptom onset in each subsequent case. Because a given ICC interval may arise from different latent transmission paths, Vink et al. modelled the observed ICC distribution as a mixture of four possible paths given household or small population settings. In this framework, the primary-secondary component exactly represents the underlying SI distribution of interest. This approach provides a practical way to using mixture model to infer SI parameters when direct transmission pairs are unavailable.
+
+However, the existing framework relies mainly on Normal or Gamma distributional assumptions for the underlying SI. These assumptions may be restrictive in some outbreak settings. A Normal distribution allows negative serial intervals by construction, which may be appropriate for infections with possible pre-symptomatic transmission, but may be less suitable when the target SI distribution is expected to be strictly positive and right-skewed. The Gamma distribution is limited when the empirical SI distribution is highly skewed or has a heavier right tail than can not be fully captured under a standard Gamma assumption.
+
+## Study Aim and Contributions
+
+The primary objective of this study is to extend the Vink et al. transmission-path mixture framework by incorporating a lognormal assumption for the underlying SI distribution. The proposed extension retains the original four-path structure of the ICC mixture model, while replacing the Normal or Gamma SI assumption with a lognormal distribution.
+
+There are three main contributios of this study. First, it formulates a lognormal extension of the transmission-path mixture framework, providing a more flexible modelling option for strictly positive and right-skewed SI distributions. Second, it uses a simulation-based evaluation strategy to assess parameter recovery and robustness under both correctly specified and misspecified distributional scenarios. Third, it lays the groundwork for a practical implementation of the lognormal extension in the {mitey} R package, supporting future use by public health researchers.
+
+# Methods
+
+## From serial interval to observable ICC interval
+
+The primary target of this study is the serial interval (SI), defined as the time between symptom onset in a primary case and symptom onset in the corresponding secondary case. The SI describes epidemiologically the timing of direct person-to-person transmission. Therefore, estimating its mean and standard deviation is central to understanding how quickly transmission tends to occur and how variable this timing is across transmissions.
+
+Let $X$ denote a true direct serial interval. If the true infector--infectee pairs were known, estimating the SI distribution would be straightforward: we could directly calculate the onset-time differences for all observed direct transmission pairs. However, in real outbreak data, the true transmission network is usually unobserved. We typically observe when individuals developed symptoms, but not who infected whom. Therefore, the true SI is a latent quantity that must be inferred indirectly from observable symptom-onset data.
+
+This motivates the use of the index case-to-case (ICC) interval. In a household or small outbreak cluster, although the full transmission chain is unknown, the first recognised symptomatic case can usually be identified. This case is referred to as the index case. For a non-index case $i$, define the observed ICC interval as
+
+$$
+Y_i = S_i - S_0,
+$$
+
+where $S_i$ is the reported symptom-onset day of case $i$, and $S_0$ is the reported symptom-onset day of the index case.
+
+The ICC interval is not necessarily a serial interval. It measures the time from the index case to a later case, whereas the SI measures the time from a case's direct infector to that case. If the latent transmission path were known, the relationship between ICC and SI would be clear. For example, if the index case directly infected the later case, the ICC interval would equal one SI. If there was one intermediate transmission event, the ICC interval would be the sum of two serial intervals. Thus, the key modelling problem is to express each observed ICC interval as a function of possible latent transmission paths.
+
+## Four latent transmission paths
+
+Following the transmission-path framework of Vink et al., each observed ICC interval is assumed to arise from one of four biologically plausible latent paths in a household or small outbreak population:
+
+$$
+\mathcal{G} = \{CP, PS, PT, PQ\},
+$$
+
+Here, $CP$ denotes co-primary transmission; $PS$ denotes primary-secondary transmission; $PT$ denotes primary-tertiary transmission; and $PQ$ denotes primary-quaternary transmission.
+
+These four paths provide a bridge between the ICC interval and the unobservable SI distribution.
+
+In the co-primary path, the index case and the later case are both infected by the same external source. Their ICC interval is not a direct serial interval, but the absolute difference between two independent serial intervals.
+
+In the primary-secondary path, the index case directly infects the later case. This is the key target path, because the ICC interval is exactly one direct SI.
+
+In the primary-tertiary path, the index case infects an intermediate case, and that intermediate case infects the later observed case. The ICC interval is therefore the sum of two independent serial intervals.
+
+In the primary-quaternary path, there are two intermediate transmission events between the index case and the later observed case. The ICC interval is therefore the sum of three independent serial intervals.
+
+Let $C_i$ denote the underlying continuous ICC interval for observation $i$, and let $Z_i$ denote its latent path indicator:
+
+$$
+Z_i \in \mathcal{G}.
+$$
+
+Conditional on $Z_i=g$, the continuous ICC interval $C_i$ follows a path-specific density
+
+$$
+f_g(x \mid \mu,\sigma).
+$$
+
+Because $Z_i$ is unobserved, each observed ICC interval is treated as potentially arising from any of the four paths.
+
+## Underlying iid lognormal serial interval model
+
+The proposed extension changes the assumed distribution of the underlying SI while keeping the same four-path transmission structure. All  serial intervals are now assumed to be independent and identically distributed lognormal random variables:
+
+$$
+X_k \overset{i.i.d.}{\sim} \text{Lognormal}(\mu,\sigma^2),
+\qquad k = 1,2,3,\ldots
+$$
+
+where $\mu$ and $\sigma^2$ are the mean and variance on the log scale.
+
+The density of a direct serial interval is
+
+$$
+f_X(x \mid \mu,\sigma)
+=
+\frac{1}{x\sigma\sqrt{2\pi}}
+\exp
+\left[
+-\frac{(\log x-\mu)^2}{2\sigma^2}
+\right],
+\qquad x > 0.
+$$
+
+The lognormal assumption is used because the SI is a positive biological time interval and may be right-skewed. Under this extension, all four ICC path distributions are derived from independent copies of the same lognormal SI distribution. 
+
+## Path-specific continuous ICC distributions
+
+Let
+
+$$
+X_1, X_2, X_3 \overset{i.i.d.}{\sim} \text{Lognormal}(\mu,\sigma^2).
+$$
+
+The four path-specific ICC distributions are derived from these iid copies.
+
+### Co-primary path
+
+For the co-primary path, both cases are infected by the same external source. The continuous ICC interval is the absolute difference between two independent serial intervals:
+
+$$
+C_{CP} = |X_1 - X_2|.
+$$
+
+For $x>0$, the density of $C_{CP}$ is
+
+$$
+f_{CP}(x \mid \mu,\sigma)
+=
+2\int_{0}^{\infty}
+f_X(t \mid \mu,\sigma)
+f_X(t+x \mid \mu,\sigma)
+\,dt.
+$$
+
+Substituting the lognormal density gives
+
+$$
+f_{CP}(x \mid \mu,\sigma)
+=
+\frac{1}{\pi\sigma^2}
+\int_{0}^{\infty}
+\frac{1}{t(t+x)}
+\exp
+\left[
+-\frac{
+(\log t-\mu)^2
++
+(\log(t+x)-\mu)^2
+}{2\sigma^2}
+\right]
+dt,
+\qquad x>0.
+$$
+
+### Primary-secondary path
+
+For the primary-secondary path, the index case directly infects the later case. Therefore, the continuous ICC interval is  serial interval:
+
+$$
+C_{PS} = X_1.
+$$
+
+Thus,
+
+$$
+f_{PS}(x \mid \mu,\sigma)
+=
+f_X(x \mid \mu,\sigma),
+\qquad x>0.
+$$
+
+$$
+f_{PS}(x \mid \mu,\sigma)
+=
+\frac{1}{x\sigma\sqrt{2\pi}}
+\exp
+\left[
+-\frac{(\log x-\mu)^2}{2\sigma^2}
+\right],
+\qquad x>0.
+$$
+
+This component is the direct target of inference, because it is exactly the SI distribution.
+
+### Primary-tertiary path
+
+For the primary-tertiary path, there is one intermediate transmission event. The continuous ICC interval is the sum of two independent serial intervals:
+
+$$
+C_{PT} = X_1 + X_2.
+$$
+
+For $x>0$, its density is the convolution
+
+$$
+f_{PT}(x \mid \mu,\sigma)
+=
+\int_0^x
+f_X(t \mid \mu,\sigma)
+f_X(x-t \mid \mu,\sigma)
+\,dt.
+$$
+
+Substituting the lognormal density gives
+
+$$
+f_{PT}(x \mid \mu,\sigma)
+=
+\frac{1}{2\pi\sigma^2}
+\int_0^x
+\frac{1}{t(x-t)}
+\exp
+\left[
+-\frac{
+(\log t-\mu)^2
++
+(\log(x-t)-\mu)^2
+}{2\sigma^2}
+\right]
+dt,
+\qquad x>0.
+$$
+
+### Primary-quaternary path
+
+For the primary-quaternary path, there are two intermediate transmission events. The continuous ICC interval is the sum of three independent serial intervals:
+
+$$
+C_{PQ} = X_1 + X_2 + X_3.
+$$
+
+The density can be written as
+
+$$
+f_{PQ}(x \mid \mu,\sigma)
+=
+\int_0^x
+f_{PT}(u \mid \mu,\sigma)
+f_X(x-u \mid \mu,\sigma)
+\,du.
+$$
+
+Equivalently, substituting all three lognormal densities gives
+
+$$
+f_{PQ}(x \mid \mu,\sigma)
+=
+\frac{1}{(2\pi)^{3/2}\sigma^3}
+\int_0^x
+\int_0^{x-u}
+\frac{1}{u v (x-u-v)}
+\times
+\exp
+\left[
+-\frac{
+(\log u-\mu)^2
++
+(\log v-\mu)^2
++
+(\log(x-u-v)-\mu)^2
+}{2\sigma^2}
+\right]
+dv\,du,
+\qquad x>0.
+$$
+where
+
+$$
+u>0,
+\qquad
+v>0,
+\qquad
+u+v<x.
+$$
+
+Under the normal assumption, sums of independent normal random variables remain normal. Under the lognormal extension, however, sums and differences of lognormal random variables do not have simple closed-form densities. Therefore, the CP, PT, and PQ components may require numerical integration.
+
+## From path distributions to the ICC mixture model
+
+The previous section defines what the ICC distribution would look like if the latent transmission path were known. In reality, however, the path label $Z_i$ is unknown for every observed ICC interval. Therefore, the observed ICC distribution must combine all four path-specific distributions.
+
+This naturally leads to a finite mixture model. The continuous ICC density is
+
+$$
+f_{ICC}(x \mid \mu,\sigma,\mathbf{w})
+=
+\sum_{g \in \mathcal{G}}
+w_g f_g(x \mid \mu,\sigma),
+\qquad x \geq 0,
+$$
+
+where
+
+$$
+\mathbf{w}
+=
+(w_{CP},w_{PS},w_{PT},w_{PQ})
+$$
+
+are the mixture weights and
+
+$$
+w_g \geq 0,
+\qquad
+\sum_{g\in\mathcal{G}} w_g = 1.
+$$
+
+Here, $w_g$ represents the relative contribution of path $g$ to the overall ICC distribution. The parameters $\mu$ and $\sigma$ are shared across all four components because all four path distributions are derived from the same underlying iid SI distribution.
+
+By fitting the full ICC mixture model, we aim to separate the primary-secondary component from the other latent paths and  recover the mean and standard deviation of the SI.
+
+## Discretisation of symptom-onset days
+
+The path-specific densities $f_g(x \mid \mu,\sigma)$ are defined for a continuous ICC interval $x$. However, in the observed data, symptom onset is usually recorded by calendar day, so the observed ICC interval is discrete. Let $T_i=t_i$ denote the observed integer ICC interval for observation $i$.
+
+Following Vink et al., we assume that the exact symptom-onset time is uniformly distributed within the reported day. Therefore, the difference between two reported onset days introduces a triangular discretisation error. Let
+
+$$
+h(u) =
+\begin{cases}
+1-|u|, & |u|\leq 1,\\
+0, & |u|>1.
+\end{cases}
+$$
+
+Then, for path $g$, the probability of observing an ICC interval of exactly $t_i$ days is
+
+
+$$
+P_g(T_i=t_i \mid \mu,\sigma)
+=
+\int_{\max(0,t_i-1)}^{t_i+1}
+f_g(x \mid \mu,\sigma)
+\{1-|t_i-x|\}\,dx.
+$$
+
+Combining the four latent paths, the marginal probability of observing $T_i=t_i$ is
+
+$$
+P(T_i=t_i \mid \mu,\sigma,\mathbf{w})
+=
+\sum_{g\in\mathcal{G}}
+w_g P_g(T_i=t_i \mid \mu,\sigma).
+$$
+
+Therefore, the observed-data likelihood is
+
+$$
+L(\mu,\sigma,\mathbf{w}\mid \mathbf{t})
+=
+\prod_{i=1}^{n}
+P(T_i=t_i \mid \mu,\sigma,\mathbf{w}),
+$$
+
+Equivalently,
+
+$$
+L(\mu,\sigma,\mathbf{w}\mid \mathbf{t})
+=
+\prod_{i=1}^{n}
+\left[
+\sum_{g\in\mathcal{G}}
+w_g P_g(T_i=t_i \mid \mu,\sigma)
+\right].
+$$
+
+The corresponding log-likelihood is
+
+$$
+\ell(\mu,\sigma,\mathbf{w})
+=
+\sum_{i=1}^{n}
+\log
+\left[
+\sum_{g\in\mathcal{G}}
+w_g P_g(T_i=t_i \mid \mu,\sigma)
+\right].
+$$
+
+## EM algorithm
+
+If the latent path label $Z_i$ were known for every ICC interval, estimation would be much simpler. Each observation could be assigned to one of the four path components, and the complete-data likelihood could be maximised directly.
+
+However, the path labels are unobserved. A given ICC interval might plausibly arise from the four unobserved latent path with different relative probabilities (path weights), which makes the EM algorithm a natural estimation approach.
+
+The EM algorithm solves this problem by iterating between two steps. In the E-step, each observed ICC interval is assigned to the four possible paths with different probabilities. In the M-step, these probabilistic assignments are used to update the mixture weights and the SI parameters.
+
+Define the latent indicator variable
+
+$$
+z_{ig}
+=
+\begin{cases}
+1, & Z_i=g,\\
+0, & Z_i\neq g.
+\end{cases}
+$$
+
+If the latent path labels were observed, the complete-data log-likelihood would be
+
+$$
+\ell_c(\mu,\sigma,\mathbf{w})
+=
+\sum_{i=1}^n
+\sum_{g\in\mathcal{G}}
+z_{ig}
+\left[
+\log w_g
++
+\log P_g(y_i \mid \mu,\sigma)
+\right].
+$$
+
+Because $z_{ig}$ is unobserved, the EM algorithm replaces it with its conditional expectation.
+
+### E-step: posterior path responsibilities
+
+At iteration $m$, given current estimates
+
+$$
+\mu^{(m)},
+\qquad
+\sigma^{(m)},
+\qquad
+\mathbf{w}^{(m)},
+$$
+
+we first calculate the path-specific observed probabilities
+
+$$
+P_g(y_i \mid \mu^{(m)},\sigma^{(m)})
+$$
+
+for each observation $i$ and each path $g$.
+
+The posterior responsibility is then defined as
+
+$$
+\gamma_{ig}^{(m)}
+=
+P(Z_i=g \mid y_i,\mu^{(m)},\sigma^{(m)},\mathbf{w}^{(m)}).
+$$
+
+Using Bayes' rule,
+
+$$
+\gamma_{ig}^{(m)}
+=
+\frac{
+w_g^{(m)}
+P_g(y_i \mid \mu^{(m)},\sigma^{(m)})
+}{
+\sum_{h\in\mathcal{G}}
+w_h^{(m)}
+P_h(y_i \mid \mu^{(m)},\sigma^{(m)})
+}.
+$$
+
+Thus, $\gamma_{ig}^{(m)}$ is the soft assignment probability that observation $i$ was generated by path $g$, which allows each observation to contribute proportionally to multiple possible paths.
+
+### M-step: update mixture weights
+
+Given the responsibilities from the E-step, the expected complete-data objective is
+
+$$
+Q(\mu,\sigma,\mathbf{w})
+=
+\sum_{i=1}^n
+\sum_{g\in\mathcal{G}}
+\gamma_{ig}^{(m)}
+\left[
+\log w_g
++
+\log P_g(y_i \mid \mu,\sigma)
+\right].
+$$
+
+The mixture weights have a closed-form update:
+
+$$
+w_g^{(m+1)}
+=
+\frac{1}{n}
+\sum_{i=1}^n
+\gamma_{ig}^{(m)}.
+$$
+
+The new weight for path $g$ is the average posterior responsibility assigned to that path across all ICC observations.
+
+### M-step: update lognormal SI parameters
+
+The lognormal SI parameters are updated by maximising the part of the expected complete-data objective involving $\mu$ and $\sigma$:
+
+$$
+(\mu^{(m+1)},\sigma^{(m+1)})
+=
+\arg\max_{\mu,\sigma>0}
+\sum_{i=1}^n
+\sum_{g\in\mathcal{G}}
+\gamma_{ig}^{(m)}
+\log P_g(y_i \mid \mu,\sigma).
+$$
+
+Unlike the original normal-based formulation, this update does not have a closed-form solution under the lognormal extension. The reason is that $P_g(y_i \mid \mu,\sigma)$ contains the triangular discretisation integral, and the CP, PT, and PQ components also contain non-closed-form lognormal difference or convolution densities. Therefore, this M-step needs to be solved by numerical optimisation.
+
+### Convergence criterion
+
+After each M-step, the observed-data log-likelihood is recalculated:
+
+$$
+\ell^{(m+1)}
+=
+\sum_{i=1}^n
+\log
+\left[
+\sum_{g\in\mathcal{G}}
+w_g^{(m+1)}
+P_g(y_i \mid \mu^{(m+1)},\sigma^{(m+1)})
+\right].
+$$
+
+The algorithm is repeated until the increase in log-likelihood falls below a pre-specified tolerance $\epsilon$.
+
+$$
+|\ell^{(m+1)}-\ell^{(m)}|<\epsilon,
+$$
+
+## Primary estimands
+
+The target component is the primary-secondary path:
+
+$$
+C_{PS}=X\sim \text{Lognormal}(\mu,\sigma^2).
+$$
+
+Therefore, the primary estimands are the natural-scale mean and standard deviation of the PS serial interval.
+
+The mean is
+
+$$
+E(X)
+=
+\exp
+\left(
+\mu+\frac{1}{2}\sigma^2
+\right).
+$$
+
+The variance is
+
+$$
+Var(X)
+=
+\left[
+\exp(\sigma^2)-1
+\right]
+\exp(2\mu+\sigma^2).
+$$
+
+Therefore, the standard deviation is
+
+$$
+SD(X)
+=
+\sqrt{
+\left[
+\exp(\sigma^2)-1
+\right]
+\exp(2\mu+\sigma^2)
+}.
+$$
+
+
+# Results
+
+This study has not yet proceeded to empirical data analysis or simulation-based evaluation. Therefore, the results presented here are methodological rather than numerical. The main result is the theoretical extension of the Vink et al. transmission-path mixture framework from a Normal or Gamma serial interval assumption to an iid lognormal serial interval assumption. This section summarises the completed theoretical formulation and the main computational challenge identified during this extension.
+
+## Theoretical extension to an iid lognormal SI assumption
+
+The first methodological result is that the original transmission-path mixture framework can be reformulated under an iid lognormal assumption for the underlying serial interval. The four-path structure of the ICC interval was retained: co-primary, primary-secondary, primary-tertiary, and primary-quaternary transmission. The key change was to replace the original SI distributional assumption with a lognormal distribution, while keeping the assumption that all direct serial intervals are independent copies from the same underlying SI distribution.
+
+Under this formulation, the primary-secondary component remains the target component of the model, because it corresponds directly to one true serial interval. Therefore, the mean and standard deviation of the underlying lognormal SI distribution can still be defined as the primary estimands of interest. This confirms that, at the theoretical level, the Vink framework can be extended to a strictly positive and right-skewed SI distribution without changing the overall latent transmission-path interpretation.
+
+## Analytical Intractability of Path-Specific Densities
+
+Although the mixture structure remains unchanged, the lognormal extension substantially changes the mathematical form of the path-specific densities. Under the original Normal assumption, higher-generation paths are relatively tractable because sums of independent Normal random variables remain Normal. This property no longer holds under the lognormal assumption.
+
+In the lognormal extension, the primary-secondary path is still simple because it is exactly the underlying SI distribution. However, the co-primary, primary-tertiary, and primary-quaternary paths involve the absolute difference or sums of independent lognormal random variables. These distributions do not have simple closed-form density functions. As a result, the path-specific densities must be represented using integrals, as derived in the Methods section.
+
+This is the main theoretical finding of the extension: the lognormal assumption improves biological plausibility for positive and right-skewed serial intervals, but it also removes much of the analytical convenience available under the Normal framework.
+
+## Computational Implications for Model Implementation
+
+The absence of closed-form path densities has important implications for model implementation, particularly for likelihood evaluation and the EM algorithm.
+
+First, the observed-data likelihood becomes more computationally demanding. Because symptom-onset times are reported in calendar days, the continuous ICC densities must be converted into discrete probabilities using triangular discretisation. Under the lognormal extension, this discretisation is applied to path-specific densities that already involve convolution-type integrals. As a result, evaluating the likelihood requires repeated numerical integration, especially for the CP, PT, and PQ components.
+
+Second, the EM algorithm  becomes more computationally complex and time-consuming. In the E-step, posterior path responsibilities can still be calculated using the current parameter values, but each calculation now depends on numerically evaluated path-specific probabilities. In the M-step, the mixture weights retain their standard analytical update. However, the lognormal SI parameters, $\mu$ and $\sigma$, no longer have closed-form updates and must instead be estimated through numerical optimisation.
+
+Overall, the lognormal extension preserves the structure of the original EM framework, but changes its implementation from a analytical procedure to one that relies on numerical integration and numerical optimisation.
+
+# Discussion
+
+This study aimed to examine whether the Vink et al. transmission-path mixture framework can be extended by replacing the original Normal or Gamma assumption for the underlying serial interval with an iid lognormal assumption and whether a lognormal extension provide a better statistical fit and more plausible estimates. The current work provides a theoretical answer to the first part of this research question. The four-path ICC mixture structure can be retained under the lognormal extension, and the primary-secondary component remains directly interpretable as the target serial interval distribution. 
+
+The main value of this extension is that it try to provide a more biologically plausible option when the serial interval is expected to be strictly positive and right-skewed. In particular, the lognormal distribution avoids negative serial intervals and can accommodate a longer right tail than more Normal and Gamma distributional assumptions, which corresponds to infectious disease settings where delayed transmission or high variability in symptom-onset timing may produce skewed ICC interval data.
+
+However, the results also show that this gain in biological plausibility comes with an important computational cost. Under the Normal assumption, several path-specific distributions are analytically convenient because sums of independent Normal random variables remain Normal. Under the lognormal assumption, this property is lost. The co-primary, primary-tertiary, and primary-quaternary paths involve absolute differences or sums of independent lognormal variables, which do not have simple closed-form density functions. As a result, the likelihood and EM algorithm require numerical integration and numerical optimisation. Thus, although the lognormal extension is theoretically well defined, its practical implementation is more computationally demanding than the original framework.
+
+## Limitations
+
+Several limitations should be noted. First, this study is currently limited to theoretical formulation. No empirical data analysis or simulation study has yet been conducted, so the performance of the proposed method remains unknown. In particular, it is not yet clear whether the lognormal extension can recover the true SI mean and standard deviation accurately under correctly specified or misspecified distributional assumptions senarios.
+
+Secondly, the current framework retains only four latent transmission paths: co-primary, primary-secondary, primary-tertiary, and primary-quaternary. This structure is reasonable for households or small outbreak populations, where long transmission chains are less likely. However, it may be restrictive for larger outbreak settings, where additional generations, multiple introductions, or more complex transmission networks may occur.
+
+Thirdly, the computational burden should be considered. Because several path-specific densities have no closed form, the EM algorithm requires repeated numerical integration in the E-step and numerical optimisation in the M-step. This may make the method slower, less stable, and more sensitive to numerical approximation choices.
+
+## Future work
+
+The next step is to implement the proposed lognormal extension within the existing `{mitey}` R package framework, which means to replace the original Normal or Gamma SI distribution option with the lognormal specification derived in this study, and then test whether the full SI inference workflow remains computationally feasible.
+
+This implementation will allow us to assess whether the anticipated computational challenges arise in practice. In particular, the CP, PT, and PQ path-specific probabilities may require repeated numerical integration, and the M-step may require numerical optimisation rather than closed-form parameter updates. This part will focus not only on coding the lognormal extension, but also on exploring more efficient numerical methods such as integration approximation if computational difficulties are observed.
+
+A simulation study will then be conducted to evaluate the performance of the proposed method. Under correct specification, data can be generated from an iid lognormal SI distribution, converted into ICC intervals through the four latent transmission paths, and then fitted using the proposed EM algorithm. This would allow assessment of bias, root mean squared error, convergence rate, and the recovery of the SI mean and standard deviation. Under misspecification scenarios, the data-generating SI distribution could be changed to Gamma, Weibull, or another positive distribution to evaluate the robustness of the lognormal extension.
+
+Future work should also compare the lognormal extension with the existing Normal and Gamma versions of the Vink framework given real outbreak datasets of different infectious disease. Such comparisons would help determine when the lognormal assumption provides improved estimation or better model fit. This is important because the lognormal model is more computationally expensive, so its practical value needs to be justified by improved performance in relevant scenarios.
+
+Finally, the transmission-path framework itself could be extended. Future models could include additional transmission generations beyond the current four paths, or incorporate more flexible assumptions about the transmission network. More general SI distributions, such as Weibull, log-logistic, or generalized gamma distributions, could also be explored. These extensions may broaden the applicability of the method to more complex real-world transmission settings.
+
+
