@@ -268,7 +268,7 @@ interval distribution from Vink et al. and from \`si_estim\` for
 different historical data sets.
 
 As with `si_estim`, the plotting function `plot_si_fit` can be applied
-to numerious vectors of ICC intervals using `purrr:group_map`. The
+to numerous vectors of ICC intervals using `purrr:group_map`. The
 results outputted from `si_estim` cannot be used directly and must be
 merged with the original ICC interval data. We will call this new data
 frame `df_merged` and it should contain column(s) identifying the study

@@ -102,7 +102,7 @@ SI estimate, any estimate of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi>t</mi></msub><annotation encoding="application/x-tex">R_t</annotation></semantics></math>
 will be biased.</li>
 <li>
-<strong>Calibrating transmission models.</strong> Compartmental
+<strong>Input into transmission models.</strong> Compartmental
 models (SIR, SEIR, etc.) and renewal equation models use the SI as a
 direct input to simulate epidemic dynamics and evaluate the impact of
 interventions.</li>
@@ -111,9 +111,9 @@ interventions.</li>
 quarantine, the contact-tracing window, and the timing of vaccination
 campaigns are all partly calibrated on the SI.</li>
 </ul>
-<p>In practice, the SI is often confused with the <strong>generation
+<p>In practice, the SI is used as a proxy for the <strong>generation
 interval</strong> (the time between infection of the primary case and
-infection of the secondary case).</p>
+infection of the secondary case) which is usually unobservable.</p>
 <hr>
 </div>
 <div class="section level2">
@@ -147,7 +147,7 @@ are:</p>
 </tr>
 <tr class="even">
 <td>Outbreak data (ICC intervals)</td>
-<td>Symptom onset dates within a household</td>
+<td>Symptom onset dates within an outbreak</td>
 <td>Multiple transmission routes (see §3)</td>
 </tr>
 <tr class="odd">
@@ -179,47 +179,7 @@ transmission), the observed SI is negative.</li>
 </ul>
 <p>These corrections are well documented in the literature but require
 additional assumptions. It is precisely to sidestep some of these
-difficulties that household-based ICC methods were developed.</p>
-</div>
-<div class="section level3">
-<h3 id="date-reporting-uncertainty">Date reporting uncertainty<a class="anchor" aria-label="anchor" href="#date-reporting-uncertainty"></a>
-</h3>
-<p>A less-discussed but practically important source of bias in serial
-interval estimation concerns the <strong>accuracy of the reported
-symptom onset date</strong>. In many surveillance systems, the date
-recorded in the database is not the true date of symptom onset, but
-rather the date at which the case was <em>reported</em> to the health
-authorities.</p>
-<p>Several mechanisms can introduce this discrepancy:</p>
-<ul>
-<li>
-<strong>Weekly reporting cycles.</strong> In some institutional
-settings (care homes, schools), health authorities collect information
-only once a week. A person who developed symptoms on a Wednesday may
-only be recorded on the following Monday, introducing an error of up to
-6 days.</li>
-<li>
-<strong>No weekend reporting.</strong> Some surveillance systems do
-not register new cases on Saturdays and Sundays. Cases with symptom
-onset on Friday evening or Saturday will systematically be reported on
-the following Monday.</li>
-<li>
-<strong>Grouped declaration.</strong> Physicians or hospitals
-sometimes submit batches of cases at fixed intervals, leading to
-artificial clustering of reported onset dates.</li>
-</ul>
-<p>The consequence for ICC interval estimation is that the observed ICC
-is not
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>t</mi><mo>=</mo><msub><mi>t</mi><mtext mathvariant="normal">onset, secondary</mtext></msub><mo>−</mo><msub><mi>t</mi><mtext mathvariant="normal">onset, index</mtext></msub></mrow><annotation encoding="application/x-tex">\Delta t = t_{\text{onset, secondary}} - t_{\text{onset, index}}</annotation></semantics></math>,
-but rather
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><msup><mi>t</mi><mo>*</mo></msup><mo>=</mo><msub><mi>t</mi><mtext mathvariant="normal">reported, secondary</mtext></msub><mo>−</mo><msub><mi>t</mi><mtext mathvariant="normal">reported, index</mtext></msub></mrow><annotation encoding="application/x-tex">\Delta t^* = t_{\text{reported, secondary}} - t_{\text{reported, index}}</annotation></semantics></math>,
-which can differ from the true value by up to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>×</mo><mtext mathvariant="monospace">𝚠𝚒𝚗𝚍</mtext></mrow><annotation encoding="application/x-tex">2 \times \texttt{wind}</annotation></semantics></math>
-days (if both the index and the secondary case are subject to reporting
-delays in opposite directions).</p>
-<p>The <code>mitey</code> package addresses this through the
-<code>wind</code> parameter (reporting <strong>wind</strong>ow),
-described in detail in Section 4.</p>
+difficulties that outbreak-based methods were developed.</p>
 <hr>
 </div>
 </div>
@@ -347,9 +307,46 @@ interval
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mi>d</mi><mo>−</mo><mn>1</mn><mo>,</mo><mi>d</mi><mo>+</mo><mn>1</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[d-1, d+1]</annotation></semantics></math>
 when
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">d &gt; 0</annotation></semantics></math>),
-reflecting only the rounding to the nearest integer day.</p>
-<p>In practice, however, the reported date may be off by several days.
-If a surveillance system collects data once a week, any ICC value
+reflecting only the rounding to the nearest integer day. In practice,
+however, the reported date may be off by several days.</p>
+</div>
+<div class="section level3">
+<h3 id="date-reporting-uncertainty">Date reporting uncertainty<a class="anchor" aria-label="anchor" href="#date-reporting-uncertainty"></a>
+</h3>
+<p>A less-discussed but practically important source of bias in serial
+interval estimation concerns the <strong>accuracy of the reported
+symptom onset date</strong>. In many surveillance systems, the date
+recorded in the database is not the true date of symptom onset, but
+rather the date at which the case was <em>reported</em> to the health
+authorities.</p>
+<p>Several mechanisms can introduce this discrepancy:</p>
+<ul>
+<li>
+<strong>Weekly reporting cycles.</strong> In some institutional
+settings (care homes, schools), health authorities collect information
+only once a week. For example, a person who developed symptoms on a
+Wednesday may only be recorded on the following Monday, introducing an
+error of up to 6 days.</li>
+<li>
+<strong>No weekend reporting.</strong> Some surveillance systems do
+not register new cases on Saturdays and Sundays. Cases with symptom
+onset on Friday evening or Saturday will systematically be reported on
+the following Monday.</li>
+<li>
+<strong>Grouped declaration.</strong> Physicians or hospitals
+sometimes submit batches of cases at fixed intervals, leading to
+artificial clustering of reported onset dates.</li>
+</ul>
+<p>The consequence for ICC interval estimation is that the observed ICC
+is not
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>t</mi><mo>=</mo><msub><mi>t</mi><mtext mathvariant="normal">onset, secondary</mtext></msub><mo>−</mo><msub><mi>t</mi><mtext mathvariant="normal">onset, index</mtext></msub></mrow><annotation encoding="application/x-tex">\Delta t = t_{\text{onset, secondary}} - t_{\text{onset, index}}</annotation></semantics></math>,
+but rather
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><msup><mi>t</mi><mo>*</mo></msup><mo>=</mo><msub><mi>t</mi><mtext mathvariant="normal">reported, secondary</mtext></msub><mo>−</mo><msub><mi>t</mi><mtext mathvariant="normal">reported, index</mtext></msub></mrow><annotation encoding="application/x-tex">\Delta t^* = t_{\text{reported, secondary}} - t_{\text{reported, index}}</annotation></semantics></math>,
+which can differ from the true value by up to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>×</mo><mtext mathvariant="monospace">𝚠𝚒𝚗𝚍</mtext></mrow><annotation encoding="application/x-tex">2 \times \texttt{wind}</annotation></semantics></math>
+days (if both the index and the secondary case are subject to reporting
+delays in opposite directions).</p>
+<p>If a surveillance system collects data once a week, any ICC value
 computed from these dates carries an uncertainty of up to
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>±</mo><mtext mathvariant="monospace">𝚠𝚒𝚗𝚍</mtext></mrow><annotation encoding="application/x-tex">\pm \texttt{wind}</annotation></semantics></math>
 days around the true value.</p>
@@ -944,7 +941,7 @@ long routes (PT, PQ) are very rare.</p>
 <span><span class="co">#&gt; Best n_routes according to AIC : 2</span></span></code></pre>
 <p>The example above shows us that the initial algorithm is robust to
 the case where the number of routes set in the algorithm is greater that
-the number of actual routes. Then, the algorihm will find weights close
+the number of actual routes. Then, the algorithm will find weights close
 to 0.</p>
 </div>
 <div class="section level3">

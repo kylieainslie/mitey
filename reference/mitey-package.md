@@ -32,3 +32,8 @@ Useful links:
 
 **Maintainer**: Kylie Ainslie <ainslie.kylie@gmail.com>
 ([ORCID](https://orcid.org/0000-0001-5419-7206)) \[copyright holder\]
+
+Authors:
+
+- Kylie Ainslie <ainslie.kylie@gmail.com>
+  ([ORCID](https://orcid.org/0000-0001-5419-7206)) \[copyright holder\]

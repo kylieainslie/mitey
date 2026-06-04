@@ -1339,7 +1339,7 @@ results_tab
 ##### Serial interval distribution
 
 In the main analysis, when we estimate the time-varying reproduction
-number, we assume an underlying Normal distriubtion. However, because we
+number, we assume an underlying Normal distribution. However, because we
 are using the serial interval distribution as an approximation of the
 generation interval, which is strictly positive, we performed a
 sensitivity analysis in which we assumed the serial interval
@@ -1622,7 +1622,7 @@ the Netherlands from 2011 to
 Figure S4. Annual scabies incidence per 1,000 people by age group in the
 Netherlands from 2011 to 2022.
 
-#### Software Implemenation and Validation
+#### Software Implementation and Validation
 
 In the main text, we show 3 examples of using the method of Vink et al²²
 on historical data sets. Below are the visualisations of the remaining

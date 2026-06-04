@@ -25,16 +25,16 @@ several reasons:
   number $R_{0}$ and the time-varying reproduction number $R_{t}$ are
   linked to the SI through the renewal equation: without an accurate SI
   estimate, any estimate of $R_{t}$ will be biased.
-- **Calibrating transmission models.** Compartmental models (SIR, SEIR,
+- **Input into transmission models.** Compartmental models (SIR, SEIR,
   etc.) and renewal equation models use the SI as a direct input to
   simulate epidemic dynamics and evaluate the impact of interventions.
 - **Designing control measures.** The duration of quarantine, the
   contact-tracing window, and the timing of vaccination campaigns are
   all partly calibrated on the SI.
 
-In practice, the SI is often confused with the **generation interval**
+In practice, the SI is used as a proxy for the **generation interval**
 (the time between infection of the primary case and infection of the
-secondary case).
+secondary case) which is usually unobservable.
 
 ------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ In practice, such data are rare. The most common alternatives are:
 | Approach                       | Data required                          | Main sources of bias                   |
 |--------------------------------|----------------------------------------|----------------------------------------|
 | Direct infector–infectee pairs | Contact-tracing surveys                | Epidemic growth bias, right-truncation |
-| Outbreak data (ICC intervals)  | Symptom onset dates within a household | Multiple transmission routes (see §3)  |
+| Outbreak data (ICC intervals)  | Symptom onset dates within an outbreak | Multiple transmission routes (see §3)  |
 | Bayesian reconstruction        | Partial transmission tree              | Strongly prior-dependent               |
 
 ### Classical biases and corrections
@@ -72,42 +72,7 @@ Several biases affect SI estimation from observed data:
 
 These corrections are well documented in the literature but require
 additional assumptions. It is precisely to sidestep some of these
-difficulties that household-based ICC methods were developed.
-
-### Date reporting uncertainty
-
-A less-discussed but practically important source of bias in serial
-interval estimation concerns the **accuracy of the reported symptom
-onset date**. In many surveillance systems, the date recorded in the
-database is not the true date of symptom onset, but rather the date at
-which the case was *reported* to the health authorities.
-
-Several mechanisms can introduce this discrepancy:
-
-- **Weekly reporting cycles.** In some institutional settings (care
-  homes, schools), health authorities collect information only once a
-  week. A person who developed symptoms on a Wednesday may only be
-  recorded on the following Monday, introducing an error of up to 6
-  days.
-- **No weekend reporting.** Some surveillance systems do not register
-  new cases on Saturdays and Sundays. Cases with symptom onset on Friday
-  evening or Saturday will systematically be reported on the following
-  Monday.
-- **Grouped declaration.** Physicians or hospitals sometimes submit
-  batches of cases at fixed intervals, leading to artificial clustering
-  of reported onset dates.
-
-The consequence for ICC interval estimation is that the observed ICC is
-not
-$\Delta t = t_{\text{onset,\ secondary}} - t_{\text{onset,\ index}}$,
-but rather
-$\Delta t^{*} = t_{\text{reported,\ secondary}} - t_{\text{reported,\ index}}$,
-which can differ from the true value by up to $2 \times \texttt{𝚠𝚒𝚗𝚍}$
-days (if both the index and the secondary case are subject to reporting
-delays in opposite directions).
-
-The `mitey` package addresses this through the `wind` parameter
-(reporting **wind**ow), described in detail in Section 4.
+difficulties that outbreak-based methods were developed.
 
 ------------------------------------------------------------------------
 
@@ -205,11 +170,43 @@ date is exact. Under this assumption, the likelihood of an observed ICC
 value $d$ is computed by integrating the component densities over the
 unit interval $\lbrack d,d + 1\rbrack$ (or $\lbrack d - 1,d + 1\rbrack$
 when $d > 0$), reflecting only the rounding to the nearest integer day.
+In practice, however, the reported date may be off by several days.
 
-In practice, however, the reported date may be off by several days. If a
-surveillance system collects data once a week, any ICC value computed
-from these dates carries an uncertainty of up to $\pm \texttt{𝚠𝚒𝚗𝚍}$
-days around the true value.
+### Date reporting uncertainty
+
+A less-discussed but practically important source of bias in serial
+interval estimation concerns the **accuracy of the reported symptom
+onset date**. In many surveillance systems, the date recorded in the
+database is not the true date of symptom onset, but rather the date at
+which the case was *reported* to the health authorities.
+
+Several mechanisms can introduce this discrepancy:
+
+- **Weekly reporting cycles.** In some institutional settings (care
+  homes, schools), health authorities collect information only once a
+  week. For example, a person who developed symptoms on a Wednesday may
+  only be recorded on the following Monday, introducing an error of up
+  to 6 days.
+- **No weekend reporting.** Some surveillance systems do not register
+  new cases on Saturdays and Sundays. Cases with symptom onset on Friday
+  evening or Saturday will systematically be reported on the following
+  Monday.
+- **Grouped declaration.** Physicians or hospitals sometimes submit
+  batches of cases at fixed intervals, leading to artificial clustering
+  of reported onset dates.
+
+The consequence for ICC interval estimation is that the observed ICC is
+not
+$\Delta t = t_{\text{onset,\ secondary}} - t_{\text{onset,\ index}}$,
+but rather
+$\Delta t^{*} = t_{\text{reported,\ secondary}} - t_{\text{reported,\ index}}$,
+which can differ from the true value by up to $2 \times \texttt{𝚠𝚒𝚗𝚍}$
+days (if both the index and the secondary case are subject to reporting
+delays in opposite directions).
+
+If a surveillance system collects data once a week, any ICC value
+computed from these dates carries an uncertainty of up to
+$\pm \texttt{𝚠𝚒𝚗𝚍}$ days around the true value.
 
     #> Warning: `geom_errorbarh()` was deprecated in ggplot2 4.0.0.
     #> ℹ Please use the `orientation` argument of `geom_errorbar()` instead.
@@ -641,7 +638,7 @@ routes (PT, PQ) are very rare.
 
 The example above shows us that the initial algorithm is robust to the
 case where the number of routes set in the algorithm is greater that the
-number of actual routes. Then, the algorihm will find weights close to
+number of actual routes. Then, the algorithm will find weights close to
 0.
 
 ### Example 3 — Example with real outbreak data - Influenza in Canada
