@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mitey</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,20 @@
       <small>Source: <a href="https://github.com/kylieainslie/mitey/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.0" id="mitey-040">mitey 0.4.0<a class="anchor" aria-label="anchor" href="#mitey-040"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-4-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-4-0"></a></h3>
+<ul><li><p><strong><code>n_routes</code> parameter in <code><a href="../reference/si_estim.html">si_estim()</a></code></strong> - Users can now specify the number of transmission routes to model (integer &gt;= 2, default <code>4</code>). Previously this was fixed. The number of mixture components fitted is <code>2*n_routes - 1</code> for the normal distribution and <code>n_routes</code> for the gamma distribution.</p></li>
+<li><p><strong><code>wind</code> parameter in <code><a href="../reference/si_estim.html">si_estim()</a></code></strong> - Adds a window censure interval parameter (default <code>1</code>) to <code><a href="../reference/si_estim.html">si_estim()</a></code>, giving users control over interval censoring in the likelihood calculation.</p></li>
+<li><p><strong><code><a href="../reference/compare_n_routes.html">compare_n_routes()</a></code> function</strong> - New model-selection utility that fits <code><a href="../reference/si_estim.html">si_estim()</a></code> for each value of <code>n_routes</code> from 2 up to <code>n_routes_max</code> and reports AIC and BIC for each fit. Helps identify the optimal number of transmission routes from the data.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-4-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-4-0"></a></h3>
+<ul><li><p>Added <strong>quick start guide</strong> vignette (<code>quick_start_guide.Rmd</code>) providing an introductory walkthrough of <code><a href="../reference/si_estim.html">si_estim()</a></code> and <code><a href="../reference/compare_n_routes.html">compare_n_routes()</a></code>.</p></li>
+<li><p>Added <strong>window parameter</strong> vignette explaining the <code>wind</code> censoring parameter and its effect on serial interval estimation.</p></li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.1" id="mitey-031">mitey 0.3.1<a class="anchor" aria-label="anchor" href="#mitey-031"></a></h2>
 <div class="section level3">
