@@ -1,3 +1,29 @@
+# mitey 0.4.0
+
+## New Features
+
+* **`n_routes` parameter in `si_estim()`** - Users can now specify the number
+  of transmission routes to model (integer >= 2, default `4`). Previously this
+  was fixed. The number of mixture components fitted is `2*n_routes - 1` for
+  the normal distribution and `n_routes` for the gamma distribution.
+
+* **`wind` parameter in `si_estim()`** - Adds a window censure interval
+  parameter (default `1`) to `si_estim()`, giving users control over interval
+  censoring in the likelihood calculation.
+
+* **`compare_n_routes()` function** - New model-selection utility that fits
+  `si_estim()` for each value of `n_routes` from 2 up to `n_routes_max` and
+  reports AIC and BIC for each fit. Helps identify the optimal number of
+  transmission routes from the data.
+
+## Documentation
+
+* Added **quick start guide** vignette (`quick_start_guide.Rmd`) providing an
+  introductory walkthrough of `si_estim()` and `compare_n_routes()`.
+
+* Added **window parameter** vignette explaining the `wind` censoring
+  parameter and its effect on serial interval estimation.
+
 # mitey 0.3.1
 
 ## New Features
