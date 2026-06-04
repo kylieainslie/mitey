@@ -22,5 +22,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Kylie Ainslie \email{ainslie.kylie@gmail.com} (\href{https://orcid.org/0000-0001-5419-7206}{ORCID}) [copyright holder]
 
+Authors:
+\itemize{
+  \item Kylie Ainslie \email{ainslie.kylie@gmail.com} (\href{https://orcid.org/0000-0001-5419-7206}{ORCID}) [copyright holder]
+}
+
 }
 \keyword{internal}
