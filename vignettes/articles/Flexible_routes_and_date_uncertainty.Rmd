@@ -1178,7 +1178,7 @@ comparison_sym <- compare_n_routes(
 )
 ```
 
-The example above shows us that the initial algorithm is robust to the case where the number of routes set in the algorithm is greater that the number of actual routes. Then, the algorihm will find weights close to 0.
+The example above shows us that the initial algorithm is robust to the case where the number of routes set in the algorithm is greater that the number of actual routes. Then, the algorithm will find weights close to 0.
 
 ## Example 3 --- Example with real outbreak data - Influenza in Canada
 

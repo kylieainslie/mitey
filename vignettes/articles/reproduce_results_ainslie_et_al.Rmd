@@ -1336,7 +1336,7 @@ results_tab
 
 #### Serial interval distribution
 
-In the main analysis, when we estimate the time-varying reproduction number, we assume an underlying Normal distriubtion. However, because we are using the serial interval distribution as an approximation of the generation interval, which is strictly positive, we performed a sensitivity analysis in which we assumed the serial interval distribution is Gamma distributed with the same mean and variance (Figure S3).
+In the main analysis, when we estimate the time-varying reproduction number, we assume an underlying Normal distribution. However, because we are using the serial interval distribution as an approximation of the generation interval, which is strictly positive, we performed a sensitivity analysis in which we assumed the serial interval distribution is Gamma distributed with the same mean and variance (Figure S3).
 
 Below, we provide the code to generate the estimates assuming a gamma distributed serial interval. However, this code takes a long time to run due to the bootstrapping, so the estimates are stored in `vignettes/data/rt_estimates_WL_gamma.rds`.
 
@@ -1575,7 +1575,7 @@ ggplot(df_inc_age, aes(x = Year, y = Incidence, color = `Age Group`)) +
   theme(legend.position = "right") 
 ```
 
-### Software Implemenation and Validation
+### Software Implementation and Validation
 
 In the main text, we show 3 examples of using the method of Vink et al [@vink2014] on historical data sets. Below are the visualisations of the remaining 19 studies.
 
