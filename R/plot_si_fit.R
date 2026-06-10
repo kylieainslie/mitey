@@ -154,6 +154,35 @@ plot_si_fit <- function(
       theme_minimal() +
       geom_vline(xintercept = mean, linetype = "dashed", color = "black")
   }
+  
+  if (dist == "lognormal") {
+    breaks <- seq(min(dat) - 0.51, max(dat) + 0.51, by = 1)
+    
+    p <- ggplot(data = data.frame(x = dat), aes(x = .data$x)) +
+      geom_histogram(
+        aes(y = after_stat(.data$density) * scaling_factor),
+        breaks = breaks,
+        fill = "lightblue",
+        color = "black"
+      ) +
+      stat_function(
+        fun = f_lnorm,
+        args = list(
+          w1 = weights[1],
+          w2 = weights[2],
+          w3 = weights[3],
+          mu = mean,
+          sigma = sd
+        ),
+        color = "red",
+        linetype = "dotdash",
+        linewidth = 1
+      ) +
+      labs(x = "Index-case to case interval (days)", y = "Density") +
+      theme_minimal() +
+      geom_vline(xintercept = mean, linetype = "dashed", color = "black")
+  }
+  
 
   return(p)
 }
@@ -213,30 +242,24 @@ plot_si_fit <- function(
 #' }
 #'
 plot_si_fit_result <- function(
-  si_result,
-  dat,
-  dist = c("normal", "gamma"),
-  scaling_factor = 1
+    si_result,
+    dat,
+    dist = c("normal", "gamma", "lognormal"),
+    scaling_factor = 1
 ) {
   dist <- match.arg(dist)
-
- if (dist == "normal") {
-    # Aggregate 7 weights into 4 for normal distribution
-    # Component 1: Co-primary
-    # Components 2+3: Primary-secondary
-    # Components 4+5: Primary-tertiary
-    # Components 6+7: Primary-quaternary
+  
+  if (dist == "normal") {
     weights <- c(
       si_result$wts[1],
       si_result$wts[2] + si_result$wts[3],
       si_result$wts[4] + si_result$wts[5],
       si_result$wts[6] + si_result$wts[7]
     )
-  } else {
-    # Gamma: pass first 3 weights; f_gam() derives the 4th as 1 - w1 - w2 - w3
+  } else if (dist %in% c("gamma", "lognormal")) {
     weights <- si_result$wts[1:3]
   }
-
+  
   plot_si_fit(
     dat = dat,
     mean = si_result$mean,

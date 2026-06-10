@@ -51,7 +51,7 @@ integrate_component <- function(
   mu,
   sigma,
   comp,
-  dist = c("normal", "gamma"),
+  dist = c("normal", "gamma","lognormal"),
   lower = TRUE
 ) {
   if (lower) {

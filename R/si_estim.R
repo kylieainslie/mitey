@@ -207,14 +207,14 @@ si_estim <- function(
   }
 
   # Check distribution parameter
-  if (!dist %in% c("normal", "gamma")) {
-    stop("Distribution must be either 'normal' or 'gamma'.")
+  if (!dist %in% c("normal", "gamma", "lognormal")) {
+    stop("Distribution must be either 'normal', 'gamma', or 'lognormal'.")
   }
 
   # Check for gamma distribution with negative values
-  if (dist == "gamma" && any(dat < 0)) {
+  if (dist %in% c("gamma", "lognormal") && any(dat < 0)) {
     stop(
-      "Gamma distribution cannot be used with negative values. Please use 'normal' distribution instead."
+      "Gamma and lognormal distributions cannot be used with negative values. Please use 'normal' distribution instead."
     )
   }
 
@@ -255,7 +255,7 @@ si_estim <- function(
   # Components depend on specified distribution
   if (dist == "normal") {
     comp_vec <- 1:7
-  } else if (dist == "gamma") {
+  } else if (dist %in% c("gamma", "lognormal")) {
     comp_vec <- c(1, 2, 4, 6)
   }
 
@@ -334,6 +334,12 @@ si_estim <- function(
         )
         mu <- opt$par[1]
         sigma <- opt$par[2]
+      } else if (dist == "lognormal") {
+        mu_log <- weighted.mean(log(dat), tau[2, ])
+        sigma_log <- sqrt(weighted_var(log(dat), tau[2, ]))
+        
+        mu <- exp(mu_log + 0.5 * sigma_log^2)
+        sigma <- sqrt((exp(sigma_log^2) - 1) * exp(2 * mu_log + sigma_log^2))
       }
 
       # Check for convergence
@@ -396,7 +402,7 @@ si_estim <- function(
 #' @param sigma numeric; estimated standard deviation
 #' @param wts numeric vector; component weights
 #' @param comp_vec integer vector; component indices
-#' @param dist character; distribution type ("normal" or "gamma")
+#' @param dist character; distribution type ("normal", "gamma", or "lognormal")
 #'
 #' @return numeric; log-likelihood value
 #' @keywords internal
