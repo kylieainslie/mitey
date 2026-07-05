@@ -1,0 +1,598 @@
+---
+title: "Simulation Study Plan"
+author: "Terry Xue"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    number_sections: false
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: false
+    theme: readable
+    df_print: paged
+fontsize: 11pt
+geometry: margin=1in
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+# 1. Introduction
+
+This document presents a simulation study plan for evaluating a
+lognormal extension of the Vink et al. transmission-path mixture framework for
+serial interval (SI) estimation. The plan follows the ADEMP structure: Aims,
+Data-generating mechanisms, Estimands, Methods, and Performance measures.
+
+The serial interval is defined as the time between symptom onset in a primary
+case and symptom onset in the corresponding secondary case. It is an important
+epidemiological quantity because it describes the timing of transmission and is
+used in epidemic models, reproduction number estimation, and public health
+planning. In most outbreak datasets, however, true infector--infectee pairs are
+not observed. We usually observe symptom-onset dates only. Therefore, the SI
+must be inferred indirectly.
+
+Following Vink et al. (2014), the observable quantity is the index case-to-case
+(ICC) interval: the time from symptom onset in the index case of a cluster to
+symptom onset in each later case. An ICC interval is not necessarily a direct
+serial interval. It may arise from several latent transmission paths:
+co-primary (CP), primary-secondary (PS), primary-tertiary (PT), or
+primary-quaternary (PQ) transmission. The PS path is the target component,
+because its ICC interval is exactly one direct SI. The other paths are nuisance
+components that must be represented to recover the PS distribution from the
+observed ICC mixture.
+
+The current project extends the original Vink framework by replacing the
+Normal or Gamma assumption for the underlying SI distribution with a lognormal
+assumption. In this updated plan, the extension retains the original
+transmission-path interpretation: all direct serial intervals are assumed to be
+independent and identically distributed copies from one underlying SI
+distribution. This is different from an earlier structurally constrained
+lognormal mixture plan, where CP, PS, PT, and PQ were directly specified as
+four ordered lognormal components with fixed path multipliers. That earlier
+formulation is not used here.
+
+The proposed simulation study has two main purposes. First, under correct
+specification, it evaluates whether the iid lognormal extension can recover the
+true natural-scale SI mean and SD. Second, under
+misspecification, it evaluates how robust the lognormal extension is when the
+true underlying SI distribution is Gamma or Normal rather than lognormal.
+Formal model comparison against Normal and Gamma fitted models is not included
+in this first simulation plan.
+
+# 2. Simulation Study
+
+## 2.1 Aims
+
+### 2.1.1 Primary aim
+
+To assess whether the proposed iid lognormal extension of the Vink
+transmission-path mixture framework can recover the mean and SD of the
+underlying SI distribution when the data are generated under
+the same iid lognormal mechanism assumed by the fitted model.
+
+### 2.1.2 Secondary aims
+
+- To examine the performance of the proposed method under
+  correct specification.
+
+- To examine sensitivity to different latent transmission-path mixture weights
+  under correct specification.
+
+- To examine robustness when the fitted model assumes an iid lognormal SI but
+  the true SI distribution is Gamma or Normal.
+
+### 2.1.3 Questions of interest
+
+The simulation study is designed to answer the following questions:
+
+- Under correct specification, can the lognormal extension recover the true SI
+  mean and SD properly?
+
+- How does performance change as the number of observed ICC intervals
+  increases?
+
+- How sensitive is estimation to the relative weights of CP, PS, PT, and
+  PQ paths in the observed ICC data?
+
+- If the true SI distribution is Gamma or Normal, how biased are the SI mean
+  and SD estimates from the lognormal extension?
+
+## 2.2 General data-generating mechanism
+
+For each simulated dataset, let the latent transmission path for observation
+$i$ be
+
+$$
+Z_i \in \{CP, PS, PT, PQ\},
+$$
+
+with path probabilities
+
+$$
+\mathbf{w} = (w_{CP}, w_{PS}, w_{PT}, w_{PQ}),
+\qquad
+\sum_g w_g = 1.
+$$
+
+The underlying direct serial intervals are independent random variables drawn
+from a specified true SI distribution. Under correct specification, this true
+distribution is lognormal:
+
+$$
+X_k \overset{i.i.d.}{\sim} \mathrm{Lognormal}(\mathrm{meanlog},\mathrm{sdlog}^2),
+\qquad k = 1,2,3,\ldots
+$$
+
+where $\mathrm{meanlog}$ and $\mathrm{sdlog}$ are log-scale parameters. The
+natural-scale SI mean and SD are denoted by $\mu$ and $\sigma$:
+
+$$
+\mu = E(X) = \exp\left(\mathrm{meanlog} + \frac{1}{2}\mathrm{sdlog}^2\right),
+$$
+
+and
+
+$$
+\sigma = SD(X) =
+\sqrt{
+\left[\exp(\mathrm{sdlog}^2)-1\right]
+\exp(2\mathrm{meanlog}+\mathrm{sdlog}^2)
+}.
+$$
+
+The path-specific continuous ICC interval $C_i$ is generated as follows:
+
+$$
+C_{CP} = |X_1 - X_2|,
+$$
+
+$$
+C_{PS} = X_1,
+$$
+
+$$
+C_{PT} = X_1 + X_2,
+$$
+
+and
+
+$$
+C_{PQ} = X_1 + X_2 + X_3.
+$$
+
+This preserves the original Vink transmission-path interpretation. The
+primary-secondary path is exactly the target SI distribution, while CP, PT, and
+PQ are derived from the same underlying iid SI distribution.
+
+
+# 3. Scenario Design
+
+The simulation study contains two scenario groups:
+
+1. Correct specification scenarios, where the true SI distribution is
+   lognormal and the fitted model is also lognormal.
+
+2. Misspecification scenarios, where the fitted model remains lognormal but
+   the true SI distribution is Gamma or Normal.
+
+
+Unless otherwise stated, the baseline natural-scale SI parameters are
+
+$$
+\mu=6 \text{ days},
+\qquad
+\sigma=3 \text{ days}.
+$$
+
+For lognormal data generation, these natural-scale values are converted to
+log-scale parameters by
+
+$$
+\mathrm{sdlog} =
+\sqrt{\log\left(1+\frac{\sigma^2}{\mu^2}\right)},
+$$
+
+and
+
+$$
+\mathrm{meanlog} =
+\log(\mu) - \frac{1}{2}\mathrm{sdlog}^2.
+$$
+
+## 3.1 Scenario A: Correct specification
+
+In all correct-specification scenarios, data are generated from the same iid
+lognormal SI mechanism assumed by the fitted model:
+
+$$
+X \sim \mathrm{Lognormal}(\mathrm{meanlog},\mathrm{sdlog}^2).
+$$
+
+The fitted method is the proposed lognormal extension implemented through
+`mitey::si_estim(dat, dist = "lognormal")`.
+
+### A0. Baseline scenario
+
+The baseline scenario checks whether the method can recover the true SI
+mean and SD in a standard setting.
+
+| Parameter | Value |
+|:--|:--|
+| True SI distribution | Lognormal |
+| True SI mean | 6 days |
+| True SI SD | 3 days |
+| ICC sample size | 300 |
+| Path weights | $(0.20, 0.50, 0.20, 0.10)$ for CP, PS, PT, PQ |
+| Number of simulation replicates | 500 |
+| Fitted model | Lognormal extension |
+
+### A1. Finite sample size
+
+This scenario evaluates finite-sample performance. Only the number of observed
+ICC intervals changes; all other baseline parameters are fixed.
+
+$$
+n_{obs} \in \{100, 300, 600, 1000\}.
+$$
+
+The purpose is to assess whether estimation becomes less biased and more
+precise as the number of observed ICC intervals increases.
+
+| Scenario | $n_{obs}$ | True SI distribution | True SI mean | True SI SD | Path weights |
+|:--|--:|:--|--:|--:|:--|
+| A1-n100 | 100 | Lognormal | 6 | 3 | $(0.20,0.50,0.20,0.10)$ |
+| A1-n300 | 300 | Lognormal | 6 | 3 | $(0.20,0.50,0.20,0.10)$ |
+| A1-n600 | 600 | Lognormal | 6 | 3 | $(0.20,0.50,0.20,0.10)$ |
+| A1-n1000 | 1000 | Lognormal | 6 | 3 | $(0.20,0.50,0.20,0.10)$ |
+
+### A2. Mixture weight patterns
+
+This scenario evaluates sensitivity to the relative proportions of latent
+transmission paths. The true SI distribution and sample size are fixed at the
+baseline values. Only the path weights change.
+
+| Scenario | CP | PS | PT | PQ | Purpose |
+|:--|--:|--:|--:|--:|:--|
+| A2-baseline | 0.20 | 0.50 | 0.20 | 0.10 | Standard mixture composition |
+| A2-PS-dominant | 0.10 | 0.70 | 0.15 | 0.05 | Strong PS signal |
+| A2-CP-heavy | 0.40 | 0.35 | 0.15 | 0.10 | More co-primary intervals |
+| A2-higher-generation-heavy | 0.10 | 0.35 | 0.35 | 0.20 | More PT/PQ intervals |
+
+The main question is whether the PS/SI mean and SD remain
+recoverable when the PS component is less dominant or when nuisance components
+make up a larger proportion of the observed ICC intervals.
+
+## 3.2 Scenario B: Misspecification
+
+In misspecification scenarios, data are generated from a true SI distribution
+that is not lognormal. The fitted model is still the proposed lognormal
+extension:
+
+```r
+mitey::si_estim(dat, dist = "lognormal")
+```
+
+, which aims to evaluate robustness of the lognormal extension under misspecified distribution setting for SI.
+
+### B1. True SI is Gamma
+
+In this scenario, the true direct SI distribution is Gamma with the same
+natural-scale mean and SD as the baseline scenario:
+
+$$
+X \sim \mathrm{Gamma}(\mu=6, \sigma=3).
+$$
+
+In implementation, the Gamma parameters are
+
+$$
+shape = \frac{\mu^2}{\sigma^2},
+\qquad
+scale = \frac{\sigma^2}{\mu}.
+$$
+
+The ICC intervals are generated using the same path construction:
+
+$$
+CP = |X_1-X_2|,
+\quad
+PS = X_1,
+\quad
+PT = X_1+X_2,
+\quad
+PQ = X_1+X_2+X_3.
+$$
+
+| Parameter | Value |
+|:--|:--|
+| True SI distribution | Gamma |
+| True SI mean | 6 days |
+| True SI SD | 3 days |
+| ICC sample size | 300 |
+| Path weights | $(0.20, 0.50, 0.20, 0.10)$ |
+| Number of simulation replicates | 500 |
+| Fitted model | Lognormal extension |
+
+### B2. True SI is Normal
+
+In this scenario, the true direct SI distribution follows the Normal
+assumption.
+
+The true direct SI distribution is
+
+$$
+X \sim \mathrm{Normal}(6, 3^2).
+$$
+
+Observed ICC intervals are generated using a folded Vink-style construction so
+that the generated ICC intervals remain non-negative:
+
+$$
+CP = |X_1-X_2|,
+$$
+
+$$
+PS = |X_1|,
+$$
+
+$$
+PT = |X_1+X_2|,
+$$
+
+and
+
+$$
+PQ = |X_1+X_2+X_3|.
+$$
+
+The fitted model remains the lognormal extension. The main question is whether
+the lognormal extension produces substantial bias when the data are generated
+from the Normal assumption.
+
+| Parameter | Value |
+|:--|:--|
+| True SI distribution | Normal |
+| True SI mean | 6 days |
+| True SI SD | 3 days |
+| ICC sample size | 300 |
+| Path weights | $(0.20, 0.50, 0.20, 0.10)$ |
+| Number of simulation replicates | 500 |
+| Fitted model | Lognormal extension |
+
+# 4. Estimands and Targets
+
+The primary estimands are the natural-scale mean and SD of the
+underlying direct SI distribution:
+
+$$
+\theta_1 = \mu = E(X),
+\qquad
+\theta_2 = \sigma = SD(X).
+$$
+
+These are the main quantities reported by `si_estim()` and are the most
+important epidemiological summaries for modelling.
+
+For correct-specification scenarios, the true values are those of the
+underlying lognormal SI distribution. For misspecification scenarios, the true
+values are the natural-scale mean and SD of the data-generating
+SI distribution, such as Gamma or Normal.
+
+Secondary quantities to record are:
+
+- estimated mixture weights;
+- convergence indicator;
+- number of EM iterations used;
+
+Since these secondary quantities are diagnostic, the main performance conclusions
+should be based on recovery of the SI mean and SD.
+
+# 5. Methods
+
+## 5.1 Fitted method
+
+The fitted method in all scenarios is the proposed lognormal extension of the
+Vink framework. The code is
+
+```r
+fit <- mitey::si_estim(
+  dat = observed_icc_intervals,
+  dist = "lognormal",
+  n = 50,
+  n_starts = 1
+)
+```
+
+The fitted model treats each observed ICC interval as arising from one of four
+latent paths: CP, PS, PT, or PQ. It estimates the SI mean and SD,
+along with mixture weights for the path components.
+
+The E-step calculates posterior path responsibilities using the current
+parameter estimates and the path-specific probabilities. Under the lognormal
+extension, CP, PT, and PQ involve differences or sums of lognormal random
+variables and therefore require numerical integration. The M-step updates the
+path weights and the lognormal SI parameters.
+
+
+## 5.2 Simulation execution using `mitey` package
+
+For SI estimation, we will generate
+CP, PS, PT, and PQ components, combines them into an ICC interval vector, and
+then fits `si_estim()`. 
+
+The code is
+
+```r
+set.seed(1234)
+
+N <- 300
+mu <- 6
+sigma <- 3
+route_weights <- c(CP = 0.20, PS = 0.50, PT = 0.20, PQ = 0.10)
+
+sdlog <- sqrt(log(1 + sigma^2 / mu^2))
+meanlog <- log(mu) - 0.5 * sdlog^2
+
+n_route <- setNames(as.integer(round(route_weights * N)), names(route_weights))
+n_route["PS"] <- N - sum(n_route[c("CP", "PT", "PQ")])
+
+CP <- abs(
+  rlnorm(n_route["CP"], meanlog = meanlog, sdlog = sdlog) -
+    rlnorm(n_route["CP"], meanlog = meanlog, sdlog = sdlog)
+)
+PS <- rlnorm(n_route["PS"], meanlog = meanlog, sdlog = sdlog)
+PT <- rlnorm(n_route["PT"], meanlog = meanlog, sdlog = sdlog) +
+  rlnorm(n_route["PT"], meanlog = meanlog, sdlog = sdlog)
+PQ <- rlnorm(n_route["PQ"], meanlog = meanlog, sdlog = sdlog) +
+  rlnorm(n_route["PQ"], meanlog = meanlog, sdlog = sdlog) +
+  rlnorm(n_route["PQ"], meanlog = meanlog, sdlog = sdlog)
+
+observed_icc_intervals <- round(c(CP, PS, PT, PQ))
+observed_icc_intervals <- pmax(observed_icc_intervals, 0)
+
+fit <- mitey::si_estim(
+  dat = observed_icc_intervals,
+  dist = "lognormal",
+  n = 50,
+  n_starts = 1
+)
+```
+
+The output for each replicate should
+contain:
+
+```r
+data.frame(
+  scenario_id = scenario_id,
+  replicate_id = replicate_id,
+  n_obs = n_obs,
+  true_dist = si_dist,
+  fit_dist = fit_dist,
+  true_mean = mu,
+  true_sd = sigma,
+  est_mean = fit$mean,
+  est_sd = fit$sd,
+  converged = fit$converged,
+  iterations = fit$iterations
+)
+```
+
+The simulation scenarios should be controlled by a scenario table:
+
+```r
+scenario_grid <- data.frame(
+  scenario_id = c(
+    "A0_baseline",
+    "A1_n100", "A1_n300", "A1_n600", "A1_n1000",
+    "A2_baseline", "A2_PS_dominant", "A2_CP_heavy",
+    "A2_higher_generation_heavy",
+    "B1_gamma", "B2_normal"
+  ),
+  scenario_type = c(
+    "correct",
+    rep("correct", 8),
+    "misspecified", "misspecified"
+  ),
+  si_dist = c(
+    "lognormal",
+    rep("lognormal", 8),
+    "gamma", "normal"
+  ),
+  n_obs = c(
+    300,
+    100, 300, 600, 1000,
+    300, 300, 300, 300,
+    300, 300
+  ),
+  true_mean = 6,
+  true_sd = 3,
+  w_cp = c(0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.10, 0.40, 0.10, 0.20, 0.20),
+  w_ps = c(0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.70, 0.35, 0.35, 0.50, 0.50),
+  w_pt = c(0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.15, 0.15, 0.35, 0.20, 0.20),
+  w_pq = c(0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.05, 0.10, 0.20, 0.10, 0.10)
+)
+```
+
+
+# 6. Performance Measures
+
+The following measures will be calculated for each scenario.
+
+## 6.1 Bias
+
+For SI mean:
+
+$$
+Bias(\widehat{\mu}) =
+\frac{1}{R}
+\sum_{r=1}^R
+\left[
+\widehat{\mu}_r - \mu
+\right],
+$$
+
+where $R$ is the number of simulation replicates.
+
+For SI SD:
+
+$$
+Bias(\widehat{\sigma}) =
+\frac{1}{R}
+\sum_{r=1}^R
+\left[
+\widehat{\sigma}_r - \sigma
+\right].
+$$
+
+Relative bias may also be reported:
+
+$$
+Relative\ Bias =
+\frac{Bias}{True\ Value}.
+$$
+
+## 6.2 Root mean squared error
+
+For SI mean:
+
+$$
+RMSE(\widehat{\mu}) =
+\sqrt{
+\frac{1}{R}
+\sum_{r=1}^R
+\left[
+\widehat{\mu}_r - \mu
+\right]^2
+}.
+$$
+
+The same definition is used for the SI SD.
+
+## 6.3 Empirical standard deviation
+
+The empirical standard deviation of estimates across simulation replicates will
+be reported for both the SI mean and SI SD:
+
+$$
+SD_{emp}(\widehat{\mu}),
+\qquad
+SD_{emp}(\widehat{\sigma}).
+$$
+
+This measures variability of the estimator across repeated simulated datasets.
+
+## 6.4 Convergence rate
+
+The convergence rate is the proportion of simulation replicates for which the
+fitted EM algorithm reports convergence:
+
+$$
+Convergence\ rate =
+\frac{\#\{\mathrm{converged\ fits}\}}{R}.
+$$
+
+This is retained as a basic diagnostic because the lognormal extension is more
+computationally demanding than the original Normal version.

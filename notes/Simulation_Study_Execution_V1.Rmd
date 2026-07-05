@@ -1,0 +1,404 @@
+---
+title: "Simulation Study Execution V1"
+author: "Terry Xue"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 3
+  html_document:
+    toc: true
+    toc_depth: 3
+    df_print: paged
+params:
+  n_reps: 100
+  n_iter: 50
+  n_starts: 1
+  seed: 20260706
+  progress_every: 10
+  scenario_subset: !r NULL
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+current_dir <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
+project_root <- if (basename(current_dir) == "meeting_summarys") {
+  normalizePath(file.path(current_dir, ".."), winslash = "/", mustWork = TRUE)
+} else {
+  current_dir
+}
+
+local_mitey_path <- file.path(project_root, "mitey", "mitey")
+pkgload::load_all(local_mitey_path, quiet = TRUE)
+```
+
+# 1. Purpose
+
+This document executes the simulation study described in
+`Simulation_Study_Plan_V4.Rmd`. The goal is to evaluate whether the lognormal
+extension of the Vink serial interval estimation framework can recover the true
+SI mean and SD from simulated ICC intervals.
+
+The fitted model is always:
+
+```{r fitted-method, eval=FALSE}
+fit <- si_estim(
+  dat = observed_icc_intervals,
+  dist = "lognormal",
+  n = params$n_iter,
+  n_starts = params$n_starts
+)
+```
+
+The data-generating distribution varies across scenarios. Correct-specification
+scenarios generate SI values from a lognormal distribution. Misspecification
+scenarios generate SI values from Gamma or Normal distributions but still fit
+the lognormal extension.
+
+# 2. Setup
+
+```{r simulation-settings}
+n_reps <- params$n_reps
+n_iter <- params$n_iter
+n_starts <- params$n_starts
+seed <- params$seed
+progress_every <- params$progress_every
+
+set.seed(seed)
+
+simulation_settings <- data.frame(
+  n_reps = n_reps,
+  n_iter = n_iter,
+  n_starts = n_starts,
+  progress_every = progress_every,
+  seed = seed
+)
+
+simulation_settings
+```
+
+# 3. Scenario Table
+
+```{r scenario-table}
+scenario_grid <- data.frame(
+  scenario_id = c(
+    "A0_baseline",
+    "A1_n100", "A1_n300", "A1_n600", "A1_n1000",
+    "A2_PS_dominant", "A2_CP_heavy", "A2_higher_generation_heavy",
+    "B1_gamma", "B2_normal"
+  ),
+  scenario_type = c(
+    rep("correct_specification", 8),
+    "misspecification", "misspecification"
+  ),
+  true_dist = c(
+    rep("lognormal", 8),
+    "gamma", "normal"
+  ),
+  n_obs = c(
+    300,
+    100, 300, 600, 1000,
+    300, 300, 300,
+    300, 300
+  ),
+  true_mean = 6,
+  true_sd = 3,
+  w_cp = c(0.20, 0.20, 0.20, 0.20, 0.20, 0.10, 0.40, 0.10, 0.20, 0.20),
+  w_ps = c(0.50, 0.50, 0.50, 0.50, 0.50, 0.70, 0.35, 0.35, 0.50, 0.50),
+  w_pt = c(0.20, 0.20, 0.20, 0.20, 0.20, 0.15, 0.15, 0.35, 0.20, 0.20),
+  w_pq = c(0.10, 0.10, 0.10, 0.10, 0.10, 0.05, 0.10, 0.20, 0.10, 0.10),
+  stringsAsFactors = FALSE
+)
+
+if (!is.null(params$scenario_subset)) {
+  scenario_grid <- scenario_grid[scenario_grid$scenario_id %in% params$scenario_subset, ]
+}
+
+scenario_grid$weights <- sprintf(
+  "(%.2f, %.2f, %.2f, %.2f)",
+  scenario_grid$w_cp,
+  scenario_grid$w_ps,
+  scenario_grid$w_pt,
+  scenario_grid$w_pq
+)
+
+scenario_grid
+```
+
+# 4. Simulation Functions
+
+The functions below generate ICC intervals using the Vink path construction.
+For lognormal and Gamma SI generation, the path-specific continuous ICC
+intervals are
+
+```text
+CP = abs(X1 - X2)
+PS = X1
+PT = X1 + X2
+PQ = X1 + X2 + X3
+```
+
+For Normal SI generation, the folded Vink-style version is used:
+
+```text
+CP = abs(X1 - X2)
+PS = abs(X1)
+PT = abs(X1 + X2)
+PQ = abs(X1 + X2 + X3)
+```
+
+Observed ICC intervals are rounded to integer days and truncated at zero.
+
+```{r simulation-functions}
+natural_to_lognormal <- function(mean, sd) {
+  sdlog <- sqrt(log(1 + sd^2 / mean^2))
+  meanlog <- log(mean) - 0.5 * sdlog^2
+  c(meanlog = meanlog, sdlog = sdlog)
+}
+
+draw_si <- function(n, dist, mean, sd) {
+  if (n == 0) {
+    return(numeric(0))
+  }
+
+  if (dist == "lognormal") {
+    pars <- natural_to_lognormal(mean, sd)
+    return(rlnorm(n, meanlog = pars[["meanlog"]], sdlog = pars[["sdlog"]]))
+  }
+
+  if (dist == "gamma") {
+    shape <- mean^2 / sd^2
+    scale <- sd^2 / mean
+    return(rgamma(n, shape = shape, scale = scale))
+  }
+
+  if (dist == "normal") {
+    return(rnorm(n, mean = mean, sd = sd))
+  }
+
+  stop("Unsupported SI distribution: ", dist)
+}
+
+route_counts <- function(n_obs, weights) {
+  counts <- setNames(as.integer(round(weights * n_obs)), names(weights))
+  counts["PS"] <- n_obs - sum(counts[c("CP", "PT", "PQ")])
+  counts
+}
+
+simulate_icc_intervals <- function(n_obs, true_dist, true_mean, true_sd, weights) {
+  counts <- route_counts(n_obs, weights)
+
+  cp <- abs(
+    draw_si(counts[["CP"]], true_dist, true_mean, true_sd) -
+      draw_si(counts[["CP"]], true_dist, true_mean, true_sd)
+  )
+
+  if (true_dist == "normal") {
+    ps <- abs(draw_si(counts[["PS"]], true_dist, true_mean, true_sd))
+    pt <- abs(
+      draw_si(counts[["PT"]], true_dist, true_mean, true_sd) +
+        draw_si(counts[["PT"]], true_dist, true_mean, true_sd)
+    )
+    pq <- abs(
+      draw_si(counts[["PQ"]], true_dist, true_mean, true_sd) +
+        draw_si(counts[["PQ"]], true_dist, true_mean, true_sd) +
+        draw_si(counts[["PQ"]], true_dist, true_mean, true_sd)
+    )
+  } else {
+    ps <- draw_si(counts[["PS"]], true_dist, true_mean, true_sd)
+    pt <- draw_si(counts[["PT"]], true_dist, true_mean, true_sd) +
+      draw_si(counts[["PT"]], true_dist, true_mean, true_sd)
+    pq <- draw_si(counts[["PQ"]], true_dist, true_mean, true_sd) +
+      draw_si(counts[["PQ"]], true_dist, true_mean, true_sd) +
+      draw_si(counts[["PQ"]], true_dist, true_mean, true_sd)
+  }
+
+  observed_icc <- pmax(round(c(cp, ps, pt, pq)), 0)
+
+  data.frame(
+    observed_icc = observed_icc,
+    latent_path = rep(names(counts), counts),
+    stringsAsFactors = FALSE
+  )
+}
+
+fit_one_replicate <- function(scenario_row, replicate_id) {
+  weights <- c(
+    CP = scenario_row[["w_cp"]],
+    PS = scenario_row[["w_ps"]],
+    PT = scenario_row[["w_pt"]],
+    PQ = scenario_row[["w_pq"]]
+  )
+
+  sim_dat <- simulate_icc_intervals(
+    n_obs = scenario_row[["n_obs"]],
+    true_dist = scenario_row[["true_dist"]],
+    true_mean = scenario_row[["true_mean"]],
+    true_sd = scenario_row[["true_sd"]],
+    weights = weights
+  )
+
+  fit <- tryCatch(
+    si_estim(
+      dat = sim_dat$observed_icc,
+      dist = "lognormal",
+      n = n_iter,
+      n_starts = n_starts
+    ),
+    error = function(e) e
+  )
+
+  if (inherits(fit, "error")) {
+    return(data.frame(
+      scenario_id = scenario_row[["scenario_id"]],
+      replicate_id = replicate_id,
+      scenario_type = scenario_row[["scenario_type"]],
+      true_dist = scenario_row[["true_dist"]],
+      n_obs = scenario_row[["n_obs"]],
+      weights = scenario_row[["weights"]],
+      true_mean = scenario_row[["true_mean"]],
+      true_sd = scenario_row[["true_sd"]],
+      est_mean = NA_real_,
+      est_sd = NA_real_,
+      bias_mean = NA_real_,
+      bias_sd = NA_real_,
+      converged = FALSE,
+      iterations = NA_integer_,
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  est_mean <- fit[["mean"]]
+  est_sd <- fit[["sd"]]
+
+  data.frame(
+    scenario_id = scenario_row[["scenario_id"]],
+    replicate_id = replicate_id,
+    scenario_type = scenario_row[["scenario_type"]],
+    true_dist = scenario_row[["true_dist"]],
+    n_obs = scenario_row[["n_obs"]],
+    weights = scenario_row[["weights"]],
+    true_mean = scenario_row[["true_mean"]],
+    true_sd = scenario_row[["true_sd"]],
+    est_mean = est_mean,
+    est_sd = est_sd,
+    bias_mean = est_mean - scenario_row[["true_mean"]],
+    bias_sd = est_sd - scenario_row[["true_sd"]],
+    converged = isTRUE(fit[["converged"]]),
+    iterations = fit[["iterations"]],
+    stringsAsFactors = FALSE
+  )
+}
+
+summarise_results <- function(results) {
+  split_results <- split(results, results$scenario_id)
+
+  summary_list <- lapply(split_results, function(dat) {
+    data.frame(
+      scenario_id = dat$scenario_id[1],
+      scenario_type = dat$scenario_type[1],
+      true_dist = dat$true_dist[1],
+      n_obs = dat$n_obs[1],
+      weights = dat$weights[1],
+      true_mean = dat$true_mean[1],
+      true_sd = dat$true_sd[1],
+      mean_est_mean = mean(dat$est_mean, na.rm = TRUE),
+      bias_mean = mean(dat$bias_mean, na.rm = TRUE),
+      rmse_mean = sqrt(mean(dat$bias_mean^2, na.rm = TRUE)),
+      emp_sd_mean = sd(dat$est_mean, na.rm = TRUE),
+      mean_est_sd = mean(dat$est_sd, na.rm = TRUE),
+      bias_sd = mean(dat$bias_sd, na.rm = TRUE),
+      rmse_sd = sqrt(mean(dat$bias_sd^2, na.rm = TRUE)),
+      emp_sd_sd = sd(dat$est_sd, na.rm = TRUE),
+      convergence_rate = mean(dat$converged, na.rm = TRUE),
+      stringsAsFactors = FALSE
+    )
+  })
+
+  out <- do.call(rbind, summary_list)
+  rownames(out) <- NULL
+  out[match(unique(results$scenario_id), out$scenario_id), ]
+}
+```
+
+# 5. Run Simulations
+
+```{r run-simulations, cache=TRUE}
+progress_line <- function(...) {
+  cat(sprintf(...), "\n")
+  flush.console()
+}
+
+overall_start <- Sys.time()
+total_scenarios <- nrow(scenario_grid)
+total_fits <- total_scenarios * n_reps
+fit_counter <- 0L
+
+scenario_results <- vector("list", total_scenarios)
+
+for (i in seq_len(total_scenarios)) {
+  scenario_row <- scenario_grid[i, ]
+  scenario_start <- Sys.time()
+
+  progress_line(
+    "[%s] Scenario %d/%d: %s | true_dist=%s | n_obs=%s | reps=%d",
+    format(Sys.time(), "%H:%M:%S"),
+    i,
+    total_scenarios,
+    scenario_row[["scenario_id"]],
+    scenario_row[["true_dist"]],
+    scenario_row[["n_obs"]],
+    n_reps
+  )
+
+  replicate_list <- vector("list", n_reps)
+
+  for (rep_id in seq_len(n_reps)) {
+    fit_counter <- fit_counter + 1L
+    replicate_list[[rep_id]] <- fit_one_replicate(
+      scenario_row,
+      replicate_id = rep_id
+    )
+
+    should_report <- rep_id == 1L ||
+      rep_id == n_reps ||
+      (progress_every > 0 && rep_id %% progress_every == 0L)
+
+    if (should_report) {
+      scenario_elapsed <- round(
+        as.numeric(difftime(Sys.time(), scenario_start, units = "mins")),
+        2
+      )
+      overall_elapsed <- round(
+        as.numeric(difftime(Sys.time(), overall_start, units = "mins")),
+        2
+      )
+      avg_seconds_per_fit <- as.numeric(
+        difftime(Sys.time(), overall_start, units = "secs")
+      ) / fit_counter
+      remaining_fits <- total_fits - fit_counter
+      eta_minutes <- round(avg_seconds_per_fit * remaining_fits / 60, 2)
+
+      progress_line(
+        "[%s]   Replicate %d/%d for %s; total fits %d/%d; scenario elapsed %.2f min; overall elapsed %.2f min; avg %.2f sec/fit; ETA %.2f min",
+        format(Sys.time(), "%H:%M:%S"),
+        rep_id,
+        n_reps,
+        scenario_row[["scenario_id"]],
+        fit_counter,
+        total_fits,
+        scenario_elapsed,
+        overall_elapsed,
+        avg_seconds_per_fit,
+        eta_minutes
+      )
+    }
+  }
+
+  scenario_results[[i]] <- do.call(rbind, replicate_list)
+}
+
+replicate_results <- do.call(rbind, scenario_results)
+
+head(replicate_results)
+```
