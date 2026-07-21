@@ -83,18 +83,30 @@ fupper <- function(
         `7` = (r + 1 - x) * dgamma(x, shape = 3 * k, scale = theta)
       )
     )
-  }  else if (dist == "lognormal") {
+  } else if (dist == "lognormal") {
     if (mu <= 0 || sigma <= 0 || !is.finite(mu) || !is.finite(sigma)) {
       return(rep(0, length(x)))
     }
     
+    # 1. Base parameters for PS (comp 2) - Standard Lognormal
     sdlog <- sqrt(log(1 + sigma^2 / mu^2))
     meanlog <- log(mu) - 0.5 * sdlog^2
     
+    # 2. FWA parameters for PT (comp 4) - Sum of 2 i.i.d lognormals
+    # Moment Matching: E[S2] = 2*mu, Var(S2) = 2*sigma^2
+    sdlog_pt <- sqrt(log(1 + (sigma^2) / (2 * mu^2)))
+    meanlog_pt <- log(2 * mu) - 0.5 * sdlog_pt^2
+    
+    # 3. FWA parameters for PQ (comp 6) - Sum of 3 i.i.d lognormals
+    sdlog_pq <- sqrt(log(1 + (sigma^2) / (3 * mu^2)))
+    meanlog_pq <- log(3 * mu) - 0.5 * sdlog_pq^2
+    
+    # Base density function (needed only for CP integration now)
     fx <- function(z) {
       ifelse(z > 0, dlnorm(z, meanlog = meanlog, sdlog = sdlog), 0)
     }
     
+    # Safe integrate wrapper
     safe_integrate <- function(f, lower, upper) {
       val <- tryCatch(
         integrate(f, lower = lower, upper = upper)[[1]],
@@ -103,37 +115,34 @@ fupper <- function(
       ifelse(is.finite(val), val, 0)
     }
     
-    d_pt <- function(z) {
-      if (!is.finite(z) || z <= 0) return(0)
-      safe_integrate(
-        f = function(t) fx(t) * fx(z - t),
-        lower = 0,
-        upper = z
-      )
-    }
-    
-    dens_one <- function(z) {
-      if (!is.finite(z) || z <= 0) return(0)
-      
-      switch(
-        as.character(comp),
-        `1` = safe_integrate(
+    # Calculate density based on the transmission component
+    if (comp == 1) {
+      # CP path: Absolute difference,can't use approxiamtion, still requires numerical integration
+      dens_one <- function(z) {
+        if (!is.finite(z) || z <= 0) return(0)
+        safe_integrate(
           f = function(t) 2 * fx(t) * fx(t + z),
           lower = 0,
           upper = Inf
-        ),
-        `2` = fx(z),
-        `4` = d_pt(z),
-        `6` = safe_integrate(
-          f = function(u) d_pt(u) * fx(z - u),
-          lower = 0,
-          upper = z
-        ),
-        stop("For lognormal distribution, comp must be one of 1, 2, 4, or 6.")
-      )
+        )
+      }
+      dens <- vapply(x, dens_one, numeric(1))
+      
+    } else if (comp == 2) {
+      # PS path: Direct density
+      dens <- ifelse(x > 0, dlnorm(x, meanlog = meanlog, sdlog = sdlog), 0)
+      
+    } else if (comp == 4) {
+      # PT path: FWA approximation
+      dens <- ifelse(x > 0, dlnorm(x, meanlog = meanlog_pt, sdlog = sdlog_pt), 0)
+      
+    } else if (comp == 6) {
+      # PQ path: FWA approximation
+      dens <- ifelse(x > 0, dlnorm(x, meanlog = meanlog_pq, sdlog = sdlog_pq), 0)
+      
+    } else {
+      stop("For lognormal distribution, comp must be one of 1, 2, 4, or 6.")
     }
-    
-    dens <- vapply(x, dens_one, numeric(1))
     
     return((r + 1 - x) * dens)
   }

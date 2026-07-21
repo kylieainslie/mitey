@@ -287,23 +287,29 @@ si_estim <- function(
     converged <- FALSE
     iterations_used <- n
 
+    # Initialize mixture weights before starting the EM iterations
+    w <- rep(1 / length(comp_vec), length(comp_vec))
+    
     for (k in 1:n) {
       mu_prev <- mu
       sigma_prev <- sigma
 
       tau <- matrix(0, nrow = length(comp_vec), ncol = j)
 
+      # --- E-STEP ---
       for (l in 1:j) {
         if (dat[l] == 0.00001) {
           for (comp in seq_along(comp_vec)) {
-            tau[comp, l] <- integrate_component(
+            # Multiply the integrated likelihood by the prior weight w[comp]
+            tau[comp, l] <- w[comp] * integrate_component(
               dat[l], mu, sigma,
               comp = comp_vec[comp], dist = dist, lower = FALSE
             )
           }
         } else {
           for (comp in seq_along(comp_vec)) {
-            tau[comp, l] <- integrate_component(
+            # Multiply the integrated likelihood by the prior weight w[comp]
+            tau[comp, l] <- w[comp] * integrate_component(
               dat[l], mu, sigma,
               comp = comp_vec[comp], dist = dist, lower = TRUE
             )
@@ -311,7 +317,7 @@ si_estim <- function(
         }
       }
 
-      # Normalize tau
+      # Normalize tau (Posterior responsibility)
       denom <- colSums(tau)
       tau <- sweep(tau, 2, denom, "/")
 
@@ -335,11 +341,19 @@ si_estim <- function(
         mu <- opt$par[1]
         sigma <- opt$par[2]
       } else if (dist == "lognormal") {
-        mu_log <- weighted.mean(log(dat), tau[2, ])
-        sigma_log <- sqrt(weighted_var(log(dat), tau[2, ]))
-        
-        mu <- exp(mu_log + 0.5 * sigma_log^2)
-        sigma <- sqrt((exp(sigma_log^2) - 1) * exp(2 * mu_log + sigma_log^2))
+        # (MODIFIED) Replace the closed-form algebraic approximation with numerical optimization using the discrete-to-continuous integral function.
+        opt <- optim(
+          par = c(mu, sigma),
+          fn = lognormal_ps_loglik,
+          tau2 = tau[2, ],
+          dat = dat,
+          # Optimization methods with boundary constraints
+          method = "L-BFGS-B",
+          lower = c(1e-4, 1e-4), 
+          upper = c(Inf, Inf)
+        )
+        mu <- opt$par[1]
+        sigma <- opt$par[2]
       }
 
       # Check for convergence
