@@ -178,7 +178,9 @@ si_estim <- function(
   dist = "normal",
   init = NULL,
   tol = 1e-6,
-  n_starts = 1
+  n_starts = 1,
+  debug = FALSE,
+  debug_obs = NULL
 ) {
   ## Check inputs
   # Check inputs for NA values
@@ -218,6 +220,11 @@ si_estim <- function(
     )
   }
 
+  ## Vink et al. implementation code
+  j <- length(dat)
+  is_zero_interval <- dat == 0
+  dat <- ifelse(is_zero_interval, 1, dat)
+
   # Set initial values if not provided
   if (is.null(init)) {
     init <- c(mean(dat), sd(dat))
@@ -248,9 +255,17 @@ si_estim <- function(
   }
   n_starts <- as.integer(n_starts)
 
-  ## Vink et al. implementation code
-  j <- length(dat)
-  dat <- ifelse(dat == 0, 0.00001, dat)
+  if (isTRUE(debug)) {
+    if (is.null(debug_obs)) {
+      zero_obs <- which(is_zero_interval)
+      debug_obs <- if (length(zero_obs) > 0) zero_obs[1] else 1
+    }
+    if (!is.numeric(debug_obs) || length(debug_obs) != 1 ||
+        debug_obs < 1 || debug_obs > j || debug_obs != floor(debug_obs)) {
+      stop("debug_obs must be a single valid observation index.")
+    }
+    debug_obs <- as.integer(debug_obs)
+  }
 
   # Components depend on specified distribution
   if (dist == "normal") {
@@ -286,10 +301,8 @@ si_estim <- function(
     sigma <- sigma_init
     converged <- FALSE
     iterations_used <- n
+    debug_history <- data.frame()
 
-    # Initialize mixture weights before starting the EM iterations
-    w <- rep(1 / length(comp_vec), length(comp_vec))
-    
     for (k in 1:n) {
       mu_prev <- mu
       sigma_prev <- sigma
@@ -298,18 +311,16 @@ si_estim <- function(
 
       # --- E-STEP ---
       for (l in 1:j) {
-        if (dat[l] == 0.00001) {
+        if (is_zero_interval[l]) {
           for (comp in seq_along(comp_vec)) {
-            # Multiply the integrated likelihood by the prior weight w[comp]
-            tau[comp, l] <- w[comp] * integrate_component(
-              dat[l], mu, sigma,
+            tau[comp, l] <- integrate_component(
+              0, mu, sigma,
               comp = comp_vec[comp], dist = dist, lower = FALSE
             )
           }
         } else {
           for (comp in seq_along(comp_vec)) {
-            # Multiply the integrated likelihood by the prior weight w[comp]
-            tau[comp, l] <- w[comp] * integrate_component(
+            tau[comp, l] <- integrate_component(
               dat[l], mu, sigma,
               comp = comp_vec[comp], dist = dist, lower = TRUE
             )
@@ -318,7 +329,17 @@ si_estim <- function(
       }
 
       # Normalize tau (Posterior responsibility)
+      debug_raw_likelihood <- if (isTRUE(debug) && dist == "lognormal") {
+        tau[, debug_obs]
+      } else {
+        NULL
+      }
       denom <- colSums(tau)
+      debug_denom <- if (isTRUE(debug) && dist == "lognormal") {
+        denom[debug_obs]
+      } else {
+        NULL
+      }
       tau <- sweep(tau, 2, denom, "/")
 
       # Calculate the weights
@@ -341,19 +362,66 @@ si_estim <- function(
         mu <- opt$par[1]
         sigma <- opt$par[2]
       } else if (dist == "lognormal") {
-        # (MODIFIED) Replace the closed-form algebraic approximation with numerical optimization using the discrete-to-continuous integral function.
-        opt <- optim(
-          par = c(mu, sigma),
-          fn = lognormal_ps_loglik,
-          tau2 = tau[2, ],
-          dat = dat,
-          # Optimization methods with boundary constraints
-          method = "L-BFGS-B",
-          lower = c(1e-4, 1e-4), 
-          upper = c(Inf, Inf)
-        )
-        mu <- opt$par[1]
-        sigma <- opt$par[2]
+        log_dat <- log(dat)
+        mu_log <- weighted.mean(log_dat, tau[2, ])
+        sigma_log <- sqrt(weighted_var(log_dat, tau[2, ]))
+
+        if (isTRUE(debug)) {
+          new_mu <- exp(mu_log + 0.5 * sigma_log^2)
+          new_sigma <- sqrt((exp(sigma_log^2) - 1) * exp(2 * mu_log + sigma_log^2))
+          comp_names <- c("CP", "PS", "PT", "PQ")
+
+          cat("\n")
+          cat("========== EM iteration", k, "==========\n")
+          print(list(
+            input_natural_parameters = data.frame(
+              mean = mu_prev,
+              sd = sigma_prev
+            ),
+            tracked_observation = data.frame(
+              index = debug_obs,
+              dat_after_zero_patch = dat[debug_obs],
+              log_dat = log_dat[debug_obs]
+            ),
+            e_step_raw_likelihood_for_observation = data.frame(
+              component = comp_names,
+              value = as.numeric(debug_raw_likelihood)
+            ),
+            e_step_denominator_for_observation = debug_denom,
+            e_step_tau_for_observation = data.frame(
+              component = comp_names,
+              tau = as.numeric(tau[, debug_obs])
+            ),
+            component_responsibility_and_weight = data.frame(
+              component = comp_names,
+              rowSums_tau = as.numeric(rowSums(tau)),
+              weight = as.numeric(w)
+            ),
+            lognormal_m_step = data.frame(
+              mu_log = mu_log,
+              sigma_log2 = sigma_log^2
+            ),
+            output_natural_parameters = data.frame(
+              mean = new_mu,
+              sd = new_sigma
+            )
+          ))
+
+          debug_history <- rbind(
+            debug_history,
+            data.frame(
+              iteration = k,
+              mean = new_mu,
+              sd = new_sigma,
+              tau_PS_observation = tau[2, debug_obs],
+              mu_log = mu_log,
+              sigma_log2 = sigma_log^2
+            )
+          )
+        }
+        
+        mu <- exp(mu_log + 0.5 * sigma_log^2)
+        sigma <- sqrt((exp(sigma_log^2) - 1) * exp(2 * mu_log + sigma_log^2))
       }
 
       # Check for convergence
@@ -370,9 +438,13 @@ si_estim <- function(
     }
 
     # Calculate log-likelihood for model comparison
-    loglik <- calculate_mixture_loglik(dat, mu, sigma, w, comp_vec, dist)
+    loglik <- if (isTRUE(debug)) {
+      NA_real_
+    } else {
+      calculate_mixture_loglik(dat, mu, sigma, w, comp_vec, dist, is_zero_interval)
+    }
 
-    list(
+    out <- list(
       mean = mu,
       sd = sigma,
       wts = w,
@@ -380,6 +452,10 @@ si_estim <- function(
       iterations = iterations_used,
       loglik = loglik
     )
+    if (isTRUE(debug)) {
+      out$debug_history <- debug_history
+    }
+    out
   }
 
   # Run EM for each starting point and keep track of results
@@ -417,10 +493,19 @@ si_estim <- function(
 #' @param wts numeric vector; component weights
 #' @param comp_vec integer vector; component indices
 #' @param dist character; distribution type ("normal", "gamma", or "lognormal")
+#' @param is_zero_interval logical vector; TRUE for observations that were originally zero
 #'
 #' @return numeric; log-likelihood value
 #' @keywords internal
-calculate_mixture_loglik <- function(dat, mu, sigma, wts, comp_vec, dist) {
+calculate_mixture_loglik <- function(
+  dat,
+  mu,
+  sigma,
+  wts,
+  comp_vec,
+  dist,
+  is_zero_interval = rep(FALSE, length(dat))
+) {
   j <- length(dat)
   loglik <- 0
 
@@ -429,9 +514,9 @@ calculate_mixture_loglik <- function(dat, mu, sigma, wts, comp_vec, dist) {
     prob <- 0
     for (comp_idx in seq_along(comp_vec)) {
       comp <- comp_vec[comp_idx]
-      if (dat[l] == 0.00001) {
+      if (is_zero_interval[l]) {
         comp_prob <- integrate_component(
-          dat[l], mu, sigma,
+          0, mu, sigma,
           comp = comp, dist = dist, lower = FALSE
         )
       } else {

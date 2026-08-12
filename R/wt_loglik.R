@@ -14,7 +14,7 @@
 #'            is the mean and \code{par[2]} is the standard deviation of the serial
 #'            interval distribution
 #' @param dat numeric vector; index case-to-case (ICC) intervals. Zero values are
-#'            replaced with 0.00001 to avoid gamma distribution issues at zero
+#'            replaced with 1 to avoid gamma distribution issues at zero
 #' @param tau2 numeric vector; posterior probabilities (weights) that each observation
 #'             belongs to the primary-secondary transmission component. These are
 #'             typically derived from the E-step of the EM algorithm
@@ -60,7 +60,7 @@ wt_loglik <- function(
 ) {
   som <- 0
 
-  dat <- ifelse(dat == 0, 0.00001, dat)
+  dat <- ifelse(dat == 0, 1, dat)
 
   # convert par values to be appropriate for gamma dist
   k <- (par[1]^2) / (par[2]^2)

@@ -13,48 +13,21 @@ f_lnorm <- function(
   sdlog <- sqrt(log(1 + sigma^2 / mu^2))
   meanlog <- log(mu) - 0.5 * sdlog^2
   
-  fx <- function(z) {
-    ifelse(z > 0, dlnorm(z, meanlog = meanlog, sdlog = sdlog), 0)
-  }
+  sdlog_pt <- sqrt(log(1 + sigma^2 / (2 * mu^2)))
+  meanlog_pt <- log(2 * mu) - 0.5 * sdlog_pt^2
   
-  safe_integrate <- function(f, lower, upper) {
-    val <- tryCatch(
-      integrate(f, lower = lower, upper = upper)[[1]],
-      error = function(e) 0
-    )
-    ifelse(is.finite(val), val, 0)
-  }
+  sdlog_pq <- sqrt(log(1 + sigma^2 / (3 * mu^2)))
+  meanlog_pq <- log(3 * mu) - 0.5 * sdlog_pq^2
   
-  d_pt <- function(z) {
-    if (!is.finite(z) || z <= 0) return(0)
-    safe_integrate(
-      f = function(t) fx(t) * fx(z - t),
-      lower = 0,
-      upper = z
-    )
-  }
+  term1 <- w1 * ifelse(
+    x >= 0,
+    dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)),
+    0
+  )
+  term2 <- w2 * ifelse(x > 0, dlnorm(x, meanlog = meanlog, sdlog = sdlog), 0)
+  term3 <- w3 * ifelse(x > 0, dlnorm(x, meanlog = meanlog_pt, sdlog = sdlog_pt), 0)
+  term4 <- (1 - w1 - w2 - w3) *
+    ifelse(x > 0, dlnorm(x, meanlog = meanlog_pq, sdlog = sdlog_pq), 0)
   
-  dens_one <- function(z) {
-    if (!is.finite(z) || z <= 0) return(0)
-    
-    term1 <- w1 * safe_integrate(
-      f = function(t) 2 * fx(t) * fx(t + z),
-      lower = 0,
-      upper = Inf
-    )
-    
-    term2 <- w2 * fx(z)
-    
-    term3 <- w3 * d_pt(z)
-    
-    term4 <- (1 - w1 - w2 - w3) * safe_integrate(
-      f = function(u) d_pt(u) * fx(z - u),
-      lower = 0,
-      upper = z
-    )
-    
-    term1 + term2 + term3 + term4
-  }
-  
-  vapply(x, dens_one, numeric(1))
+  term1 + term2 + term3 + term4
 }

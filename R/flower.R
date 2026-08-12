@@ -101,33 +101,13 @@ flower <- function(
     sdlog_pq <- sqrt(log(1 + (sigma^2) / (3 * mu^2)))
     meanlog_pq <- log(3 * mu) - 0.5 * sdlog_pq^2
     
-    # Base density function (needed only for CP integration now)
-    fx <- function(z) {
-      ifelse(z > 0, dlnorm(z, meanlog = meanlog, sdlog = sdlog), 0)
-    }
-    
-    # Safe integrate wrapper (for CP path)
-    safe_integrate <- function(f, lower, upper) {
-      val <- tryCatch(
-        integrate(f, lower = lower, upper = upper)[[1]],
-        error = function(e) 0
-      )
-      ifelse(is.finite(val), val, 0)
-    }
-    
-    # Evaluate density based on the transmission component
+    # Using half-normal density for CP path
     if (comp == 1) {
-      # CP path: Absolute difference, still requires numerical integration
-      dens_one <- function(z) {
-        if (!is.finite(z) || z <= 0) return(0)
-        safe_integrate(
-          f = function(t) 2 * fx(t) * fx(t + z),
-          lower = 0,
-          upper = Inf
-        )
-      }
-      dens <- vapply(x, dens_one, numeric(1))
-      
+      dens <- ifelse(
+        x >= 0,
+        dhalfnorm(x, theta = sqrt(pi / 2) / (sqrt(2) * sigma)),
+        0
+      )
     } else if (comp == 2) {
       # PS path: Direct density
       dens <- ifelse(x > 0, dlnorm(x, meanlog = meanlog, sdlog = sdlog), 0)
