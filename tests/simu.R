@@ -4,6 +4,7 @@ library(dplyr)
 library(devtools)
 library(fdrtool)
 
+
 pkg_root <- r"(C:\Users\Administrator.DESKTOP-JQG2K7N\桌面\2025 melb\master_project\mitey\mitey)"
 setwd(pkg_root)
 
@@ -45,6 +46,16 @@ lognormal_results_list <- lapply(normal_results$study, function(study_name) {
 
 lognormal_results <- bind_rows(lognormal_results_list)
 
+#normal model
+dat <- si_data %>% 
+    filter(study == "Akunzirwe et al.") %>% 
+    pull(icc_interval)
+
+fit <- si_estim(dat = dat, dist = "normal")
+
+
+
+
 # Merge lognormal and normal results for comparison
 comparison_table <- normal_results %>%
   left_join(lognormal_results, by = "study") %>%
@@ -69,41 +80,90 @@ rlnorm_natural <- function(n, mean, sd) {
 set.seed(123)
 
 # Parameters for simulation
-N <- 500           
+N <- 200           
 true_mean <- 15    # True mean serial interval (days)
 true_sd <- 3      
 route_weights <- c(0.2, 0.5, 0.2, 0.1)  
 
 # Generate data for different transmission routes 
-CP <- rhalfnorm(route_weights[1] * N, theta = sqrt(pi / 2) / (sqrt(2) * true_sd))
-PS <- rlnorm_natural(route_weights[2] * N, mean = true_mean, sd = true_sd)
-PT <- rlnorm_natural(route_weights[3] * N, mean = true_mean, sd = true_sd) +
-  rlnorm_natural(route_weights[3] * N, mean = true_mean, sd = true_sd)
-PQ <- rlnorm_natural(route_weights[4] * N, mean = true_mean, sd = true_sd) +
-  rlnorm_natural(route_weights[4] * N, mean = true_mean, sd = true_sd) +
-  rlnorm_natural(route_weights[4] * N, mean = true_mean, sd = true_sd)
+generate_sim_data <- function(N, true_mean, true_sd, route_weights) {
+  CP <- rhalfnorm(route_weights[1] * N, theta = sqrt(pi / 2) / (sqrt(2) * true_sd))
+  PS <- rlnorm_natural(route_weights[2] * N, mean = true_mean, sd = true_sd)
+  PT <- rlnorm_natural(route_weights[3] * N, mean = true_mean, sd = true_sd) +
+        rlnorm_natural(route_weights[3] * N, mean = true_mean, sd = true_sd)
+  PQ <- rlnorm_natural(route_weights[4] * N, mean = true_mean, sd = true_sd) +
+        rlnorm_natural(route_weights[4] * N, mean = true_mean, sd = true_sd) +
+        rlnorm_natural(route_weights[4] * N, mean = true_mean, sd = true_sd)
+  
+  return(round(c(CP, PS, PT, PQ)))
+}
+sim_icc_intervals <- generate_sim_data(N, true_mean, true_sd, route_weights)
 
-sim_icc_intervals <- round(c(CP, PS, PT, PQ))
+# Fit all three distributions and collect results
+dists <- c("lognormal", "normal", "gamma")
+si_results <- lapply(dists, function(d) {
+  si_estim(sim_icc_intervals, dist = d, init = c(true_mean, true_sd))
+})
+names(si_results) <- dists
 
-si_results <- si_estim(
-  sim_icc_intervals,
-  dist = "lognormal",
-  init = c(true_mean, true_sd)
-)
+# Summary table comparing estimates to true values
+do.call(rbind, lapply(dists, function(d) {
+  fit <- si_results[[d]]
+  data.frame(
+    dist       = d,
+    true_mean  = true_mean,
+    est_mean   = fit$mean,
+    true_sd    = true_sd,
+    est_sd     = fit$sd,
+    converged  = fit$converged,
+    iterations = fit$iterations
+  )
+}))
 
-# results
-data.frame(
-  true_mean  = true_mean,
-  est_mean   = si_results$mean,
-  true_sd    = true_sd,
-  est_sd     = si_results$sd,
-  converged  = si_results$converged,
-  iterations = si_results$iterations
-)
+# Plot fitted curves (estimated mean/sd/weights) against the data histogram
+for (d in dists) {
+  print(plot_si_fit_result(si_results[[d]], sim_icc_intervals, dist = d))
+}
 
+# ---------------------------------------------------------------------
+# Compare change in estiamtes between weighted and unweighted models
 
+# source unweightd version for comparison
+source(r"(C:\Users\Administrator.DESKTOP-JQG2K7N\桌面\2025 melb\master_project\mitey\mitey\R\old\si_estim_unweighted.R)")
 
+n_reps <- 50
+# Run batch simulation
+sim_results_list <- lapply(1:n_reps, function(i) {
+  
+  # Generate new synthetic data for each iteration
+  sim_icc_intervals <- generate_sim_data(N, true_mean, true_sd, route_weights)
+  
+  # Fit both models separately
+  fit_w <- si_estim(sim_icc_intervals, dist = "lognormal", init = c(true_mean, true_sd))
+  fit_u <- si_estim_unweighted(sim_icc_intervals, dist = "lognormal", init = c(true_mean, true_sd))
+  
+  data.frame(
+    rep = i,
+    model = c("weighted", "unweighted"),
+    est_mean = c(fit_w$mean, fit_u$mean),
+    est_sd = c(fit_w$sd, fit_u$sd),
+    converged = c(fit_w$converged, fit_u$converged)
+  )
+})
 
+# Combine all repetition results
+sim_results <- bind_rows(sim_results_list)
 
+# 3. Calculate evaluation metrics
+mse_comparison <- sim_results %>%
+  # Evaluate only successfully converged results
+  filter(converged == TRUE) %>%
+  group_by(model) %>%
+  summarise(
+    convergence_rate = round(n() / n_reps, 3),
+    mean_bias = mean(est_mean) - true_mean,
+    mean_mse = mean((est_mean - true_mean)^2),
+    .groups = 'drop'
+  )
 
-
+print(mse_comparison)

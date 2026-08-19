@@ -178,9 +178,7 @@ si_estim <- function(
   dist = "normal",
   init = NULL,
   tol = 1e-6,
-  n_starts = 1,
-  debug = FALSE,
-  debug_obs = NULL
+  n_starts = 1
 ) {
   ## Check inputs
   # Check inputs for NA values
@@ -222,12 +220,14 @@ si_estim <- function(
 
   ## Vink et al. implementation code
   j <- length(dat)
+  # A helper list for selecting data with 0 based on original dataset
   is_zero_interval <- dat == 0
-  dat <- ifelse(is_zero_interval, 1, dat)
+  dat_raw <- dat # Original data, kept for all steps preceding the M-step summary stats
+  dat <- ifelse(is_zero_interval, 1, dat) # M-dat only used for M-step summary stats (mean/sd)
 
   # Set initial values if not provided
   if (is.null(init)) {
-    init <- c(mean(dat), sd(dat))
+    init <- c(mean(dat_raw), sd(dat_raw))
   }
 
   # Check initial values
@@ -255,18 +255,6 @@ si_estim <- function(
   }
   n_starts <- as.integer(n_starts)
 
-  if (isTRUE(debug)) {
-    if (is.null(debug_obs)) {
-      zero_obs <- which(is_zero_interval)
-      debug_obs <- if (length(zero_obs) > 0) zero_obs[1] else 1
-    }
-    if (!is.numeric(debug_obs) || length(debug_obs) != 1 ||
-        debug_obs < 1 || debug_obs > j || debug_obs != floor(debug_obs)) {
-      stop("debug_obs must be a single valid observation index.")
-    }
-    debug_obs <- as.integer(debug_obs)
-  }
-
   # Components depend on specified distribution
   if (dist == "normal") {
     comp_vec <- 1:7
@@ -275,8 +263,8 @@ si_estim <- function(
   }
 
   # Data-derived bounds for random starting points
-  data_sd <- sd(dat)
-  data_range <- range(dat)
+  data_sd <- sd(dat_raw)
+  data_range <- range(dat_raw)
 
   # Generate starting points for multiple restarts
   starting_points <- vector("list", n_starts)
@@ -301,7 +289,8 @@ si_estim <- function(
     sigma <- sigma_init
     converged <- FALSE
     iterations_used <- n
-    debug_history <- data.frame()
+    # Initialize mixing weights uniformly across components
+    w <- rep(1 / length(comp_vec), length(comp_vec))
 
     for (k in 1:n) {
       mu_prev <- mu
@@ -312,6 +301,7 @@ si_estim <- function(
       # --- E-STEP ---
       for (l in 1:j) {
         if (is_zero_interval[l]) {
+          # If dat = 0 in original dataset, then integrate 0
           for (comp in seq_along(comp_vec)) {
             tau[comp, l] <- integrate_component(
               0, mu, sigma,
@@ -319,6 +309,7 @@ si_estim <- function(
             )
           }
         } else {
+          # If dat != 0, use original dataset
           for (comp in seq_along(comp_vec)) {
             tau[comp, l] <- integrate_component(
               dat[l], mu, sigma,
@@ -328,24 +319,18 @@ si_estim <- function(
         }
       }
 
-      # Normalize tau (Posterior responsibility)
-      debug_raw_likelihood <- if (isTRUE(debug) && dist == "lognormal") {
-        tau[, debug_obs]
-      } else {
-        NULL
-      }
+      # Weight each component by the previous iteration's mixing weight,
+      # then normalize to posterior responsibilities
+      tau <- sweep(tau, 1, w, "*")
       denom <- colSums(tau)
-      debug_denom <- if (isTRUE(debug) && dist == "lognormal") {
-        denom[debug_obs]
-      } else {
-        NULL
-      }
       tau <- sweep(tau, 2, denom, "/")
 
-      # Calculate the weights
+      # Update mixing weights for the next iteration
       w <- rowSums(tau) / j
 
+      # --- M-STEP --- 
       # Update parameters
+      # Using dat (0 replaced with 1) instead of dat_original
       if (dist == "normal") {
         mu <- weighted.mean(dat, tau[2, ])
         sigma <- sqrt(weighted_var(dat, tau[2, ]))
@@ -366,60 +351,6 @@ si_estim <- function(
         mu_log <- weighted.mean(log_dat, tau[2, ])
         sigma_log <- sqrt(weighted_var(log_dat, tau[2, ]))
 
-        if (isTRUE(debug)) {
-          new_mu <- exp(mu_log + 0.5 * sigma_log^2)
-          new_sigma <- sqrt((exp(sigma_log^2) - 1) * exp(2 * mu_log + sigma_log^2))
-          comp_names <- c("CP", "PS", "PT", "PQ")
-
-          cat("\n")
-          cat("========== EM iteration", k, "==========\n")
-          print(list(
-            input_natural_parameters = data.frame(
-              mean = mu_prev,
-              sd = sigma_prev
-            ),
-            tracked_observation = data.frame(
-              index = debug_obs,
-              dat_after_zero_patch = dat[debug_obs],
-              log_dat = log_dat[debug_obs]
-            ),
-            e_step_raw_likelihood_for_observation = data.frame(
-              component = comp_names,
-              value = as.numeric(debug_raw_likelihood)
-            ),
-            e_step_denominator_for_observation = debug_denom,
-            e_step_tau_for_observation = data.frame(
-              component = comp_names,
-              tau = as.numeric(tau[, debug_obs])
-            ),
-            component_responsibility_and_weight = data.frame(
-              component = comp_names,
-              rowSums_tau = as.numeric(rowSums(tau)),
-              weight = as.numeric(w)
-            ),
-            lognormal_m_step = data.frame(
-              mu_log = mu_log,
-              sigma_log2 = sigma_log^2
-            ),
-            output_natural_parameters = data.frame(
-              mean = new_mu,
-              sd = new_sigma
-            )
-          ))
-
-          debug_history <- rbind(
-            debug_history,
-            data.frame(
-              iteration = k,
-              mean = new_mu,
-              sd = new_sigma,
-              tau_PS_observation = tau[2, debug_obs],
-              mu_log = mu_log,
-              sigma_log2 = sigma_log^2
-            )
-          )
-        }
-        
         mu <- exp(mu_log + 0.5 * sigma_log^2)
         sigma <- sqrt((exp(sigma_log^2) - 1) * exp(2 * mu_log + sigma_log^2))
       }
@@ -438,13 +369,9 @@ si_estim <- function(
     }
 
     # Calculate log-likelihood for model comparison
-    loglik <- if (isTRUE(debug)) {
-      NA_real_
-    } else {
-      calculate_mixture_loglik(dat, mu, sigma, w, comp_vec, dist, is_zero_interval)
-    }
+    loglik <- calculate_mixture_loglik(dat, mu, sigma, w, comp_vec, dist, is_zero_interval)
 
-    out <- list(
+    list(
       mean = mu,
       sd = sigma,
       wts = w,
@@ -452,10 +379,6 @@ si_estim <- function(
       iterations = iterations_used,
       loglik = loglik
     )
-    if (isTRUE(debug)) {
-      out$debug_history <- debug_history
-    }
-    out
   }
 
   # Run EM for each starting point and keep track of results
