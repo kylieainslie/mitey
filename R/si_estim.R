@@ -291,11 +291,14 @@ si_estim <- function(
     iterations_used <- n
     # Initialize mixing weights uniformly across components
     w <- rep(1 / length(comp_vec), length(comp_vec))
+    # Use a list to record the change of parameter in each iteration
+    history <- list()
 
     for (k in 1:n) {
       mu_prev <- mu
       sigma_prev <- sigma
-
+       w_prev <- w
+      
       tau <- matrix(0, nrow = length(comp_vec), ncol = j)
 
       # --- E-STEP ---
@@ -354,20 +357,36 @@ si_estim <- function(
         mu <- exp(mu_log + 0.5 * sigma_log^2)
         sigma <- sqrt((exp(sigma_log^2) - 1) * exp(2 * mu_log + sigma_log^2))
       }
+     # Default value for parameter change
+mu_change <- NA_real_
+sigma_change <- NA_real_
+w_change <- NA_real_
 
-      # Check for convergence
-      if (tol > 0 && k > 1) {
-        mu_change <- abs(mu - mu_prev) / (abs(mu_prev) + .Machine$double.eps)
-        sigma_change <- abs(sigma - sigma_prev) / (abs(sigma_prev) + .Machine$double.eps)
+# Check parameter changes
+if (tol > 0 && k > 1) {
+  mu_change <- abs(mu - mu_prev) / (abs(mu_prev) + .Machine$double.eps)
+  sigma_change <- abs(sigma - sigma_prev) / (abs(sigma_prev) + .Machine$double.eps)
+  w_change <- max(abs(w - w_prev))
+}
+      
+# Document parameter change in each iteration
+history[[k]] <- data.frame(
+  iteration = k,
+  mean = mu,
+  sd = sigma,
+  mu_change = mu_change,
+  sigma_change = sigma_change,
+  w_change = w_change,
+  as.list(setNames(w, paste0("w_", comp_vec)))
+)
 
-        if (mu_change < tol && sigma_change < tol) {
-          converged <- TRUE
-          iterations_used <- k
-          break
-        }
-      }
-    }
-
+# Stop if converged
+if (tol > 0 && k > 1 && mu_change < tol && sigma_change < tol && w_change < tol) {
+  converged <- TRUE
+  iterations_used <- k
+  break
+}
+}   
     # Calculate log-likelihood for model comparison
     loglik <- calculate_mixture_loglik(dat, mu, sigma, w, comp_vec, dist, is_zero_interval)
 
@@ -377,9 +396,10 @@ si_estim <- function(
       wts = w,
       converged = converged,
       iterations = iterations_used,
-      loglik = loglik
+      loglik = loglik,
+      history = bind_rows(history)
     )
-  }
+    }
 
   # Run EM for each starting point and keep track of results
   best_result <- NULL
