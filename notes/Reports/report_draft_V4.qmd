@@ -1,0 +1,1161 @@
+---
+title: "Estimating Serial Intervals from Outbreak Symptom Onset Data: An Extension of the Vink et al. Transmission-Path Framework"
+subtitle: "Report Draft V3"
+author: "Terry"
+date: 2026-09-05
+format:
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
+  html:
+    toc: true
+    number-sections: true
+  docx:
+    toc: true
+    number-sections: true
+execute:
+  enabled: true
+---
+
+# Introduction / Background
+
+## What is the serial interval?
+
+The serial interval (SI) is defined as the time duration between symptom onset in a primary case (the infector) and symptom onset in the corresponding secondary case (the infectee). Because the exact moment of infection is rarely observable in real-world outbreaks, the serial interval serves as a practical and measurable proxy for the generation time, which is instead defined using unobservable infection times. It is a fundamental quantity in infectious disease epidemiology that describes both how quickly transmission tends to occur and how much the timing varies between transmission events. In infections characterized by pre-symptomatic transmission, a secondary case may develop symptoms even before the primary case does; consequently, an individual direct serial interval can sometimes be negative.
+
+## Why is the serial interval important?
+
+Accurate estimation of the SI is important for verifying epidemiological links between individuals, tracing likely sources of infection, and identifying new cases within transmission clusters. It also provides an essential input for epidemic-transmission models and for estimating quantities such as the basic reproduction number and the time-varying reproduction number.
+
+In practice, knowledge of the SI distribution supports public-health planning. It can inform the timing of contact tracing, isolation, quarantine, and follow-up of exposed individuals, and it contributes to short-term outbreak forecasting. 
+
+## Why is it difficult to estimate?
+
+Despite its epidemiological importance, direct empirical measurement of the SI remains difficult in real outbreak settings. True infector--infectee pairs are usually unobserved. Researchers generally observe when individuals developed symptoms, but not exactly when infection occurred or who infected whom. Available surveillance data may therefore contain symptom-onset dates without the transmission network required to calculate direct serial intervals.
+
+The difficulty is especially clear in household or small-cluster data. The first recognised symptomatic person can usually be identified, but a later case may have been infected by that person, by an unobserved intermediate case, or by the same source that infected the first case. Thus, an observed time difference between the index case and another case is not necessarily one direct serial interval. Estimation requires both a model for the SI distribution and a model for the unobserved transmission path that generated each observed interval.
+
+# Existing Method: Vink et al.
+
+## Motivation and rationale
+
+Vink et al. (2014) addressed the absence of known infector--infectee pairs by estimating the SI distribution from index case-to-case (ICC) intervals [@vink2014]. In a household or small outbreak cluster, the index case is the first person to show symptoms. For a non-index case $i$, let $S_i$ be that case's symptom-onset time and $S_0$ the index case's symptom-onset time. The underlying continuous ICC interval is
+
+$$
+C_i=S_i-S_0.
+$$
+
+Because the index case is selected as the first symptomatic case, an observed ICC interval is non-negative. This differs from a direct SI, which can be negative when the infectee develops symptoms before the infector.
+
+
+
+
+**Rationale for a mixture model.**  In real outbreak settings, we only observe the "macro" ICC interval between symptom onsets, leaving the true transmission links completely hidden. Because this network is unobserved, a single empirical ICC interval could be formed in different ways depending on the number of hidden generation steps occurring between the index case and the newly observed case. 
+
+Vink et al. represented this ambiguity by mapping the statistical components of the ICC distribution to four epidemiologically interpretable household transmission pathways. Under primary-secondary (PS) transmission, the index case directly infects the later case. This pathway contains a single transmission generation and therefore provides the most direct information about the target SI distribution. Under primary-tertiary (PT) or primary-quaternary (PQ) transmission, one or two intermediate cases occur between the observed cases, so the ICC interval represents the sum of two or three serial intervals. Under co-primary (CP) transmission, both observed cases are infected by a common external source, and their ICC interval corresponds to the absolute difference between two independent serial intervals.
+
+An empirical ICC dataset is therefore a weighted combination of intervals generated by these different, unobserved pathways. This mixture can produce multimodality, asymmetry, and extended tails that cannot be adequately represented by a single SI distribution. 
+
+**Rationale for the EM algorithm.** Although the mixture model defines the possible transmission pathways, the pathway responsible for any individual ICC observation remains unobserved. This creates a latent-variable estimation problem. Assigning every observation to one pathway before fitting the model would ignore this uncertainty and could produce unstable or biased estimates when several pathways are plausible.
+
+The expectation-maximization (EM) algorithm addresses this problem through probabilistic rather than deterministic classification. In the expectation step (E-step), the algorithm calculates the posterior responsibility of each pathway---CP, PS, PT, or PQ---for every observed ICC interval. Each observation can therefore contribute fractionally to several pathways according to its compatibility with their current weights and component distributions. In the maximization step (M-step), these responsibilities are used to update the pathway proportions and the underlying SI parameters.
+
+A distinctive feature of the Vink procedure is that the SI mean and variance are updated using the responsibilities assigned to the PS component only. Because the PS pathway represents direct, one-generation transmission, it contains the least contaminated information about the target SI distribution. Very short intervals that are more compatible with common-source exposure and long intervals that are more compatible with multi-generation transmission tend to receive lower PS responsibilities. They therefore contribute less to the SI parameter updates. This PS-weighted mechanism acts as a pathway-based filter and provides robustness against contamination by non-direct transmission.
+
+**Strategic advantages.** The Vink framework achieves exceptional data efficiency by enabling robust estimation using solely symptom-onset dates, bypassing the need for complex serological tracking. Furthermore, it provides a standardized methodology that requires no pathogen-specific prior assumptions, allowing for seamless application and horizontal comparison across various infectious diseases like influenza, measles, and pertussis.
+
+## Methodology
+
+### Four latent transmission paths
+
+Let
+
+$$
+\mathcal{G}=\{CP,PS,PT,PQ\},
+$$
+
+where $CP$, $PS$, $PT$, and $PQ$ denote co-primary, primary-secondary, primary-tertiary, and primary-quaternary transmission, respectively. Let $Z_i\in\mathcal{G}$ denote the unobserved path for observation $i$.
+
+- In the co-primary path, the index case and the other observed case are independently infected by the same person outside the household.
+- In the primary-secondary path, the index case directly infects the other observed case.
+- In the primary-tertiary path, the index case infects an intermediate case, which then infects the other observed case.
+- In the primary-quaternary path, transmission from the index case to the other observed case occurs through two intermediate cases.
+
+These four paths connect the observable ICC interval to one or more unobserved direct serial intervals.
+### The Original Normal Mixture Model
+
+In the main model of Vink et al., direct serial intervals are assumed to be independent copies of a Normal random variable:
+
+$$
+X_k \sim N(\mu,\sigma^2),
+\qquad k=1,2,3,\ldots,
+$$
+
+where $\mu$ is the mean SI and $\sigma^2$ is the SI variance on the original time scale. Because an observed ICC interval is recorded as strictly non-negative, the underlying continuous ICC interval $C$ must be modelled using absolute values, resulting in folded-Normal distributions.
+
+The defining mathematical elegance of the original framework is that differences and sums of independent Normal variables remain Normal. This closure property allows the four latent transmission paths to be expressed simply as functions of $\mu$ and $\sigma^2$:
+
+- **Co-primary transmission ($f_1$):** The interval is the absolute difference between two independent serial intervals from a common source,
+
+  $$
+  C_{\mathrm{CP}}=\lvert X_1-X_2\rvert.
+  $$
+
+  It follows a folded-Normal distribution based on
+
+  $$
+  X_1-X_2\sim N(0,2\sigma^2).
+  $$
+
+- **Primary-secondary transmission ($f_2$):** The interval is exactly one direct SI,
+
+  $$
+  C_{\mathrm{PS}}=\lvert X_1\rvert.
+  $$
+
+  It follows a folded-Normal distribution based on
+
+  $$
+  X_1\sim N(\mu,\sigma^2).
+  $$
+
+  This component is the direct target of inference.
+
+- **Primary-tertiary transmission ($f_3$):** The interval spans two successive serial intervals,
+
+  $$
+  C_{\mathrm{PT}}=\lvert X_1+X_2\rvert.
+  $$
+
+  It follows a folded-Normal distribution based on
+
+  $$
+  X_1+X_2\sim N(2\mu,2\sigma^2).
+  $$
+
+- **Primary-quaternary transmission ($f_4$):** The interval spans three successive serial intervals,
+
+  $$
+  C_{\mathrm{PQ}}=\lvert X_1+X_2+X_3\rvert.
+  $$
+
+  It follows a folded-Normal distribution based on
+
+  $$
+  X_1+X_2+X_3\sim N(3\mu,3\sigma^2).
+  $$
+
+By assigning a mixture weight $w_j$ to each pathway density $f_j$, subject to
+
+$$
+w_j\geq0,
+\qquad
+\sum_{j=1}^{4}w_j=1,
+$$
+
+the overall continuous ICC density is formulated as the finite mixture
+
+$$
+f(c\mid\mu,\sigma^2,\mathbf{w})
+=
+w_1f_1(c\mid\sigma^2)
++w_2f_2(c\mid\mu,\sigma^2)
++w_3f_3(c\mid\mu,\sigma^2)
++w_4f_4(c\mid\mu,\sigma^2).
+$$
+
+Because $w_4=1-w_1-w_2-w_3$, the model has five free parameters:
+
+$$
+w_1,\quad w_2,\quad w_3,\quad \mu,\quad \sigma^2.
+$$
+
+This mixture structure captures the multimodality of the ICC data. It allows $\mu$ to be informed both by the location of the primary-secondary component and by the spacing between successive higher-generation components.
+
+### Discretisation of symptom-onset days
+
+The component densities above describe a continuous ICC interval $C_i$. In most data sets, however, symptom onset is recorded only as a calendar day. Let $T_i=t_i$ denote the observed integer-day ICC interval. Vink et al. assumed that the exact onset time is uniformly distributed within each reported day. The difference between two such within-day times produces a triangular measurement kernel.
+
+Define
+
+$$
+g_t(c)=
+\begin{cases}
+1-|c-t|, & |c-t|\leq1,\\
+0, & |c-t|>1.
+\end{cases}
+$$
+
+For component $j$, the probability of observing exactly $t_i$ days is
+
+$$
+p_{ij}(\mu,\sigma^2)
+=P(T_i=t_i\mid Z_i=j,\mu,\sigma^2)
+=\int_{\max(0,t_i-1)}^{t_i+1}
+f_j(c\mid\mu,\sigma^2)g_{t_i}(c)\,dc.
+$$
+
+The lower limit reflects the non-negative support of an ICC interval. Equivalently, one may integrate over $[t_i-1,t_i+1]$ after defining the folded density to be zero for $c<0$.
+
+After mixing over the unknown path,
+
+$$
+P(T_i=t_i\mid\mu,\sigma^2,\mathbf{w})
+=
+\sum_{j=1}^{4}w_jp_{ij}(\mu,\sigma^2).
+$$
+
+For $n$ observed ICC intervals, the likelihood is
+
+$$
+L(\mu,\sigma^2,\mathbf{w}\mid\mathbf{t})
+=
+\prod_{i=1}^{n}
+\left\{
+\sum_{j=1}^{4}w_jp_{ij}(\mu,\sigma^2)
+\right\},
+$$
+
+and the corresponding observed-data log-likelihood is
+
+$$
+\ell(\mu,\sigma^2,\mathbf{w})
+=
+\sum_{i=1}^{n}
+\log
+\left\{
+\sum_{j=1}^{4}w_jp_{ij}(\mu,\sigma^2)
+\right\}.
+$$
+
+### EM estimation
+
+Because the path label $Z_i$ is unobserved, Vink et al. estimated the model using an expectation-maximization (EM) algorithm. Introduce the latent indicator
+
+$$
+z_{ij}=
+\begin{cases}
+1, & Z_i=j,\\
+0, & Z_i\neq j.
+\end{cases}
+$$
+
+If the path labels were known, the component-membership contribution to the complete-data log-likelihood would be
+
+$$
+\ell_c
+=
+\sum_{i=1}^{n}\sum_{j=1}^{4}
+z_{ij}
+\left\{
+\log w_j+\log p_{ij}(\mu,\sigma^2)
+\right\}.
+$$
+
+**E-step: posterior path responsibilities.** At iteration $r$, suppose the current parameter estimates are
+
+$$
+\mu^{(r)},\qquad
+(\sigma^2)^{(r)},\qquad
+\mathbf{w}^{(r)}
+=
+\left(w_1^{(r)},w_2^{(r)},w_3^{(r)},w_4^{(r)}\right).
+$$
+
+For each observation $i$ and each candidate path $j$, the first calculation is the path-specific observed probability
+
+$$
+p_{ij}^{(r)}
+=
+p_{ij}\!\left(\mu^{(r)},(\sigma^2)^{(r)}\right)
+=
+P\!\left(
+T_i=t_i
+\mid
+Z_i=j,\mu^{(r)},(\sigma^2)^{(r)}
+\right).
+$$
+
+This quantity answers a conditional question: *if observation $i$ had arisen from path $j$, how probable would its observed integer interval $t_i$ be under the current SI parameters?*
+
+The E-step then reverses the conditioning. Its posterior responsibility is defined as
+
+$$
+\gamma_{ij}^{(r)}
+=
+P\!\left(
+Z_i=j
+\mid
+T_i=t_i,\mu^{(r)},(\sigma^2)^{(r)},\mathbf{w}^{(r)}
+\right).
+$$
+
+Applying Bayes' rule gives
+
+$$
+\gamma_{ij}^{(r)}
+=
+\frac{
+w_j^{(r)}p_{ij}^{(r)}
+}{
+\displaystyle\sum_{k=1}^{4}
+w_k^{(r)}p_{ik}^{(r)}
+}.
+$$
+
+The terms have a direct interpretation:
+
+- $w_j^{(r)}$ is the current prior probability, or prevalence, of path $j$;
+- $p_{ij}^{(r)}$ measures how well path $j$ explains the observed interval $t_i$; and
+- the denominator is the total probability of observing $t_i$ across all four possible paths.
+
+The numerator therefore combines pathway prevalence with observation compatibility. The denominator normalizes these four competing explanations so that
+
+$$
+\sum_{j=1}^{4}\gamma_{ij}^{(r)}=1
+\qquad\text{for every observation }i.
+$$
+
+Thus, $\gamma_{ij}^{(r)}$ is the fractional membership assigned to observation $i$ for path $j$, rather than a hard pathway classification. Averaging these responsibilities gives the updated mixture proportions:
+
+$$
+w_j^{(r+1)}
+=
+\frac{1}{n}\sum_{i=1}^{n}\gamma_{ij}^{(r)}.
+$$
+
+The parameter update described by Vink et al. then uses the posterior weights for the second, primary-secondary component only:
+
+$$
+\mu^{(r+1)}
+=
+\frac{
+\sum_{i=1}^{n}\gamma_{i2}^{(r)}t_i
+}{
+\sum_{i=1}^{n}\gamma_{i2}^{(r)}
+},
+$$
+
+and
+
+$$
+\{\sigma^2\}^{(r+1)}
+=
+\frac{
+\sum_{i=1}^{n}\gamma_{i2}^{(r)}
+\left(t_i-\mu^{(r+1)}\right)^2
+}{
+\sum_{i=1}^{n}\gamma_{i2}^{(r)}
+}.
+$$
+
+This PS-only local update acts as a pathway-based outlier filter. Very short intervals that resemble common exposure and very long intervals that resemble multi-generation transmission receive less PS responsibility and are correspondingly downweighted in the SI mean and variance. The mechanism is the source of the procedure's robustness to pathway contamination: it uses all observations to learn pathway membership but allows the most plausible one-generation information to dominate the target-parameter update.
+
+The E-step and parameter updates are repeated until the estimates converge. The article does not state a single numerical tolerance; it reports using several starting values to reduce the risk that the algorithm stops at a local rather than global maximum. Vink et al. also checked the method on simulated data.
+
+
+## Limitations
+
+While the Vink framework provides an ingenious method for estimating SI parameters without known transmission pairs, it relies on several assumptions. These limitations can be broadly categorized into distributional constraints, which restrict the model's biological realism, and broader structural compromises.
+
+### Distributional and algorithmic constraints
+
+The most critical limitation of the original framework lies in its restrictive distributional assumptions. The primary Normal model is perfectly symmetric and assumes support over the entire real line. Although negative serial intervals can occur during pre-symptomatic transmission, real-world ICC data for many pathogens are strictly positive and strongly right-skewed. Forcing a symmetric Normal distribution onto heavily skewed outbreak data can allocate implausible probabilities to extreme values and bias the resulting SI estimates. While Vink et al. used a Gamma distribution as a sensitivity analysis, this does not establish a universal best fit, particularly for diseases where prolonged incubation creates a "heavy tail" of delayed transmission events.
+
+### Structural and observational assumptions
+Beyond the distributional challenges, the framework relies on several broader structural and observational assumptions. First, it strictly caps the mixture at four latent paths (CP, PS, PT, and PQ). While reasonable for single households, this is restrictive for larger clusters involving multiple introductions or longer transmission chains. Second, the model assumes that all ICC observations are identically distributed and independent, ignoring potential statistical dependence among cases sharing the same household environment. Finally, the triangular discretisation model assumes that exact symptom-onset times are uniformly distributed within a reported calendar day, which may oversimplify actual reporting or recall errors.
+
+
+## Motivation for the current project
+
+The original Vink framework is attractive because it converts incomplete symptom-onset data into an interpretable four-path mixture and exploits the analytical closure of the Normal distribution. However, its available Normal and Gamma specifications may be restrictive when the SI is expected to be strictly positive, strongly right-skewed, or heavy-tailed. This motivates investigating a lognormal SI distribution while retaining the epidemiologically meaningful path structure.
+
+A lognormal extension is not a simple substitution in the preceding formulas. Although the primary-secondary path remains directly linked to one SI, the absolute difference of two lognormal variables and the sums of two or three lognormal variables do not have the same closed-form convenience as Normal differences and sums. The extension therefore raises both statistical and computational questions: how to represent the path-specific distributions, how to evaluate the discretised likelihood, how to update the SI parameters, and whether the resulting estimates are stable and accurate.
+
+To address these challenges, the following Methods chapter first reconstructs the ideal lognormal mixture framework, then introduces tractable approximations for its non-closed-form components and develops a robust, customized EM procedure to resolve the resulting numerical singularities. The chapter will finally concludes by showing how empirical data and a simulation study were used to test plausibility of the method from parameter-recovery performance.
+
+# Methods
+
+## Generalisation beyond Normal and Gamma distributions
+
+The pathway interpretation developed by Vink et al. does not itself require a Normal or Gamma SI. The present extension therefore preserves the scientific pathway construction and the triangular observation model while changing the latent SI family. To prevent confusion with the Normal-model notation in Chapter 2, this chapter uses $m$ and $s$ for the natural-scale mean and standard deviation of a lognormal SI and $\eta$ and $\zeta$ for its log-scale mean and standard deviation.
+
+### Ideal lognormal mixture framework
+
+Assume that successive direct serial intervals are independent and identically distributed:
+
+$$
+X_k\overset{\mathrm{iid}}{\sim}\operatorname{Lognormal}(\eta,\zeta^2),
+\qquad k=1,2,3,\ldots.
+$$
+
+The natural-scale and log-scale parameters satisfy
+
+$$
+\zeta^2=\log\!\left(1+\frac{s^2}{m^2}\right),
+\qquad
+\eta=\log(m)-\frac{\zeta^2}{2},
+$$
+
+and
+
+$$
+m=e^{\eta+\zeta^2/2},
+\qquad
+s=\left[(e^{\zeta^2}-1)e^{2\eta+\zeta^2}\right]^{1/2}.
+$$
+
+Let $f_X(x;\eta,\zeta)$ denote the direct lognormal SI density,
+
+$$
+f_X(x;\eta,\zeta)
+=
+\frac{1}{x\zeta\sqrt{2\pi}}
+\exp\!\left[
+-\frac{(\log x-\eta)^2}{2\zeta^2}
+\right],
+\qquad x>0.
+$$
+
+The same four latent transmission paths remain epidemiologically meaningful, but their exact mathematical forms change:
+
+$$
+\begin{aligned}
+C_{\mathrm{CP}}&=|X_1-X_2|,\\
+C_{\mathrm{PS}}&=X_1,\\
+C_{\mathrm{PT}}&=X_1+X_2,\\
+C_{\mathrm{PQ}}&=X_1+X_2+X_3.
+\end{aligned}
+$$
+
+For the primary-secondary path, positivity implies $C_{\mathrm{PS}}=X_1$, so
+
+$$
+f_{\mathrm{PS}}(c)=f_X(c;\eta,\zeta),
+\qquad c>0.
+$$
+
+For $c\geq0$, the exact co-primary density is the absolute-difference density
+
+$$
+f_{\mathrm{CP}}(c)
+=
+2\int_0^\infty
+f_X(u;\eta,\zeta)f_X(u+c;\eta,\zeta)\,du.
+$$
+
+The exact primary-tertiary density is the convolution
+
+$$
+f_{\mathrm{PT}}(c)
+=
+\int_0^c
+f_X(u;\eta,\zeta)f_X(c-u;\eta,\zeta)\,du,
+$$
+
+and the exact primary-quaternary density is a further convolution,
+
+$$
+f_{\mathrm{PQ}}(c)
+=
+\int_0^c
+f_{\mathrm{PT}}(u)f_X(c-u;\eta,\zeta)\,du.
+$$
+
+If $w_g=P(G_i=g)$, the ideal continuous ICC mixture is
+
+$$
+f_C(c;m,s,\mathbf{w})
+=
+\sum_{g\in\mathcal{G}}
+w_gf_g(c;m,s),
+\qquad
+w_g\geq0,\quad\sum_gw_g=1.
+$$
+
+For an observed integer-day interval $T_i=t_i$, the corresponding ideal pathway likelihood retains the triangular observation model:
+
+$$
+p_g(t_i;m,s)
+=
+\int_{\max(0,t_i-1)}^{t_i+1}
+f_g(c;m,s)g_{t_i}(c)\,dc.
+$$
+
+This model is the scientific target: CP is the difference of two independent lognormal SIs, PS is one direct lognormal SI, and PT/PQ are exact sums of two and three independent lognormal SIs. The next section explains why the target cannot be used directly at the scale required by iterative mixture estimation and how the fitted working model approximates it.
+
+## Lognormal extension: Computational challenges and tractable approximations
+
+### Computational difficulty and lack of closed form
+
+The lognormal extension removes the analytical closure that made the original Normal framework convenient. A difference of independent lognormal variables is not Normal or lognormal, and a sum of independent lognormal variables has no elementary closed-form density. Direct evaluation would therefore require numerical integration for CP and numerical convolution for PT/PQ.
+
+This difficulty is compounded by the observation model. Every continuous component must already be integrated against the triangular kernel to obtain an integer-day probability. Substituting the exact lognormal path expressions would place numerical convolution inside the discretisation integral and repeat that nested calculation for every observation, every pathway, and every EM iteration. Likelihood evaluation would become computationally expensive and vulnerable to quadrature failure, especially in highly skewed or long-tailed settings. A direct numerical M-step would add another layer of repeated optimization over these integrated probabilities.
+
+The fitted model therefore uses analytically tractable working components. This is not a claim that the exact CP difference or PT/PQ sums are lognormal. It is a controlled compromise: preserve the scientific meaning and key moments of each pathway while avoiding nested integration that would make the full simulation and routine model fitting impractical.
+
+### Half-normal approximation for co-primary transmission
+
+Under co-primary (CP) transmission, two observed cases acquire infection independently from the same external source rather than infecting one another. Because their exposures may occur at similar times, their symptom-onset dates can also be closely spaced. The resulting ICC distribution is therefore expected to contain substantial probability near zero, including observations recorded as zero-day intervals.
+
+Under the ideal lognormal pathway construction, the continuous CP interval is
+
+$$
+C_{\mathrm{CP}}
+=
+\lvert X_1-X_2\rvert,
+$$
+
+where $X_1$ and $X_2$ are independent serial intervals drawn from the same lognormal distribution. Its density can be expressed as
+
+$$
+f_{\mathrm{CP}}(c)
+=
+2\int_0^\infty
+f_X(u)f_X(u+c)\,du,
+\qquad c\geq0.
+$$
+
+This expression is mathematically well defined at $c=0$, so the exact CP distribution is capable of assigning probability density near zero. The difficulty is computational rather than one of mathematical support: the absolute difference between two independent lognormal variables does not have a convenient closed-form density. Evaluating the integral repeatedly within the triangular observation likelihood and throughout the EM iterations would make model fitting computationally expensive and potentially sensitive to numerical integration error.
+
+The fitted model therefore replaces the exact lognormal-difference distribution with a half-normal approximation. This choice is motivated by both the epidemiological structure of the CP pathway and the moments of the underlying difference. A half-normal density has its mode at zero and decreases as the distance between the two symptom-onset times increases. It therefore provides a natural representation of co-primary cases whose onset times tend to be closely clustered.
+
+To determine its scale, consider two independent serial intervals with common variance $s^2$. Independence implies
+
+$$
+\begin{aligned}
+\operatorname{Var}(X_1-X_2)
+&=
+\operatorname{Var}(X_1)
++
+\operatorname{Var}(X_2)\\
+&=
+2s^2.
+\end{aligned}
+$$
+
+The working model approximates $X_1-X_2$ by a zero-centred Normal random variable with variance $2s^2$ and then folds that distribution at zero:
+
+$$
+C_{\mathrm{CP}}
+\sim
+\operatorname{HalfNormal}(0,\sqrt{2}s).
+$$
+
+The corresponding density is
+
+$$
+f_{\mathrm{CP}}(c;s)
+=
+\frac{1}{s\sqrt{\pi}}
+\exp\!\left(
+-\frac{c^2}{4s^2}
+\right),
+\qquad c\geq0.
+$$
+
+This approximation preserves the variance scale of the unfurled difference and provides a normalized density that is inexpensive to evaluate. Its concentration at zero is also consistent with the expectation that cases infected by a common source may develop symptoms within a short time of one another.
+
+The approximation does not reproduce the complete distribution of the absolute difference between two lognormal variables. In the exact construction, the shape of the CP distribution depends on both the natural-scale mean $m$ and standard deviation $s$ of the underlying SI distribution. By contrast, the half-normal approximation depends only on $s$. It may therefore differ from the exact CP distribution in its curvature and tail behaviour, particularly when the underlying serial intervals are highly dispersed or strongly right-skewed. The approximation should consequently be interpreted as a computationally tractable CP working model rather than an exact distributional identity.
+
+Zero-day observations create a related but distinct problem in the logarithmic M-step because $\log(0)$ is undefined. The half-normal CP approximation provides stable density near zero, but it does not by itself resolve that log-scale singularity. Section 3.3.3 describes the E/M-decoupled strategy used to retain the correct zero-day interval likelihood in the E-step while applying a neutral log-scale representation in the M-step.
+
+### Fenton--Wilkinson approximation for PT and PQ
+
+**Computational motivation.** The primary-tertiary (PT) and primary-quaternary (PQ) pathways represent transmission chains containing two and three successive generation steps, respectively. Their continuous ICC intervals are therefore
+
+$$
+C_{\mathrm{PT}}=X_1+X_2
+$$
+
+and
+
+$$
+C_{\mathrm{PQ}}=X_1+X_2+X_3,
+$$
+
+where the $X_k$ are independent lognormal serial intervals. Although the moments of these sums are readily available, the sum of independent lognormal variables does not have an elementary closed-form density. An exact likelihood calculation would therefore require numerical convolution.
+
+This computational difficulty is amplified by the observation model. Each continuous pathway density must already be integrated against the triangular discretisation kernel to obtain an integer-day probability. Using the exact PT and PQ sum distributions would place numerical convolution inside this likelihood integration and repeat the nested calculation for every observation and every EM iteration. Although such a procedure is theoretically possible, it would be prohibitively expensive for routine estimation and for a simulation study involving many repeated fits.
+
+The fitted model resolves this bottleneck using the Fenton--Wilkinson (FW) approximation.
+
+**Moment-matching principle.** The FW method replaces a sum of independent lognormal variables with a single lognormal random variable whose first two moments match those of the exact sum on the natural scale.
+
+Let
+
+$$
+S_n=X_1+\cdots+X_n
+$$
+
+be the sum of $n$ independent serial intervals, each with natural-scale mean $m$ and standard deviation $s$. Independence gives
+
+$$
+\operatorname{E}(S_n)=nm
+$$
+
+and
+
+$$
+\operatorname{Var}(S_n)=ns^2.
+$$
+
+Suppose the approximating distribution is lognormal with log-scale parameters $\eta_n$ and $\zeta_n$. A lognormal random variable with natural-scale mean $M$ and variance $V$ has parameters
+
+$$
+\zeta^2
+=
+\log\left(1+\frac{V}{M^2}\right)
+$$
+
+and
+
+$$
+\eta
+=
+\log(M)-\frac{\zeta^2}{2}.
+$$
+
+Substituting
+
+$$
+M=nm
+\qquad\text{and}\qquad
+V=ns^2
+$$
+
+gives
+
+$$
+\zeta_n^2
+=
+\log\left(1+\frac{s^2}{nm^2}\right)
+$$
+
+and
+
+$$
+\eta_n
+=
+\log(nm)-\frac{\zeta_n^2}{2}.
+$$
+
+The PT component uses $n=2$, giving
+
+$$
+\zeta_2^2
+=
+\log\left(1+\frac{s^2}{2m^2}\right),
+\qquad
+\eta_2
+=
+\log(2m)-\frac{\zeta_2^2}{2},
+$$
+
+whereas the PQ component uses $n=3$:
+
+$$
+\zeta_3^2
+=
+\log\left(1+\frac{s^2}{3m^2}\right),
+\qquad
+\eta_3
+=
+\log(3m)-\frac{\zeta_3^2}{2}.
+$$
+
+The resulting PT and PQ densities are inexpensive to evaluate and can therefore be incorporated directly into the discretised E-step likelihood.
+
+**Distributional cost of the approximation.** By construction, the FW approximation reproduces the exact mean and variance of each sum. Its approximation error therefore appears in higher-order characteristics of the distribution, particularly skewness and tail shape.
+
+Let
+
+$$
+c_v=\frac{s}{m}
+$$
+
+denote the coefficient of variation of the underlying SI distribution. For a sum of $n$ independent and identically distributed lognormal variables, the skewness of the exact sum is
+
+$$
+\gamma_{\mathrm{sum},n}
+=
+\frac{(c_v^2+3)c_v}{\sqrt{n}}.
+$$
+
+The skewness of the moment-matched FW lognormal distribution is
+
+$$
+\gamma_{\mathrm{FW},n}
+=
+\frac{(c_v^2/n+3)c_v}{\sqrt{n}}.
+$$
+
+The resulting skewness gap is
+
+$$
+\Delta\gamma_n
+=
+\gamma_{\mathrm{sum},n}
+-
+\gamma_{\mathrm{FW},n}
+=
+\frac{c_v^3(1-1/n)}{\sqrt{n}},
+\qquad n>1.
+$$
+
+Because $\Delta\gamma_n>0$, the FW distribution has lower skewness than the corresponding exact sum. The approximation therefore compresses the overall right-skewness of the PT and PQ distributions. This statement concerns the distribution's standardized third moment; it does not imply that the FW density is lower than the exact density at every point in the right tail.
+
+The magnitude of the discrepancy depends on relative dispersion, $c_v=s/m$, rather than on the absolute time scale alone.The discrepancy increases rapidly with $c_v$ because it is proportional to $c_v^3$. Consequently, the approximation is expected to be accurate when the underlying SI distribution has low relative dispersion, but potentially less accurate when the SI is highly variable and strongly right-skewed. 
+
+
+## Robust EM algorithm implementation
+
+The fitted procedure retains the EM logic of probabilistic pathway assignment followed by parameter updating, but it is customized for a lognormal target, approximate higher-generation components, and zero-day observations. The modifications are presented as parts of one coherent estimation strategy.
+
+### Posterior responsibilities with current pathway weights
+
+For a finite mixture, the posterior probability of pathway $g$ must combine its current prevalence with its compatibility with the observation. At iteration $r$, let $p_g(T_i;m^{(r)},s^{(r)})$ be the discretised working likelihood for observation $i$. The E-step is
+
+$$
+\tau_{gi}^{(r)}
+=
+\frac{
+w_g^{(r)}p_g(T_i;m^{(r)},s^{(r)})
+}{
+\sum_h
+w_h^{(r)}p_h(T_i;m^{(r)},s^{(r)})
+}.
+$$
+
+Here, $w_g^{(r)}$ is the prior pathway probability within the current iteration, $p_g(T_i)$ is the pathway-specific likelihood, and $\tau_{gi}^{(r)}$ is the posterior responsibility. Omitting $w_g^{(r)}$ would implicitly reset the four pathways to equal prevalence at every E-step and could create systematic misclassification when their true frequencies differ.
+
+The pathway proportions are updated by
+
+$$
+w_g^{(r+1)}
+=
+\frac{1}{N}\sum_{i=1}^{N}\tau_{gi}^{(r)},
+$$
+
+and these updated proportions are returned to the next E-step. This feedback ensures that estimated pathway prevalence and individual classification remain probabilistically coherent.
+
+### PS-only weighted-moment update
+
+After the E-step, all pathway proportions are updated using their corresponding posterior responsibilities. However, the parameters of the underlying lognormal SI distribution are updated using only the responsibilities assigned to the primary-secondary pathway. This distinction is important: the procedure updates all mixture weights, but it does not use all four pathways equally when estimating the target SI mean and standard deviation.
+
+Let
+
+$$
+a_i^{(r)}
+=
+\tau_{\mathrm{PS},i}^{(r)}
+$$
+
+denote the PS responsibility for observation $i$ at iteration $r$, and let
+
+$$
+Z_i=\log(T_i^*)
+$$
+
+denote the corresponding log-scale M-step value. Define
+
+$$
+A_1^{(r)}
+=
+\sum_{i=1}^{N}a_i^{(r)},
+\qquad
+A_2^{(r)}
+=
+\sum_{i=1}^{N}\left(a_i^{(r)}\right)^2.
+$$
+
+The log-scale SI parameters are updated as
+
+$$
+\eta^{(r+1)}
+=
+\frac{
+\displaystyle\sum_{i=1}^{N}
+a_i^{(r)}Z_i
+}{
+A_1^{(r)}
+}
+$$
+
+and
+
+$$
+(\zeta^2)^{(r+1)}
+=
+\frac{
+A_1^{(r)}
+}{
+\left(A_1^{(r)}\right)^2-A_2^{(r)}
+}
+\displaystyle\sum_{i=1}^{N}
+a_i^{(r)}
+\left(
+Z_i-\eta^{(r+1)}
+\right)^2.
+$$
+
+The second expression is a responsibility-weighted sample variance with a finite-sample correction. The updated log-scale parameters are then converted to the natural-scale SI mean $m$ and standard deviation $s$ using the transformations defined in Section 3.1. The construction of the zero-safe value $T_i^*$ is explained separately in Section 3.3.3.
+
+The rationale for restricting this parameter update to the PS pathway is epidemiological. A PS observation represents one direct transmission generation, so the PS component follows the target lognormal SI distribution directly. In contrast, the CP component is based on the retained half-normal construction, while the PT and PQ components represent longer transmission chains and rely on working approximations. A parameter update based on all pathways would require the shared SI parameters to improve the fit of the CP, PT, and PQ components simultaneously. Approximation error or poor tail fit in these components could then pull the estimated SI parameters away from the distribution of direct transmission intervals.
+
+The PS-only update instead concentrates parameter learning on the component that contains the clearest one-generation information. An observation contributes to the parameter update in proportion to its PS responsibility, $a_i^{(r)}$. Long ICC intervals that are more compatible with PT or PQ transmission will generally receive smaller PS responsibilities and will therefore have less influence on the estimated SI mean and standard deviation. Similarly, very short intervals that are more compatible with co-primary transmission will be downweighted in the PS update.
+
+This does not require the SI parameters to reproduce every mode of the complete ICC distribution equally well. In particular, the estimation of $m$ and $s$ is not driven directly by the need to fit the higher-generation PT and PQ peaks. Instead, these components help classify observations in the E-step, while the PS-weighted observations provide the primary information for updating the target SI distribution.
+
+The other pathways are not completely excluded from the estimation process. Their likelihoods and mixture weights remain part of the E-step and therefore affect the PS responsibilities indirectly. If a PT or PQ observation is incorrectly assigned substantial PS responsibility, it can still influence the SI parameter update. Nevertheless, the PS-only construction substantially reduces the direct influence of long-path observations and their tail-shape approximations on the estimation of $m$ and $s$.
+
+Because the update uses responsibility-weighted moments rather than directly maximizing the complete interval-censored four-pathway likelihood,its purpose is to prioritize direct-transmission information while avoiding the computational burden and potential approximation sensitivity of a full-path numerical parameter update.
+
+
+### Resolving the logarithmic singularity at $T_i=0$
+
+Zero-day ICC intervals have genuine epidemiological meaning, but the lognormal M-step encounters the singularity
+
+$$
+\log(0)=-\infty.
+$$
+
+An uncontrolled near-zero pseudo-observation produces an extremely negative log value. With non-negligible PS responsibility, it pulls $\widehat\eta$ downward and inflates $\widehat\zeta$; the resulting PS density becomes flatter, changes the next set of responsibilities, and can assign excessive PS weight to observations that are not direct transmissions. This creates a pathological positive-feedback loop:
+
+$$
+T_i=0
+\longrightarrow
+\text{extreme negative log value}
+\longrightarrow
+\widehat\zeta\ \text{inflates}
+\longrightarrow
+\text{PS density flattens}
+\longrightarrow
+\tau_{\mathrm{PS},i}\ \text{is distorted}
+\longrightarrow
+\text{further variance inflation}.
+$$
+
+The adopted solution is an E/M-decoupled zero-handling strategy. In the E-step, a zero remains a zero and contributes its exact rounded-interval likelihood,
+
+$$
+p_g(0;m,s)
+=
+\int_0^1
+2(1-c)f_g(c;m,s)\,dc.
+$$
+
+Only in the logarithmic M-step is the working value replaced by
+
+$$
+T_i^*=1,
+\qquad
+\log(T_i^*)=0.
+$$
+
+The value one is a neutral log-scale proxy: it prevents a mathematical singularity without turning a same-day observation into an arbitrarily extreme negative log value. It is not a claim that the true continuous ICC interval was one day. This separation preserves the observation's zero-day meaning in pathway classification while breaking the feedback mechanism that otherwise inflates the variance.
+
+### Joint convergence criterion
+
+Pathway weights and distributional parameters are mutually dependent. A small change in $m$ or $s$ alters the component likelihoods; those likelihoods alter responsibilities and weights; the changed weights then affect the next parameter update. Stability of only one or two parameters can therefore be misleading.
+
+At iteration $r$, the implementation monitors relative changes in the natural-scale parameters,
+
+$$
+\Delta_m^{(r)}
+=
+\frac{|m^{(r+1)}-m^{(r)}|}{m^{(r)}+\epsilon},
+\qquad
+\Delta_s^{(r)}
+=
+\frac{|s^{(r+1)}-s^{(r)}|}{s^{(r)}+\epsilon},
+$$
+
+together with the maximum absolute pathway-weight change,
+
+$$
+\Delta_w^{(r)}
+=
+\max_g
+|w_g^{(r+1)}-w_g^{(r)}|.
+$$
+
+Convergence is declared only when
+
+$$
+\Delta_m^{(r)}<\mathrm{tol},
+\qquad
+\Delta_s^{(r)}<\mathrm{tol},
+\qquad
+\Delta_w^{(r)}<\mathrm{tol}.
+$$
+
+The default tolerance is $10^{-6}$. Including $\Delta_w^{(r)}$ prevents premature termination when the natural-scale parameters appear locally stable but the latent pathway allocation is still changing.
+
+## Empirical plausibility assessment
+
+The implemented lognormal method was first applied to four scabies datasets previously analyzed under a Normal SI model: studies by Akunzirwe et al. [@akunzirwe2023], Ariza et al. [@ariza2013], Kaburi et al. [@kaburi2019], and Tjon-Kon-Fat et al. [@tjon-kon-fat2021]. This analysis is a preliminary numerical plausibility check rather than an independent validation study.
+
+The true SI distributions in these outbreaks are unknown, so the historical data cannot be used to calculate bias, MSE, or parameter-recovery coverage. The limited objective is to determine whether the reconstructed algorithm produces epidemiologically plausible natural-scale means and standard deviations when applied to real, discrete outbreak data. Estimates broadly comparable in magnitude to the earlier Normal-model results would show that the implementation has not failed in an obvious numerical or epidemiological sense. Such agreement would not establish that the lognormal family fits better, nor would it validate its tail shape.
+
+## Simulation study design
+
+The core simulation is the principal controlled assessment of the lognormal procedure. It asks how the method performs with a finite sample of $N=200$ when both the true natural-scale SI parameters and the pathway composition are known. The design is a $3\times3$ stress-testing grid rather than an arbitrary collection of settings.
+
+###  Distribution-shape stress tests
+
+To evaluate model performance under a range of distributional conditions, three natural-scale parameter settings for the SI mean $m$ and standard deviation $s$ were selected:
+
+$$
+(m,s)\in\left\{(15,3),(2,2),(5,10)\right\}.
+$$
+
+These settings represent progressively more challenging levels of relative dispersion, as measured by the coefficient of variation,
+
+$$
+c_v=\frac{s}{m}.
+$$
+
+- **Low dispersion ($m \gg s$):** The setting $(m,s)=(15,3)$ has a coefficient of variation of $0.2$ and serves as the least challenging baseline scenario. Because the mean is substantially larger than the standard deviation, the underlying lognormal SI distribution has relatively low right-skewness. The pathway components are therefore expected to be more clearly separated, providing comparatively favourable conditions for pathway classification and parameter identifiability.
+
+- **Moderate dispersion ($m \approx s$):** The setting $(m,s)=(2,2)$ has a coefficient of variation of $1$. It combines a short mean SI with substantial relative variability, producing greater right-skewness and more probability mass near zero. After the continuously generated ICC values are rounded to integer days, this setting is also expected to produce a larger proportion of zero-day observations. It therefore tests the robustness of the zero-day likelihood treatment, pathway classification, and algorithmic convergence when the observed intervals are small and highly variable.
+
+- **Extreme dispersion ($s \gg m$):** The setting $(m,s)=(5,10)$ has a coefficient of variation of $2$, meaning that the standard deviation is twice the mean. This produces a highly right-skewed SI distribution with a pronounced upper tail and substantial overlap among the pathway components. It serves as an intentionally severe stress test of the Fenton--Wilkinson approximation, latent-path separation, the PS-only parameter update, and the numerical stability of the estimation procedure.
+
+Three natural-scale parameter settings represent progressively different numerical and epidemiological challenges:
+
+$$
+(m,s)\in\{(2,2),(15,3),(5,10)\}.
+$$
+
+- $(15,3)$ is a conventional low-dispersion, low-skewness setting in which component separation should be comparatively clear.
+- $(2,2)$ combines a short mean with substantial relative variability. Rounding places more observations near zero, directly testing the zero-day likelihood and convergence mechanism.
+- $(5,10)$ is an extreme high-dispersion, long-tailed setting. Its coefficient of variation is two, so it deliberately challenges Fenton--Wilkinson tail accuracy, pathway separation, and numerical stability.
+
+### Pathway-weight stress tests
+
+Each distributional setting is crossed with three pathway profiles:
+
+| Profile | $w_{\mathrm{CP}}$ | $w_{\mathrm{PS}}$ | $w_{\mathrm{PT}}$ | $w_{\mathrm{PQ}}$ |
+|---|---:|---:|---:|---:|
+| Baseline | 0.20 | 0.50 | 0.20 | 0.10 |
+| CP-heavy | 0.40 | 0.35 | 0.15 | 0.10 |
+| Higher-generation-heavy | 0.10 | 0.35 | 0.35 | 0.20 |
+
+The baseline profile contains the largest PS share. The CP-heavy profile tests whether the target parameters can be recovered when common-source observations dominate. The higher-generation-heavy profile shifts mass toward PT/PQ, increasing the proportion of observations generated by exact lognormal sums but fitted with moment-matched approximations. Both non-baseline profiles reduce the fraction of direct one-generation evidence and therefore test whether the EM procedure can still isolate $m$ and $s$ from stronger pathway noise.
+
+### Data generation and fitting protocol
+
+Within every scenario, the scientific data-generating mechanism uses the unapproximated distributions wherever they define the target model. PS observations are single lognormal draws, while PT and PQ observations are actual sums of two and three independent lognormal draws. CP is generated from the same half-normal component used by the fitted working model. The fitted PT/PQ likelihood uses Fenton--Wilkinson approximations, so the study evaluates both parameter recovery and the practical effect of the sum approximation.
+
+Each of the nine scenarios uses 100 repetitions, seed 2026, a maximum of 50 EM iterations, the default tolerance $10^{-6}$, and one starting value initialized at the true $(m,s)$. The use of an oracle start deliberately removes poor initialization as the primary explanation for failure in this first study; it does not test operational robustness to realistic starts. Pathway counts are fixed as
+
+$$
+n_g=\operatorname{round}(Nw_g),
+$$
+
+rather than sampled from a categorical distribution, and the generated continuous ICC intervals are rounded to integer days before fitting.
+
+### Evaluation metrics
+
+Convergence is assessed first because an estimate stopped at the 50-iteration cap is not equivalent to a converged estimate. For $\theta\in\{m,s\}$ and $R=100$ repetitions, the performance summaries are
+
+$$
+\operatorname{Bias}(\widehat\theta)
+=
+\frac{1}{R}\sum_{r=1}^{R}\widehat\theta_r-\theta,
+$$
+
+$$
+\operatorname{MSE}(\widehat\theta)
+=
+\frac{1}{R}\sum_{r=1}^{R}
+(\widehat\theta_r-\theta)^2,
+\qquad
+\operatorname{RMSE}(\widehat\theta)
+=
+\sqrt{\operatorname{MSE}(\widehat\theta)},
+$$
+
+and
+
+$$
+\operatorname{ESD}(\widehat\theta)
+=
+\left\{
+\frac{1}{R-1}
+\sum_{r=1}^{R}
+(\widehat\theta_r-\overline{\widehat\theta})^2
+\right\}^{1/2}.
+$$
+
+The report also summarizes the convergence rate, terminal iteration, and final pathway weights. For scenarios that do not converge within 50 iterations, bias, MSE, RMSE, and ESD describe iteration-cap terminal states rather than the sampling distribution of a converged estimator. This distinction allows the capped runs to remain diagnostically informative without treating them as successful fits. RMSE and ESD are derived from the saved repetition-level results; no simulation code is rerun for the report.
+
+# Results
+
+## Simulation results
+
+```{r}
+#| label: tbl-simulation-results
+#| tbl-cap: "Simulation performance by scenario for N = 200 and 100 repetitions"
+#| echo: false
+#| warning: false
+#| message: false
+
+library(dplyr)
+library(openxlsx)
+
+simulation_file <- file.path(
+  "..", "..", "mitey", "mitey", "notes", "Simulation_results",
+  "Simulation_All_Results.xlsx"
+)
+
+scenario_results <- read.xlsx(simulation_file, sheet = "Per_Scenario") |>
+  mutate(
+    pathway_profile = recode(
+      weight_name,
+      baseline = "Baseline",
+      early_dominant = "CP-heavy",
+      heavy_tailed = "Higher-generation-heavy"
+    )
+  )
+
+simulation_table <- bind_rows(
+  scenario_results |>
+    transmute(
+      Scenario = scenario_id,
+      `Pathway profile` = pathway_profile,
+      Parameter = "SI mean",
+      `True value` = true_mean,
+      `Average estimate` = avg_est_mean,
+      Bias = bias_est_mean,
+      MSE = mse_est_mean,
+      RMSE = sqrt(mse_est_mean),
+      `Convergence (%)` = 100 * convergence_rate
+    ),
+  scenario_results |>
+    transmute(
+      Scenario = scenario_id,
+      `Pathway profile` = pathway_profile,
+      Parameter = "SI SD",
+      `True value` = true_sd,
+      `Average estimate` = avg_est_sd,
+      Bias = bias_est_sd,
+      MSE = mse_est_sd,
+      RMSE = sqrt(mse_est_sd),
+      `Convergence (%)` = 100 * convergence_rate
+    )
+) |>
+  arrange(Scenario, factor(Parameter, levels = c("SI mean", "SI SD"))) |>
+  mutate(
+    across(c(`True value`, `Average estimate`, Bias, MSE, RMSE), ~ round(.x, 2)),
+    `Convergence (%)` = round(`Convergence (%)`)
+  )
+
+knitr::kable(
+  simulation_table,
+  align = c("r", "l", "l", "r", "r", "r", "r", "r", "r"),
+  booktabs = TRUE
+)
+```
+
+Convergence within the prespecified 50-iteration limit showed a clear dependence on the distributional setting. The algorithm performed well only in the low-dispersion setting, $(m,s)=(15,3)$, corresponding to a coefficient of variation of $CV=0.20$. Under this setting, 99% of repetitions converged for the baseline pathway profile (Scenario 4), 98% for the CP-heavy profile (Scenario 5), and 96% for the higher-generation-heavy profile (Scenario 6). In contrast, none of the repetitions converged within 50 iterations under either the moderate-dispersion setting, $(m,s)=(2,2)$, or the extreme-dispersion setting, $(m,s)=(5,10)$, irrespective of the pathway profile. The consistency of this pattern across the three pathway compositions suggests that convergence difficulty was driven primarily by the shape and relative dispersion of the underlying SI distribution rather than by pathway composition alone.
+
+For the low-dispersion scenarios that achieved high convergence rates, recovery of the true SI parameters was generally accurate. Under the baseline profile, the estimated SI mean was 15.06 compared with the true value of 15, corresponding to a bias of 0.06 and an RMSE of 0.49. The estimated SI standard deviation was 3.10 compared with the true value of 3, with a bias of 0.10 and an RMSE of 0.36.
+
+Estimation also remained close to the true values under the CP-heavy and higher-generation-heavy pathway profiles, although precision was lower than under the baseline profile. For the CP-heavy profile, the RMSEs were 0.61 for the SI mean and 0.39 for the SI SD, whereas under the higher-generation-heavy profile they increased to 0.72 and 0.52, respectively. Both profiles contained the same PS proportion of 0.35, yet the higher-generation-heavy profile produced larger estimation errors. This suggests that the reduction in precision cannot be explained by the lower proportion of direct PS observations alone. A greater contribution from PT and PQ observations may introduce additional estimation difficulty, potentially because these pathways provide less direct information about the underlying SI parameters and are represented using working approximations.
+
+The interpretation of Scenarios 1--3 and 7--9 is different because none satisfied the joint convergence criterion within 50 iterations. Their reported estimates therefore represent iteration-capped terminal states rather than results from a converged estimator. At iteration 50, the moderate-dispersion scenarios showed mild overestimation of the SI mean and underestimation of the SI SD, whereas the extreme-dispersion scenarios showed more pronounced underestimation, particularly for the SD. These terminal values are primarily diagnostic and should not be interpreted as evidence of estimator bias until convergence behaviour has been investigated under a larger iteration limit.
+
+To better understand why the non-convergent scenarios had not met the stopping rule by iteration 50, the changes in the SI mean, SI SD, and pathway weights were examined across iterations. The plots show that these quantities generally continued to decrease over time, but at different rates across scenarios.
+
+
+```{r}
+#| label: fig-convergence-diagnostics
+#| fig-cap: "Representative convergence diagnostics for non-convergent scenarios under the baseline pathway profile."
+#| fig-subcap:
+#|   - "Scenario 1: moderate dispersion, $(m,s)=(2,2)$."
+#|   - "Scenario 7: extreme dispersion, $(m,s)=(5,10)$."
+#| layout-ncol: 2
+#| echo: false
+#| out-width: "100%"
+
+figure_dir <- file.path(
+  "..", "..", "mitey", "mitey", "notes", "Simulation_results"
+)
+
+knitr::include_graphics(file.path(
+  figure_dir,
+  c(
+    "Convergence_Diagnostics_Scenario_1.jpg",
+    "Convergence_Diagnostics_Scenario_7.jpg"
+  )
+))
+```
+
+For Scenarios 1--3, the SI SD changed more slowly than the mean and pathway weights, and remained the furthest from the convergence threshold by iteration 50. In Scenarios 7--8, the pathway weights were slower to stabilize, while in Scenario 9 the mean, SD, and weights remained at broadly similar levels. This suggests that there was no single parameter responsible for non-convergence across all scenarios; instead, the slowest component depended on the distributional setting.
+
+Importantly, the trajectories were still moving downward at iteration 50. Therefore, these results do not yet show whether the algorithm would eventually converge if given more iterations. The next step is to increase the iteration limit and examine how the convergence rate changes as more iterations are allowed.
+
+ @fig-convergence-diagnostics shows representative convergence diagnostics for two non-convergent scenarios under the baseline pathway profile. Scenario 1 represents the moderate-dispersion setting, $(m,s)=(2,2)$, and Scenario 7 represents the extreme-dispersion setting, $(m,s)=(5,10)$. The solid line shows the median parameter-change trajectory across repetitions, the shaded region shows the 5th--95th percentile range, and the dashed horizontal line denotes the convergence tolerance of $10^{-6}$.
+
+Several mechanisms may contribute to this behaviour. As relative dispersion increases, stronger right-skewness and greater overlap between pathway-specific ICC distributions can weaken pathway separation and slow the joint updating of SI parameters and mixture weights. In the extreme-dispersion setting, the larger discrepancy between the exact PT/PQ sum distributions and their Fenton--Wilkinson working approximations may also contribute to poorer stabilization. However, the current 50-iteration results alone cannot distinguish slow convergence from persistent algorithmic instability.
+
+
+
+
+# Software Implementation
+# Discussion
+
+This study aimed to examine whether the Vink et al. transmission-path mixture framework can be extended by replacing the original Normal or Gamma assumption for the underlying serial interval with an iid lognormal assumption and whether a lognormal extension provide a better statistical fit and more plausible estimates. The current work provides a theoretical answer to the first part of this research question. The four-path ICC mixture structure can be retained under the lognormal extension, and the primary-secondary component remains directly interpretable as the target serial interval distribution. 
+
+The main value of this extension is that it try to provide a more biologically plausible option when the serial interval is expected to be strictly positive and right-skewed. In particular, the lognormal distribution avoids negative serial intervals and can accommodate a longer right tail than more Normal and Gamma distributional assumptions, which corresponds to infectious disease settings where delayed transmission or high variability in symptom-onset timing may produce skewed ICC interval data.
+
+However, the results also show that this gain in biological plausibility comes with an important computational cost. Under the Normal assumption, several path-specific distributions are analytically convenient because sums of independent Normal random variables remain Normal. Under the lognormal assumption, this property is lost. The co-primary, primary-tertiary, and primary-quaternary paths involve absolute differences or sums of independent lognormal variables, which do not have simple closed-form density functions. As a result, the likelihood and EM algorithm require numerical integration and numerical optimisation. Thus, although the lognormal extension is theoretically well defined, its practical implementation is more computationally demanding than the original framework.
+
+##  Limitations
+
+The present study provides a proof of concept for extending the Vink transmission-path framework to a lognormal serial interval. However, its theoretical and computational findings should be interpreted in light of several approximation errors, algorithmic compromises, and structural assumptions.
+
+### Approximation Costs in Latent Pathways
+
+To maintain computational feasibility, the fitted model replaces several exact pathway distributions with tractable approximations. For the co-primary (CP) pathway, the exact distribution of the absolute difference between two serial intervals depends on both the natural-scale mean ($m$) and standard deviation ($s$), whereas the half-normal approximation depends only on $s$. As a result, the approximation discards information related to $m$ and may distort the curvature and tail behaviour of the CP component, particularly when the underlying SI distribution is highly dispersed.
+
+For the PT and PQ pathways, the Fenton--Wilkinson (FW) approximation matches only the first two moments of the exact sums of lognormal serial intervals. As the coefficient of variation increases, the approximation increasingly understates the right-skewness of these higher-generation distributions. These discrepancies may also affect the E-step indirectly, because pathway-specific working densities determine the posterior responsibilities used to classify observations across the four latent pathways.
+
+### Algorithmic Compromises in Parameter Updating
+
+The estimation procedure uses a PS-only parameter update in the M-step. Restricting the update to primary-secondary responsibilities reduces the direct influence of higher-generation observations and their associated approximation errors. The trade-off is that information about the underlying SI parameters contained in the CP, PT, and PQ pathways is not used directly in the parameter update. When the PS proportion is small or when pathway distributions overlap substantially, this restriction may reduce the effective information available for estimating the SI mean and standard deviation.
+
+A fuller parameter update based on multiple or all pathways could, in principle, make use of additional information. However, such an approach would require repeated numerical evaluation and optimization of more complicated pathway likelihood contributions, substantially increasing computational cost. Under typical settings, the corresponding improvement in estimation accuracy may therefore be limited relative to the additional computational burden.
+
+### Model Identifiability and Convergence
+
+The performance of the iterative estimation procedure depends strongly on the degree of separation between pathway components. When the underlying SI distribution has high relative dispersion, the four pathway distributions can overlap substantially. This makes pathway allocation more difficult, weakens practical identifiability, and may lead to slow stabilization of both the SI parameters and pathway weights.
+
+The simulation study also used an oracle starting value, with the initial SI mean and standard deviation set to their true values. This design was useful for isolating the behaviour of the proposed method under favourable initialization, but it does not assess sensitivity to realistic starting values. In practical applications, random or poorly chosen initial values may increase the risk of slow convergence, convergence to different stationary points, or failure to satisfy the stopping criterion.
+
+### Simulation Scope and Empirical Verification
+
+The current simulation study is limited in scope. All scenarios used a fixed sample size of $N=200$, and pathway counts were determined from prespecified proportions rather than sampled randomly. The study therefore does not yet assess how performance changes across different sample sizes or under additional variability in pathway composition.
+
+Empirical assessment is also limited by the absence of known transmission pairs or a known true SI distribution in the historical datasets. Although the proposed model can be fitted to these datasets and produces epidemiologically plausible estimates, the empirical data cannot establish whether the lognormal specification is  superior to the Normal or Gamma alternatives. At present, empirical evaluation is therefore restricted to plausibility checks and visual comparison between fitted distributions and the ICC data.
+
+### Structural and Observational Assumptions
+
+Finally, the framework retains several structural assumptions inherited from the original transmission-path model. The four-pathway structure is most appropriate for small household or cluster settings and may become restrictive when longer transmission chains, multiple external introductions, or more complex transmission networks are present.
+
+The model also treats ICC observations as statistically independent, which does not account for possible dependence among cases from the same household or outbreak cluster. In addition, the discretisation model assumes that exact symptom-onset times are uniformly distributed within each reported calendar day. This simplification does not explicitly account for other forms of measurement error, including recall error, reporting delay, or inaccuracies in recorded onset dates.
+
+## Future work
+
+The next step is to implement the proposed lognormal extension within the existing `{mitey}` R package framework, which means to replace the original Normal or Gamma SI distribution option with the lognormal specification derived in this study, and then test whether the full SI inference workflow remains computationally feasible.
+
+This implementation will allow us to assess whether the anticipated computational challenges arise in practice. In particular, the CP, PT, and PQ path-specific probabilities may require repeated numerical integration, and the M-step may require numerical optimisation rather than closed-form parameter updates. This part will focus not only on coding the lognormal extension, but also on exploring more efficient numerical methods such as integration approximation if computational difficulties are observed.
+
+A simulation study will then be conducted to evaluate the performance of the proposed method. Under correct specification, data can be generated from an iid lognormal SI distribution, converted into ICC intervals through the four latent transmission paths, and then fitted using the proposed EM algorithm. This would allow assessment of bias, root mean squared error, convergence rate, and the recovery of the SI mean and standard deviation. Under misspecification scenarios, the data-generating SI distribution could be changed to Gamma, Weibull, or another positive distribution to evaluate the robustness of the lognormal extension.
+
+Future work should also compare the lognormal extension with the existing Normal and Gamma versions of the Vink framework given real outbreak datasets of different infectious disease. Such comparisons would help determine when the lognormal assumption provides improved estimation or better model fit. This is important because the lognormal model is more computationally expensive, so its practical value needs to be justified by improved performance in relevant scenarios.
+
+Finally, the transmission-path framework itself could be extended. Future models could include additional transmission generations beyond the current four paths, or incorporate more flexible assumptions about the transmission network. More general SI distributions, such as Weibull, log-logistic, or generalized gamma distributions, could also be explored. These extensions may broaden the applicability of the method to more complex real-world transmission settings.
