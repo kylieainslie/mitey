@@ -27,7 +27,7 @@
 #' @param sigma numeric; the standard deviation of the serial interval distribution in days
 #' @param comp integer; the transmission route component number (1 to 7). See Details for component definitions
 #' @param dist character; the assumed underlying distribution of the serial interval.
-#'             Must be either "normal" or "gamma". Defaults to "normal"
+#'             Must be either "normal", "gamma" or "lognormal". Defaults to "normal"
 #' @param lower logical; if \code{TRUE} (default), performs integration using \code{flower} and \code{fupper} functions. If \code{FALSE}, uses \code{f0} function
 #'
 #' @return numeric; the integrated likelihood value for the specified component and data point. Used in the EM algorithm for serial interval estimation

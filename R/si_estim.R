@@ -38,6 +38,11 @@
 #'   \item \strong{Gamma distribution}: Restricts to positive values only, uses 4 components
 #'         (CP, PS, PT, PQ without negative pairs). Recommended when negative serial
 #'         intervals are epidemiologically implausible
+#'   \item \strong{Lognormal distribution}: Restricts serial intervals
+#'         to positive values and uses four components (CP, PS, PT, PQ).
+#'         CP is approximated by a Half-Normal distribution, PS follows
+#'         a Lognormal distribution, and PT/PQ use
+#'         Fenton-Wilkinson approximations.
 #' }
 #'
 #' \strong{Key Assumptions:}
@@ -61,6 +66,7 @@
 #' \itemize{
 #'   \item \code{"normal"} (default): Allows negative serial intervals, uses 7 mixture components
 #'   \item \code{"gamma"}: Restricts to positive serial intervals, uses 4 mixture components
+#'   \item \code{"lognormal"}: Restricts to positive serial intervals, uses 4 mixture components
 #' }
 #' @param init numeric vector of length 2; initial values for the mean and standard
 #'             deviation to start the EM algorithm. If \code{NULL} (default), uses the
@@ -68,7 +74,8 @@
 #'             good initial values can improve convergence, especially for challenging datasets
 #' @param tol numeric; convergence tolerance for the EM algorithm. The algorithm stops
 #'            early if the relative change in both mean and standard deviation between
-#'            iterations is less than this value. Set to 0 to disable early stopping
+#'            iterations and the maximum absolute change in component weights is less 
+#'            than this value. Set to 0 to disable early stopping
 #'            and always run all \code{n} iterations. Defaults to 1e-6
 #' @param n_starts integer; number of random restarts for the EM algorithm. The algorithm
 #'                 can converge to local optima, especially when initial values are far from
@@ -152,6 +159,7 @@
 #'
 #' result_normal <- si_estim(large_icc, dist = "normal")
 #' result_gamma <- si_estim(large_icc, dist = "gamma")
+#' result_lognormal <- si_estim(large_icc, dist = "lognormal")
 #'
 #' # Example 3: Using custom initial values
 #' result_custom <- si_estim(large_icc, dist = "normal", init = c(3.0, 1.5))
@@ -218,12 +226,13 @@ si_estim <- function(
     )
   }
 
-  ## Vink et al. implementation code
+
+  # Zero-day observations remain zero in the E-step but are replaced
+  # with one in the M-step to avoid numerical issues.
   j <- length(dat)
-  # A helper list for selecting data with 0 based on original dataset
-  is_zero_interval <- dat == 0
-  dat_raw <- dat # Original data, kept for all steps preceding the M-step summary stats
-  dat <- ifelse(is_zero_interval, 1, dat) # M-dat only used for M-step summary stats (mean/sd)
+  is_zero_interval <- dat == 0 
+  dat_raw <- dat 
+  dat <- ifelse(is_zero_interval, 1, dat) 
 
   # Set initial values if not provided
   if (is.null(init)) {
@@ -350,6 +359,7 @@ si_estim <- function(
         mu <- opt$par[1]
         sigma <- opt$par[2]
       } else if (dist == "lognormal") {
+          # Apply the Normal M-step updates on the log scale, then transform the estimates back to the natural-scale.
         log_dat <- log(dat)
         mu_log <- weighted.mean(log_dat, tau[2, ])
         sigma_log <- sqrt(weighted_var(log_dat, tau[2, ]))

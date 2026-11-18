@@ -7,7 +7,7 @@
 #' @param mu The mean value.
 #' @param sigma The standard deviation.
 #' @param comp The component number (1 to 7).
-#' @param dist string; assumed distribution of the serial interval; accepts "normal" or "gamma"; defaults to "normal".
+#' @param dist string; assumed distribution of the serial interval; accepts "normal", "gamma" or "lognormal"; defaults to "normal".
 #'
 #' @return The calculated value of fupper.
 #' @keywords internal
@@ -109,15 +109,15 @@ fupper <- function(
         0
       )
     } else if (comp == 2) {
-      # PS path: Direct density
+      # PS path: lognormal (mu, sigma)
       dens <- ifelse(x > 0, dlnorm(x, meanlog = meanlog, sdlog = sdlog), 0)
       
     } else if (comp == 4) {
-      # PT path: FWA approximation
+      # approximated PT path: lognormal (2mu, 2sigma)
       dens <- ifelse(x > 0, dlnorm(x, meanlog = meanlog_pt, sdlog = sdlog_pt), 0)
       
     } else if (comp == 6) {
-      # PQ path: FWA approximation
+      # approximated PQ path: lognormal (3mu, 3sigma)
       dens <- ifelse(x > 0, dlnorm(x, meanlog = meanlog_pq, sdlog = sdlog_pq), 0)
       
     } else {

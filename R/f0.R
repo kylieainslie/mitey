@@ -13,11 +13,17 @@
 #' \deqn{\mu = k \times \theta}
 #' \deqn{\sigma^2 = k \times \theta^2}.
 #'
+#' #' If dist = "lognormal", the natural-scale mean (\eqn{\mu}) and standard
+#' deviation (\eqn{\sigma}) are converted to log-scale parameters for
+#' the PS component:
+#' \deqn{sdlog = \sqrt{\log(1 + \sigma^2 / \mu^2)}}
+#' \deqn{meanlog = \log(\mu) - sdlog^2 / 2}
+#' 
 #' @param x numeric; the value at which to evaluate the function.
 #' @param mu numeric; the mean value.
 #' @param sigma numeric; the standard deviation.
 #' @param comp integer; the component number (1 to 7).
-#' @param dist string; assumed distribution of the serial interval; takes "normal" or "gamma"; defaults to "normal"
+#' @param dist string; assumed distribution of the serial interval; takes "normal", "gamma" or "lognormal"; defaults to "normal"
 #'
 #' @return The calculated value of f0.
 #' @keywords internal
@@ -100,6 +106,9 @@ f0 <- function(
       return(rep(0, length(x)))
     }
     
+# Convert natural-scale SI parameters to log-scale for component densities.
+# CP uses a Half-Normal approximation; PS is Lognormal, while PT/PQ
+# also use Lognormal densities based on Fenton-Wilkinson approximations.
     sdlog <- sqrt(log(1 + sigma^2 / mu^2))
     meanlog <- log(mu) - 0.5 * sdlog^2
     

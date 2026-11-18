@@ -32,9 +32,10 @@
 #'         transmission routes (co-primary, primary-secondary, primary-tertiary,
 #'         primary-quaternary)
 #'   \item \strong{Gamma distribution}: 3 weights for the reduced component set
+#'    \item \strong{Lognormal distribution}: 3 weights for the reduced component set
 #' }
 #' @param dist character; the distribution family used for serial interval estimation.
-#'             Must be either "normal" (default) or "gamma". Should match the
+#'             Must be either "normal" (default), "gamma" or "lognormal zh". Should match the
 #'             distribution used in the original \code{si_estim()} call
 #' @param scaling_factor numeric; multiplicative factor to adjust the height of the
 #'                       fitted density curve relative to the histogram. Values > 1
@@ -46,7 +47,7 @@
 #'         publication-quality figures
 #'
 #' @seealso \code{\link{si_estim}} for serial interval estimation,
-#'          \code{\link{f_norm}} and \code{\link{f_gam}} for the underlying
+#'          \code{\link{f_norm}}, \code{\link{f_gam}}, \code{\link{f_lnorm}} for the underlying
 #'          mixture distribution functions
 #'
 #' @references
@@ -88,6 +89,18 @@
 #'   scaling_factor = 0.8
 #' )
 #'
+#' # Example 3: Using lognormal distribution
+#' plot_si_fit(
+#'   dat = icc_data,
+#'   mean = 12.0,
+#'   sd = 3.5,
+#'   weights = c(0.25, 0.65, 0.10),
+#'   dist = "lognormal",
+#'   scaling_factor = 0.8
+#' )
+#' 
+#' 
+#' 
 plot_si_fit <- function(
   dat,
   mean,
@@ -198,7 +211,7 @@ plot_si_fit <- function(
 #' @param dat numeric vector; the index case-to-case (ICC) intervals in days used
 #'            for estimation
 #' @param dist character; the distribution family used for estimation. Must be either
-#'             "normal" (default) or "gamma". Should match the distribution used in
+#'             "normal" (default), "gamma", or "lognormal". Should match the distribution used in
 #'             the original \code{si_estim()} call
 #' @param scaling_factor numeric; multiplicative factor to adjust the height of the
 #'                       fitted density curve. Defaults to 1
@@ -217,6 +230,9 @@ plot_si_fit <- function(
 #'   \item For \strong{gamma distribution}: Passes the first 3 weights (co-primary,
 #'         primary-secondary, primary-tertiary); the primary-quaternary weight is
 #'         derived internally by \code{f_gam()} as \code{1 - w1 - w2 - w3}
+#' \item For \strong{lognormal distribution}: Passes the first 3 weights (co-primary,
+#'         primary-secondary, primary-tertiary); the primary-quaternary weight is
+#'         derived internally by \code{f_lnorm()} as \code{1 - w1 - w2 - w3}
 #' }
 #'
 #' @seealso \code{\link{si_estim}} for serial interval estimation,
