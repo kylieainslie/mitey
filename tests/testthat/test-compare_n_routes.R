@@ -64,7 +64,6 @@ mock_si_estim <- function(dat, n = 50, dist = "normal", n_routes = 4L, ...) {
 }
 
 test_that("compare_n_routes computes parameters, AIC and BIC (normal)", {
-  skip_if_not_installed("dplyr")
   local_mocked_bindings(
     si_estim = mock_si_estim,
     plot_si_fit_result = function(...) invisible(NULL)
@@ -92,7 +91,6 @@ test_that("compare_n_routes computes parameters, AIC and BIC (normal)", {
 })
 
 test_that("compare_n_routes uses gamma parameter count", {
-  skip_if_not_installed("dplyr")
   local_mocked_bindings(
     si_estim = mock_si_estim,
     plot_si_fit_result = function(...) invisible(NULL)
@@ -108,7 +106,6 @@ test_that("compare_n_routes uses gamma parameter count", {
 })
 
 test_that("compare_n_routes reports the model with the lowest AIC and BIC", {
-  skip_if_not_installed("dplyr")
   local_mocked_bindings(
     si_estim = mock_si_estim,
     plot_si_fit_result = function(...) invisible(NULL)
@@ -122,7 +119,6 @@ test_that("compare_n_routes reports the model with the lowest AIC and BIC", {
 })
 
 test_that("compare_n_routes forwards arguments to si_estim", {
-  skip_if_not_installed("dplyr")
   calls <- list()
   local_mocked_bindings(
     si_estim = function(dat, n, dist, n_routes, ...) {
@@ -148,7 +144,6 @@ test_that("compare_n_routes forwards arguments to si_estim", {
 })
 
 test_that("compare_n_routes returns its results invisibly", {
-  skip_if_not_installed("dplyr")
   local_mocked_bindings(
     si_estim = mock_si_estim,
     plot_si_fit_result = function(...) invisible(NULL)
@@ -162,7 +157,6 @@ test_that("compare_n_routes returns its results invisibly", {
 # -----------------------------------------------------------------------
 
 test_that("compare_n_routes runs end to end on simulated data", {
-  skip_if_not_installed("dplyr")
   skip_on_cran()
   set.seed(42)
   icc <- round(pmax(c(abs(rnorm(30, 0, 2)), rnorm(80, 12, 3),
