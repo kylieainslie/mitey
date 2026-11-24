@@ -343,24 +343,28 @@ Click to expand dependency information
 |  | `purrr` | Functional programming tools | 📦 Suggested |
 | **Visualization** |  |  |  |
 |  | `cowplot` | Combining plots | 📦 Suggested |
-|  | `ggridges` | Ridge plots for meta-analysis | 📦 Suggested |
-|  | `viridis` | Color palettes | 📦 Suggested |
+|  | `ggridges` | Ridge plots for meta-analysis | 🌐 Articles only |
+|  | `viridis` | Color palettes | 🌐 Articles only |
 | **Time Series & Data Handling** |  |  |  |
-|  | `zoo` | Moving averages and smoothing | 📦 Suggested |
-|  | `lubridate` | Date manipulation | 📦 Suggested |
-|  | `ISOweek` | ISO week handling | 📦 Suggested |
-|  | `openxlsx` | Excel file reading | 📦 Suggested |
+|  | `zoo` | Moving averages and smoothing | 🌐 Articles only |
+|  | `lubridate` | Date manipulation | 🌐 Articles only |
+|  | `ISOweek` | ISO week handling | 🌐 Articles only |
+|  | `openxlsx` | Excel file reading | 🌐 Articles only |
 | **Method Validation** |  |  |  |
 |  | `EpiEstim` | Reproduction number estimation comparison | 🔬 Development |
-|  | `EpiLPS` | Alternative reproduction number methods | 🔬 Development |
-|  | `outbreaks` | Epidemiological datasets for validation | 🔬 Development |
+|  | `EpiLPS` | Alternative reproduction number methods | 🌐 Articles only |
+|  | `outbreaks` | Epidemiological datasets for validation | 📦 Suggested |
 | **Bayesian Analysis** |  |  |  |
-|  | `brms` | Bayesian regression modeling | 📦 Suggested |
-|  | `tidybayes` | Bayesian posterior visualization | 📦 Suggested |
+|  | `brms` | Bayesian regression modeling | 🌐 Articles only |
+|  | `tidybayes` | Bayesian posterior visualization | 🌐 Articles only |
 | **Documentation & Tables** |  |  |  |
-|  | `gt` | Publication-quality tables | 📊 Vignettes |
-|  | `flextable` | Flexible table formatting | 📊 Vignettes |
-|  | `broom` | Model output tidying | 📊 Vignettes |
+|  | `gt` | Publication-quality tables | 🌐 Articles only |
+|  | `flextable` | Flexible table formatting | 🌐 Articles only |
+
+📦 Suggested packages are installed with `dependencies = TRUE` and are
+needed to build the package vignette. 🌐 Articles-only packages are
+listed under `Config/Needs/website` in `DESCRIPTION` and are only needed
+to render the articles on the package website.
 
 </details>
 
