@@ -858,22 +858,14 @@ tested:</p>
 <span><span class="co"># ...</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="starting-heuristics-n_optimal1-n_optimal2">Starting heuristics: <code>n_optimal1()</code>,
-<code>n_optimal2()</code><a class="anchor" aria-label="anchor" href="#starting-heuristics-n_optimal1-n_optimal2"></a>
+<h3 id="choosing-n_routes_max">Choosing <code>n_routes_max</code><a class="anchor" aria-label="anchor" href="#choosing-n_routes_max"></a>
 </h3>
-<p>Two simple data-driven heuristics are available to guide the initial
-choice of <code>n_routes_max</code>:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Heuristic 1: based on the 95th percentile and the mean</span></span>
-<span><span class="fu">n_optimal1</span><span class="op">(</span><span class="va">icc_data</span><span class="op">)</span>   <span class="co"># as.integer(quantile(dat, 0.95) / mean(dat))</span></span>
-<span></span>
-<span><span class="co"># Heuristic 2: based on the relative range</span></span>
-<span><span class="fu">n_optimal2</span><span class="op">(</span><span class="va">icc_data</span><span class="op">)</span>   <span class="co"># as.integer(max(dat) / sd(dat))</span></span></code></pre></div>
-<p>These heuristics are not rigorous estimators but reasonable
-<strong>starting points</strong> for exploring the <code>n_routes</code>
-grid. It is recommended to use them to set <code>n_routes_max</code> in
-<code><a href="../reference/compare_n_routes.html">compare_n_routes()</a></code>, and then rely on AIC/BIC for the final
-selection.</p>
+<p><code>n_routes_max</code> only sets the upper limit of the models
+compared; AIC/BIC then selects the number of routes. Setting it too high
+only costs computation time, whereas setting it too low can exclude the
+best model. The default of 8 covers most practical settings. Lower it if
+knowledge of the disease rules out long transmission chains, and raise
+it if the BIC-optimal model is at the upper limit.</p>
 <hr>
 </div>
 </div>
@@ -1030,27 +1022,20 @@ comparison and allows the optimal model to be selected objectively.</li>
 <div class="section level3">
 <h3 id="recommended-workflow">Recommended workflow<a class="anchor" aria-label="anchor" href="#recommended-workflow"></a>
 </h3>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Step 1: get a ballpark for the number of routes using the heuristics</span></span>
-<span><span class="va">n1</span> <span class="op">&lt;-</span> <span class="fu">n_optimal1</span><span class="op">(</span><span class="va">icc_data</span><span class="op">)</span></span>
-<span><span class="va">n2</span> <span class="op">&lt;-</span> <span class="fu">n_optimal2</span><span class="op">(</span><span class="va">icc_data</span><span class="op">)</span></span>
-<span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Heuristics:"</span>, <span class="va">n1</span>, <span class="va">n2</span>, <span class="st">"\n"</span><span class="op">)</span></span>
-<span><span class="va">n_max_explore</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">n1</span>, <span class="va">n2</span><span class="op">)</span> <span class="op">+</span> <span class="fl">2</span>   <span class="co"># safety margin</span></span>
-<span></span>
-<span><span class="co"># Step 2: compare models from 2 to n_max_explore routes</span></span>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Step 1: compare models from 2 to n_routes_max routes (default 8)</span></span>
 <span><span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compare_n_routes.html">compare_n_routes</a></span><span class="op">(</span></span>
 <span>  dat          <span class="op">=</span> <span class="va">icc_data</span>,</span>
-<span>  n_routes_max <span class="op">=</span> <span class="va">n_max_explore</span>,</span>
+<span>  n_routes_max <span class="op">=</span> <span class="fl">8L</span>,</span>
 <span>  dist         <span class="op">=</span> <span class="st">"normal"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Step 3: estimate with the BIC-optimal number of routes</span></span>
+<span><span class="co"># Step 2: estimate with the BIC-optimal number of routes</span></span>
+<span><span class="co"># (if this equals n_routes_max, increase n_routes_max and re-run step 1)</span></span>
 <span><span class="va">n_opt</span> <span class="op">&lt;-</span> <span class="va">comparison</span><span class="op">$</span><span class="va">n_routes</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.min</a></span><span class="op">(</span><span class="va">comparison</span><span class="op">$</span><span class="va">bic</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">result_final</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/si_estim.html">si_estim</a></span><span class="op">(</span><span class="va">icc_data</span>, dist <span class="op">=</span> <span class="st">"normal"</span>, n_routes <span class="op">=</span> <span class="va">n_opt</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Step 4: visualise the final fit</span></span>
+<span><span class="co"># Step 3: visualise the final fit</span></span>
 <span><span class="fu"><a href="../reference/plot_si_fit_result.html">plot_si_fit_result</a></span><span class="op">(</span><span class="va">result_final</span>, dat <span class="op">=</span> <span class="va">icc_data</span>, dist <span class="op">=</span> <span class="st">"normal"</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>

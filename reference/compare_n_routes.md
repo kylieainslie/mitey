@@ -143,21 +143,17 @@ results <- compare_n_routes(icc_data, n_routes_max = 6, dist = "normal", n = 50)
 
 # Compare using gamma distribution
 results_gam <- compare_n_routes(icc_data, n_routes_max = 5, dist = "gamma", n = 50)
-#> Warning: Computation failed in `stat_function()`.
-#> Caused by error in `fun()`:
-#> ! unused argument (n_routes = 2)
+#> Warning: Removed 1 row containing missing values or values outside the scale range
+#> (`geom_function()`).
 
-#> Warning: Computation failed in `stat_function()`.
-#> Caused by error in `fun()`:
-#> ! unused argument (n_routes = 3)
+#> Warning: Removed 1 row containing missing values or values outside the scale range
+#> (`geom_function()`).
 
-#> Warning: Computation failed in `stat_function()`.
-#> Caused by error in `fun()`:
-#> ! unused argument (n_routes = 4)
+#> Warning: Removed 1 row containing missing values or values outside the scale range
+#> (`geom_function()`).
 
-#> Warning: Computation failed in `stat_function()`.
-#> Caused by error in `fun()`:
-#> ! unused argument (n_routes = 5)
+#> Warning: Removed 1 row containing missing values or values outside the scale range
+#> (`geom_function()`).
 
 #> === Comparison of the n_routes ===
 #>   n_routes    mu sigma loglik   aic   bic n_params converged iterations

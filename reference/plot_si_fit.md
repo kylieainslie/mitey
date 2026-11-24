@@ -106,8 +106,7 @@ plot_si_fit(
   n_routes = 5,
   scaling_factor = 0.8
 )
-#> Warning: Computation failed in `stat_function()`.
-#> Caused by error in `fun()`:
-#> ! unused argument (n_routes = 5)
+#> Warning: Removed 1 row containing missing values or values outside the scale range
+#> (`geom_function()`).
 
 ```
