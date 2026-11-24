@@ -1,0 +1,66 @@
+# Updates download statistics in data-raw/ and commits any changes.
+# - CRAN: monthly totals from cranlogs (complete months only; safe to re-run).
+# - GitHub clones: daily counts. The traffic API only keeps 14 days, so this
+#   runs weekly. Requires a repo secret TRAFFIC_TOKEN: a fine-grained personal
+#   access token for this repo with "Administration: Read-only" permission.
+#   If the secret is missing, the clones step is skipped.
+
+name: Update download stats
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # 06:00 UTC every Monday
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      TRAFFIC_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Install R packages
+        run: Rscript -e 'install.packages(c("cranlogs", "jsonlite"))'
+
+      # The collectors run independently: a failure in one doesn't stop the
+      # other or the commit, but still marks the run as failed. Only outputs
+      # from collectors that succeeded are committed.
+      - name: Update CRAN downloads
+        id: cran
+        run: Rscript data-raw/update_cran_downloads.R
+
+      - name: Update GitHub clones
+        id: clones
+        if: ${{ !cancelled() && env.TRAFFIC_TOKEN != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
+        run: Rscript data-raw/update_github_clones.R
+
+      - name: Commit changes
+        if: ${{ !cancelled() }}
+        env:
+          CRAN_OUTCOME: ${{ steps.cran.outcome }}
+          CLONES_OUTCOME: ${{ steps.clones.outcome }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ "$CRAN_OUTCOME" = "success" ]; then
+            git add data-raw/cran_downloads_monthly.csv
+          fi
+          if [ "$CLONES_OUTCOME" = "success" ]; then
+            git add data-raw/github_clones_daily.csv
+          fi
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Update download stats"
+            git push
+          fi
