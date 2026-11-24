@@ -612,7 +612,7 @@ fig1 <- plot_grid(final_plot, forest_plot,
                   ncol = 2, 
                   rel_widths = c(1.2, 0.9),
                   labels = c("", "E"))
-#> Picking joint bandwidth of 0.577
+#> Picking joint bandwidth of 0.576
 fig1
 ```
 
