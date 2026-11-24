@@ -94,8 +94,7 @@ plot_si_fit <- function(
         args = list(
           weights = weights[1:n_routes-1],
           mu      = mean,
-          sigma   = sd,
-          n_routes = n_routes
+          sigma   = sd
         ),
         color     = "red",
         linetype  = "dashed",
