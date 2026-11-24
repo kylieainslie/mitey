@@ -76,6 +76,13 @@ compare_n_routes <- function(
     n = 50,
     ...
 ) {
+  if (!is.numeric(n_routes_max) || length(n_routes_max) != 1 ||
+      is.na(n_routes_max) || !is.finite(n_routes_max) || n_routes_max < 2 ||
+      n_routes_max != floor(n_routes_max)) {
+    stop("n_routes_max must be an integer >= 2.")
+  }
+  n_routes_max <- as.integer(n_routes_max)
+
   results <- vector("list", n_routes_max - 1L)
 
   for (n_routes in 2:n_routes_max) {

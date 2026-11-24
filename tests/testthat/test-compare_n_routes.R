@@ -152,6 +152,22 @@ test_that("compare_n_routes returns its results invisibly", {
   expect_false(vis$visible)
 })
 
+test_that("compare_n_routes rejects invalid n_routes_max", {
+  for (bad in list(1, 0, -3, 2.5, NA, Inf, "4", c(3, 4))) {
+    expect_error(compare_n_routes(1:20, n_routes_max = bad),
+                 regexp = "integer >= 2")
+  }
+})
+
+test_that("compare_n_routes accepts the smallest valid n_routes_max", {
+  local_mocked_bindings(
+    si_estim = mock_si_estim,
+    plot_si_fit_result = function(...) invisible(NULL)
+  )
+  capture.output(res <- compare_n_routes(1:20, n_routes_max = 2))
+  expect_equal(res$n_routes, 2L)
+})
+
 # -----------------------------------------------------------------------
 # compare_n_routes: end-to-end with real fits
 # -----------------------------------------------------------------------
