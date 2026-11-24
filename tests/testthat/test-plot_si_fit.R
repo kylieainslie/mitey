@@ -128,3 +128,11 @@ test_that("plot_si_fit can be built without errors", {
   built <- ggplot2::ggplot_build(p)
   expect_true(!is.null(built$data))
 })
+
+test_that("plot_si_fit_result reports the actual weight length on mismatch", {
+  bad_fit <- list(n_routes = 3, wts = c(0.2, 0.3, 0.5), mean = 10, sd = 2)
+  expect_error(
+    plot_si_fit_result(bad_fit, dat = 1:10, dist = "normal"),
+    regexp = "length 2n_routes -1 = 5, but has length 3\\."
+  )
+})
