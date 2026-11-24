@@ -30,20 +30,34 @@ jobs:
       - name: Install R packages
         run: Rscript -e 'install.packages(c("cranlogs", "jsonlite"))'
 
+      # The collectors run independently: a failure in one doesn't stop the
+      # other or the commit, but still marks the run as failed. Only outputs
+      # from collectors that succeeded are committed.
       - name: Update CRAN downloads
+        id: cran
         run: Rscript data-raw/update_cran_downloads.R
 
       - name: Update GitHub clones
-        if: env.TRAFFIC_TOKEN != ''
+        id: clones
+        if: ${{ !cancelled() && env.TRAFFIC_TOKEN != '' }}
         env:
           GH_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
         run: Rscript data-raw/update_github_clones.R
 
       - name: Commit changes
+        if: ${{ !cancelled() }}
+        env:
+          CRAN_OUTCOME: ${{ steps.cran.outcome }}
+          CLONES_OUTCOME: ${{ steps.clones.outcome }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data-raw/*.csv
+          if [ "$CRAN_OUTCOME" = "success" ]; then
+            git add data-raw/cran_downloads_monthly.csv
+          fi
+          if [ "$CLONES_OUTCOME" = "success" ]; then
+            git add data-raw/github_clones_daily.csv
+          fi
           if git diff --cached --quiet; then
             echo "No changes"
           else
