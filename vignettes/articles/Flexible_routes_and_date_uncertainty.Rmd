@@ -897,19 +897,9 @@ The function returns a summary table and automatically displays the fitted distr
 # ...
 ```
 
-## Starting heuristics: `n_optimal1()`, `n_optimal2()`
+## Choosing `n_routes_max`
 
-Two simple data-driven heuristics are available to guide the initial choice of `n_routes_max`:
-
-```{r heuristics, eval=FALSE}
-# Heuristic 1: based on the 95th percentile and the mean
-n_optimal1(icc_data)   # as.integer(quantile(dat, 0.95) / mean(dat))
-
-# Heuristic 2: based on the relative range
-n_optimal2(icc_data)   # as.integer(max(dat) / sd(dat))
-```
-
-These heuristics are not rigorous estimators but reasonable **starting points** for exploring the `n_routes` grid. It is recommended to use them to set `n_routes_max` in `compare_n_routes()`, and then rely on AIC/BIC for the final selection.
+`n_routes_max` only sets the upper limit of the models compared; AIC/BIC then selects the number of routes. Setting it too high only costs computation time, whereas setting it too low can exclude the best model. The default of 8 covers most practical settings. Lower it if knowledge of the disease rules out long transmission chains, and raise it if the BIC-optimal model is at the upper limit.
 
 ------------------------------------------------------------------------
 
@@ -1332,26 +1322,19 @@ The key takeaways are:
 ## Recommended workflow
 
 ```{r recommended-workflow, eval=FALSE}
-# Step 1: get a ballpark for the number of routes using the heuristics
-n1 <- n_optimal1(icc_data)
-n2 <- n_optimal2(icc_data)
-
-
-cat("Heuristics:", n1, n2, "\n")
-n_max_explore <- max(n1, n2) + 2   # safety margin
-
-# Step 2: compare models from 2 to n_max_explore routes
+# Step 1: compare models from 2 to n_routes_max routes (default 8)
 comparison <- compare_n_routes(
   dat          = icc_data,
-  n_routes_max = n_max_explore,
+  n_routes_max = 8L,
   dist         = "normal"
 )
 
-# Step 3: estimate with the BIC-optimal number of routes
+# Step 2: estimate with the BIC-optimal number of routes
+# (if this equals n_routes_max, increase n_routes_max and re-run step 1)
 n_opt <- comparison$n_routes[which.min(comparison$bic)]
 result_final <- si_estim(icc_data, dist = "normal", n_routes = n_opt)
 
-# Step 4: visualise the final fit
+# Step 3: visualise the final fit
 plot_si_fit_result(result_final, dat = icc_data, dist = "normal")
 ```
 

@@ -76,8 +76,14 @@ compare_n_routes <- function(
     n = 50,
     ...
 ) {
+  if (!is.numeric(n_routes_max) || length(n_routes_max) != 1 ||
+      is.na(n_routes_max) || !is.finite(n_routes_max) || n_routes_max < 2 ||
+      n_routes_max != floor(n_routes_max)) {
+    stop("n_routes_max must be an integer >= 2.")
+  }
+  n_routes_max <- as.integer(n_routes_max)
+
   results <- vector("list", n_routes_max - 1L)
-  weights_list <- vector("list", n_routes_max - 1L)
 
   for (n_routes in 2:n_routes_max) {
     fit <- si_estim(dat, n = n, dist = dist, n_routes = n_routes, ...)
@@ -104,33 +110,13 @@ compare_n_routes <- function(
       converged  = fit$converged,
       iterations = fit$iterations
     )
-
-    wts        <- fit$wts
-    wt_names   <- paste0("w", seq_along(wts))   # w1, w2, w3, ...
-    wts_df     <- as.data.frame(t(wts))
-    names(wts_df) <- wt_names
-    wts_df$n_routes <- n_routes
-    weights_list[[n_routes - 1L]] <- wts_df
   }
 
   results_df <- do.call(rbind, results)
 
-  weights_df <- do.call(
-    dplyr::bind_rows,
-    weights_list
-  )
-
-  weights_df <- weights_df[, c("n_routes",
-                               setdiff(names(weights_df), "n_routes"))]
-
-
   # Identify the best using BIC
   best_bic <- results_df$n_routes[which.min(results_df$bic)]
   best_aic <- results_df$n_routes[which.min(results_df$aic)]
-
-  # Compute the n_optimal
-  n_opt1 <- n_optimal1(dat)
-  n_opt2 <- n_optimal2(dat)
 
   cat("=== Comparison of the n_routes ===\n")
   print(results_df, digits = 4)
