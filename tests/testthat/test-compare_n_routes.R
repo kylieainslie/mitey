@@ -45,6 +45,17 @@ test_that("n_optimal heuristics return a single integer", {
   }
 })
 
+test_that("n_optimal heuristics reject invalid data", {
+  for (fn in list(n_optimal1, n_optimal2)) {
+    expect_error(fn("a"), "numeric vector with at least two values")
+    expect_error(fn(5), "numeric vector with at least two values")
+    expect_error(fn(c(1, NA, 3)), "missing or infinite")
+    expect_error(fn(c(1, Inf, 3)), "missing or infinite")
+  }
+  expect_error(n_optimal1(c(0, 0, 0)), "positive mean")
+  expect_error(n_optimal2(c(4, 4, 4)), "must not be constant")
+})
+
 # -----------------------------------------------------------------------
 # compare_n_routes: logic checked against a mocked si_estim()
 # -----------------------------------------------------------------------

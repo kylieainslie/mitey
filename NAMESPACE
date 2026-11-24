@@ -2,6 +2,8 @@
 
 export(compare_n_routes)
 export(generate_synthetic_epidemic)
+export(n_optimal1)
+export(n_optimal2)
 export(plot_si_fit)
 export(plot_si_fit_result)
 export(si_estim)
