@@ -51,7 +51,6 @@ Suggests:
     openxlsx,
     outbreaks,
     purrr,
-    RcppEigen,
     rmarkdown,
     stringr,
     testthat (>= 3.1.7),
